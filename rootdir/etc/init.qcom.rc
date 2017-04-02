@@ -206,6 +206,9 @@ on boot
     chown system system /sys/class/leds/white/brightness
     chown system system /sys/class/leds/button-backlight/brightness
 
+    # Update touchscreen firmware
+    write /proc/touchpanel/tp_fw_update 1
+
 # msm specific files that need to be created on /data
 on post-fs-data
     mkdir /data/vendor/misc 01771 system system
