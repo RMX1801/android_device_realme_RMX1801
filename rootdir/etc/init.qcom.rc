@@ -22,8 +22,8 @@ on init
     chown system system /proc/touchpanel/oppo_tp_limit_whitelist
     chown system system /proc/touchpanel/tp_fw_update
 
-    # Add for touchscreen firmware update check
-    write /proc/touchpanel/tp_fw_update 0
+    # Update toucscreen firmware
+    write /proc/touchpanel/tp_fw_update 1
 
 on boot
     # OTG
