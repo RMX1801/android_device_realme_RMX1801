@@ -11,5 +11,6 @@ allow vendor_init {
 }:file rw_file_perms;
 
 allow init adsprpcd_file:file mounton;
+allow vendor_init proc:file w_file_perms;
 
 set_prop(vendor_init, vendor_power_prop)
