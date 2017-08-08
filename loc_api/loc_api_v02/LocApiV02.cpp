@@ -1609,7 +1609,7 @@ LocApiV02::setServerSync(const char* url, int len, LocServerType type)
   req_union.pSetServerReq = &set_server_req;
 
   status = locSyncSendReq(QMI_LOC_SET_SERVER_REQ_V02,
-                          req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                          req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
                           QMI_LOC_SET_SERVER_IND_V02,
                           &set_server_ind);
 
@@ -1660,7 +1660,7 @@ LocApiV02::setServerSync(unsigned int ip, int port, LocServerType type)
   req_union.pSetServerReq = &set_server_req;
 
   status = locSyncSendReq(QMI_LOC_SET_SERVER_REQ_V02,
-                          req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                          req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
                           QMI_LOC_SET_SERVER_IND_V02,
                           &set_server_ind);
 
@@ -2069,7 +2069,7 @@ LocApiV02::setLPPConfigSync(GnssConfigLppProfile profile)
   req_union.pSetProtocolConfigParametersReq = &lpp_config_req;
 
   result = locSyncSendReq(QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_REQ_V02,
-                          req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                          req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
                           QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_IND_V02,
                           &lpp_config_ind);
 
@@ -2252,7 +2252,7 @@ LocApiV02::setAGLONASSProtocolSync(GnssConfigAGlonassPositionProtocolMask aGlona
                              aGlonassProtocol_req.assistedGlonassProtocolMask);
 
   result = locSyncSendReq(QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_REQ_V02,
-                          req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                          req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
                           QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_IND_V02,
                           &aGlonassProtocol_ind);
 
@@ -2301,7 +2301,7 @@ LocApiV02::setLPPeProtocolCpSync(GnssConfigLppeControlPlaneMask lppeCP)
            lppe_req.lppeCpConfig);
 
   result = locSyncSendReq(QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_REQ_V02,
-                          req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                          req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
                           QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_IND_V02,
                           &lppe_ind);
 
@@ -2351,7 +2351,7 @@ LocApiV02::setLPPeProtocolUpSync(GnssConfigLppeUserPlaneMask lppeUP)
            lppe_req.lppeUpConfig);
 
   result = locSyncSendReq(QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_REQ_V02,
-                          req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                          req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
                           QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_IND_V02,
                           &lppe_ind);
 
@@ -5837,7 +5837,7 @@ LocationError LocApiV02 :: setGpsLockSync(GnssConfigGpsLock lock)
     req_union.pSetEngineLockReq = &setEngineLockReq;
     memset(&setEngineLockInd, 0, sizeof(setEngineLockInd));
     status = locSyncSendReq(QMI_LOC_SET_ENGINE_LOCK_REQ_V02,
-                            req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                            req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
                             QMI_LOC_SET_ENGINE_LOCK_IND_V02,
                             &setEngineLockInd);
     if (eLOC_CLIENT_SUCCESS != status || eQMI_LOC_SUCCESS_V02 != setEngineLockInd.status) {
