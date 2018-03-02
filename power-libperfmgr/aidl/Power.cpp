@@ -26,7 +26,7 @@
 #include <android-base/properties.h>
 #include <android-base/strings.h>
 
-#include <utils/Log.h>
+#include <log/log.h>
 #include <utils/Trace.h>
 
 #ifndef TAP_TO_WAKE_NODE
