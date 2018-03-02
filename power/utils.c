@@ -41,7 +41,7 @@
 #include "power-common.h"
 
 #define LOG_TAG "QCOM RMX1801 PowerHAL"
-#include <utils/Log.h>
+#include <log/log.h>
 
 char scaling_gov_path[4][80] ={
     "sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
