@@ -40,7 +40,7 @@
 #include <unistd.h>
 
 #define LOG_TAG "QCOM RMX1801 PowerHAL"
-#include <utils/Log.h>
+#include <log/log.h>
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
