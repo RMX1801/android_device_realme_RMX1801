@@ -156,12 +156,6 @@ service vendor.cdsprpcd /vendor/bin/cdsprpcd
    group system
    disabled
 
-service energy-awareness /vendor/bin/energy-awareness
-    class main
-    user system
-    group system
-    oneshot
-
 service mdtpd /vendor/bin/mdtpd
     class late_start
     user root
