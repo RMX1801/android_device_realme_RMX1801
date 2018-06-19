@@ -76,6 +76,10 @@ on post-fs
     write /dev/ipa 1
 
 on late-fs
+    # Start services for bootanim
+    start servicemanager
+    start surfaceflinger
+    start bootanim
     # Mount RW partitions which need run fsck
     mount_all /vendor/etc/fstab.qcom --late
 
