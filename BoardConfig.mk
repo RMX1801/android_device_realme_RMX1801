@@ -107,6 +107,8 @@ BOARD_ROOT_EXTRA_SYMLINKS := \
 
 # Sepolicy
 BOARD_PLAT_PRIVATE_SEPOLICY_DIR += $(DEVICE_PATH)/sepolicy/private
+BOARD_PLAT_PRIVATE_SEPOLICY_DIR += device/qcom/sepolicy/private
+BOARD_PLAT_PUBLIC_SEPOLICY_DIR += device/qcom/sepolicy/public
 
 # Vendor
 TARGET_COPY_OUT_VENDOR := vendor
