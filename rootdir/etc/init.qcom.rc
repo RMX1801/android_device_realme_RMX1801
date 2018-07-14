@@ -9,3 +9,7 @@ on init
     mount none /system/etc/manifest.xml /vendor/etc/vintf/manifest.xml bind
     # Bind mount qcacld3 module
     mount none /system/lib/modules/wlan.ko /vendor/lib/modules/qca_cld3_wlan.ko bind
+
+on boot
+    # OTG
+    write /sys/class/power_supply/usb/otg_switch 1

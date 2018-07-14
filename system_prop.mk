@@ -95,6 +95,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.nfc.port=I2C
 
+# OTG
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.sys.oem.otg_support=true
+
 # Perf
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.qti.core_ctl_min_cpu=2 \
