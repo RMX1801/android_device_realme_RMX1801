@@ -2792,12 +2792,9 @@ lib64/vendor.qti.gnss@2.1.so
 -priv-app/com.qualcomm.location/com.qualcomm.location.apk
 vendor/bin/DR_AP_Service
 vendor/bin/garden_app
-vendor/bin/hw/vendor.qti.gnss@2.0-service
 vendor/bin/loc_launcher
 vendor/bin/slim_daemon
 vendor/bin/xtra-daemon
-vendor/etc/init/vendor.qti.gnss@2.0-service.rc
-vendor/lib/hw/vendor.qti.gnss@2.0-impl.so
 vendor/lib/libDRPlugin.so
 vendor/lib/lib_drplugin_server.so
 vendor/lib/libdataitems.so
@@ -2820,12 +2817,6 @@ vendor/lib/libquipc_os_api.so
 vendor/lib/libslimclient.so
 vendor/lib/libulp2.so
 vendor/lib/libxtadapter.so
-vendor/lib/vendor.qti.gnss@1.0.so
-vendor/lib/vendor.qti.gnss@1.1.so
-vendor/lib/vendor.qti.gnss@1.2.so
-vendor/lib/vendor.qti.gnss@2.0.so
-vendor/lib/vendor.qti.gnss@2.1.so
-vendor/lib64/hw/vendor.qti.gnss@2.0-impl.so
 vendor/lib64/libDRPlugin.so
 vendor/lib64/lib_drplugin_server.so
 vendor/lib64/libdataitems.so
@@ -2849,11 +2840,6 @@ vendor/lib64/libquipc_os_api.so
 vendor/lib64/libslimclient.so
 vendor/lib64/libulp2.so
 vendor/lib64/libxtadapter.so
-vendor/lib64/vendor.qti.gnss@1.0.so
-vendor/lib64/vendor.qti.gnss@1.1.so
-vendor/lib64/vendor.qti.gnss@1.2.so
-vendor/lib64/vendor.qti.gnss@2.0.so
-vendor/lib64/vendor.qti.gnss@2.1.so
 
 # Gatekeeper
 vendor/bin/hw/android.hardware.gatekeeper@1.0-service-qti
