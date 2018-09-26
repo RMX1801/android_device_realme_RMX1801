@@ -1,3 +1,7 @@
+# Audio - from jasmine_sprout - V10.0.15.0.PDIMIXM
+vendor/lib64/soundfx/libvolumelistener.so:lib64/soundfx/libvolumelistener.so|4de2009f3b9fb02ebbd9fa0df4a3521fc89fb953
+vendor/lib/soundfx/libvolumelistener.so:lib/soundfx/libvolumelistener.so|a64f3ae760accdec32c7def9b0573385fe4e39d9
+
 # Camera calibration files
 etc/camera/ashdr/ncf_pack.ncf
 etc/camera/cp/CPCalibrationData.bin
