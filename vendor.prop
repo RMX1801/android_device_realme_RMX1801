@@ -120,7 +120,6 @@ debug.stagefright.omx_default_rank=0
 ro.oem_unlock_supported=1
 
 # Perf
-ro.vendor.extension_library=libqti-perfd-client.so
 ro.vendor.qti.core_ctl_min_cpu=2
 ro.vendor.qti.core_ctl_max_cpu=4
 

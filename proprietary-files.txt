@@ -2900,6 +2900,10 @@ vendor/etc/init/qcrild.rc
 # Init - modified
 vendor/etc/init/netmgrd.rc|213d147cfcfe175aa4cdf1a345f3b148ea72982d
 
+# IRQ HAL
+vendor/bin/msm_irqbalance
+vendor/etc/msm_irqbalance.conf
+
 # Keybox
 vendor/bin/hw/vendor.oppo.hardware.cryptoeng@1.0-service
 vendor/etc/init/vendor.oppo.hardware.cryptoeng@1.0-service_FDE.rc
@@ -3032,31 +3036,6 @@ vendor/lib/hw/vendor.oppo.hardware.mmdisplayfeature@1.0-impl.so
 vendor/lib/vendor.oppo.hardware.mmdisplayfeature@1.0.so
 vendor/lib64/hw/vendor.oppo.hardware.mmdisplayfeature@1.0-impl.so
 vendor/lib64/vendor.oppo.hardware.mmdisplayfeature@1.0.so
-
-# Perf
-lib64/libqti-perfd-client_system.so
-lib64/libqti_performance.so
-vendor/bin/hw/vendor.qti.hardware.perf@2.0-service
-vendor/bin/msm_irqbalance
-vendor/etc/init/vendor.qti.hardware.perf@2.0-service.rc
-vendor/etc/msm_irqbalance.conf
-vendor/etc/perf/commonresourceconfigs.xml
-vendor/etc/perf/perfboostsconfig.xml
-vendor/etc/perf/perfconfigstore.xml
-vendor/etc/perf/targetconfig.xml
-vendor/etc/perf/targetresourceconfigs.xml
-vendor/lib/libperfconfig.so
-vendor/lib/libperfgluelayer.so
-vendor/lib/libqti-perfd-client.so
-vendor/lib/libqti-perfd.so
-vendor/lib/libqti-util.so
-vendor/lib64/libadaptlaunch.so
-vendor/lib64/liblearningmodule.so
-vendor/lib64/libperfconfig.so
-vendor/lib64/libperfgluelayer.so
-vendor/lib64/libqti-perfd-client.so
-vendor/lib64/libqti-perfd.so
-vendor/lib64/libqti-util.so
 
 # Perf-IOP
 vendor/lib64/hw/vendor.qti.hardware.iop@2.0-impl.so
