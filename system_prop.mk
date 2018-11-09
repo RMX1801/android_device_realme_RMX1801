@@ -112,6 +112,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     DEVICE_PROVISIONED=1 \
     gsm.lte.ca.support=0 \
+    persist.radio.add_power_save=1 \
     persist.radio.custom_exp_ecc=1 \
     persist.radio.multisim.config=dsds \
     persist.vendor.radio.atfwd.start=true \
