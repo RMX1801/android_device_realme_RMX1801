@@ -158,19 +158,19 @@ service vendor.cdsprpcd /vendor/bin/cdsprpcd
    group system
    disabled
 
-## imsdatadaemon starts with root and UID will be downgraded to SYSTEM.
+## imsdatadaemon starts with root and UID will be downgraded to RADIO.
 service vendor.imsqmidaemon /vendor/bin/imsqmidaemon
     class main
-    user system
+    user radio
     socket ims_qmid stream 0660 system radio
     group radio log diag
 
-# imsdatadaemon starts with root and UID will be downgraded to SYSTEM.
+# imsdatadaemon starts with root and UID will be downgraded to RADIO.
 service vendor.imsdatadaemon /vendor/bin/imsdatadaemon
     class main
-    user system
+    user radio
     socket ims_datad stream 0660 system radio
-    group system wifi radio inet log diag
+    group radio wifi inet log diag
     disabled
 
 service mdtpd /vendor/bin/mdtpd
@@ -197,7 +197,7 @@ service vendor.ims_rtp_daemon /vendor/bin/ims_rtp_daemon
 
 service vendor.imsrcsservice /vendor/bin/imsrcsd
    class main
-   user system
+   user radio
    group radio diag inet log wakelock
 
 on property:vendor.ims.DATA_DAEMON_STATUS=1
