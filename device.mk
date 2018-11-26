@@ -341,7 +341,9 @@ PRODUCT_PACKAGES += \
     android.hardware.secure_element@1.0 \
     libprotobuf-cpp-full \
     librmnetctl \
-    libxml2
+    libxml2  \
+    qti-telephony-hidl-wrapper \
+    qti_telephony_hidl_wrapper.xml
 
 # RenderScript
 PRODUCT_PACKAGES += \
