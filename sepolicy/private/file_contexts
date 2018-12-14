@@ -12,8 +12,5 @@
 # HIDL manifest
 /system/etc/manifest\.xml    u:object_r:vendor_configs_file:s0
 
-# Modules
-/system/lib/modules/wlan\.ko    u:object_r:vendor_file:s0
-
 # Trust HAL
 /system/bin/hw/lineage\.trust@1\.0-service                             u:object_r:shal_lineage_trust_default_exec:s0
