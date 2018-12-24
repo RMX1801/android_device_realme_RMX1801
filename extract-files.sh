@@ -64,4 +64,10 @@ setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" false "${CLEAN_VENDOR}"
 
 extract "${MY_DIR}/proprietary-files.txt" "${SRC}" ${KANG} --section "${SECTION}"
 
+# Fix proprietary blobs
+patchelf --remove-needed android.hidl.base@1.0.so \
+        "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/lib/libwfdnative.so"
+patchelf --remove-needed android.hidl.base@1.0.so \
+        "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/lib64/libwfdnative.so"
+
 "${MY_DIR}/setup-makefiles.sh"
