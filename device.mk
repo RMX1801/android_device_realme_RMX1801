@@ -54,7 +54,8 @@ PRODUCT_PACKAGES += \
 
 # Display
 PRODUCT_PACKAGES += \
-    libvulkan
+    libvulkan \
+    vendor.display.config@1.5
 
 # Fingerprint
 PRODUCT_PACKAGES += \
@@ -126,3 +127,10 @@ PRODUCT_PACKAGES += \
 # Trust HAL
 PRODUCT_PACKAGES += \
     lineage.trust@1.0-service
+
+# WiFi Display
+PRODUCT_PACKAGES += \
+    libnl
+
+PRODUCT_BOOT_JARS += \
+    WfdCommon
