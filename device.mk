@@ -136,6 +136,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     lineage.trust@1.0-service
 
+# Touch
+PRODUCT_PACKAGES += \
+    lineage.touch@1.0-service.realme_sdm660
+
 # WiFi Display
 PRODUCT_PACKAGES += \
     libnl
