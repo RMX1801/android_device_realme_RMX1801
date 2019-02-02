@@ -65,6 +65,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.enable.hypnus=1
 
+# IMS Debug
+PRODUCT_PROPERTY_OVERRIDES += \
+   persist.dbg.volte_avail_ovr=1 \
+   persist.dbg.vt_avail_ovr=1 \
+   persist.dbg.wfc_avail_ovr=1
+
 # Location
 PRODUCT_PROPERTY_OVERRIDES += \
    persist.backup.ntpServer="0.pool.ntp.org" \
