@@ -55,8 +55,7 @@
 
 const int kMaxLaunchDuration = 5000; /* ms */
 const int kMaxInteractiveDuration = 5000; /* ms */
-const int kMinInteractiveDuration = 500; /* ms */
-const int kMinFlingDuration = 1500; /* ms */
+const int kMinInteractiveDuration = 400; /* ms */
 
 static int saved_interactive_mode = -1;
 static int display_hint_sent;
@@ -144,11 +143,7 @@ static void process_interaction_hint(void *data)
     s_previous_boost_timespec = cur_boost_timespec;
     s_previous_duration = duration;
 
-    if (duration >= kMinFlingDuration) {
-        perf_hint_enable_with_type(VENDOR_HINT_SCROLL_BOOST, -1, SCROLL_PREFILING);
-    } else {
-        perf_hint_enable_with_type(VENDOR_HINT_SCROLL_BOOST, duration, SCROLL_VERTICAL);
-    }
+    perf_hint_enable_with_type(VENDOR_HINT_SCROLL_BOOST, duration, SCROLL_VERTICAL);
 }
 
 int  power_hint_override(struct power_module *module, power_hint_t hint,
