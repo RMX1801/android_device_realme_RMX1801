@@ -2972,7 +2972,7 @@ vendor/lib/libavformat.so
 vendor/lib/libavutil.so
 vendor/lib/libdsd2pcm.so
 vendor/lib/libFlacSwDec.so
--vendor/lib/libgpustats.so
+vendor/lib/libgpustats.so
 vendor/lib/libI420colorconvert.so
 vendor/lib/libmm-color-convertor.so
 vendor/lib/libmmosal_proprietary.so
@@ -3007,7 +3007,7 @@ vendor/lib64/libavcodec.so
 vendor/lib64/libavformat.so
 vendor/lib64/libavutil.so
 vendor/lib64/libFlacSwDec.so
--vendor/lib64/libgpustats.so
+vendor/lib64/libgpustats.so
 vendor/lib64/libI420colorconvert.so
 vendor/lib64/libmm-color-convertor.so
 vendor/lib64/libmmosal_proprietary.so
