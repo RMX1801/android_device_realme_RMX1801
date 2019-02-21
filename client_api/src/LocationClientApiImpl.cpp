@@ -1579,7 +1579,11 @@ void LocationClientApiImpl::capabilitesCallback(ELocMsgID msgId, const void* msg
         LOC_LOGd(">>> UpdateCallbacksReq callBacksMask=0x%x rc=%d", mCallbacksMask, rc);
     }
 
-    if (0 != mLocationOptions.minInterval) {
+    LOC_LOGd(">>> session id %d", mSessionId);
+    if (mSessionId != LOCATION_CLIENT_SESSION_ID_INVALID)  {
+        // force mSessionId to invalid so startTracking will start the sesssion
+        // if hal deamon crashes and restarts in the middle of a session
+        mSessionId = LOCATION_CLIENT_SESSION_ID_INVALID;
         TrackingOptions trackOption;
         trackOption.setLocationOptions(mLocationOptions);
         (void)startTracking(trackOption);
@@ -1654,9 +1658,6 @@ void LocationClientApiImpl::onReceive(const string& data) {
                         // flag to false to prevent messages to be sent to hal
                         // before registeration completes
                         mApiImpl->mHalRegistered = false;
-
-                        // set mSessionId to invalid so session can be restarted
-                        mApiImpl->mSessionId = LOCATION_CLIENT_SESSION_ID_INVALID;
                         // when hal daemon crashes, we need to find the new node/port
                         #ifdef FEATURE_EXTERNAL_AP
                             mApiImpl->mIpcSender->findNewService();
