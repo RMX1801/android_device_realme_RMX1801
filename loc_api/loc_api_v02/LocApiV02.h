@@ -78,7 +78,6 @@ private:
   bool mEngineOn;
   bool mMeasurementsStarted;
   std::vector<Resender> mResenders;
-  bool mIsMasterRegistered;
   bool mMasterRegisterNotSupported;
   GnssSvMeasurementSet*  mSvMeasurementSet;
 
@@ -215,17 +214,6 @@ private:
   bool cacheGnssMeasurementSupport();
   void registerMasterClient();
   int getGpsLock(uint8_t subType);
-
-  inline bool checkRegisterMaster() {
-      if (!mIsMasterRegistered) {
-          if (true == isMaster()) {
-              registerMasterClient();
-              mIsMasterRegistered = true;
-              return true;
-          }
-      }
-      return false;
-  }
 
   /* Convert get blacklist sv info to GnssSvIdConfig */
   void reportGnssSvIdConfig
