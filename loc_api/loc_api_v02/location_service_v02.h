@@ -63,7 +63,7 @@
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.7
-   It was generated on: Tue Mar 12 2019 (Spin 0)
+   It was generated on: Fri Mar 15 2019 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -89,7 +89,7 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
 /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x6A
+#define LOC_V02_IDL_MINOR_VERS 0x6B
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
@@ -270,6 +270,9 @@ extern "C" {
 
 /**  Maximum number of satellites in a measurement block for a given system.  */
 #define QMI_LOC_SV_MEAS_LIST_MAX_SIZE_V02 16
+
+/**  Maximum number of satellites in a extended measurement block  */
+#define QMI_LOC_EXT_SV_MEAS_LIST_MAX_SIZE_V02 8
 
 /**  Maximum length of 'Other Code Type Name' string, when the code used for the measurement is 'other'  */
 #define QMI_LOC_SV_MEAS_OTHER_CODE_TYPE_NAME_MAX_LEN_V02 8
@@ -14756,6 +14759,12 @@ typedef struct {
   qmiLocSVMeasurementStructT_v02 svMeasurement[QMI_LOC_SV_MEAS_LIST_MAX_SIZE_V02];
 
   /* Optional */
+  /*  Measurement Report for extended SVs */
+  uint8_t extSvMeasurement_valid;  /**< Must be set to true if extSvMeasurement is being passed */
+  uint32_t extSvMeasurement_len;  /**< Must be set to # of elements in extSvMeasurement */
+  qmiLocSVMeasurementStructT_v02 extSvMeasurement[QMI_LOC_EXT_SV_MEAS_LIST_MAX_SIZE_V02];
+
+  /* Optional */
   /*  Extended Time Information - Cumulative Number of Clock Resets */
   uint8_t numClockResets_valid;  /**< Must be set to true if numClockResets is being passed */
   uint32_t numClockResets;
@@ -14766,6 +14775,12 @@ typedef struct {
   uint8_t svCarrierPhaseUncertainty_valid;  /**< Must be set to true if svCarrierPhaseUncertainty is being passed */
   uint32_t svCarrierPhaseUncertainty_len;  /**< Must be set to # of elements in svCarrierPhaseUncertainty */
   float svCarrierPhaseUncertainty[QMI_LOC_SV_MEAS_LIST_MAX_SIZE_V02];
+
+  /* Optional */
+  /*  Carrier Phase Measurement Uncertainty for extended SVs */
+  uint8_t extSvCarrierPhaseUncertainty_valid;  /**< Must be set to true if extSvCarrierPhaseUncertainty is being passed */
+  uint32_t extSvCarrierPhaseUncertainty_len;  /**< Must be set to # of elements in extSvCarrierPhaseUncertainty */
+  float extSvCarrierPhaseUncertainty[QMI_LOC_EXT_SV_MEAS_LIST_MAX_SIZE_V02];
 
   /* Optional */
   /*  GNSS Signal Type */

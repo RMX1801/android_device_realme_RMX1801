@@ -4887,29 +4887,66 @@ void LocApiV02 :: reportGnssMeasurementData(
     }
 
     // number of measurements
-    if (gnss_measurement_report_ptr.svMeasurement_valid) {
-        if (gnss_measurement_report_ptr.svMeasurement_len != 0 &&
-            gnss_measurement_report_ptr.svMeasurement_len <= QMI_LOC_SV_MEAS_LIST_MAX_SIZE_V02) {
-            // the array of measurements
-            LOC_LOGv("Measurements received for GNSS system %d",
-                     gnss_measurement_report_ptr.system);
+    if (gnss_measurement_report_ptr.svMeasurement_valid &&
+        gnss_measurement_report_ptr.svMeasurement_len > 0 &&
+        gnss_measurement_report_ptr.svMeasurement_len <= QMI_LOC_SV_MEAS_LIST_MAX_SIZE_V02) {
+        // the array of measurements
+        LOC_LOGv("Measurements received for GNSS system %d",
+                 gnss_measurement_report_ptr.system);
 
-            if (0 == measurementsNotify.count) {
-                bAgcIsPresent = true;
+        if (0 == measurementsNotify.count) {
+            bAgcIsPresent = true;
+        }
+        for (uint32_t index = 0; index < gnss_measurement_report_ptr.svMeasurement_len &&
+                measurementsNotify.count < GNSS_MEASUREMENTS_MAX;
+                index++) {
+            LOC_LOGv("index=%u count=%zu", index, measurementsNotify.count);
+            if ((gnss_measurement_report_ptr.svMeasurement[index].validMeasStatusMask &
+                 QMI_LOC_MASK_MEAS_STATUS_GNSS_FRESH_MEAS_STAT_BIT_VALID_V02) &&
+                (gnss_measurement_report_ptr.svMeasurement[index].measurementStatus &
+                 QMI_LOC_MASK_MEAS_STATUS_GNSS_FRESH_MEAS_VALID_V02)) {
+                bAgcIsPresent &= convertGnssMeasurements(
+                    measurementsNotify.measurements[measurementsNotify.count],
+                    gnss_measurement_report_ptr,
+                    index);
+                measurementsNotify.count++;
+            } else {
+                LOC_LOGv("Measurements are stale, do not report");
             }
-            for (uint32_t index = 0; index < gnss_measurement_report_ptr.svMeasurement_len &&
+        }
+        LOC_LOGv("there are %d SV measurements now, total=%zu",
+                 gnss_measurement_report_ptr.svMeasurement_len,
+                 measurementsNotify.count);
+
+        /* now check if more measurements are available (some constellations such
+           as BDS have more measurements available in extSvMeasurement)
+        */
+        if (gnss_measurement_report_ptr.extSvMeasurement_valid &&
+            gnss_measurement_report_ptr.extSvMeasurement_len > 0) {
+            // the array of measurements
+            LOC_LOGv("More measurements received for GNSS system %d",
+                     gnss_measurement_report_ptr.system);
+            for (uint32_t index = 0; index < gnss_measurement_report_ptr.extSvMeasurement_len &&
                     measurementsNotify.count < GNSS_MEASUREMENTS_MAX;
                     index++) {
                 LOC_LOGv("index=%u count=%zu", index, measurementsNotify.count);
-                bAgcIsPresent &= convertGnssMeasurements(
+                if ((gnss_measurement_report_ptr.extSvMeasurement[index].validMeasStatusMask &
+                      QMI_LOC_MASK_MEAS_STATUS_GNSS_FRESH_MEAS_STAT_BIT_VALID_V02) &&
+                     (gnss_measurement_report_ptr.extSvMeasurement[index].measurementStatus &
+                      QMI_LOC_MASK_MEAS_STATUS_GNSS_FRESH_MEAS_VALID_V02)) {
+                    bAgcIsPresent &= convertGnssMeasurements(
                         measurementsNotify.measurements[measurementsNotify.count],
                         gnss_measurement_report_ptr,
                         index);
-                measurementsNotify.count++;
+                    measurementsNotify.count++;
+                }
+                else {
+                    LOC_LOGv("Measurements are stale, do not report");
+                }
             }
             LOC_LOGv("there are %d SV measurements now, total=%zu",
-                     gnss_measurement_report_ptr.svMeasurement_len,
-                     measurementsNotify.count);
+                gnss_measurement_report_ptr.extSvMeasurement_len,
+                measurementsNotify.count);
         }
     } else {
         LOC_LOGv("there is no valid GNSS measurement for system %d, total=%zu",
