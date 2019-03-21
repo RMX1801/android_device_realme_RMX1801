@@ -2,19 +2,6 @@ import /system/etc/init/init.fingerprint.rc
 import /vendor/etc/init/init.oppo.reserve.rc
 
 on init
-    # Bind mount the fstab file with the one in /vendor/etc/
-    mount none /system/etc/fstab.qcom /vendor/etc/fstab.qcom bind
-    # Bind mount the config file with the one in /vendor/etc/audio/
-    mount none /system/etc/audio_policy_configuration.xml /vendor/etc/audio/audio_policy_configuration.xml bind
-    # Bind mount manifest.xml
-    mount none /system/etc/manifest.xml /vendor/etc/vintf/manifest.xml bind
-    # Bind mount libvolumelistener with /vendor/(lib|lib64)/soundfx/
-    mount none /system/lib64/soundfx/libvolumelistener.so /vendor/lib64/soundfx/libvolumelistener.so bind
-    mount none /system/lib/soundfx/libvolumelistener.so /vendor/lib/soundfx/libvolumelistener.so bind
-    # Bind mount power.qcom.so
-    mount none /system/lib64/hw/power.qcom.so /vendor/lib64/hw/power.qcom.so bind
-    mount none /system/lib/hw/power.qcom.so /vendor/lib/hw/power.qcom.so bind
-
     # Add for limit_enable
     chown system system /proc/touchpanel/oppo_tp_limit_enable
     chown system system /proc/touchpanel/oppo_tp_limit_area
@@ -28,19 +15,3 @@ on init
 on boot
     # OTG
     write /sys/class/power_supply/usb/otg_switch 1
-
-service vendor.ss_ramdump_local /vendor/bin/subsystem_ramdump
-    class late_start
-    user system
-    group system
-    disabled
-
-on property:persist.vendor.sys.ssr.enable_ramdumps=1
-    start vendor.ss_ramdump_local
-
-on property:persist.vendor.sys.ssr.enable_ramdumps=0
-    stop vendor.ss_ramdump
-    stop vendor.ss_ramdump_local
-
-on property:sys.boot_completed=1
-    stop vendor.ss_ramdump
