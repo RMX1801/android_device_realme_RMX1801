@@ -5595,6 +5595,7 @@ LocationError LocApiV02 :: setGpsLockSync(GnssConfigGpsLock lock)
     locClientStatusEnumType status;
     locClientReqUnionType req_union;
 
+    memset(&setEngineLockReq, 0, sizeof(setEngineLockReq));
     setEngineLockReq.lockType = convertGpsLockFromAPItoQMI((GnssConfigGpsLock)lock);;
     setEngineLockReq.subType_valid = true;
     setEngineLockReq.subType = eQMI_LOC_LOCK_ALL_SUB_V02;
