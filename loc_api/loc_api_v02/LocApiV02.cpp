@@ -2625,8 +2625,11 @@ void LocApiV02 :: reportPosition (
     GpsLocationExtended locationExtended;
     memset(&locationExtended, 0, sizeof (GpsLocationExtended));
     locationExtended.size = sizeof(locationExtended);
-    if( clock_gettime( CLOCK_BOOTTIME, &locationExtended.timeStamp.apTimeStamp)== 0 )
+    struct timespec apTimestamp;
+    if( clock_gettime( CLOCK_BOOTTIME, &apTimestamp)== 0)
     {
+       locationExtended.timeStamp.apTimeStamp.tv_sec = apTimestamp.tv_sec;
+       locationExtended.timeStamp.apTimeStamp.tv_nsec = apTimestamp.tv_nsec;
        locationExtended.timeStamp.apTimeStampUncertaintyMs = (float)ap_timestamp_uncertainty;
 
     }
@@ -3741,7 +3744,11 @@ void  LocApiV02 :: reportSvMeasurement (
 
     if (gnss_raw_measurement_ptr->seqNum == gnss_raw_measurement_ptr->maxMessageNum) {
         // when we received the last sequence, timestamp the packet with AP time
-        if (clock_gettime(CLOCK_BOOTTIME, &svMeasSetHead.apBootTimeStamp.apTimeStamp)== 0) {
+        struct timespec apTimestamp;
+        if (clock_gettime(CLOCK_BOOTTIME, &apTimestamp)== 0) {
+            svMeasSetHead.apBootTimeStamp.apTimeStamp.tv_sec = apTimestamp.tv_sec;
+            svMeasSetHead.apBootTimeStamp.apTimeStamp.tv_nsec = apTimestamp.tv_nsec;
+
             // use the time uncertainty configured in gps.conf
             svMeasSetHead.apBootTimeStamp.apTimeStampUncertaintyMs =
                     (float)ap_timestamp_uncertainty;
