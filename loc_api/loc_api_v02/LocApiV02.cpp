@@ -2915,7 +2915,7 @@ void LocApiV02 :: reportPosition (
                                                        location_report_ptr->sessionStatus ?
                                                        LOC_SESS_INTERMEDIATE : LOC_SESS_SUCCESS),
                                                        tech_Mask);
-                if (reported) {
+                if (unpropagatedPosition || reported) {
                     for (idx = 0; idx < gnssSvUsedList_len; idx++)
                     {
                         gnssSvIdUsed = svUsedList[idx];
