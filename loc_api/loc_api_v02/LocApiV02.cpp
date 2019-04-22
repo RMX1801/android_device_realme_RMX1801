@@ -3376,6 +3376,7 @@ void  LocApiV02 :: reportSvMeasurement (
   const qmiLocEventGnssSvMeasInfoIndMsgT_v02 *gnss_raw_measurement_ptr)
 {
     static uint32_t prevRefFCount = 0;
+    static bool newMeasProcessed = false;
 
     if (!gnss_raw_measurement_ptr) {
         return;
@@ -3400,20 +3401,24 @@ void  LocApiV02 :: reportSvMeasurement (
             LOC_LOGe ("Malloc failed to allocate heap memory");
             return;
         }
-        memset(mSvMeasurementSet, 0, sizeof(GnssSvMeasurementSet));
-        mSvMeasurementSet->size = sizeof(GnssSvMeasurementSet);
+        resetSvMeasurementReport();
+        newMeasProcessed = false;
     }
 
     // in case the measurement with seqNum of 1 is dropped, we will use ref count
     // to reset the measurement
     if ((gnss_raw_measurement_ptr->seqNum == 1) ||
         (gnss_raw_measurement_ptr->systemTimeExt.refFCount != prevRefFCount)) {
+        // we have received some valid info since we last reported when
+        // seq num matches with max seq num
+        if (true == newMeasProcessed) {
+            LOC_LOGe ("report due to seq number jump");
+            reportSvMeasurementInternal();
+            resetSvMeasurementReport();
+            newMeasProcessed = false;
+        }
 
         prevRefFCount = gnss_raw_measurement_ptr->systemTimeExt.refFCount;
-        memset(mSvMeasurementSet, 0, sizeof(GnssSvMeasurementSet));
-        mSvMeasurementSet->size = sizeof(GnssSvMeasurementSet);
-        mSvMeasurementSet->isNhz = false;
-        mSvMeasurementSet->svMeasSetHeader.size = sizeof(GnssSvMeasurementHeader);
         if (gnss_raw_measurement_ptr->nHzMeasurement_valid &&
                     gnss_raw_measurement_ptr->nHzMeasurement) {
             mSvMeasurementSet->isNhz = true;
@@ -3741,8 +3746,23 @@ void  LocApiV02 :: reportSvMeasurement (
         } // for loop for sv
     }// valid sv measurement
 
+    // set up indication that we have processed some new measurement
+    newMeasProcessed = true;
 
     if (gnss_raw_measurement_ptr->seqNum == gnss_raw_measurement_ptr->maxMessageNum) {
+        reportSvMeasurementInternal();
+        resetSvMeasurementReport();
+        // set up flag to indicate that no new info in mSvMeasurementSet
+        newMeasProcessed = false;
+    }
+}
+
+
+void LocApiV02 ::reportSvMeasurementInternal() {
+
+    if (mSvMeasurementSet) {
+        GnssSvMeasurementHeader &svMeasSetHead = mSvMeasurementSet->svMeasSetHeader;
+
         // when we received the last sequence, timestamp the packet with AP time
         struct timespec apTimestamp;
         if (clock_gettime(CLOCK_BOOTTIME, &apTimestamp)== 0) {
@@ -3763,11 +3783,10 @@ void  LocApiV02 :: reportSvMeasurement (
             LOC_LOGE("%s:%d Error in clock_gettime() ",__func__, __LINE__);
         }
 
-        LOC_LOGd("refFCnt %d, report %d sv in sv meas",
-                 gnss_raw_measurement_ptr->systemTimeExt.refFCount,
+        LOC_LOGd("report %d sv in sv meas",
                  mSvMeasurementSet->svMeasCount);
+
         LocApiBase::reportSvMeasurement(*mSvMeasurementSet);
-        memset(mSvMeasurementSet, 0, sizeof(GnssSvMeasurementSet));
     }
 }
 

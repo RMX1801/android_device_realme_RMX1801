@@ -147,7 +147,15 @@ private:
   void reportSv (const qmiLocEventGnssSvInfoIndMsgT_v02 *gnss_report_ptr);
 
   void reportSvMeasurement (
-  const qmiLocEventGnssSvMeasInfoIndMsgT_v02 *gnss_raw_measurement_ptr);
+          const qmiLocEventGnssSvMeasInfoIndMsgT_v02 *gnss_raw_measurement_ptr);
+
+  void reportSvMeasurementInternal();
+
+  inline void resetSvMeasurementReport(){
+      memset(mSvMeasurementSet, 0, sizeof(GnssSvMeasurementSet));
+      mSvMeasurementSet->size = sizeof(GnssSvMeasurementSet);
+      mSvMeasurementSet->svMeasSetHeader.size = sizeof(GnssSvMeasurementHeader);
+  }
 
   void  reportSvPolynomial (
   const qmiLocEventGnssSvPolyIndMsgT_v02 *gnss_sv_poly_ptr);
