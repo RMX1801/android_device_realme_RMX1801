@@ -15,7 +15,6 @@ vendor.bluetooth.soc=cherokee
 persist.vendor.camera.preview.ubwc=0
 persist.vendor.qti.telephony.vt_cam_interface=1
 vidc.enc.dcvs.extra-buff-count=2
-vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.android.camera,org.lineageos.snap
 
 # Data modules
 persist.data.df.dev_name=rmnet_usb0
