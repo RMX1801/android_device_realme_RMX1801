@@ -808,11 +808,11 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
     SockNodeEap sock(LOCATION_CLIENT_API_QSOCKET_CLIENT_SERVICE_ID,
                      pid * 100 + mClientId);
     strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
-    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQsockRecver(
+    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(
             make_shared<IpcListener>(*this, *mMsgTask), sock.getId1(), sock.getId2());
 
     // establish an ipc sender to the hal daemon
-    mIpcSender = LocIpc::getLocIpcQsockSender(LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
+    mIpcSender = LocIpc::getLocIpcQrtrSender(LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
                                      LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
     if (mIpcSender == nullptr) {
         LOC_LOGe("create sender socket failed for service id: %d instance id: %d",
@@ -868,13 +868,13 @@ void LocationClientApiImpl::destroy() {
                 mApiImpl->mMsgTask->destroy();
             }
 
-        #ifdef ENABLE_USE_LOC_SOCKET
+#ifdef FEATURE_EXTERNAL_AP
             // get clientId
             lock_guard<mutex> lock(mMutex);
             mApiImpl->mClientIdGenerator &= ~(1UL << mApiImpl->mClientId);
             LOC_LOGd("client id generarator 0x%x, id %d",
                      mApiImpl->mClientIdGenerator, mApiImpl->mClientId);
-        #endif
+#endif //FEATURE_EXTERNAL_AP
             delete mApiImpl;
         }
         LocationClientApiImpl* mApiImpl;
@@ -1685,11 +1685,19 @@ void IpcListener::onReceive(const char* data, uint32_t length) {
                     LOC_LOGe("invalid message");
                     break;
                 }
+
+                // when hal daemon crashes, we need to find the new node/port
+                // when remote socket api is used
+                // this code can not be moved to inside of onListenerReady as
+                // onListenerReady can be invoked from other places
+                if (mApiImpl.mIpcSender != nullptr) {
+                    mApiImpl.mIpcSender->informRecverRestarted();
+                }
+
                 // location hal deamon has restarted, need to set this
                 // flag to false to prevent messages to be sent to hal
                 // before registeration completes
                 mApiImpl.mHalRegistered = false;
-                // when hal daemon crashes, we need to find the new node/port
                 mListener.onListenerReady();
                 break;
             }
@@ -2013,7 +2021,9 @@ void IpcListener::onReceive(const char* data, uint32_t length) {
         const string mMsgData;
 #ifndef FEATURE_EXTERNAL_AP
         LocDiagIface* mDiagInterface;
+#endif //FEATURE_EXTERNAL_AP
     };
+#ifndef FEATURE_EXTERNAL_AP
     if (mApiImpl.mDiagIface == nullptr) {
         void* libHandle = nullptr;
         getLocDiagIface_t* getter = (getLocDiagIface_t*)dlGetSymFromLib(libHandle,
