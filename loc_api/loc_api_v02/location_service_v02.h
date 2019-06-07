@@ -63,7 +63,7 @@
 *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.7
-It was generated on: Tue Apr  9 2019 (Spin 0)
+It was generated on: Thu May  2 2019 (Spin 0)
 From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -89,7 +89,7 @@ extern "C" {
     /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
     /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x6D
+#define LOC_V02_IDL_MINOR_VERS 0x70
     /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
     /** Maximum Defined Message ID */
@@ -770,7 +770,7 @@ extern "C" {
         uint8_t clientType_valid;  /**< Must be set to true if clientType is being passed */
         qmiLocClientTypeEnumT_v02 clientType;
         /**<   If not specified, defaults to NFW client.
-        If specifically set as the NFW client, then the control point
+        If specifically set as the NFW or PRIVILEGED client, then the control point
         must set the value for enablePosRequestNotification.
         Note: Location requests from privileged client(s) are always allowed,
         regardless of user privacy settings. This may violate OEM, carrier,
@@ -1331,6 +1331,7 @@ extern "C" {
 #define QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q_V02 ((qmiLocGnssSignalTypeMaskT_v02)0x00010000ull) /**<  QZSS L5_Q RF Band  */
 #define QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA_V02 ((qmiLocGnssSignalTypeMaskT_v02)0x00020000ull) /**<  SBAS L1_CA RF Band  */
 #define QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5_V02 ((qmiLocGnssSignalTypeMaskT_v02)0x00040000ull) /**<  NAVIC L5 Signal  */
+#define QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q_V02 ((qmiLocGnssSignalTypeMaskT_v02)0x00080000ull) /**<  BEIDOU B2A_Q Signal  */
     /** @addtogroup loc_qmi_enums
     @{
     */
@@ -1356,6 +1357,7 @@ extern "C" {
         eQMI_LOC_GNSS_SIGNAL_TYPE_QZSS_L5_Q_V02 = 17, /**<  QZSS L5_Q RF Band  */
         eQMI_LOC_GNSS_SIGNAL_TYPE_SBAS_L1_CA_V02 = 18, /**<  SBAS L1_CA RF Band  */
         eQMI_LOC_GNSS_SIGNAL_TYPE_NAVIC_L5_V02 = 19, /**<  NAVIC L5 RF Band  */
+        eQMI_LOC_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q_V02 = 20, /**<  BEIDOU B2A_Q RF Band  */
         QMILOCGNSSSIGNALTYPEENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
     }qmiLocGnssSignalTypeEnumT_v02;
     /**
@@ -1825,6 +1827,7 @@ extern "C" {
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q (0x00010000) --  QZSS L5_Q RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BEIDOU B2A_Q Signal
         */
 
         /* Optional */
@@ -2048,7 +2051,8 @@ extern "C" {
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L2C_L (0x00008000) --  QZSS L2C_L RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q (0x00010000) --  QZSS L5_Q RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF Band
-        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal  */
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BEIDOU B2A_Q Signal  */
     }qmiLocEventGnssSvInfoIndMsgT_v02;  /* Message */
                                         /**
                                         @}
@@ -4077,7 +4081,8 @@ extern "C" {
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L2C_L (0x00008000) --  QZSS L2C_L RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q (0x00010000) --  QZSS L5_Q RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF Band
-        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal  */
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BEIDOU B2A_Q Signal  */
     }qmiLocEventGeofenceBatchedBreachIndMsgT_v02;  /* Message */
                                                    /**
                                                    @}
@@ -4293,7 +4298,8 @@ extern "C" {
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L2C_L (0x00008000) --  QZSS L2C_L RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q (0x00010000) --  QZSS L5_Q RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF Band
-        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal  */
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BEIDOU B2A_Q Signal  */
     }qmiLocEventGeofenceBatchedDwellIndMsgT_v02;  /* Message */
                                                   /**
                                                   @}
@@ -11540,7 +11546,8 @@ extern "C" {
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L2C_L (0x00008000) --  QZSS L2C_L RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q (0x00010000) --  QZSS L5_Q RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF Band
-        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal  */
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BEIDOU B2A_Q Signal  */
     }qmiLocGetBestAvailablePositionIndMsgT_v02;  /* Message */
                                                  /**
                                                  @}
@@ -14842,7 +14849,8 @@ extern "C" {
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L2C_L (0x00008000) --  QZSS L2C_L RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q (0x00010000) --  QZSS L5_Q RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF Band
-        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal  */
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BEIDOU B2A_Q Signal  */
 
         /* Optional */
         /*  Jammer Indicator */
@@ -15005,10 +15013,12 @@ extern "C" {
 #define QMI_LOC_SV_POLY_SRC_ALM_CORR_V02 ((qmiLocSvPolyStatusMaskT_v02)0x01) /**<  Polynomials based on XTRA  */
 #define QMI_LOC_SV_POLY_GLO_STR4_V02 ((qmiLocSvPolyStatusMaskT_v02)0x02) /**<  GLONASS string 4 has been received  */
 #define QMI_LOC_SV_POLY_DELETE_V02 ((qmiLocSvPolyStatusMaskT_v02)0x04) /**<  Polynomials are invalid and should be deleted  */
+#define QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV_V02 ((qmiLocSvPolyStatusMaskT_v02)0x08) /**<  Polynomials based on GALILEO FNAV if set. INAV otherwise  */
     typedef uint16_t qmiLocSvPolyStatusMaskValidityT_v02;
 #define QMI_LOC_SV_POLY_SRC_ALM_CORR_VALID_V02 ((qmiLocSvPolyStatusMaskValidityT_v02)0x01) /**<  Validity status for QMI_LOC_SV_POLY_SRC_ALM_CORR  */
 #define QMI_LOC_SV_POLY_GLO_STR4_VALID_V02 ((qmiLocSvPolyStatusMaskValidityT_v02)0x02) /**<  Validity status for QMI_LOC_SV_POLY_GLO_STR4   */
 #define QMI_LOC_SV_POLY_DELETE_VALID_V02 ((qmiLocSvPolyStatusMaskValidityT_v02)0x04) /**<  Validity status for QMI_LOC_SV_POLY_DELETE  */
+#define QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV_VALID_V02 ((qmiLocSvPolyStatusMaskValidityT_v02)0x08) /**<  Validity status for QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV  */
     /** @addtogroup loc_qmi_messages
     @{
     */
@@ -15048,7 +15058,8 @@ extern "C" {
         Valid bitmasks: \n
         - QMI_LOC_SV_POLY_SRC_ALM_CORR_VALID (0x01) --  Validity status for QMI_LOC_SV_POLY_SRC_ALM_CORR
         - QMI_LOC_SV_POLY_GLO_STR4_VALID (0x02) --  Validity status for QMI_LOC_SV_POLY_GLO_STR4
-        - QMI_LOC_SV_POLY_DELETE_VALID (0x04) --  Validity status for QMI_LOC_SV_POLY_DELETE  */
+        - QMI_LOC_SV_POLY_DELETE_VALID (0x04) --  Validity status for QMI_LOC_SV_POLY_DELETE
+        - QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV_VALID (0x08) --  Validity status for QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV  */
 
         /* Mandatory */
         /*  SV Polynomial Report Status */
@@ -15058,7 +15069,8 @@ extern "C" {
         Valid bitmasks: \n
         - QMI_LOC_SV_POLY_SRC_ALM_CORR (0x01) --  Polynomials based on XTRA
         - QMI_LOC_SV_POLY_GLO_STR4 (0x02) --  GLONASS string 4 has been received
-        - QMI_LOC_SV_POLY_DELETE (0x04) --  Polynomials are invalid and should be deleted  */
+        - QMI_LOC_SV_POLY_DELETE (0x04) --  Polynomials are invalid and should be deleted
+        - QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV (0x08) --  Polynomials based on GALILEO FNAV if set. INAV otherwise  */
 
         /* Optional */
         /*  Polynomial Coefficient's 0th Term for X, Y, and Z Coordinates */
@@ -15200,6 +15212,124 @@ extern "C" {
         \item 1st term -- Meters/second^2
         \item 2nd term -- Meters/second^3
         \item 3rd term -- Meters/second^4 \vspace{-0.18in} \end{itemize1} end{itemize1}
+        */
+
+        /* Optional */
+        /*  Inter Signal Correction - GPS L1C/A */
+        uint8_t gpsIscL1ca_valid;  /**< Must be set to true if gpsIscL1ca is being passed */
+        float gpsIscL1ca;
+        /**<   Inter Signal Correction - GPS L1C/A. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Inter Signal Correction - GPS L2C */
+        uint8_t gpsIscL2c_valid;  /**< Must be set to true if gpsIscL2c is being passed */
+        float gpsIscL2c;
+        /**<   Inter Signal Correction - GPS L2C. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Inter Signal Correction - GPS L5I5 */
+        uint8_t gpsIscL5I5_valid;  /**< Must be set to true if gpsIscL5I5 is being passed */
+        float gpsIscL5I5;
+        /**<   Inter Signal Correction - GPS L5I5. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Inter Signal Correction - GPS L5Q5 */
+        uint8_t gpsIscL5Q5_valid;  /**< Must be set to true if gpsIscL5Q5 is being passed */
+        float gpsIscL5Q5;
+        /**<   Inter Signal Correction - GPS L5Q5. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Time of Group Delay - GPS */
+        uint8_t gpsTgd_valid;  /**< Must be set to true if gpsTgd is being passed */
+        float gpsTgd;
+        /**<   Time of Group Delay - GPS. \n
+        13 bits from CNAV, 8 bits from LNAV. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Time of Group Delay - GLONASS G1-G2 */
+        uint8_t gloTgdG1G2_valid;  /**< Must be set to true if gloTgdG1G2 is being passed */
+        float gloTgdG1G2;
+        /**<   Time of Group Delay - GLONASS G1-G2. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Time of Group Delay - BDS B1 */
+        uint8_t bdsTgdB1_valid;  /**< Must be set to true if bdsTgdB1 is being passed */
+        float bdsTgdB1;
+        /**<   Time of Group Delay - BDS B1. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Time of Group Delay - BDS B2 */
+        uint8_t bdsTgdB2_valid;  /**< Must be set to true if bdsTgdB2 is being passed */
+        float bdsTgdB2;
+        /**<   Time of Group Delay - BDS B2. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Time of Group Delay - BDS B2A */
+        uint8_t bdsTgdB2a_valid;  /**< Must be set to true if bdsTgdB2a is being passed */
+        float bdsTgdB2a;
+        /**<   Time of Group Delay - BDS B2A. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Inter Signal Correction - BDS B2A */
+        uint8_t bdsIscB2a_valid;  /**< Must be set to true if bdsIscB2a is being passed */
+        float bdsIscB2a;
+        /**<   Inter Signal Correction - BDS B2A. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Broadcast Group Delay - GALILEO E1-E5a */
+        uint8_t galBgdE1E5a_valid;  /**< Must be set to true if galBgdE1E5a is being passed */
+        float galBgdE1E5a;
+        /**<   Broadcast Group Delay - GALILEO E1-E5a. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Broadcast Group Delay - GALILEO E1-E5b */
+        uint8_t galBgdE1E5b_valid;  /**< Must be set to true if galBgdE1E5b is being passed */
+        float galBgdE1E5b;
+        /**<   Broadcast Group Delay - GALILEO E1-E5b. \n
+        - Type: float
+        - Units: Milli-seconds
+        */
+
+        /* Optional */
+        /*  Time of Group Delay - NAVIC L5 */
+        uint8_t navicTgdL5_valid;  /**< Must be set to true if navicTgdL5 is being passed */
+        float navicTgdL5;
+        /**<   Time of Group Delay - NAVIC L5. \n
+        - Type: float
+        - Units: Milli-seconds
         */
     }qmiLocEventGnssSvPolyIndMsgT_v02;  /* Message */
                                         /**
@@ -16642,7 +16772,8 @@ extern "C" {
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L2C_L (0x00008000) --  QZSS L2C_L RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_QZSS_L5_Q (0x00010000) --  QZSS L5_Q RF Band
         - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF Band
-        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal  */
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NAVIC L5 Signal
+        - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BEIDOU B2A_Q Signal  */
     }qmiLocEventDbtPositionReportIndMsgT_v02;  /* Message */
                                                /**
                                                @}
@@ -21369,6 +21500,8 @@ extern "C" {
 #define QMI_LOC_SRN_V02 ((qmiLocResponseLocProtocolMaskT_v02)0x00000010) /**<  SRN has been reported to the client  */
 #define QMI_LOC_ECID_V02 ((qmiLocResponseLocProtocolMaskT_v02)0x00000020) /**<  Enhanced Cell ID has been reported to the client  */
 #define QMI_LOC_WLAN_V02 ((qmiLocResponseLocProtocolMaskT_v02)0x00000040) /**<  WLAN measurement has been reported to the client  */
+#define QMI_LOC_BARO_V02 ((qmiLocResponseLocProtocolMaskT_v02)0x00000080) /**<  Barometer has been reported to the client  */
+#define QMI_LOC_PPM_V02 ((qmiLocResponseLocProtocolMaskT_v02)0x00000100) /**<  Pilot Phase Measurement has been reported to the client  */
     /** @addtogroup loc_qmi_messages
     @{
     */
@@ -21432,6 +21565,8 @@ extern "C" {
         - QMI_LOC_SRN (0x00000010) --  SRN has been reported to the client
         - QMI_LOC_ECID (0x00000020) --  Enhanced Cell ID has been reported to the client
         - QMI_LOC_WLAN (0x00000040) --  WLAN measurement has been reported to the client
+        - QMI_LOC_BARO (0x00000080) --  Barometer has been reported to the client
+        - QMI_LOC_PPM (0x00000100) --  Pilot Phase Measurement has been reported to the client
         */
 
         /* Mandatory */
@@ -22091,3 +22226,4 @@ extern "C" {
 }
 #endif
 #endif
+
