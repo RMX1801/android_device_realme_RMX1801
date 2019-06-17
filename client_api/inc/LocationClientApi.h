@@ -1,4 +1,4 @@
-/* Copyright (c) 2018 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -53,9 +53,10 @@ enum LocationCapabilitiesMask {
 };
 
 enum GnssSvOptionsMask {
-    GNSS_SV_OPTIONS_HAS_EPHEMER_BIT = (1<<0),
-    GNSS_SV_OPTIONS_HAS_ALMANAC_BIT = (1<<1),
-    GNSS_SV_OPTIONS_USED_IN_FIX_BIT = (1<<2)
+    GNSS_SV_OPTIONS_HAS_EPHEMER_BIT             = (1<<0),
+    GNSS_SV_OPTIONS_HAS_ALMANAC_BIT             = (1<<1),
+    GNSS_SV_OPTIONS_USED_IN_FIX_BIT             = (1<<2),
+    GNSS_SV_OPTIONS_HAS_CARRIER_FREQUENCY_BIT   = (1<<3)
 };
 
 enum LocationFlagsMask {
@@ -180,7 +181,11 @@ enum GnssSignalTypeMask {
     /** QZSS L5 RF Band */
     GNSS_SIGNAL_QZSS_L5_BIT             = (1<<16),
     /** SBAS L1 RF Band */
-    GNSS_SIGNAL_SBAS_L1_BIT             = (1<<17)
+    GNSS_SIGNAL_SBAS_L1_BIT             = (1<<17),
+    /** NAVIC L5 RF Band */
+    GNSS_SIGNAL_NAVIC_L5_BIT            = (1<<18),
+    /** BEIDOU B2A_Q RF Band */
+    GNSS_SIGNAL_BEIDOU_B2AQ_BIT         = (1<<19)
 };
 
 
@@ -576,6 +581,10 @@ struct GnssSv {
     float azimuth;
     /** Bitwise OR of GnssSvOptionsBits */
     GnssSvOptionsMask gnssSvOptionsMask;
+    /** carrier frequency of the signal tracked */
+    float carrierFrequencyHz;
+    /** Specifies GNSS signal type */
+    GnssSignalTypeMask gnssSignalTypeMask;
 };
 
 enum GnssSignalTypes {
@@ -597,7 +606,9 @@ enum GnssSignalTypes {
     GNSS_SIGNAL_TYPE_QZSS_L2C_L = 15,       /**<  QZSS L2C_L RF Band  */
     GNSS_SIGNAL_TYPE_QZSS_L5_Q = 16,        /**<  QZSS L5_Q RF Band  */
     GNSS_SIGNAL_TYPE_SBAS_L1_CA = 17,       /**<  SBAS L1_CA RF Band  */
-    GNSS_MAX_NUMBER_OF_SIGNAL_TYPES = 18    /**< Maximum number of signal types */
+    GNSS_SIGNAL_TYPE_NAVIC_L5 = 18,         /**<  NAVIC L5 RF Band */
+    GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q = 19,     /**<  BEIDOU B2A_Q RF Band  */
+    GNSS_MAX_NUMBER_OF_SIGNAL_TYPES = 20    /**< Maximum number of signal types */
 };
 
 typedef uint64_t GnssDataMask;

@@ -249,6 +249,10 @@ void translateDiagGnssSv(clientDiagGnssSv& out, const GnssSv& in) {
     out.azimuth = in.azimuth;
     /** Bitwise OR of GnssSvOptionsBits */
     out.gnssSvOptionsMask = in.gnssSvOptionsMask;
+    /** carrier frequency of SV (in Hz) */
+    out.carrierFrequencyHz = in.carrierFrequencyHz;
+    /** Bitwise OR of clientDiagGnssSignalTypeBits */
+    out.gnssSignalTypeMask = in.gnssSignalTypeMask;
 }
 
 void populateClientDiagGnssSv(clientDiagGnssSvStructType* diagGnssSvPtr,
