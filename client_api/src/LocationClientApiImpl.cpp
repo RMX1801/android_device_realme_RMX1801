@@ -377,7 +377,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     GnssLocation locationInfo;
     ::Location halLocation = halLocationInfo.location;
     uint32_t flags = 0;
-
+    memset(&locationInfo,0,sizeof(locationInfo));
     locationInfo.timestamp = halLocation.timestamp;
     locationInfo.latitude = halLocation.latitude;
     locationInfo.longitude = halLocation.longitude;
