@@ -41,6 +41,7 @@
 
 #include <synergy_loc_util_log.h>
 #include <gps_extended.h>
+#include <gps_extended_c.h>
 #include "loc_pla.h"
 #include <loc_cfg.h>
 #include <LocDualContext.h>
@@ -501,7 +502,7 @@ void handleSllRequestNiNotify(GnssNiNotification &notify, const void* data,
 
     if (nullptr != context) {
         SynergyLocApi *synergyLocApiInstance = (SynergyLocApi*)context;
-        synergyLocApiInstance->requestNiNotify(notify, data);
+        synergyLocApiInstance->requestNiNotify(notify, data, LOC_IN_EMERGENCY_UNKNOWN);
     } else {
         LOC_LOGw ("Context is NULL");
     }
