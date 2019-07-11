@@ -3268,12 +3268,6 @@ vendor/lib64/sensor_calibrate.so
 vendor/etc/sensors/sensor_def_18321.conf
 vendor/etc/sensors/sensor_def_qcomdev.conf
 
-# SSR
-vendor/bin/ssr_setup
-vendor/bin/subsystem_ramdump
-vendor/lib64/libSubSystemShutdown.so
-vendor/lib64/libsubsystem_control.so
-
 # Touchpanel Firmware
 vendor/firmware/tp/18321/FW_HX_NF83112A_DSJM_FAE.img
 vendor/firmware/tp/18321/FW_HX_NF83112A_DSJM.img

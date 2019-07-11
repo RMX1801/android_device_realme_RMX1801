@@ -89,7 +89,3 @@ ro.vendor.sensors.dev_ori=true
 ro.vendor.sensors.mot_detect=true
 ro.vendor.sensors.pmd=true
 ro.vendor.sensors.sta_detect=true
-
-# SSR
-persist.vendor.ssr.enable_ramdumps=0
-persist.vendor.ssr.restart_level=ALL_ENABLE
