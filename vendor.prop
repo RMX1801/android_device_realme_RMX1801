@@ -84,6 +84,9 @@ persist.vendor.camera.expose.aux=1
 vendor.camera.hal1.packagelist=com.whatsapp,com.instagram.android,com.snapchat.android
 vidc.enc.dcvs.extra-buff-count=2
 
+# Charger
+ro.charger.enable_suspend=true
+
 # CNE/ DPM
 persist.vendor.cne.feature=1
 persist.vendor.dpm.feature=1
