@@ -165,6 +165,10 @@ PRODUCT_PACKAGES += \
     Snap \
     vendor.qti.hardware.camera.device@1.0
 
+# Charger
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.charger.enable_suspend=true
+
 # Configstore
 RODUCT_PACKAGES += \
     android.hardware.configstore@1.1-service \
