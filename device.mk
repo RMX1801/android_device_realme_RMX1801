@@ -39,9 +39,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:system/etc/audio_policy_configuration.xml
 
-# Audio
+# Camera
 PRODUCT_PACKAGES += \
     Snap
+
+# HIDL
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/manifest.xml:system/etc/manifest.xml
 
 # IMS
 PRODUCT_PACKAGES += \
