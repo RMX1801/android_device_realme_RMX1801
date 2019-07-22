@@ -38,7 +38,9 @@
 #include "LocationClientApi.h"
 
 #define CLIENT_DIAG_GNSS_SV_MAX            (176)
-#define LOG_CLIENT_DIAG_MSG_VERSION        (1)
+#define LOG_CLIENT_LOCATION_DIAG_MSG_VERSION        (1)
+#define LOG_CLIENT_SV_REPORT_DIAG_MSG_VERSION       (2)
+
 namespace location_client
 {
 
@@ -266,7 +268,7 @@ typedef enum {
     /** GALILEO E5A RF Band */
     CLIENT_DIAG_GNSS_SIGNAL_GALILEO_E5A         = (1<<7),
     /** GALILEO E5B RF Band */
-    CLIENT_DIAG_GNSS_SIGNAL_GALILIEO_E5B        = (1<<8),
+    CLIENT_DIAG_GNSS_SIGNAL_GALILEO_E5B         = (1<<8),
     /** BEIDOU B1 RF Band */
     CLIENT_DIAG_GNSS_SIGNAL_BEIDOU_B1           = (1<<9),
     /** BEIDOU B2 RF Band */
