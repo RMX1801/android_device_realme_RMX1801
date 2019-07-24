@@ -71,12 +71,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
    persist.dbg.vt_avail_ovr=1 \
    persist.dbg.wfc_avail_ovr=1
 
-# Location
-PRODUCT_PROPERTY_OVERRIDES += \
-   persist.backup.ntpServer="0.pool.ntp.org" \
-   ro.location.osnlp.package=com.google.android.gms \
-   ro.location.osnlp.region.package=
-
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
     media.aac_51_output_enabled=true \
