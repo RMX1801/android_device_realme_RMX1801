@@ -3516,6 +3516,13 @@ void  LocApiV02 :: reportSvMeasurement (
 
     GnssSvMeasurementHeader &svMeasSetHead = mSvMeasurementSet->svMeasSetHeader;
 
+    // The refCountTicks for each constellation sent for one meas report is the same
+    // always. It does not matter if it gets overwritten.
+    if (gnss_raw_measurement_ptr->refCountTicks_valid) {
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_REF_COUNT_TICKS;
+        svMeasSetHead.refCountTicks = gnss_raw_measurement_ptr->refCountTicks;
+    }
+
     // clock frequency
     if (1 == gnss_raw_measurement_ptr->rcvrClockFrequencyInfo_valid) {
         const qmiLocRcvrClockFrequencyInfoStructT_v02* rcvClockFreqInfo =
