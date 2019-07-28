@@ -280,7 +280,19 @@ typedef enum {
     /** QZSS L5 RF Band */
     CLIENT_DIAG_GNSS_SIGNAL_QZSS_L5             = (1<<14),
     /** SBAS L1 RF Band */
-    CLIENT_DIAG_GNSS_SIGNAL_SBAS_L1             = (1<<15)
+    CLIENT_DIAG_GNSS_SIGNAL_SBAS_L1             = (1<<15),
+    /** BEIDOU B1I RF Band */
+    CLIENT_DIAG_GNSS_SIGNAL_BEIDOU_B1I          = (1<<16),
+    /** BEIDOU B1C RF Band */
+    CLIENT_DIAG_GNSS_SIGNAL_BEIDOU_B1C          = (1<<17),
+    /** BEIDOU B2I RF Band */
+    CLIENT_DIAG_GNSS_SIGNAL_BEIDOU_B2I          = (1<<18),
+    /** BEIDOU B2AI RF Band */
+    CLIENT_DIAG_GNSS_SIGNAL_BEIDOU_B2AI         = (1<<19),
+    /** NAVIC L5 RF Band */
+    CLIENT_DIAG_GNSS_SIGNAL_NAVIC_L5            = (1<<20),
+    /** BEIDOU B2AQ RF Band */
+    CLIENT_DIAG_GNSS_SIGNAL_BEIDOU_B2AQ         = (1<<21)
 } clientDiagGnssSignalTypeBits;
 
 typedef PACKED struct PACKED_POST {
@@ -310,9 +322,10 @@ typedef enum {
 
 typedef uint16_t clientDiagGnssSvOptionsMask;
 typedef enum {
-    CLIENT_DIAG_GNSS_SV_OPTIONS_HAS_EPHEMER_BIT = (1<<0),
-    CLIENT_DIAG_GNSS_SV_OPTIONS_HAS_ALMANAC_BIT = (1<<1),
-    CLIENT_DIAG_GNSS_SV_OPTIONS_USED_IN_FIX_BIT = (1<<2),
+    CLIENT_DIAG_GNSS_SV_OPTIONS_HAS_EPHEMER_BIT           = (1<<0),
+    CLIENT_DIAG_GNSS_SV_OPTIONS_HAS_ALMANAC_BIT           = (1<<1),
+    CLIENT_DIAG_GNSS_SV_OPTIONS_USED_IN_FIX_BIT           = (1<<2),
+    CLIENT_DIAG_GNSS_SV_OPTIONS_HAS_CARRIER_FREQUENCY_BIT = (1<<3)
 } clientDiagGnssSvOptionsBits;
 
 typedef PACKED struct PACKED_POST {
@@ -328,6 +341,10 @@ typedef PACKED struct PACKED_POST {
     float azimuth;
     /** Bitwise OR of GnssSvOptionsBits */
     clientDiagGnssSvOptionsMask gnssSvOptionsMask;
+    /** carrier frequency of the signal tracked */
+    float carrierFrequencyHz;
+    /** Specifies GNSS signal type */
+    clientDiagGnssSignalTypeMask gnssSignalTypeMask;
 } clientDiagGnssSv;
 
 typedef uint16_t clientDiagLocationTechnologyMask;
