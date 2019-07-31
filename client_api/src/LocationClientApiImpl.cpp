@@ -741,6 +741,7 @@ static GnssSv parseGnssSv(const ::GnssSv &halGnssSv) {
     if (GNSS_SV_OPTIONS_HAS_CARRIER_FREQUENCY_BIT & halGnssSv.gnssSvOptionsMask) {
         gnssSvOptionsMask |= GNSS_SV_OPTIONS_HAS_CARRIER_FREQUENCY_BIT;
     }
+    gnssSv.carrierFrequencyHz = halGnssSv.carrierFrequencyHz;
     gnssSv.gnssSvOptionsMask = (GnssSvOptionsMask)gnssSvOptionsMask;
     gnssSv.gnssSignalTypeMask = parseGnssSignalType(halGnssSv.gnssSignalTypeMask);
 
