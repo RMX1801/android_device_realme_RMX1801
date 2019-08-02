@@ -7,7 +7,6 @@
             <name>IDevicesFactory</name>
             <instance>default</instance>
         </interface>
-        <fqname>@4.0::IDevicesFactory/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.audio.effect</name>
@@ -17,7 +16,6 @@
             <name>IEffectsFactory</name>
             <instance>default</instance>
         </interface>
-        <fqname>@4.0::IEffectsFactory/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.biometrics.fingerprint</name>
@@ -27,7 +25,6 @@
             <name>IBiometricsFingerprint</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.1::IBiometricsFingerprint/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.bluetooth</name>
@@ -37,7 +34,6 @@
             <name>IBluetoothHci</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IBluetoothHci/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.camera.provider</name>
@@ -47,7 +43,6 @@
             <name>ICameraProvider</name>
             <instance>legacy/0</instance>
         </interface>
-        <fqname>@2.4::ICameraProvider/legacy/0</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.cas</name>
@@ -57,7 +52,6 @@
             <name>IMediaCasService</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IMediaCasService/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.configstore</name>
@@ -67,7 +61,6 @@
             <name>ISurfaceFlingerConfigs</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.1::ISurfaceFlingerConfigs/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.drm</name>
@@ -81,8 +74,6 @@
             <name>IDrmFactory</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ICryptoFactory/default</fqname>
-        <fqname>@1.0::IDrmFactory/default</fqname>
         <fqname>@1.1::ICryptoFactory/clearkey</fqname>
         <fqname>@1.1::ICryptoFactory/widevine</fqname>
         <fqname>@1.1::IDrmFactory/clearkey</fqname>
@@ -96,7 +87,6 @@
             <name>IGatekeeper</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IGatekeeper/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.gnss</name>
@@ -106,7 +96,6 @@
             <name>IGnss</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IGnss/default</fqname>
         <fqname>@1.0::IGnss/gnss_vendor</fqname>
     </hal>
     <hal format="hidl">
@@ -117,7 +106,6 @@
             <name>IAllocator</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.0::IAllocator/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.graphics.composer</name>
@@ -127,7 +115,6 @@
             <name>IComposer</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.1::IComposer/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.graphics.mapper</name>
@@ -137,7 +124,6 @@
             <name>IMapper</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.0::IMapper/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.health</name>
@@ -147,7 +133,6 @@
             <name>IHealth</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.0::IHealth/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.keymaster</name>
@@ -157,7 +142,6 @@
             <name>IKeymasterDevice</name>
             <instance>default</instance>
         </interface>
-        <fqname>@3.0::IKeymasterDevice/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.light</name>
@@ -167,7 +151,6 @@
             <name>ILight</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.0::ILight/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.media.omx</name>
@@ -181,8 +164,6 @@
             <name>IOmxStore</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IOmx/default</fqname>
-        <fqname>@1.0::IOmxStore/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.memtrack</name>
@@ -192,7 +173,6 @@
             <name>IMemtrack</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IMemtrack/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.power</name>
@@ -202,7 +182,6 @@
             <name>IPower</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.1::IPower/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.radio</name>
@@ -218,10 +197,6 @@
             <instance>slot1</instance>
             <instance>slot2</instance>
         </interface>
-        <fqname>@1.2::IRadio/slot1</fqname>
-        <fqname>@1.2::IRadio/slot2</fqname>
-        <fqname>@1.2::ISap/slot1</fqname>
-        <fqname>@1.2::ISap/slot2</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.radio.config</name>
@@ -231,7 +206,6 @@
             <name>IRadioConfig</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IRadioConfig/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.renderscript</name>
@@ -241,7 +215,6 @@
             <name>IDevice</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IDevice/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.secure_element</name>
@@ -252,8 +225,6 @@
             <instance>SIM1</instance>
             <instance>SIM2</instance>
         </interface>
-        <fqname>@1.0::ISecureElement/SIM1</fqname>
-        <fqname>@1.0::ISecureElement/SIM2</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.sensors</name>
@@ -263,7 +234,6 @@
             <name>ISensors</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ISensors/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.soundtrigger</name>
@@ -273,7 +243,6 @@
             <name>ISoundTriggerHw</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.1::ISoundTriggerHw/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.tetheroffload.config</name>
@@ -283,7 +252,6 @@
             <name>IOffloadConfig</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IOffloadConfig/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.tetheroffload.control</name>
@@ -293,7 +261,6 @@
             <name>IOffloadControl</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IOffloadControl/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.thermal</name>
@@ -303,7 +270,6 @@
             <name>IThermal</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IThermal/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.usb</name>
@@ -313,7 +279,6 @@
             <name>IUsb</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IUsb/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.vibrator</name>
@@ -323,7 +288,6 @@
             <name>IVibrator</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IVibrator/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.wifi</name>
@@ -333,7 +297,6 @@
             <name>IWifi</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.2::IWifi/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.wifi.hostapd</name>
@@ -343,7 +306,6 @@
             <name>IHostapd</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IHostapd/default</fqname>
     </hal>
     <hal format="hidl">
         <name>android.hardware.wifi.supplicant</name>
@@ -353,7 +315,6 @@
             <name>ISupplicant</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.1::ISupplicant/default</fqname>
     </hal>
     <hal format="hidl">
         <name>com.qualcomm.qti.ant</name>
@@ -363,7 +324,6 @@
             <name>IAntHci</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IAntHci/default</fqname>
     </hal>
     <hal format="hidl">
         <name>com.qualcomm.qti.bluetooth_audio</name>
@@ -373,7 +333,6 @@
             <name>IBluetoothAudio</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IBluetoothAudio/default</fqname>
     </hal>
     <hal format="hidl">
         <name>com.qualcomm.qti.dpm.api</name>
@@ -383,7 +342,6 @@
             <name>IdpmQmi</name>
             <instance>dpmQmiService</instance>
         </interface>
-        <fqname>@1.0::IdpmQmi/dpmQmiService</fqname>
     </hal>
     <hal format="hidl">
         <name>com.qualcomm.qti.imscmservice</name>
@@ -393,7 +351,6 @@
             <name>IImsCmService</name>
             <instance>qti.ims.connectionmanagerservice</instance>
         </interface>
-        <fqname>@2.1::IImsCmService/qti.ims.connectionmanagerservice</fqname>
     </hal>
     <hal format="hidl">
         <name>com.qualcomm.qti.uceservice</name>
@@ -403,7 +360,6 @@
             <name>IUceService</name>
             <instance>com.qualcomm.qti.uceservice</instance>
         </interface>
-        <fqname>@2.0::IUceService/com.qualcomm.qti.uceservice</fqname>
     </hal>
     <hal format="hidl">
         <name>com.qualcomm.qti.wifidisplayhal</name>
@@ -417,8 +373,6 @@
             <name>IHDCPSession</name>
             <instance>wifidisplayhdcphal</instance>
         </interface>
-        <fqname>@1.0::IDSManager/wifidisplaydshal</fqname>
-        <fqname>@1.0::IHDCPSession/wifidisplayhdcphal</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.display.color</name>
@@ -428,7 +382,6 @@
             <name>IDisplayColor</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IDisplayColor/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.display.config</name>
@@ -438,7 +391,6 @@
             <name>IDisplayConfig</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.1::IDisplayConfig/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.display.postproc</name>
@@ -448,7 +400,6 @@
             <name>IDisplayPostproc</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IDisplayPostproc/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.lineage.livedisplay</name>
@@ -462,8 +413,6 @@
             <name>IPictureAdjustment</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.0::IDisplayModes/default</fqname>
-        <fqname>@2.0::IPictureAdjustment/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.lineage.power</name>
@@ -473,7 +422,6 @@
             <name>ILineagePower</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ILineagePower/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.lineage.trust</name>
@@ -483,7 +431,6 @@
             <name>IUsbRestrict</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IUsbRestrict/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.lineage.touch</name>
@@ -493,7 +440,6 @@
             <name>ITouchscreenGesture</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ITouchscreenGesture/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.oppo.hardware.biometrics.fingerprint</name>
@@ -503,7 +449,6 @@
             <name>IBiometricsFingerprint</name>
             <instance>default</instance>
         </interface>
-        <fqname>@2.1::IBiometricsFingerprint/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.oppo.hardware.camera.oppopostproc</name>
@@ -513,7 +458,6 @@
             <name>ICameraPostProc</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ICameraPostProc/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.oppo.hardware.cryptoeng</name>
@@ -523,7 +467,6 @@
             <name>ICryptoeng</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ICryptoeng/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.oppo.hardware.ktv</name>
@@ -533,7 +476,6 @@
             <name>IKtv</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IKtv/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.data.factory</name>
@@ -543,7 +485,6 @@
             <name>IFactory</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IFactory/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.esepowermanager</name>
@@ -553,7 +494,6 @@
             <name>IEsePowerManager</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IEsePowerManager/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.gnss</name>
@@ -563,7 +503,6 @@
             <name>ILocHidlGnss</name>
             <instance>gnss_vendor</instance>
         </interface>
-        <fqname>@1.2::ILocHidlGnss/gnss_vendor</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.gnss</name>
@@ -573,7 +512,6 @@
             <name>ILocHidlGnss</name>
             <instance>gnss_vendor</instance>
         </interface>
-        <fqname>@2.0::ILocHidlGnss/gnss_vendor</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.alarm</name>
@@ -583,7 +521,6 @@
             <name>IAlarm</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IAlarm/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.data.connection</name>
@@ -594,8 +531,6 @@
             <instance>slot1</instance>
             <instance>slot2</instance>
         </interface>
-        <fqname>@1.0::IDataConnection/slot1</fqname>
-        <fqname>@1.0::IDataConnection/slot2</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.data.latency</name>
@@ -605,7 +540,6 @@
             <name>ILinkLatency</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ILinkLatency/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.factory</name>
@@ -615,7 +549,6 @@
             <name>IFactory</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IFactory/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.perf</name>
@@ -625,7 +558,6 @@
             <name>IPerf</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IPerf/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.qdutils_disp</name>
@@ -635,7 +567,6 @@
             <name>IQdutilsDisp</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IQdutilsDisp/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.qteeconnector</name>
@@ -649,8 +580,6 @@
             <name>IGPAppConnector</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IAppConnector/default</fqname>
-        <fqname>@1.0::IGPAppConnector/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.am</name>
@@ -661,8 +590,6 @@
             <instance>slot1</instance>
             <instance>slot2</instance>
         </interface>
-        <fqname>@1.0::IQcRilAudio/slot1</fqname>
-        <fqname>@1.0::IQcRilAudio/slot2</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.ims</name>
@@ -673,8 +600,6 @@
             <instance>imsradio0</instance>
             <instance>imsradio1</instance>
         </interface>
-        <fqname>@1.4::IImsRadio/imsradio0</fqname>
-        <fqname>@1.4::IImsRadio/imsradio1</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.lpa</name>
@@ -685,8 +610,6 @@
             <instance>UimLpa0</instance>
             <instance>UimLpa1</instance>
         </interface>
-        <fqname>@1.0::IUimLpa/UimLpa0</fqname>
-        <fqname>@1.0::IUimLpa/UimLpa1</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.qcrilhook</name>
@@ -697,8 +620,6 @@
             <instance>oemhook0</instance>
             <instance>oemhook1</instance>
         </interface>
-        <fqname>@1.0::IQtiOemHook/oemhook0</fqname>
-        <fqname>@1.0::IQtiOemHook/oemhook1</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.qtiradio</name>
@@ -709,8 +630,6 @@
             <instance>slot1</instance>
             <instance>slot2</instance>
         </interface>
-        <fqname>@1.0::IQtiRadio/slot1</fqname>
-        <fqname>@1.0::IQtiRadio/slot2</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.qtiradio</name>
@@ -721,8 +640,6 @@
             <instance>slot1</instance>
             <instance>slot2</instance>
         </interface>
-        <fqname>@2.1::IQtiRadio/slot1</fqname>
-        <fqname>@2.1::IQtiRadio/slot2</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.uim</name>
@@ -733,8 +650,6 @@
             <instance>Uim0</instance>
             <instance>Uim1</instance>
         </interface>
-        <fqname>@1.1::IUim/Uim0</fqname>
-        <fqname>@1.1::IUim/Uim1</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.uim_remote_client</name>
@@ -745,8 +660,6 @@
             <instance>uimRemoteClient0</instance>
             <instance>uimRemoteClient1</instance>
         </interface>
-        <fqname>@1.0::IUimRemoteServiceClient/uimRemoteClient0</fqname>
-        <fqname>@1.0::IUimRemoteServiceClient/uimRemoteClient1</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.radio.uim_remote_server</name>
@@ -757,8 +670,6 @@
             <instance>uimRemoteServer0</instance>
             <instance>uimRemoteServer1</instance>
         </interface>
-        <fqname>@1.0::IUimRemoteServiceServer/uimRemoteServer0</fqname>
-        <fqname>@1.0::IUimRemoteServiceServer/uimRemoteServer1</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.hardware.tui_comm</name>
@@ -768,7 +679,6 @@
             <name>ITuiComm</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::ITuiComm/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.ims.callinfo</name>
@@ -778,7 +688,6 @@
             <name>IService</name>
             <instance>default</instance>
         </interface>
-        <fqname>@1.0::IService/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.qti.imsrtpservice</name>
@@ -788,7 +697,6 @@
             <name>IRTPService</name>
             <instance>imsrtpservice</instance>
         </interface>
-        <fqname>@1.0::IRTPService/imsrtpservice</fqname>
     </hal>
     <sepolicy>
         <version>28.0</version>
