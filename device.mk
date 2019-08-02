@@ -155,7 +155,8 @@ PRODUCT_PACKAGES += \
     libtinyxml \
     libvulkan \
     memtrack.sdm660 \
-    vendor.display.config@1.5
+    vendor.display.config@1.5 \
+    vendor.display.config@1.3.vendor
 
 # Doze
 PRODUCT_PACKAGES += \
