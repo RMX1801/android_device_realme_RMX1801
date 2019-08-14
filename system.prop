@@ -34,6 +34,7 @@ ro.lcd.backlight.dpt_twelvebit=11,662,40,170,266,490,783,1213,1905,2391,3447,409
 ro.lcd.backlight.himaxs_twelvebit=11,662,40,170,266,490,783,1213,1905,2391,3447,4095
 ro.lcd.backlight.tianma_twelvebit=11,662,40,170,266,490,783,1213,1905,2391,3447,4095
 ro.display.rc.size=108,108,111,111
+vendor.display.enable_default_color_mode=1
 
 # Graphics
 debug.sf.enable_hwc_vds=1
