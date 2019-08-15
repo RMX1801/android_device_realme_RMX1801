@@ -3752,92 +3752,29 @@ void  LocApiV02 :: reportSvMeasurement (
             validCarrierPhaseUnc = true;
         }
 
-        uint32_t &svMeasCount = mSvMeasurementSet->svMeasCount;
-        uint32_t i = 0;
-        for (i=0; (i<svMeasurement_len) && (svMeasCount<GNSS_LOC_SV_MEAS_LIST_MAX_SIZE); i++) {
-            const qmiLocSVMeasurementStructT_v02& qmiSvMeas =
-                     gnss_raw_measurement_ptr->svMeasurement[i];
-            Gnss_SVMeasurementStructType& svMeas =
-                    mSvMeasurementSet->svMeas[svMeasCount];
-
-            qmiLocSvMeasStatusMaskT_v02 measStatus = qmiSvMeas.measurementStatus;
-            if ((0 != qmiSvMeas.gnssSvId) &&
-                    (QMI_LOC_MASK_MEAS_STATUS_GNSS_FRESH_MEAS_VALID_V02 & measStatus)) {
-                svMeas.size = sizeof(Gnss_SVMeasurementStructType);
-                svMeas.gnssSystem = locSvSystemType;
-                if (gnss_raw_measurement_ptr->gnssSignalType_valid) {
-                    svMeas.gnssSignalTypeMask = gnss_raw_measurement_ptr->gnssSignalType;
-                }
-                svMeas.gnssSvId = qmiSvMeas.gnssSvId;
-                svMeas.gloFrequency = qmiSvMeas.gloFrequency;
-
-                if (qmiSvMeas.validMask & QMI_LOC_SV_LOSSOFLOCK_VALID_V02) {
-                    svMeas.lossOfLock = (bool) qmiSvMeas.lossOfLock;
-                }
-
-                svMeas.svStatus = (Gnss_LocSvSearchStatusEnumT) qmiSvMeas.svStatus;
-
-                if (qmiSvMeas.validMask & QMI_LOC_SV_HEALTH_VALID_V02) {
-                    svMeas.healthStatus_valid = 1;
-                    svMeas.healthStatus = (uint8_t)qmiSvMeas.healthStatus;
-                }
-
-                svMeas.svInfoMask = (Gnss_LocSvInfoMaskT) qmiSvMeas.svInfoMask;
-                svMeas.CNo = qmiSvMeas.CNo;
-                svMeas.gloRfLoss = qmiSvMeas.gloRfLoss;
-                svMeas.measLatency = qmiSvMeas.measLatency;
-
-                // SVTimeSpeed
-                svMeas.svTimeSpeed.size = sizeof(Gnss_LocSVTimeSpeedStructType);
-                svMeas.svTimeSpeed.svMs = qmiSvMeas.svTimeSpeed.svTimeMs;
-                svMeas.svTimeSpeed.svSubMs = qmiSvMeas.svTimeSpeed.svTimeSubMs;
-                svMeas.svTimeSpeed.svTimeUncMs = qmiSvMeas.svTimeSpeed.svTimeUncMs;
-                svMeas.svTimeSpeed.dopplerShift = qmiSvMeas.svTimeSpeed.dopplerShift;
-                svMeas.svTimeSpeed.dopplerShiftUnc = qmiSvMeas.svTimeSpeed.dopplerShiftUnc;
-
-                svMeas.measurementStatus = (uint32_t)qmiSvMeas.measurementStatus;
-                svMeas.validMeasStatusMask = qmiSvMeas.validMeasStatusMask;
-
-                if (qmiSvMeas.validMask & QMI_LOC_SV_MULTIPATH_EST_VALID_V02) {
-                    svMeas.multipathEstValid = 1;
-                    svMeas.multipathEstimate = qmiSvMeas.multipathEstimate;
-                }
-
-                if (qmiSvMeas.validMask & QMI_LOC_SV_FINE_SPEED_VALID_V02) {
-                    svMeas.fineSpeedValid = 1;
-                    svMeas.fineSpeed = qmiSvMeas.fineSpeed;
-                }
-                if (qmiSvMeas.validMask & QMI_LOC_SV_FINE_SPEED_UNC_VALID_V02) {
-                    svMeas.fineSpeedUncValid = 1;
-                    svMeas.fineSpeedUnc = qmiSvMeas.fineSpeedUnc;
-                }
-                if (qmiSvMeas.validMask & QMI_LOC_SV_CARRIER_PHASE_VALID_V02) {
-                    svMeas.carrierPhaseValid = 1;
-                    svMeas.carrierPhase = qmiSvMeas.carrierPhase;
-                }
-                if (qmiSvMeas.validMask & QMI_LOC_SV_SV_DIRECTION_VALID_V02) {
-                    svMeas.svDirectionValid = 1;
-                    svMeas.svElevation = qmiSvMeas.svElevation;
-                    svMeas.svAzimuth = qmiSvMeas.svAzimuth;
-                }
-                if (qmiSvMeas.validMask & QMI_LOC_SV_CYCLESLIP_COUNT_VALID_V02) {
-                    svMeas.cycleSlipCountValid = 1;
-                    svMeas.cycleSlipCount = qmiSvMeas.cycleSlipCount;
-                }
-
-                if (validCarrierPhaseUnc) {
-                    svMeas.carrierPhaseUncValid = 1;
-                    svMeas.carrierPhaseUnc =
-                             gnss_raw_measurement_ptr->svCarrierPhaseUncertainty[i];
-                }
-
-                svMeasCount++;
-            } else {
-                LOC_LOGw("invalid sv id %d or sv status %d", qmiSvMeas.gnssSvId,
-                         qmiSvMeas.measurementStatus);
-            }
-        } // for loop for sv
+        reportSvMeasurementSvLoop(gnss_raw_measurement_ptr,
+                                  false, /* indicating we are processing svMeas */
+                                  validCarrierPhaseUnc);
     }// valid sv measurement
+
+     /* now check if more measurements are available (some constellations such
+     as BDS have more measurements available in extSvMeasurement)
+     */
+    if (1 == gnss_raw_measurement_ptr->extSvMeasurement_valid) {
+
+        // check whether carrier phase info is available
+        uint32_t svMeasurement_len = gnss_raw_measurement_ptr->extSvMeasurement_len;
+        uint32_t svCarrierPhase_len = gnss_raw_measurement_ptr->extSvCarrierPhaseUncertainty_len;
+        bool validCarrierPhaseUnc = false;
+        if ((1 == gnss_raw_measurement_ptr->extSvCarrierPhaseUncertainty_valid) &&
+            (svMeasurement_len == svCarrierPhase_len)) {
+            validCarrierPhaseUnc = true;
+        }
+
+        reportSvMeasurementSvLoop(gnss_raw_measurement_ptr,
+                                  true, /* indicating we are processing extSvMeas */
+                                  validCarrierPhaseUnc);
+    }// valid ext sv measurement
 
     // set up indication that we have processed some new measurement
     newMeasProcessed = true;
@@ -3881,6 +3818,111 @@ void LocApiV02 ::reportSvMeasurementInternal() {
 
         LocApiBase::reportSvMeasurement(*mSvMeasurementSet);
     }
+}
+
+void LocApiV02::reportSvMeasurementSvLoop(
+      const qmiLocEventGnssSvMeasInfoIndMsgT_v02 *gnss_raw_measurement_ptr,
+      bool processExtSvMeas,
+      bool validCarrierPhaseUnc)
+{
+    uint32_t &svMeasCount = mSvMeasurementSet->svMeasCount;
+    uint32_t i = 0;
+    Gnss_LocSvSystemEnumType locSvSystemType =
+            getLocApiSvSystemType(gnss_raw_measurement_ptr->system);
+
+    uint32_t svMeasurement_len = 0;
+    const qmiLocSVMeasurementStructT_v02* sv_meas_ptr = nullptr;
+
+    if (!processExtSvMeas) {
+        svMeasurement_len = gnss_raw_measurement_ptr->svMeasurement_len;
+        sv_meas_ptr = gnss_raw_measurement_ptr->svMeasurement;
+    } else {
+        svMeasurement_len = gnss_raw_measurement_ptr->extSvMeasurement_len;
+        sv_meas_ptr = gnss_raw_measurement_ptr->extSvMeasurement;
+    }
+
+    for (i = 0; (i<svMeasurement_len) && (svMeasCount<GNSS_LOC_SV_MEAS_LIST_MAX_SIZE); i++) {
+        const qmiLocSVMeasurementStructT_v02& qmiSvMeas = *(sv_meas_ptr+i);
+        Gnss_SVMeasurementStructType& svMeas =
+                mSvMeasurementSet->svMeas[svMeasCount];
+
+        qmiLocSvMeasStatusMaskT_v02 measStatus = qmiSvMeas.measurementStatus;
+        if ((0 != qmiSvMeas.gnssSvId) &&
+            (QMI_LOC_MASK_MEAS_STATUS_GNSS_FRESH_MEAS_VALID_V02 & measStatus)) {
+            svMeas.size = sizeof(Gnss_SVMeasurementStructType);
+            svMeas.gnssSystem = locSvSystemType;
+            if (gnss_raw_measurement_ptr->gnssSignalType_valid) {
+                svMeas.gnssSignalTypeMask = gnss_raw_measurement_ptr->gnssSignalType;
+            }
+            svMeas.gnssSvId = qmiSvMeas.gnssSvId;
+            svMeas.gloFrequency = qmiSvMeas.gloFrequency;
+
+            if (qmiSvMeas.validMask & QMI_LOC_SV_LOSSOFLOCK_VALID_V02) {
+                svMeas.lossOfLock = (bool)qmiSvMeas.lossOfLock;
+            }
+
+            svMeas.svStatus = (Gnss_LocSvSearchStatusEnumT)qmiSvMeas.svStatus;
+
+            if (qmiSvMeas.validMask & QMI_LOC_SV_HEALTH_VALID_V02) {
+                svMeas.healthStatus_valid = 1;
+                svMeas.healthStatus = (uint8_t)qmiSvMeas.healthStatus;
+            }
+
+            svMeas.svInfoMask = (Gnss_LocSvInfoMaskT)qmiSvMeas.svInfoMask;
+            svMeas.CNo = qmiSvMeas.CNo;
+            svMeas.gloRfLoss = qmiSvMeas.gloRfLoss;
+            svMeas.measLatency = qmiSvMeas.measLatency;
+
+            // SVTimeSpeed
+            svMeas.svTimeSpeed.size = sizeof(Gnss_LocSVTimeSpeedStructType);
+            svMeas.svTimeSpeed.svMs = qmiSvMeas.svTimeSpeed.svTimeMs;
+            svMeas.svTimeSpeed.svSubMs = qmiSvMeas.svTimeSpeed.svTimeSubMs;
+            svMeas.svTimeSpeed.svTimeUncMs = qmiSvMeas.svTimeSpeed.svTimeUncMs;
+            svMeas.svTimeSpeed.dopplerShift = qmiSvMeas.svTimeSpeed.dopplerShift;
+            svMeas.svTimeSpeed.dopplerShiftUnc = qmiSvMeas.svTimeSpeed.dopplerShiftUnc;
+
+            svMeas.measurementStatus = (uint32_t)qmiSvMeas.measurementStatus;
+            svMeas.validMeasStatusMask = qmiSvMeas.validMeasStatusMask;
+
+            if (qmiSvMeas.validMask & QMI_LOC_SV_MULTIPATH_EST_VALID_V02) {
+                svMeas.multipathEstValid = 1;
+                svMeas.multipathEstimate = qmiSvMeas.multipathEstimate;
+            }
+
+            if (qmiSvMeas.validMask & QMI_LOC_SV_FINE_SPEED_VALID_V02) {
+                svMeas.fineSpeedValid = 1;
+                svMeas.fineSpeed = qmiSvMeas.fineSpeed;
+            }
+            if (qmiSvMeas.validMask & QMI_LOC_SV_FINE_SPEED_UNC_VALID_V02) {
+                svMeas.fineSpeedUncValid = 1;
+                svMeas.fineSpeedUnc = qmiSvMeas.fineSpeedUnc;
+            }
+            if (qmiSvMeas.validMask & QMI_LOC_SV_CARRIER_PHASE_VALID_V02) {
+                svMeas.carrierPhaseValid = 1;
+                svMeas.carrierPhase = qmiSvMeas.carrierPhase;
+            }
+            if (qmiSvMeas.validMask & QMI_LOC_SV_SV_DIRECTION_VALID_V02) {
+                svMeas.svDirectionValid = 1;
+                svMeas.svElevation = qmiSvMeas.svElevation;
+                svMeas.svAzimuth = qmiSvMeas.svAzimuth;
+            }
+            if (qmiSvMeas.validMask & QMI_LOC_SV_CYCLESLIP_COUNT_VALID_V02) {
+                svMeas.cycleSlipCountValid = 1;
+                svMeas.cycleSlipCount = qmiSvMeas.cycleSlipCount;
+            }
+
+            if (validCarrierPhaseUnc) {
+                svMeas.carrierPhaseUncValid = 1;
+                svMeas.carrierPhaseUnc =
+                    gnss_raw_measurement_ptr->svCarrierPhaseUncertainty[i];
+            }
+
+            svMeasCount++;
+        } else {
+            LOC_LOGw("invalid sv id %d or sv status %d", qmiSvMeas.gnssSvId,
+                qmiSvMeas.measurementStatus);
+        }
+    } // for loop for sv
 }
 
 /* convert satellite polynomial to loc eng format and  send the converted

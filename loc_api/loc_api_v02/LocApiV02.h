@@ -148,6 +148,11 @@ private:
 
   void reportSvMeasurementInternal();
 
+  void reportSvMeasurementSvLoop(
+          const qmiLocEventGnssSvMeasInfoIndMsgT_v02 *gnss_sv_measurement_ptr,
+          bool processExtSvMeas,
+          bool validCarrierPhaseUnc);
+
   inline void resetSvMeasurementReport(){
       memset(mSvMeasurementSet, 0, sizeof(GnssSvMeasurementSet));
       mSvMeasurementSet->size = sizeof(GnssSvMeasurementSet);
