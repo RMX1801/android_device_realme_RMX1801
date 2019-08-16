@@ -48,9 +48,11 @@ LocHalDaemonClientHandler
 class LocHalDaemonClientHandler
 {
 public:
-    inline LocHalDaemonClientHandler(LocationApiService* service, const std::string& clientname) :
+    inline LocHalDaemonClientHandler(LocationApiService* service, const std::string& clientname,
+                                     ClientType clientType) :
                 mService(service),
                 mName(clientname),
+                mClientType(clientType),
                 mCapabilityMask(0),
                 mTracking(false),
                 mBatching(false),
@@ -64,8 +66,11 @@ public:
                 mGeofenceIds(nullptr),
                 mIpcSender(createSender(clientname.c_str())) {
 
-        updateSubscription(E_LOC_CB_GNSS_LOCATION_INFO_BIT);
-        mLocationApi = LocationAPI::createInstance(mCallbacks);
+
+        if (mClientType == LOCATION_CLIENT_API) {
+            updateSubscription(E_LOC_CB_GNSS_LOCATION_INFO_BIT);
+            mLocationApi = LocationAPI::createInstance(mCallbacks);
+        }
     }
 
     static shared_ptr<LocIpcSender> createSender(const string socket);
@@ -81,6 +86,7 @@ public:
     void stopTracking();
     void updateTrackingOptions(LocationOptions & locOptions);
     void onGnssEnergyConsumedInfoAvailable(LocAPIGnssEnergyConsumedIndMsg &msg);
+    void onControlResponseCb(LocationError err, ELocMsgID msgId);
     bool hasPendingEngineInfoRequest(uint32_t mask);
     void addEngineInfoRequst(uint32_t mask);
 
@@ -147,6 +153,7 @@ private:
 
     // name of this client
     const std::string mName;
+    ClientType mClientType;
 
     // LocationAPI interface
     LocationCapabilitiesMask mCapabilityMask;
