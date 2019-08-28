@@ -89,6 +89,10 @@ TARGET_SCREEN_WIDTH := 1080
 PRODUCT_PACKAGES += \
     fs_config_files
 
+# ANT+
+PRODUCT_PACKAGES += \
+    AntHalService
+
 # Audio
 PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-impl \
