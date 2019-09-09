@@ -63,9 +63,11 @@ static inline void waitForDir(const char* dirName) {
 int main(int argc, char *argv[])
 {
     configParamToRead configParamRead = {};
+#if FEATURE_AUTOMOTIVE
     // enable auto start by default with 100 ms TBF
     configParamRead.autoStartGnss = 1;
     configParamRead.gnssSessionTbfMs = 100;
+#endif
 
     const loc_param_s_type configTable[] =
     {
