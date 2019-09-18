@@ -1,3 +1,3 @@
-allow qti_init_shell sysfs_dm:file write;
+allow qti_init_shell { sysfs_dm sysfs_mmc }:file write;
 
 dontaudit qti_init_shell self:capability { dac_override dac_read_search };
