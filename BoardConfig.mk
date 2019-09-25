@@ -178,7 +178,7 @@ BOARD_VNDK_VERSION := current
 TARGET_COPY_OUT_VENDOR := vendor
 
 # Sepolicy
-include device/qcom/sepolicy/sepolicy.mk
+include device/qcom/sepolicy-legacy-um/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
 
 # WiFi
