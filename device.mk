@@ -150,6 +150,10 @@ PRODUCT_PACKAGES += \
     libbthost_if \
     vendor.qti.hardware.btconfigstore@1.0.vendor
 
+# Bluetooth component overrides
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/component-overrides.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sysconfig/component-overrides.xml
+
 # Camera
 PRODUCT_PACKAGES += \
     android.frameworks.displayservice@1.0 \
