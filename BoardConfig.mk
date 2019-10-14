@@ -165,13 +165,6 @@ TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)
 ENABLE_VENDOR_RIL_SERVICE := true
 PROTOBUF_SUPPORTED := true
 
-# Root Directories
-BOARD_ROOT_EXTRA_SYMLINKS := \
-    /mnt/vendor/persist:/persist \
-    /vendor/bt_firmware:/bt_firmware \
-    /vendor/dsp:/dsp \
-    /vendor/firmware_mnt:/firmware
-
 # Security patch level
 VENDOR_SECURITY_PATCH := 2020-03-05
 
