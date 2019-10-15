@@ -57,6 +57,10 @@ PRODUCT_PACKAGES += \
     libvulkan \
     vendor.display.config@1.5
 
+# Doze
+PRODUCT_PACKAGES += \
+    RealmeParts
+
 # Fingerprint
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.1-service.realme_sdm660
