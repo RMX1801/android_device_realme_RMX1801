@@ -24,6 +24,7 @@ DEVICE_PROVISIONED=1
 gsm.lte.ca.support=0
 persist.radio.custom_exp_ecc=1
 ril.subscription.types=NV,RUIM
+persist.sys.fflag.override.settings_network_and_internet_v2=true
 
 # SSR
 persist.vendor.ssr.enable_ramdumps=0
