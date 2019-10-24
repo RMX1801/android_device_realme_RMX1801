@@ -1,0 +1,3 @@
+on init
+    # Bind mount the fstab file with the one in /vendor/etc/
+    mount none /system/etc/fstab.qcom /vendor/etc/fstab.qcom bind
