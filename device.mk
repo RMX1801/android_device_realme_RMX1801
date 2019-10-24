@@ -36,6 +36,10 @@ TARGET_SCREEN_WIDTH := 1080
 PRODUCT_PACKAGES += \
     audio.a2dp.default
 
+# Audio
+PRODUCT_PACKAGES += \
+    Snap
+
 # IMS
 PRODUCT_PACKAGES += \
     ims-ext-common
