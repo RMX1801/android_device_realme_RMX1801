@@ -45,6 +45,10 @@ PRODUCT_PACKAGES += \
     init.qcom.rc \
     fstab.qcom
 
+# Keylayout
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/keylayout/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl
+
 # Telephony-ext
 PRODUCT_PACKAGES += \
     telephony-ext
