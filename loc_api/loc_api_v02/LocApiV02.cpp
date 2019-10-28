@@ -3318,47 +3318,41 @@ void  LocApiV02 :: reportSv (
             {
                 GnssSvOptionsMask mask = 0;
 
-                LOC_LOGv("i:%d sv-id:%d count:%d sys:%d en:0x%X",
+                LOC_LOGv("i:%d sv-id:%d count:%d sys:%d en:0x%" PRIu64,
                     i, sv_info_ptr->gnssSvId, SvNotify.count, sv_info_ptr->system,
                     gnss_report_ptr->gnssSignalTypeList[SvNotify.count]);
 
                 GnssSv &gnssSv_ref = SvNotify.gnssSvs[SvNotify.count];
 
                 gnssSv_ref.size = sizeof(GnssSv);
+                gnssSv_ref.svId = sv_info_ptr->gnssSvId;
                 switch (sv_info_ptr->system) {
                 case eQMI_LOC_SV_SYSTEM_GPS_V02:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId;
                     gnssSv_ref.type = GNSS_SV_TYPE_GPS;
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_GALILEO_V02:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId - 300;
                     gnssSv_ref.type = GNSS_SV_TYPE_GALILEO;
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_SBAS_V02:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId;
                     gnssSv_ref.type = GNSS_SV_TYPE_SBAS;
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId;
                     gnssSv_ref.type = GNSS_SV_TYPE_GLONASS;
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_BDS_V02:
                 case eQMI_LOC_SV_SYSTEM_COMPASS_V02:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId - 200;
                     gnssSv_ref.type = GNSS_SV_TYPE_BEIDOU;
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_QZSS_V02:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId - 192;
                     gnssSv_ref.type = GNSS_SV_TYPE_QZSS;
                     break;
 
                 default:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId;
                     gnssSv_ref.type = GNSS_SV_TYPE_UNKNOWN;
                     break;
                 }
@@ -5292,50 +5286,39 @@ bool LocApiV02 :: convertGnssMeasurements (GnssMeasurementsData& measurementData
     // flag initiation
     measurementData.flags = 0;
 
-    // constellation and svid
+    // svid
+    measurementData.svId = gnss_measurement_info.gnssSvId;
+
+    // constellation
     switch (gnss_measurement_report_ptr.system)
     {
         case eQMI_LOC_SV_SYSTEM_GPS_V02:
             measurementData.svType = GNSS_SV_TYPE_GPS;
-            measurementData.svId = gnss_measurement_info.gnssSvId;
             break;
 
         case eQMI_LOC_SV_SYSTEM_GALILEO_V02:
             measurementData.svType = GNSS_SV_TYPE_GALILEO;
-            measurementData.svId = gnss_measurement_info.gnssSvId + 1 - GAL_SV_PRN_MIN;
             break;
 
         case eQMI_LOC_SV_SYSTEM_SBAS_V02:
             measurementData.svType = GNSS_SV_TYPE_SBAS;
-            measurementData.svId = gnss_measurement_info.gnssSvId;
             break;
 
         case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
             measurementData.svType = GNSS_SV_TYPE_GLONASS;
-            if (gnss_measurement_info.gnssSvId != 255) // OSN is known
-            {
-                measurementData.svId = gnss_measurement_info.gnssSvId + 1 - GLO_SV_PRN_MIN;
-            }
-            else // OSN is not known, report FCN
-            {
-                measurementData.svId = gnss_measurement_info.gloFrequency + 92;
-            }
             gloFrequency = gnss_measurement_info.gloFrequency;
             break;
 
         case eQMI_LOC_SV_SYSTEM_BDS_V02:
             measurementData.svType = GNSS_SV_TYPE_BEIDOU;
-            measurementData.svId = gnss_measurement_info.gnssSvId + 1 - BDS_SV_PRN_MIN;
             break;
 
         case eQMI_LOC_SV_SYSTEM_QZSS_V02:
             measurementData.svType = GNSS_SV_TYPE_QZSS;
-            measurementData.svId = gnss_measurement_info.gnssSvId;
             break;
 
         default:
             measurementData.svType = GNSS_SV_TYPE_UNKNOWN;
-            measurementData.svId = gnss_measurement_info.gnssSvId;
             break;
     }
 
