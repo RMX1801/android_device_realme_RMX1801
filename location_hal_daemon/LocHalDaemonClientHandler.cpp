@@ -366,7 +366,7 @@ void LocHalDaemonClientHandler::cleanup() {
     // check whether this is client from external AP,
     // mName for client on external ap is of format "serviceid.instanceid"
     if (strncmp(mName.c_str(), EAP_LOC_CLIENT_DIR,
-                sizeof(EAP_LOC_CLIENT_DIR)-1) != 0 ) {
+                sizeof(EAP_LOC_CLIENT_DIR)-1) == 0 ) {
         char fileName[MAX_SOCKET_PATHNAME_LENGTH];
         snprintf (fileName, sizeof(fileName), "%s%s%s",
                   EAP_LOC_CLIENT_DIR, LOC_CLIENT_NAME_PREFIX, mName.c_str());
@@ -739,13 +739,15 @@ void LocHalDaemonClientHandler::onEngLocationsInfoCb(
             }
         }
 
-        LocAPIEngineLocationsInfoIndMsg msg(SERVICE_NAME, reportCount,
-                                            engineLocationInfoNotification);
-        int rc = sendMessage((const uint8_t*)&msg, msg.getMsgSize());
-        // purge this client if failed
-        if (!rc) {
-            LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
-            mService->deleteClientbyName(mName);
+        if (reportCount > 0 ) {
+            LocAPIEngineLocationsInfoIndMsg msg(SERVICE_NAME, reportCount,
+                                                engineLocationInfoNotification);
+            int rc = sendMessage((const uint8_t*)&msg, msg.getMsgSize());
+            // purge this client if failed
+            if (!rc) {
+                LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
+                mService->deleteClientbyName(mName);
+            }
         }
     }
 }
