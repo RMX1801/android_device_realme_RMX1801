@@ -329,6 +329,7 @@ public:
   virtual LocationError setConstrainedTuncMode(bool enabled, float tuncConstraint, uint32_t powerBudget);
   virtual LocationError setPositionAssistedClockEstimatorMode(bool enabled);
   virtual LocationError getGnssEnergyConsumed();
+  virtual void updatePowerState(PowerStateType powerState);
   virtual void requestForAidingData(GnssAidingDataSvMask svDataMask);
 
   /*
