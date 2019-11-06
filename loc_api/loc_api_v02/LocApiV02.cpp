@@ -2591,6 +2591,12 @@ void LocApiV02 :: reportPosition (
     GpsLocationExtended locationExtended;
     memset(&locationExtended, 0, sizeof (GpsLocationExtended));
     locationExtended.size = sizeof(locationExtended);
+
+    locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_OUTPUT_ENG_TYPE;
+    locationExtended.locOutputEngType = LOC_OUTPUT_ENGINE_SPE;
+    locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_OUTPUT_ENG_MASK;
+    locationExtended.locOutputEngMask = STANDARD_POSITIONING_ENGINE;
+
     struct timespec apTimestamp;
     if( clock_gettime( CLOCK_BOOTTIME, &apTimestamp)== 0)
     {
@@ -3147,11 +3153,6 @@ void LocApiV02 :: reportPosition (
                locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_LEAP_SECONDS;
                locationExtended.leapSeconds = location_report_ptr->leapSeconds;
             }
-
-            locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_OUTPUT_ENG_TYPE;
-            locationExtended.locOutputEngType = LOC_OUTPUT_ENGINE_SPE;
-            locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_OUTPUT_ENG_MASK;
-            locationExtended.locOutputEngMask = STANDARD_POSITIONING_ENGINE;
 
             LocApiBase::reportPosition(location,
                                        locationExtended,
