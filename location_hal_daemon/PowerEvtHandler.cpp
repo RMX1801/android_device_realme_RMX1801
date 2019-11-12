@@ -58,23 +58,14 @@ int PowerEvtHandler::pwrStateCb(power_state_t pwr_state) {
     syslog(LOG_INFO, "PowerEvtHandler: pwrStateCb: %d", pwr_state.sys_state);
     switch (pwr_state.sys_state) {
         case SYS_SUSPEND:
-            if (mLocationApiService) {
-                mLocationApiService->onSuspend();
-            }
             client_ack.ack = SUSPEND_ACK;
             powerState = POWER_STATE_SUSPEND;
             break;
         case SYS_RESUME:
-            if (mLocationApiService) {
-                mLocationApiService->onResume();
-            }
             client_ack.ack = RESUME_ACK;
             powerState = POWER_STATE_RESUME;
             break;
         case SYS_SHUTDOWN:
-            if (mLocationApiService) {
-                mLocationApiService->onShutdown();
-            }
             client_ack.ack = SHUTDOWN_ACK;
             powerState = POWER_STATE_SHUTDOWN;
             break;
@@ -82,7 +73,7 @@ int PowerEvtHandler::pwrStateCb(power_state_t pwr_state) {
 
     if (powerState != POWER_STATE_UNKNOWN) {
         if (mLocationApiService) {
-            mLocationApiService->injectPowerEvent(powerState);
+              mLocationApiService->onPowerEvent(powerState);
         }
     }
 

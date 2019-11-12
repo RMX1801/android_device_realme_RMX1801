@@ -543,6 +543,24 @@ void LocHalDaemonClientHandler::onCollectiveResponseCallback(
     free(clientIds);
 }
 
+
+/******************************************************************************
+LocHalDaemonClientHandler - Location Control API response callback functions
+******************************************************************************/
+void LocHalDaemonClientHandler::onControlResponseCb(LocationError err, ELocMsgID msgId) {
+    // no need to hold the lock, as lock is already held at the caller
+    if (nullptr != mIpcSender) {
+        LOC_LOGd("--< onControlResponseCb err=%u msgId=%u", err, msgId);
+        LocAPIGenericRespMsg msg(SERVICE_NAME, msgId, err);
+        int rc = sendMessage(msg);
+        // purge this client if failed
+        if (!rc) {
+            LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
+            mService->deleteClientbyName(mName);
+        }
+    }
+}
+
 /******************************************************************************
 LocHalDaemonClientHandler - Location API callback functions
 ******************************************************************************/
