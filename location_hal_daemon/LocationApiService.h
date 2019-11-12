@@ -188,7 +188,6 @@ private:
 #ifdef POWERMANAGER_ENABLED
     // power event observer
     PowerEvtHandler* mPowerEventObserver;
-    PowerStateType  mPowerState;
 #endif
 
     // singleton instance
@@ -209,6 +208,8 @@ private:
 
     // Configration
     const uint32_t mAutoStartGnss;
+
+    PowerStateType  mPowerState;
 };
 
 #endif //LOCATIONAPISERVICE_H
