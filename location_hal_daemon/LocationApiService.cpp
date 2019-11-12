@@ -199,6 +199,7 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
 
         pClient->startTracking(locationOption);
         pClient->mTracking = true;
+        loc_boot_kpi_marker("L - Auto Session Start");
         pClient->mPendingMessages.push(E_LOCAPI_START_TRACKING_MSG_ID);
     }
 
