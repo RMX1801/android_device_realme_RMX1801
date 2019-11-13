@@ -60,9 +60,11 @@ public:
                 mBatchingId(0),
                 mBatchingMode(BATCHING_MODE_NO_AUTO_REPORT),
                 mLocationApi(nullptr),
+                mCallbacks{},
                 mPendingMessages(),
                 mGfPendingMessages(),
                 mSubscriptionMask(0),
+                mEngineInfoRequestMask(0),
                 mGeofenceIds(nullptr),
                 mIpcSender(createSender(clientname.c_str())) {
 

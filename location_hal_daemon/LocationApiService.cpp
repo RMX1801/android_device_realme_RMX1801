@@ -982,7 +982,9 @@ void LocationApiService::addConfigRequestToMap(
         // if session id is 0, we need to deliver failed response back to the
         // client
         LocHalDaemonClientHandler* pClient = getClient(pMsg->mSocketName);
-        pClient->onControlResponseCb(LOCATION_ERROR_GENERAL_FAILURE, pMsg->msgId);
+        if (pClient) {
+            pClient->onControlResponseCb(LOCATION_ERROR_GENERAL_FAILURE, pMsg->msgId);
+        }
     }
 }
 
@@ -996,7 +998,9 @@ void LocationApiService::onControlResponseCallback(LocationError err, uint32_t s
     auto configReqData = mConfigReqs.find(sessionId);
     if (configReqData != std::end(mConfigReqs)) {
         LocHalDaemonClientHandler* pClient = getClient(configReqData->second.clientName);
-        pClient->onControlResponseCb(err, configReqData->second.configMsgId);
+        if (pClient) {
+            pClient->onControlResponseCb(err, configReqData->second.configMsgId);
+        }
         mConfigReqs.erase(configReqData);
         LOC_LOGd("--< map size %d", mConfigReqs.size());
     } else {
