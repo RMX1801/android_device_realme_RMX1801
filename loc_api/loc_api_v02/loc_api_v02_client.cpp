@@ -47,6 +47,7 @@
 #include "loc_pla.h"
 #include "loc_api_v02_client.h"
 #include "loc_util_log.h"
+#include "loc_api_v02_log.h"
 
 #include "loc_cfg.h"
 
