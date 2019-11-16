@@ -31,6 +31,7 @@ QMI_BOARD_PLATFORM_LIST += kona
 QMI_BOARD_PLATFORM_LIST += lito
 QMI_BOARD_PLATFORM_LIST += bengal
 QMI_BOARD_PLATFORM_LIST += atoll
+QMI_BOARD_PLATFORM_LIST += lahaina
 
 ifneq (,$(filter $(QMI_BOARD_PLATFORM_LIST),$(TARGET_BOARD_PLATFORM)))
 include $(call all-subdir-makefiles)
