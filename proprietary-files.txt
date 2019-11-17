@@ -139,3 +139,7 @@ framework/qcrilhook.jar
 framework/qti-telephony-common.jar
 framework/QtiTelephonyServicelibrary.jar
 -priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
+
+# SDM
+lib/libsdm-disp-apis.so
+lib64/libsdm-disp-apis.so
