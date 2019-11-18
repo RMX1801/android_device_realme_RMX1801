@@ -127,28 +127,28 @@ lib64/vendor.qti.hardware.alarm@1.0.so
 etc/permissions/qti_libpermissions.xml|ef3c88495f2f61a2d16e1445113a9d80f8db0e0a
 etc/permissions/qti_permissions.xml
 
-# Radio (IMS)
-lib64/libdiag_system.so
-lib64/libimscamera_jni.so
-lib64/libimsmedia_jni.so
-lib64/libmmrtpdecoder.so
-lib64/libmmrtpencoder.so
-lib64/librcc.so
-lib64/lib-imsvideocodec.so
-lib64/lib-imsvt.so
-lib64/lib-imsvtextutils.so
-lib64/lib-imsvtutils.so
-lib64/vendor.qti.imsrtpservice@1.0.so
--priv-app/ims/ims.apk
+# Radio (IMS) - from lavender - V10.3.7.0.PFGINXM
+lib64/libdiag_system.so|81a47cb3a8c4a040cc0144ae15684b4dfe4e0dd6
+lib64/libimscamera_jni.so|133fec4e7be337eb255eb226c4ff96ae53b94be7
+lib64/libimsmedia_jni.so|6b741c6ca5fc407d16fcfeb5a695fd485daad5b4
+lib64/libmmrtpdecoder.so|5b6c1e8d63bab729862f8e4afff374e2e365a51a
+lib64/libmmrtpencoder.so|da67c10a9fb3579c2a5b8ab705fc0335ec62bef0
+lib64/librcc.so|96c467ec6b7ea03b77cda3b88fb36a56c196aaa8
+lib64/lib-imsvideocodec.so|f01549188bc962e6bcefecbefa4f2fb5718aca06
+lib64/lib-imsvt.so|8dafceb20cb519944b669278e61b532eed0d9060
+lib64/lib-imsvtextutils.so|4f5e33e1fce70dafdc9ed0de95440ccd262342d7
+lib64/lib-imsvtutils.so|3c1913878aac6c5d5a9b279acecf5997d3737d5e
+lib64/vendor.qti.imsrtpservice@1.0.so|559a2dbf409d86746ed4303f2e0089256bb91a07
+-priv-app/ims/ims.apk|3de4664c12bc274cc733ffe9fa59d256a09d67bf
 
-# Radio
--app/QtiTelephonyService/QtiTelephonyService.apk
-etc/permissions/qcrilhook.xml
-etc/permissions/telephonyservice.xml
-framework/qcrilhook.jar
-framework/qti-telephony-common.jar
-framework/QtiTelephonyServicelibrary.jar
--priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
+# Radio - from lavender - V10.3.7.0.PFGINXM
+-app/QtiTelephonyService/QtiTelephonyService.apk|bc6d47779502b0ab7ac209f00be6327d9ce77728
+etc/permissions/qcrilhook.xml|9fc58a3d54d20ac1d53bab14608815121aefbce5
+etc/permissions/telephonyservice.xml|b297c8a27443570377d78586b00198839ce326bb
+framework/qcrilhook.jar|23224e0e63190fe5807480a6c61a6aca4dc1c4c3
+framework/qti-telephony-common.jar|a78b0f84923639845293a0a44be8bbf2c003dc3b
+framework/QtiTelephonyServicelibrary.jar|303fbf1219c9e4fae1e96b823062bd24cdfdaaac
+-priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk|d1d3adfe6eff32a3013e146317324029181e3c4a
 
 # SDM
 lib/libsdm-disp-apis.so
