@@ -1,4 +1,5 @@
 import /system/etc/init/init.fingerprint.rc
+import /vendor/etc/init/init.oppo.reserve.rc
 
 on init
     # Bind mount the fstab file with the one in /vendor/etc/
