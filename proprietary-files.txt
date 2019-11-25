@@ -167,8 +167,6 @@ etc/wfdconfigsink.xml
 lib/com.qualcomm.qti.wifidisplayhal@1.0.so
 lib/libaacwrapper.so
 lib/libdisplayconfig.so
-lib/libmmrtpdecoder.so
-lib/libmmrtpencoder.so
 lib/libqdMetaData.system.so
 lib/libwfdavenhancements.so
 lib/libwfdclient.so
