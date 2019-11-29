@@ -1,0 +1,15 @@
+type hal_touch_sdm660, domain;
+
+# Allow a base set of permissions required for a domain to offer a
+# HAL implementation of the specified type over HwBinder.
+typeattribute hal_touch_sdm660 halserverdomain;
+
+type hal_touch_sdm660_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_touch_sdm660)
+
+# Talk to the binder device node
+#allow hal_touch_sdm660 binder_device:chr_file rw_file_perms;
+
+# Allow access to gesture enable nodes
+allow hal_touch_sdm660 proc_touchpanel:dir search;
+allow hal_touch_sdm660 proc_touchpanel:file rw_file_perms;

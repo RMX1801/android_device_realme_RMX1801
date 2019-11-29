@@ -14,8 +14,8 @@
 // limitations under the License.
 
 cc_binary {
-    name: "lineage.touch@1.0-service.realme_sdm660",
-    init_rc: ["lineage.touch@1.0-service.realme_sdm660.rc"],
+    name: "vendor.lineage.touch@1.0-service.realme_sdm660",
+    init_rc: ["vendor.lineage.touch@1.0-service.realme_sdm660.rc"],
     defaults: ["hidl_defaults"],
     relative_install_path: "hw",
     srcs: [
@@ -30,4 +30,5 @@ cc_binary {
         "libutils",
         "vendor.lineage.touch@1.0",
     ],
+    proprietary: true,
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "lineage.touch@1.0-service.realme_sdm660"
+#define LOG_TAG "vendor.lineage.touch@1.0-service.realme_sdm660"
 
 #include <android-base/logging.h>
 #include <binder/ProcessState.h>
