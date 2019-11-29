@@ -165,7 +165,7 @@ PRODUCT_PACKAGES += \
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
-    lineage.livedisplay@2.0-service-sdm
+    vendor.lineage.livedisplay@2.0-service-sdm
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -175,7 +175,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.power@1.0-impl \
     android.hardware.power@1.0-service \
-    power.qcom
+    power.sdm660
 
 # QCOM
 PRODUCT_COPY_FILES += \
@@ -223,11 +223,11 @@ PRODUCT_PACKAGES += \
 
 # Trust HAL
 PRODUCT_PACKAGES += \
-    lineage.trust@1.0-service
+    vendor.lineage.trust@1.0-service
 
 # Touch
 PRODUCT_PACKAGES += \
-    lineage.touch@1.0-service.realme_sdm660
+    vendor.lineage.touch@1.0-service.realme_sdm660
 
 # USB
 PRODUCT_PACKAGES += \

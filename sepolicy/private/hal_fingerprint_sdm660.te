@@ -1,5 +1,0 @@
-type hal_fingerprint_sdm660, coredomain, domain;
-hal_server_domain(hal_fingerprint_sdm660, hal_fingerprint)
-
-type hal_fingerprint_sdm660_exec, exec_type, file_type;
-init_daemon_domain(hal_fingerprint_sdm660)
