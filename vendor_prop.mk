@@ -89,7 +89,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     debug.sf.disable_backpressure=1 \
     debug.sf.hw=1 \
     debug.sf.latch_unsignaled=1 \
-    persist.debug.wfd.enable=1 \
     persist.demo.hdmirotationlock=false \
     ro.opengles.version=196610 \
     sdm.debug.disable_skip_validate=1 \
