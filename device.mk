@@ -165,7 +165,7 @@ PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
     android.hardware.camera.provider@2.4-service \
     android.hardware.camera.provider@2.5 \
-    libstdc++.vendor \
+    libstdc++.vendor_32 \
     Snap \
     vendor.qti.hardware.camera.device@1.0
 
@@ -433,12 +433,11 @@ PRODUCT_PACKAGES += \
     android.hardware.vibrator@1.0-impl \
     android.hardware.vibrator@1.0-service
 
-# VNDK-SP
+# VNDK
 PRODUCT_PACKAGES += \
-    vndk-sp \
+    vndk-ext \
     com.android.vndk.current.on_vendor
 
-# VNDK
 PRODUCT_COPY_FILES += \
     prebuilts/vndk/v29/arm64/arch-arm64-armv8-a/shared/vndk-sp/libcutils.so:$(TARGET_COPY_OUT_SYSTEM)/lib64/libcutils-v29.so
 
