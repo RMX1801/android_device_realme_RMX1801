@@ -127,6 +127,11 @@ private:
   int convertGnssClock (GnssMeasurementsClock& clock,
       const qmiLocEventGnssSvMeasInfoIndMsgT_v02& gnss_measurement_info);
 
+  /* convert dgnss constellation mask from QMI loc to loc eng format */
+  static void convertGnssConestellationMask (
+            qmiLocGNSSConstellEnumT_v02 qmiConstellationEnum,
+            GnssConstellationTypeMask& constellationMask);
+
   /* If Confidence value is less than 68%, then scale the accuracy value to 68%
      confidence.*/
   void scaleAccuracyTo68PercentConfidence(const uint8_t confidenceValue,
@@ -151,7 +156,8 @@ private:
   void reportSvMeasurementSvLoop(
           const qmiLocEventGnssSvMeasInfoIndMsgT_v02 *gnss_sv_measurement_ptr,
           bool processExtSvMeas,
-          bool validCarrierPhaseUnc);
+          bool validCarrierPhaseUnc,
+          bool validDgnssSvMeas);
 
   inline void resetSvMeasurementReport(){
       memset(mSvMeasurementSet, 0, sizeof(GnssSvMeasurementSet));
