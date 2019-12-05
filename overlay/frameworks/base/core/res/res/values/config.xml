@@ -53,9 +53,6 @@
          and the screen off animation has been performed. -->
      <bool name="config_dozeAfterScreenOffByDefault">true</bool>
 
-    <!-- Flag specifying whether or not IMS will use the ImsResolver dynamically -->
-     <bool name="config_dynamic_bind_ims">true</bool>
-
     <!--  Whether Multiuser UI should be shown -->
      <bool name="config_enableMultiUserUI">true</bool>
 
@@ -182,9 +179,6 @@
 
     <!-- Regex of wired ethernet ifaces -->
      <string name="config_ethernet_iface_regex">eth\\d</string>
-
-    <!-- ImsService package name to bind to by default, if config_dynamic_bind_ims is true -->
-     <string name="config_ims_package">org.codeaurora.ims</string>
 
     <!-- The bounding path of the cutout region of the main built-in display.
          Must either be empty if there is no cutout region, or a string that is parsable by
