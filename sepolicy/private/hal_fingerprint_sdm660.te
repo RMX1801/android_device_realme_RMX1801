@@ -1,0 +1,9 @@
+type hal_fingerprint_sdm660, coredomain, domain;
+
+# Allow a base set of permissions required for a domain to offer a
+# HAL implementation of the specified type over HwBinder.
+typeattribute hal_fingerprint_sdm660 halserverdomain;
+typeattribute hal_fingerprint_sdm660 hal_fingerprint_server;
+
+type hal_fingerprint_sdm660_exec, exec_type, file_type;
+init_daemon_domain(hal_fingerprint_sdm660)
