@@ -1,0 +1,8 @@
+type hal_light_sdm660, coredomain, domain;
+hal_server_domain(hal_light_sdm660, hal_light)
+
+type hal_light_sdm660_exec, exec_type, file_type;
+init_daemon_domain(hal_light_sdm660)
+
+allow hal_light_sdm660 sysfs_white_led:file rw_file_perms;
+allow hal_light_sdm660 sysfs_white_led:dir search;
