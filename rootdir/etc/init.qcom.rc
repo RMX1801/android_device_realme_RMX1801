@@ -11,6 +11,9 @@ on init
     # Bind mount libvolumelistener with /vendor/(lib|lib64)/soundfx/
     mount none /system/lib64/soundfx/libvolumelistener.so /vendor/lib64/soundfx/libvolumelistener.so bind
     mount none /system/lib/soundfx/libvolumelistener.so /vendor/lib/soundfx/libvolumelistener.so bind
+    # Bind mount power.qcom.so
+    mount none /system/lib64/hw/power.qcom.so /vendor/lib64/hw/power.qcom.so bind
+    mount none /system/lib/hw/power.qcom.so /vendor/lib/hw/power.qcom.so bind
 
     # Add for limit_enable
     chown system system /proc/touchpanel/oppo_tp_limit_enable
