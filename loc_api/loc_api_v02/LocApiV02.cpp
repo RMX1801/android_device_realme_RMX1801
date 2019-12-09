@@ -3157,6 +3157,49 @@ void LocApiV02 :: reportPosition (
                locationExtended.leapSeconds = location_report_ptr->leapSeconds;
             }
 
+            if (location_report_ptr->dgnssCorrectionSource_valid) {
+                locationExtended.flags |=
+                        GPS_LOCATION_EXTENDED_HAS_DGNSS_CORRECTION_SOURCE_TYPE;
+                locationExtended.dgnssCorrectionSourceType = (LocDgnssCorrectionSourceType)
+                        location_report_ptr->dgnssCorrectionSource;
+            }
+
+            if (location_report_ptr->dgnssCorrectionSourceID_valid) {
+                locationExtended.flags |=
+                        GPS_LOCATION_EXTENDED_HAS_DGNSS_CORRECTION_SOURCE_ID;
+                locationExtended.dgnssCorrectionSourceID =
+                        location_report_ptr->dgnssCorrectionSourceID;
+            }
+
+            if (location_report_ptr->dgnssConstellationUsage_valid) {
+                locationExtended.flags |=
+                        GPS_LOCATION_EXTENDED_HAS_DGNSS_CONSTELLATION_USAGE;
+                convertGnssConestellationMask(location_report_ptr->dgnssConstellationUsage,
+                                              locationExtended.dgnssConstellationUsage);
+            }
+
+            if (location_report_ptr->dgnssRefStationId_valid) {
+                locationExtended.flags |=
+                        GPS_LOCATION_EXTENDED_HAS_DGNSS_REF_STATION_ID;
+                locationExtended.dgnssRefStationId =
+                        location_report_ptr->dgnssRefStationId;
+            }
+
+            if (location_report_ptr->dgnssDataAgeMsec_valid) {
+                locationExtended.flags |=
+                        GPS_LOCATION_EXTENDED_HAS_DGNSS_DATA_AGE;
+                locationExtended.dgnssDataAgeMsec =
+                        location_report_ptr->dgnssDataAgeMsec;
+            }
+
+            LOC_LOGv("report position mask: 0x%" PRIx64 ", dgnss info: 0x%x %d %d %d %d,",
+                     locationExtended.flags,
+                     locationExtended.dgnssConstellationUsage,
+                     locationExtended.dgnssCorrectionSourceType,
+                     locationExtended.dgnssCorrectionSourceID,
+                     locationExtended.dgnssDataAgeMsec,
+                     locationExtended.dgnssRefStationId);
+
             LocApiBase::reportPosition(location,
                                        locationExtended,
                                        (location_report_ptr->sessionStatus ==
@@ -3749,6 +3792,25 @@ void  LocApiV02 :: reportSvMeasurement (
         }
     }
 
+    if (gnss_raw_measurement_ptr->dgnssCorrectionSourceT_valid) {
+        svMeasSetHead.dgnssCorrectionSourceType =
+                (LocDgnssCorrectionSourceType)gnss_raw_measurement_ptr->dgnssCorrectionSourceT;
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_DGNSS_CORRECTION_SOURCE_TYPE;
+    }
+
+    if (gnss_raw_measurement_ptr->dgnssCorrectionSourceID_valid) {
+        svMeasSetHead.dgnssCorrectionSourceID =
+                gnss_raw_measurement_ptr->dgnssCorrectionSourceID;
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_DGNSS_CORRECTION_SOURCE_ID;
+
+    }
+    if (gnss_raw_measurement_ptr->dgnssRefStationId_valid) {
+        svMeasSetHead.dgnssRefStationId =
+                gnss_raw_measurement_ptr->dgnssRefStationId;
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_DGNSS_REF_STATION_ID;
+    }
+
+    bool validDgnssMeas = false;
     if (1 == gnss_raw_measurement_ptr->svMeasurement_valid) {
 
         // check whether carrier phase info is available
@@ -3760,9 +3822,20 @@ void  LocApiV02 :: reportSvMeasurement (
             validCarrierPhaseUnc = true;
         }
 
+        if (gnss_raw_measurement_ptr->dgnssSvMeasurement_valid) {
+            uint32_t totalSvMeasLen = svMeasurement_len;
+            if (gnss_raw_measurement_ptr->extSvMeasurement_valid) {
+                totalSvMeasLen += gnss_raw_measurement_ptr->extSvMeasurement_len;
+            }
+            if (totalSvMeasLen == gnss_raw_measurement_ptr->dgnssSvMeasurement_len) {
+                validDgnssMeas = true;
+            }
+        }
+
         reportSvMeasurementSvLoop(gnss_raw_measurement_ptr,
                                   false, /* indicating we are processing svMeas */
-                                  validCarrierPhaseUnc);
+                                  validCarrierPhaseUnc,
+                                  validDgnssMeas);
     }// valid sv measurement
 
      /* now check if more measurements are available (some constellations such
@@ -3781,7 +3854,8 @@ void  LocApiV02 :: reportSvMeasurement (
 
         reportSvMeasurementSvLoop(gnss_raw_measurement_ptr,
                                   true, /* indicating we are processing extSvMeas */
-                                  validCarrierPhaseUnc);
+                                  validCarrierPhaseUnc,
+                                  validDgnssMeas);
     }// valid ext sv measurement
 
     // set up indication that we have processed some new measurement
@@ -3794,7 +3868,6 @@ void  LocApiV02 :: reportSvMeasurement (
         newMeasProcessed = false;
     }
 }
-
 
 void LocApiV02 ::reportSvMeasurementInternal() {
 
@@ -3821,8 +3894,13 @@ void LocApiV02 ::reportSvMeasurementInternal() {
             LOC_LOGE("%s:%d Error in clock_gettime() ",__func__, __LINE__);
         }
 
-        LOC_LOGd("report %d sv in sv meas",
-                 mSvMeasurementSet->svMeasCount);
+        LOC_LOGd("report %d sv in sv meas, mask: 0x%" PRIx64 ", "
+                 "dgnss source id %d, type %d, station id %d ",
+                 mSvMeasurementSet->svMeasCount,
+                 mSvMeasurementSet->svMeasSetHeader.flags,
+                 mSvMeasurementSet->svMeasSetHeader.dgnssCorrectionSourceID,
+                 mSvMeasurementSet->svMeasSetHeader.dgnssCorrectionSourceType,
+                 mSvMeasurementSet->svMeasSetHeader.dgnssRefStationId);
 
         LocApiBase::reportSvMeasurement(*mSvMeasurementSet);
     }
@@ -3831,7 +3909,8 @@ void LocApiV02 ::reportSvMeasurementInternal() {
 void LocApiV02::reportSvMeasurementSvLoop(
       const qmiLocEventGnssSvMeasInfoIndMsgT_v02 *gnss_raw_measurement_ptr,
       bool processExtSvMeas,
-      bool validCarrierPhaseUnc)
+      bool validCarrierPhaseUnc,
+      bool validDgnssSvMeas)
 {
     uint32_t &svMeasCount = mSvMeasurementSet->svMeasCount;
     uint32_t i = 0;
@@ -3840,13 +3919,21 @@ void LocApiV02::reportSvMeasurementSvLoop(
 
     uint32_t svMeasurement_len = 0;
     const qmiLocSVMeasurementStructT_v02* sv_meas_ptr = nullptr;
+    const qmiLocDgnssSVMeasurementStructT_v02* dgnss_sv_meas_ptr = nullptr;
 
     if (!processExtSvMeas) {
         svMeasurement_len = gnss_raw_measurement_ptr->svMeasurement_len;
         sv_meas_ptr = gnss_raw_measurement_ptr->svMeasurement;
+        if (validDgnssSvMeas) {
+            dgnss_sv_meas_ptr  = gnss_raw_measurement_ptr->dgnssSvMeasurement;
+        }
     } else {
         svMeasurement_len = gnss_raw_measurement_ptr->extSvMeasurement_len;
         sv_meas_ptr = gnss_raw_measurement_ptr->extSvMeasurement;
+        if (validDgnssSvMeas) {
+            dgnss_sv_meas_ptr = gnss_raw_measurement_ptr->dgnssSvMeasurement +
+                    gnss_raw_measurement_ptr->svMeasurement_len;
+        }
     }
 
     for (i = 0; (i<svMeasurement_len) && (svMeasCount<GNSS_LOC_SV_MEAS_LIST_MAX_SIZE); i++) {
@@ -3928,6 +4015,23 @@ void LocApiV02::reportSvMeasurementSvLoop(
                 svMeas.carrierPhaseUncValid = 1;
                 svMeas.carrierPhaseUnc =
                     gnss_raw_measurement_ptr->svCarrierPhaseUncertainty[i];
+            }
+
+            if (validDgnssSvMeas) {
+                svMeas.dgnssSvMeas.dgnssMeasStatus = (LocSvDgnssMeasStatusMask)
+                        (dgnss_sv_meas_ptr + i)->dgnssMeasStatus,
+                svMeas.dgnssSvMeas.diffDataEpochTimeMsec =
+                        (dgnss_sv_meas_ptr + i)->diffDataEpochTimeMsec;
+                svMeas.dgnssSvMeas.prCorrMeters =
+                        (dgnss_sv_meas_ptr + i)->prCorrMeters;
+                svMeas.dgnssSvMeas.prrCorrMetersPerSec =
+                        (dgnss_sv_meas_ptr + i)->prrCorrMetersPerSec;
+
+                LOC_LOGv("dgnss meas info %d: 0x%x, %d, %f %f", i,
+                         mSvMeasurementSet->svMeas[0].dgnssSvMeas.dgnssMeasStatus,
+                         mSvMeasurementSet->svMeas[0].dgnssSvMeas.diffDataEpochTimeMsec,
+                         mSvMeasurementSet->svMeas[0].dgnssSvMeas.prCorrMeters,
+                         mSvMeasurementSet->svMeas[0].dgnssSvMeas.prrCorrMetersPerSec);
             }
 
             svMeasCount++;
@@ -7075,6 +7179,37 @@ qmiLocPowerModeEnumT_v02 LocApiV02::convertPowerMode(GnssPowerMode powerMode)
     }
 
     return QMILOCPOWERMODEENUMT_MIN_ENUM_VAL_V02;
+}
+
+/* convert dgnss constellation mask from QMI loc to loc eng format */
+void LocApiV02::convertGnssConestellationMask(
+        qmiLocGNSSConstellEnumT_v02 qmiConstellationEnum,
+        GnssConstellationTypeMask& constellationMask) {
+
+    constellationMask = 0x0;
+    if (qmiConstellationEnum & eQMI_SYSTEM_GPS_V02) {
+        constellationMask |= GNSS_CONSTELLATION_TYPE_GPS_BIT;
+    }
+
+    if (qmiConstellationEnum & eQMI_SYSTEM_GLO_V02) {
+        constellationMask |= GNSS_CONSTELLATION_TYPE_GLONASS_BIT;
+    }
+
+    if (qmiConstellationEnum & eQMI_SYSTEM_BDS_V02) {
+        constellationMask |= GNSS_CONSTELLATION_TYPE_BEIDOU_BIT;
+    }
+
+    if (qmiConstellationEnum & eQMI_SYSTEM_GAL_V02) {
+        constellationMask |= GNSS_CONSTELLATION_TYPE_GALILEO_BIT;
+    }
+
+    if (qmiConstellationEnum & eQMI_SYSTEM_QZSS_V02) {
+        constellationMask |= GNSS_CONSTELLATION_TYPE_QZSS_BIT;
+    }
+
+    if (qmiConstellationEnum & eQMI_SYSTEM_NAVIC_V02) {
+        constellationMask |= GNSS_CONSTELLATION_TYPE_NAVIC_BIT;
+    }
 }
 
 GnssSignalTypeMask LocApiV02::convertQmiGnssSignalType(
