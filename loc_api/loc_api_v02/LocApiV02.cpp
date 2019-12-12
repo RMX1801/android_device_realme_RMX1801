@@ -3386,8 +3386,11 @@ void  LocApiV02 :: reportSv (
                     gnssSv_ref.type = GNSS_SV_TYPE_SBAS;
                     break;
 
+                // Glonass in SV report comes in range of [1, 32],
+                // convert to [65, 96]
                 case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GLONASS;
+                    gnssSv_ref.svId = sv_info_ptr->gnssSvId + GLO_SV_PRN_MIN - 1;
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_BDS_V02:
