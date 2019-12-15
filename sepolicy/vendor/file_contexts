@@ -22,6 +22,9 @@
 # (e.g. Google Camera App)
 /mnt/vendor/dsp/fastrpc_shell_3                                                                         u:object_r:public_adsprpcd_file:s0
 
+# Hypnus
+/vendor/bin/hw/vendor\.oppo\.hardware\.hypnus@1\.0-service                                              u:object_r:hal_hypnus_default_exec:s0
+
 # Light
 /vendor/bin/hw/android\.hardware\.light@2\.0-service\.realme_sdm660                                     u:object_r:hal_light_sdm660_exec:s0
 /sys/devices(/platform)?/soc/[0-9a-f]+.qcom,spmi/spmi-[0-9]+/spmi[0-9]+-[0-9]+/[0-9a-z]+.qcom,spmi:qcom,pm660l@[0-9]+:qcom,leds@[a-z0-9]+/leds/button-backlight(/.*)?  u:object_r:sysfs_leds:s0
