@@ -1,4 +1,4 @@
-/* Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -77,6 +77,8 @@ void populateClientDiagGnssSv(clientDiagGnssSvStructType* diagGnssSvPtr,
         std::vector<GnssSv>& gnssSvs);
 void populateClientDiagNmea(clientDiagGnssNmeaStructType *diagGnssNmeaPtr,
         const LocAPINmeaSerializedPayload &nmeaSerializedPayload);
+void populateClientDiagSvPoly(clientDiagGnssSvPoly *diagGnssSvPolyPtr,
+        const GnssSvPoly &gnssSvPoly);
 #endif // FEATURE_EXTERNAL_AP
 
 enum ReportCbEnumType {
@@ -240,6 +242,7 @@ private:
     GnssNmeaCb              mGnssNmeaCb;
     GnssDataCb              mGnssDataCb;
     GnssMeasurementsCb      mGnssMeasurementsCb;
+    GnssSvPolyCb            mGnssSvPolyCb;
 
     GnssEnergyConsumedCb    mGnssEnergyConsumedInfoCb;
     ResponseCb              mGnssEnergyConsumedResponseCb;

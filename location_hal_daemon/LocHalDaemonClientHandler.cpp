@@ -1,4 +1,4 @@
-/* Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2018-2020, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -143,6 +143,15 @@ void LocHalDaemonClientHandler::updateSubscription(uint32_t mask) {
     if (mSubscriptionMask & E_LOC_CB_GNSS_MEAS_BIT) {
         mCallbacks.gnssMeasurementsCb = [this](GnssMeasurementsNotification notification) {
             onGnssMeasurementsCb(notification);
+        };
+    } else {
+        mCallbacks.gnssMeasurementsCb = nullptr;
+    }
+
+    // SV poly
+    if (mSubscriptionMask & E_LOC_CB_GNSS_SV_POLY_BIT) {
+        mCallbacks.gnssSvPolynomialCb = [this](GnssSvPolynomial notification) {
+            onGnssSvPolynomialCb(notification);
         };
     } else {
         mCallbacks.gnssMeasurementsCb = nullptr;
@@ -881,6 +890,23 @@ void LocHalDaemonClientHandler::onGnssMeasurementsCb(GnssMeasurementsNotificatio
     if ((nullptr != mIpcSender) && (mSubscriptionMask & E_LOC_CB_GNSS_MEAS_BIT)) {
         LocAPIMeasIndMsg msg(SERVICE_NAME, notification);
         LOC_LOGv("Sending meas message");
+        int rc = sendMessage(msg);
+        // purge this client if failed
+        if (!rc) {
+            LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
+            mService->deleteClientbyName(mName);
+        }
+    }
+}
+
+void LocHalDaemonClientHandler::onGnssSvPolynomialCb(GnssSvPolynomial notification) {
+
+    std::lock_guard<std::mutex> lock(LocationApiService::mMutex);
+    LOC_LOGd("--< onGnssSvPolynomialCb");
+
+    if ((nullptr != mIpcSender) && (mSubscriptionMask & E_LOC_CB_GNSS_SV_POLY_BIT)) {
+        LocAPIGnssSvPolyIndMsg msg(SERVICE_NAME, notification);
+        LOC_LOGv("Sending sv poly message");
         int rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
