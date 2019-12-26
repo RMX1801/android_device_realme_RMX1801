@@ -37,6 +37,7 @@ BiometricsFingerprint::BiometricsFingerprint() {
 class OppoClientCallback : public vendor::oppo::hardware::biometrics::fingerprint::V2_1::IBiometricsFingerprintClientCallback {
 public:
     OppoClientCallback(sp<android::hardware::biometrics::fingerprint::V2_1::IBiometricsFingerprintClientCallback> clientCallback) : mClientCallback(clientCallback) {}
+
     Return<void> onEnrollResult(uint64_t deviceId, uint32_t fingerId,
         uint32_t groupId, uint32_t remaining) {
         return mClientCallback->onEnrollResult(deviceId, fingerId, groupId, remaining);
@@ -66,13 +67,19 @@ public:
         return mClientCallback->onEnumerate(deviceId, fingerId, groupId, remaining);
     }
 
-    Return<void> onTouchUp(uint64_t deviceId) { return Void(); }
     Return<void> onTouchDown(uint64_t deviceId) { return Void(); }
-    Return<void> onSyncTemplates(uint64_t deviceId, const hidl_vec<uint32_t>& fingerId, uint32_t remaining) { return Void(); }
-    Return<void> onFingerprintCmd(int32_t deviceId, const hidl_vec<uint32_t>& groupId, uint32_t remaining) { return Void(); }
-    Return<void> onImageInfoAcquired(uint32_t type, uint32_t quality, uint32_t match_score) { return Void(); }
+
+    Return<void> onTouchUp(uint64_t deviceId) { return Void(); }
+
     Return<void> onMonitorEventTriggered(uint32_t type, const hidl_string& data) { return Void(); }
+
+    Return<void> onImageInfoAcquired(uint32_t type, uint32_t quality, uint32_t match_score) { return Void(); }
+
+    Return<void> onSyncTemplates(uint64_t deviceId, const hidl_vec<uint32_t>& fingerId, uint32_t remaining) { return Void(); }
+
     Return<void> onEngineeringInfoUpdated(uint32_t length, const hidl_vec<uint32_t>& keys, const hidl_vec<hidl_string>& values) { return Void(); }
+
+    Return<void> onFingerprintCmd(int32_t deviceId, const hidl_vec<uint32_t>& groupId, uint32_t remaining) { return Void(); }
 
 private:
     sp<android::hardware::biometrics::fingerprint::V2_1::IBiometricsFingerprintClientCallback> mClientCallback;
@@ -134,42 +141,82 @@ Return<RequestStatus> BiometricsFingerprint::OppoToAOSPRequestStatus(vendor::opp
     }
 }
 
-Return<uint64_t> BiometricsFingerprint::preEnroll()  {
+Return<uint64_t> BiometricsFingerprint::preEnroll() {
     return mOppoBiometricsFingerprint->preEnroll();
 }
 
 Return<RequestStatus> BiometricsFingerprint::enroll(const hidl_array<uint8_t, 69>& hat,
-    uint32_t gid, uint32_t timeoutSec)  {
+    uint32_t gid, uint32_t timeoutSec) {
     return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->enroll(hat, gid, timeoutSec));
 }
 
-Return<RequestStatus> BiometricsFingerprint::postEnroll()  {
+Return<RequestStatus> BiometricsFingerprint::postEnroll() {
     return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->postEnroll());
 }
 
-Return<uint64_t> BiometricsFingerprint::getAuthenticatorId()  {
+Return<uint64_t> BiometricsFingerprint::getAuthenticatorId() {
     return mOppoBiometricsFingerprint->getAuthenticatorId();
 }
 
-Return<RequestStatus> BiometricsFingerprint::cancel()  {
+Return<RequestStatus> BiometricsFingerprint::cancel() {
     return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->cancel());
 }
 
-Return<RequestStatus> BiometricsFingerprint::enumerate()  {
+Return<RequestStatus> BiometricsFingerprint::enumerate() {
     return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->enumerate());
 }
 
-Return<RequestStatus> BiometricsFingerprint::remove(uint32_t gid, uint32_t fid)  {
+Return<RequestStatus> BiometricsFingerprint::remove(uint32_t gid, uint32_t fid) {
     return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->remove(gid, fid));
 }
 
 Return<RequestStatus> BiometricsFingerprint::setActiveGroup(uint32_t gid,
-    const hidl_string& storePath)  {
+    const hidl_string& storePath) {
     return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->setActiveGroup(gid, storePath));
 }
 
-Return<RequestStatus> BiometricsFingerprint::authenticate(uint64_t operationId, uint32_t gid)  {
+Return<RequestStatus> BiometricsFingerprint::authenticate(uint64_t operationId, uint32_t gid) {
     return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->authenticate(operationId, gid));
+}
+
+Return<RequestStatus> BiometricsFingerprint::cleanUp() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->cleanUp());
+}
+
+Return<RequestStatus> BiometricsFingerprint::pauseEnroll() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->pauseEnroll());
+}
+
+Return<RequestStatus> BiometricsFingerprint::continueEnroll() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->continueEnroll());
+}
+
+Return<RequestStatus> BiometricsFingerprint::setTouchEventListener() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->setTouchEventListener());
+}
+
+Return<RequestStatus> BiometricsFingerprint::dynamicallyConfigLog(uint32_t on) {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->dynamicallyConfigLog(on));
+}
+
+Return<RequestStatus> BiometricsFingerprint::pauseIdentify() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->pauseIdentify());
+}
+
+Return<RequestStatus> BiometricsFingerprint::continueIdentify() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->continueIdentify());
+}
+
+Return<RequestStatus> BiometricsFingerprint::getAlikeyStatus() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->getAlikeyStatus());
+}
+
+Return<RequestStatus> BiometricsFingerprint::getEnrollmentTotalTimes() {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->getEnrollmentTotalTimes());
+}
+
+Return<RequestStatus> BiometricsFingerprint::getEngineeringInfo(uint32_t type) {
+    return OppoToAOSPRequestStatus(mOppoBiometricsFingerprint->getEngineeringInfo(type));
 }
 
 } // namespace implementation
