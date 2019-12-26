@@ -1,4 +1,5 @@
 typeattribute hal_camera_default data_between_core_and_vendor_violators;
+typeattribute hal_camera_default vendor_executes_system_violators;
 
 allow hal_camera_default cam_proc:file { open read write getattr };
 allow hal_camera_default hal_ktv_hwservice:hwservice_manager add;
