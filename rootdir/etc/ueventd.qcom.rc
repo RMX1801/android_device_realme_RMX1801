@@ -222,39 +222,8 @@ firmware_directories /vendor/firmware_mnt/image/
 
 # sensors
 /dev/sensors              0660   system     system
-/sys/devices/i2c-12/12-*  pollrate_ms 0664 system system
-/sys/devices/f9925000.i2c/i2c-0/0-*                 enable         0660    input    system
-/sys/devices/f9925000.i2c/i2c-0/0-*                 poll_delay     0660    input    system
-/sys/devices/soc.0/78b6000.i2c/i2c-0/0-*            enable         0660    input    system
-/sys/devices/soc.0/78b6000.i2c/i2c-0/0-*            poll_delay     0660    input    system
-/sys/devices/soc.0/78b6000.i2c/i2c-0/0-*            enable_wakeup  0660    input    system
-/sys/devices/soc.0/78b6000.i2c/i2c-0/0-*            max_latency    0660    input    system
-/sys/devices/soc.0/78b6000.i2c/i2c-0/0-*            flush          0660    input    system
-/sys/devices/soc.0/78b6000.i2c/i2c-0/0-*            calibrate      0660    input    system
-/sys/devices/soc.0/78b5000.i2c/i2c-1/1-*            enable         0660    input    system
-/sys/devices/soc.0/78b5000.i2c/i2c-1/1-*            poll_delay     0660    input    system
-/sys/devices/soc.0/78b5000.i2c/i2c-1/1-*            enable_wakeup  0660    input    system
-/sys/devices/soc.0/78b5000.i2c/i2c-1/1-*            max_latency    0660    input    system
-/sys/devices/soc.0/78b5000.i2c/i2c-1/1-*            flush          0660    input    system
-/sys/devices/soc.0/78b5000.i2c/i2c-1/1-*            calibrate      0660    input    system
-/sys/devices/virtual/optical_sensors/proximity      ps_adc         0660    input    system
-/sys/devices/virtual/optical_sensors/proximity      ps_poll_delay  0660    input    system
-/sys/devices/virtual/optical_sensors/lightsensor    ls_auto        0660    input    system
-/sys/devices/virtual/optical_sensors/lightsensor    ls_poll_delay  0660    input    system
 /sys/devices/virtual/input/input*                   poll           0660    input    system
 /sys/devices/virtual/input/input*                   pollrate_ms    0660    input    system
-/sys/devices/soc/78b7000.i2c/i2c-3/3-0020/input/input*    secure_touch         0440   system  drmrpc
-/sys/devices/soc/78b7000.i2c/i2c-3/3-0020/input/input*    secure_touch_enable  0660   system  drmrpc
-/sys/devices/soc/78b7000.i2c/i2c-3/3-0038/input/input*    secure_touch         0440   system  drmrpc
-/sys/devices/soc/78b7000.i2c/i2c-3/3-0038/input/input*    secure_touch_enable  0660   system  drmrpc
-/sys/devices/soc/78b7000.i2c/i2c-3/3-004b/input/input*    secure_touch         0440   system  drmrpc
-/sys/devices/soc/78b7000.i2c/i2c-3/3-004b/input/input*    secure_touch_enable  0660   system  drmrpc
-/sys/devices/soc/c179000.i2c/i2c-5/5-0020/input/input*    secure_touch         0440   system  drmrpc
-/sys/devices/soc/c179000.i2c/i2c-5/5-0020/input/input*    secure_touch_enable  0660   system  drmrpc
-/sys/devices/platform/soc/a98000.i2c/i2c-2/2-0020/input/input*  secure_touch          0440 system drmrpc
-/sys/devices/platform/soc/a98000.i2c/i2c-2/2-0020/input/input*  secure_touch_enable   0660 system drmrpc
-/sys/devices/platform/soc/a84000.i2c/i2c-2/2-0020/input/input*  secure_touch          0440 system drmrpc
-/sys/devices/platform/soc/a84000.i2c/i2c-2/2-0020/input/input*  secure_touch_enable   0660 system drmrpc
 
 # native sensors input
 /sys/devices/virtual/input/input*   enable_int       0660  system   input
@@ -266,7 +235,6 @@ firmware_directories /vendor/firmware_mnt/image/
 /sys/devices/virtual/input/input*   fifo_watermark   0660  system   input
 /sys/devices/virtual/input/input*   enable           0660  system   input
 /sys/devices/virtual/input/input*   acc_odr          0660  system   input
-/sys/devices/virtual/input/input*   temperature      0660  system   input
 /sys/devices/virtual/input/input*   acc_op_mode      0660  system   input
 /sys/devices/virtual/input/input*   fifo_bytecount   0660  system   input
 /sys/devices/virtual/input/input*   gyro_range       0660  system   input
@@ -275,33 +243,11 @@ firmware_directories /vendor/firmware_mnt/image/
 # GNSS PPS Device premissions
 /dev/pps*                  0660   gps     gps
 
-# laser sensor access
-/sys/devices/virtual/input/input*                   enable_ps_sensor 0660  system   input
-/sys/devices/virtual/input/input*                   set_delay_ms     0660  system   input
-/sys/devices/virtual/input/input*                   do_flush         0660  system   input
-
-# vm_bms
-/dev/vm_bms               0660   system     system
-/dev/battery_data         0660   system     system
-
 # wlan
 /dev/wcnss_wlan           0660   system     system
 /dev/wcnss_ctrl           0660   system     system
 /sys/devices/soc/600000.qcom,pcie/pci0000:00/0000:00:00.0/0000:01:00.0/net/wlan0/queues/rx-* rps_cpus 0660 system system
 /sys/devices/soc/600000.qcom,pcie/pci0000:00/0000:00:00.0/0000:01:00.0/net/p2p0/queues/rx-* rps_cpus 0660 system system
-
-# wigig
-/sys/bus/pci/drivers/wil6210* 0000:01:00.0/wil6210/fst_link_loss 0660 wifi wifi
-/sys/bus/pci/drivers/wil6210* 0000:01:00.0/wil6210/thermal_throttling 0660 system system
-/sys/bus/pci/drivers/wil6210* 0000:01:00.0/wil6210/snr_thresh 0660 wifi wifi
-/sys/bus/pci/drivers/wil6210* 0000:01:00.0/net/wigig0/queues/rx-0/rps_cpus 0660 system system
-/sys/bus/pci/drivers/wil6210* 0000:01:00.0/net/wigig0/gro_flush_timeout 0660 system system
-/sys/devices/virtual/net/bond0 queues/rx-0/rps_cpus 0660 system system
-
-#nfc permissions
-/dev/nfc-nci              0660    nfc         nfc
-/dev/nq-nci               0660    nfc         nfc
-/dev/assd                 0660    nfc         nfc
 
 # UIO devices
 /dev/uio0                 0660   system     system
@@ -317,46 +263,18 @@ firmware_directories /vendor/firmware_mnt/image/
 # Ramdump devices
 /dev/ramdump*             0640   system     system
 
-# Fingerprint device
-/dev/qbt1000              0660   system     system
-
-#ImproveTouch device
+# ImproveTouch device
 /dev/hbtp_input           0660   system     system
 /dev/hbtp_vm              0660   system     system
 
 # Add device block for FRP
-/dev/block/platform/soc/7824900.sdhci/by-name/config    0600   system     system
-/dev/block/platform/soc/7464900.sdhci/by-name/frp       0600   system     system
-/dev/block/platform/soc/624000.ufshc/by-name/frp        0600   system     system
-/dev/block/platform/soc/1da4000.ufshc/by-name/frp       0600   system     system
 /dev/block/platform/soc/c0c4000.sdhci/by-name/frp       0600   system     system
-/dev/block/platform/soc/1d84000.ufshc/by-name/frp       0600   system     system
-/dev/block/platform/soc/7c4000.sdhci/by-name/frp        0600   system     system
-
-# This is temporary while using SD card for initial bring-up
-/dev/block/platform/soc/8804000.sdhci/by-name/frp       0600   system     system
 
 # Kmsg device
 /dev/kmsg                                               0620   root       system
 
-# LED class devices
-/sys/class/leds/red      delay_on     0640    system    system
-/sys/class/leds/red      delay_off    0640    system    system
-/sys/class/leds/red      breath       0640    system    system
-/sys/class/leds/green    delay_on     0640    system    system
-/sys/class/leds/green    delay_off    0640    system    system
-/sys/class/leds/green    breath       0640    system    system
-/sys/class/leds/blue     delay_on     0640    system    system
-/sys/class/leds/blue     delay_off    0640    system    system
-/sys/class/leds/blue     breath       0640    system    system
-
 # NPU device
 /dev/msm_npu             0644   system     system
-
-# USB role switch
-/sys/class/dual_role_usb/*	data_role	0660	system	system
-/sys/class/dual_role_usb/*	power_role	0660	system	system
-/sys/class/dual_role_usb/*	mode		0660	system	system
 
 #Memory Offline
 /sys/devices/system/memory/memory* state    0660 system system
@@ -393,3 +311,7 @@ firmware_directories /vendor/firmware_mnt/image/
 /sys/class/graphics/fb0     dynamic_bitclk           0664    system  graphics
 
 /sys/devices/virtual/hdcp/msm_hdcp  min_level_change 0664    system  graphics
+
+/sys/bus/platform/devices/soc:fpc_fpc1020    irq              0664   system  system
+/sys/bus/platform/devices/soc:fpc_fpc1020    irq_enable       0664   system  system
+/sys/bus/platform/devices/soc:fpc_fpc1020    wakelock_enable  0664   system  system

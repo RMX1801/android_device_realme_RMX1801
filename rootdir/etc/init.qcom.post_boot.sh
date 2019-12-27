@@ -229,27 +229,51 @@ function configure_zram_parameters() {
     low_ram=`getprop ro.config.low_ram`
 
     # Zram disk - 75% for Go devices.
-    # For 512MB Go device, size = 384MB, set same for Non-Go.
-    # For 1GB Go device, size = 768MB, set same for Non-Go.
-    # For >=2GB Non-Go device, size = 1GB
-    # And enable lz4 zram compression for Go targets.
+    # For 512MB Go device, size = 384MB
+    # For 1GB Go device, size = 768MB
+    # Others - 512MB size
+    # And enable lz4 zram compression for Go devices
 
-    if [ "$low_ram" == "true" ]; then
-        echo lz4 > /sys/block/zram0/comp_algorithm
-    fi
+	if [ $MemTotal -le 524288 ] && [ "$low_ram" == "true" ]; then
+		echo lz4 > /sys/block/zram0/comp_algorithm
+		echo 402653184 > /sys/block/zram0/disksize
+		echo 160 > /proc/sys/vm/swappiness
+		echo 60 > /proc/sys/vm/direct_swappiness
+	elif [ $MemTotal -le 1048576 ] && [ "$low_ram" == "true" ]; then
+		echo lz4 > /sys/block/zram0/comp_algorithm
+		echo 805306368 > /sys/block/zram0/disksize
+		echo 160 > /proc/sys/vm/swappiness
+		echo 60 > /proc/sys/vm/direct_swappiness
+		#ifdef VENDOR_EDIT //Huacai.Zhou@PSW.Kernel.mm,config zramsize according to ramsize
+	elif [ $MemTotal -le 2097152 ]; then
+		#config 1GB zram size with memory 2 GB
+		echo lz4 > /sys/block/zram0/comp_algorithm
+		echo 1073741824 > /sys/block/zram0/disksize
+		echo 160 > /proc/sys/vm/swappiness
+		echo 60 > /proc/sys/vm/direct_swappiness
+	elif [ $MemTotal -le 3145728 ]; then
+		#config 1.6GB zram size with memory 3 GB
+		echo lz4 > /sys/block/zram0/comp_algorithm
+		echo 1717986918 > /sys/block/zram0/disksize
+		echo 160 > /proc/sys/vm/swappiness
+		echo 60 > /proc/sys/vm/direct_swappiness
+	elif [ $MemTotal -le 4194304 ]; then
+		#config 2GB zram size with memory 4 GB
+		echo lz4 > /sys/block/zram0/comp_algorithm
+		echo 2147483648 > /sys/block/zram0/disksize
+		echo 160 > /proc/sys/vm/swappiness
+		echo 60 > /proc/sys/vm/direct_swappiness
+	elif [ $MemTotal -le 6291456 ]; then
+		#config 2GB+192M zram size with memory 6 GB
+		echo lz4 > /sys/block/zram0/comp_algorithm
+		echo 2348810240 > /sys/block/zram0/disksize
+		echo 160 > /proc/sys/vm/swappiness
+		echo 60 > /proc/sys/vm/direct_swappiness
+		#endif
+	fi
+	mkswap /dev/block/zram0
+	swapon /dev/block/zram0 -p 32758
 
-    if [ -f /sys/block/zram0/disksize ]; then
-        if [ $MemTotal -le 524288 ]; then
-            echo 402653184 > /sys/block/zram0/disksize
-        elif [ $MemTotal -le 1048576 ]; then
-            echo 805306368 > /sys/block/zram0/disksize
-        else
-            # Set Zram disk size=1GB for >=2GB Non-Go targets.
-            echo 1073741824 > /sys/block/zram0/disksize
-        fi
-        mkswap /dev/block/zram0
-        swapon /dev/block/zram0 -p 32758
-    fi
 }
 
 function configure_read_ahead_kb_values() {
@@ -429,7 +453,6 @@ else
     # Set allocstall_threshold to 0 for all targets.
     # Set swappiness to 100 for all targets
     echo 0 > /sys/module/vmpressure/parameters/allocstall_threshold
-    echo 100 > /proc/sys/vm/swappiness
 
     configure_zram_parameters
 

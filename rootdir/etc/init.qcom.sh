@@ -430,6 +430,6 @@ case "$buildvariant" in
         ;;
     *)
         #set default loglevel to KERN_WARNING
-        echo "4 4 1 4" > /proc/sys/kernel/printk
+        echo "1 6 1 7" > /proc/sys/kernel/printk
         ;;
 esac
