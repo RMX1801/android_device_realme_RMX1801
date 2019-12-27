@@ -144,7 +144,17 @@ PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@2.0-impl \
     android.hardware.memtrack@1.0-impl \
     android.hardware.memtrack@1.0-service \
+    copybit.sdm660 \
+    gralloc.sdm660 \
+    hwcomposer.sdm660 \
+    libdisplayconfig \
+    libgui_vendor \
+    libhwc2on1adapter \
+    libhwc2onfbadapter \
+    libqdMetaData.system \
+    libtinyxml \
     libvulkan \
+    memtrack.sdm660 \
     vendor.display.config@1.5
 
 # Doze
