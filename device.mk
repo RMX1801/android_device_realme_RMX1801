@@ -58,6 +58,7 @@ PRODUCT_COPY_FILES += \
 
 # Properties
 -include $(LOCAL_PATH)/system_prop.mk
+-include $(LOCAL_PATH)/vendor_prop.mk
 
 # AAPT
 PRODUCT_AAPT_CONFIG := normal
