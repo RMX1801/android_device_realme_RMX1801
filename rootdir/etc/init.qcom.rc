@@ -384,7 +384,7 @@ service iop /vendor/bin/iop
     disabled
     socket iop seqpacket 0666 root system
 
-service qcomsysd /system/vendor/bin/qcom-system-daemon
+service qcomsysd /vendor/bin/qcom-system-daemon
     class main
     user root
     group root diag oem_2901
