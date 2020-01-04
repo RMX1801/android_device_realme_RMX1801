@@ -3144,6 +3144,7 @@ vendor/lib64/vendor.qti.hardware.qteeconnector@1.0.so
 -priv-app/ims/ims.apk|0c7e831a8e2b4e7c5cc553b51c92b742e63ad1a3
 
 # Radio (IMS)
+-app/uceShimService/uceShimService.apk
 lib64/libdiag_system.so
 lib64/libimscamera_jni.so
 lib64/libimsmedia_jni.so
