@@ -37,17 +37,17 @@
 #define START_IDX       "start_idx"
 
 /*
- * 15 duty percent steps.
+ * 8 duty percent steps.
  */
-#define RAMP_STEPS 15
+#define RAMP_STEPS 8
 /*
  * Each step will stay on for 150ms by default.
  */
-#define RAMP_STEP_DURATION 150
+#define RAMP_STEP_DURATION 50
 /*
  * Each value represents a duty percent (0 - 100) for the led pwm.
  */
-static int32_t BRIGHTNESS_RAMP[RAMP_STEPS] = {0, 12, 25, 37, 50, 72, 85, 100, 85, 72, 50, 37, 25, 12, 0};
+static int32_t BRIGHTNESS_RAMP[RAMP_STEPS] = {0, 12, 25, 37, 50, 72, 85, 100};
 
 namespace {
 /*
