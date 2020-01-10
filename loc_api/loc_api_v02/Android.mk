@@ -3,6 +3,9 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libloc_api_v02
+LOCAL_SANITIZE += $(GNSS_SANITIZE)
+# activate the following line for debug purposes only, comment out for production
+#LOCAL_SANITIZE_DIAG += $(GNSS_SANITIZE_DIAG)
 LOCAL_MODULE_PATH_32 := $(TARGET_OUT_VENDOR)/lib
 LOCAL_MODULE_PATH_64 := $(TARGET_OUT_VENDOR)/lib64
 LOCAL_MODULE_TAGS := optional
@@ -19,9 +22,9 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_SRC_FILES = \
     LocApiV02.cpp \
-    loc_api_v02_log.c \
-    loc_api_v02_client.c \
-    loc_api_sync_req.c \
+    loc_api_v02_log.cpp \
+    loc_api_v02_client.cpp \
+    loc_api_sync_req.cpp \
     location_service_v02.c
 
 LOCAL_CFLAGS += \

@@ -37,6 +37,10 @@ PKG_CHECK_MODULES([LOCCLIENTAPI], [location-client-api])
 AC_SUBST([LOCCLIENTAPI_CFLAGS])
 AC_SUBST([LOCCLIENTAPI_LIBS])
 
+PKG_CHECK_MODULES([LOCINTEGRATIONAPI], [location-integration-api])
+AC_SUBST([LOCINTEGRATIONAPI_CFLAGS])
+AC_SUBST([LOCINTEGRATIONAPI_LIBS])
+
 AC_ARG_WITH([external_ap],
     AC_HELP_STRING([--with-external_ap=@<:@dir@:>@],
         [Using External Application Processor]),

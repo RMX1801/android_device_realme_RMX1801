@@ -170,6 +170,11 @@ uint32_t LocHalDaemonClientHandler::startTracking() {
     return mSessionId;
 }
 
+// Round input TBF to 100ms, 200ms, 500ms, and integer senconds
+// input tbf < 200 msec, round to 100 msec, else
+// input tbf < 500 msec, round to 200 msec, else
+// input tbf < 1000 msec, round to 500 msec, else
+// round up input tbf to the closet integer seconds
 uint32_t LocHalDaemonClientHandler::startTracking(LocationOptions & locOptions) {
     LOC_LOGd("distance %d, internal %d, req mask %x",
           locOptions.minDistance, locOptions.minInterval,
@@ -177,8 +182,11 @@ uint32_t LocHalDaemonClientHandler::startTracking(LocationOptions & locOptions) 
     if (mSessionId == 0 && mLocationApi) {
         // update option
         mOptions = locOptions;
+        // set interval to engine supported interval
+        mOptions.minInterval = getSupportedTbf(mOptions.minInterval);
         mSessionId = mLocationApi->startTracking(mOptions);
     }
+
     return mSessionId;
 }
 
@@ -203,13 +211,12 @@ void LocHalDaemonClientHandler::updateTrackingOptions(LocationOptions & locOptio
              locOptions.minDistance, locOptions.minInterval,
              locOptions.locReqEngTypeMask);
 
-        if ((mOptions.minDistance != locOptions.minDistance) ||
-            (mOptions.minInterval != locOptions.minInterval)) {
+        TrackingOptions trackingOption;
+        trackingOption.setLocationOptions(locOptions);
+        // set tbf to device supported tbf
+        trackingOption.minInterval = getSupportedTbf(trackingOption.minInterval);
+        mLocationApi->updateTrackingOptions(mSessionId, trackingOption);
 
-            TrackingOptions trackingOption;
-            trackingOption.setLocationOptions(locOptions);
-            mLocationApi->updateTrackingOptions(mSessionId, trackingOption);
-        }
         // save other info: eng req type that will be used in filtering
         mOptions = locOptions;
     }
@@ -358,7 +365,7 @@ void LocHalDaemonClientHandler::cleanup() {
     // check whether this is client from external AP,
     // mName for client on external ap is of format "serviceid.instanceid"
     if (strncmp(mName.c_str(), EAP_LOC_CLIENT_DIR,
-                sizeof(EAP_LOC_CLIENT_DIR)-1) != 0 ) {
+                sizeof(EAP_LOC_CLIENT_DIR)-1) == 0 ) {
         char fileName[MAX_SOCKET_PATHNAME_LENGTH];
         snprintf (fileName, sizeof(fileName), "%s%s%s",
                   EAP_LOC_CLIENT_DIR, LOC_CLIENT_NAME_PREFIX, mName.c_str());
@@ -536,6 +543,24 @@ void LocHalDaemonClientHandler::onCollectiveResponseCallback(
     }
     delete[] msg;
     free(clientIds);
+}
+
+
+/******************************************************************************
+LocHalDaemonClientHandler - Location Control API response callback functions
+******************************************************************************/
+void LocHalDaemonClientHandler::onControlResponseCb(LocationError err, ELocMsgID msgId) {
+    // no need to hold the lock, as lock is already held at the caller
+    if (nullptr != mIpcSender) {
+        LOC_LOGd("--< onControlResponseCb err=%u msgId=%u", err, msgId);
+        LocAPIGenericRespMsg msg(SERVICE_NAME, msgId, err);
+        int rc = sendMessage(msg);
+        // purge this client if failed
+        if (!rc) {
+            LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
+            mService->deleteClientbyName(mName);
+        }
+    }
 }
 
 /******************************************************************************
@@ -731,13 +756,15 @@ void LocHalDaemonClientHandler::onEngLocationsInfoCb(
             }
         }
 
-        LocAPIEngineLocationsInfoIndMsg msg(SERVICE_NAME, reportCount,
-                                            engineLocationInfoNotification);
-        int rc = sendMessage((const uint8_t*)&msg, msg.getMsgSize());
-        // purge this client if failed
-        if (!rc) {
-            LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
-            mService->deleteClientbyName(mName);
+        if (reportCount > 0 ) {
+            LocAPIEngineLocationsInfoIndMsg msg(SERVICE_NAME, reportCount,
+                                                engineLocationInfoNotification);
+            int rc = sendMessage((const uint8_t*)&msg, msg.getMsgSize());
+            // purge this client if failed
+            if (!rc) {
+                LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
+                mService->deleteClientbyName(mName);
+            }
         }
     }
 }
@@ -903,3 +930,28 @@ void LocHalDaemonClientHandler::addEngineInfoRequst(uint32_t mask) {
     mEngineInfoRequestMask |= E_ENGINE_INFO_CB_GNSS_ENERGY_CONSUMED_BIT;
 }
 
+// Round input TBF to 100ms, 200ms, 500ms, and integer senconds that engine supports
+// input tbf < 200 msec, round to 100 msec, else
+// input tbf < 500 msec, round to 200 msec, else
+// input tbf < 1000 msec, round to 500 msec, else
+// round up input tbf to the closet integer seconds
+uint32_t LocHalDaemonClientHandler::getSupportedTbf(uint32_t tbfMsec) {
+    uint32_t supportedTbfMsec = 0;
+
+    if (tbfMsec < 200) {
+        supportedTbfMsec = 100;
+    } else if (tbfMsec < 500) {
+        supportedTbfMsec = 200;
+    } else if (tbfMsec < 1000) {
+        supportedTbfMsec = 500;
+    } else {
+        if (tbfMsec > (UINT32_MAX - 999)) {
+            supportedTbfMsec = UINT32_MAX / 1000 * 1000;
+        } else {
+            // round up to the next integer second
+            supportedTbfMsec = (tbfMsec+999) / 1000 * 1000;
+        }
+    }
+
+    return supportedTbfMsec;
+}
