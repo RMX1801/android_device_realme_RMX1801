@@ -455,6 +455,8 @@ typedef enum {
     CLIENT_DIAG_GNSS_LOCATION_INFO_OUTPUT_ENG_TYPE_BIT              = (1<<27),
     /** valid output engine mask */
     CLIENT_DIAG_GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT              = (1<<28),
+    /** valid output probability of good fix */
+    CLIENT_DIAG_GNSS_LOCATION_INFO_PROBABILITY_OF_GOOD_FIX_BIT      = (1<<29),
 } clientDiagGnssLocationInfoFlagBits;
 
 typedef enum {
@@ -630,6 +632,9 @@ typedef PACKED struct PACKED_POST {
     /** when loc output eng type is set to fused, this field
         indicates the set of engines contribute to the fix. */
     clientDiagPositioningEngineMask locOutputEngMask;
+    /** When robust location is enabled, this field
+     * will indicate proability of good fix if valid, range [0.0, 1.0]. */
+    float probabilityOfGoodFix;
 } clientDiagGnssLocationStructType;
 
 typedef uint32_t clientDiagGnssMeasurementsDataFlagsMask;
