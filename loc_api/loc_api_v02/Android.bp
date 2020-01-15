@@ -1,0 +1,48 @@
+
+cc_library_shared {
+
+    name: "libloc_api_v02",
+    vendor: true,
+
+    sanitize: GNSS_SANITIZE,
+
+    shared_libs: [
+        "libutils",
+        "libcutils",
+        "libqmi_cci",
+        "libqmi_common_so",
+        "libloc_core",
+        "libgps.utils",
+        "libdl",
+        "liblog",
+    ],
+
+    srcs: [
+        "LocApiV02.cpp",
+        "loc_api_v02_log.cpp",
+        "loc_api_v02_client.cpp",
+        "loc_api_sync_req.cpp",
+        "location_service_v02.c",
+    ],
+
+    cflags: [
+        "-fno-short-enums",
+        "-D_ANDROID_",
+    ] + GNSS_CFLAGS,
+
+    header_libs: [
+        "libloc_core_headers",
+        "libgps.utils_headers",
+        "libloc_pla_headers",
+        "liblocation_api_headers",
+        "libqmi_common_headers",
+        "libqmi_cci_headers",
+    ],
+}
+
+cc_library_headers {
+
+    name: "libloc_api_v02_headers",
+    export_include_dirs: ["."],
+    vendor: true,
+}
