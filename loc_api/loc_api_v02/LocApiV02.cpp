@@ -3479,6 +3479,11 @@ void  LocApiV02 :: reportSv (
 
                 if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_SNR_V02) {
                     gnssSv_ref.cN0Dbhz = sv_info_ptr->snr;
+                    if ((1 == gnss_report_ptr->expandedSvList_valid) &&
+                        (1 == gnss_report_ptr->rfLoss_valid)) {
+                        gnssSv_ref.basebandCarrierToNoiseDbHz = gnssSv_ref.cN0Dbhz -
+                                gnss_report_ptr->rfLoss[i];
+                    }
                 }
 
                 if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_ELEVATION_V02) {
@@ -5986,6 +5991,10 @@ bool LocApiV02 :: convertGnssMeasurements(
         }
     }
 
+    // basebandCarrierToNoiseDbHz
+    measurementData.basebandCarrierToNoiseDbHz = measurementData.carrierToNoiseDbHz -
+            gnss_measurement_info.gloRfLoss / 10.0;
+
     LOC_LOGv(" GNSS measurement raw data received from modem:\n"
              " Input => gnssSvId=%d validMask=0x%04x validMeasStatus=0x%" PRIx64
              "  CNo=%d dopplerShift=%.2f dopplerShiftUnc=%.2f fineSpeed=%.2f fineSpeedUnc=%.2f"
@@ -5994,7 +6003,7 @@ bool LocApiV02 :: convertGnssMeasurements(
              " GNSS measurement data after conversion:"
              " Output => size=%" PRIu32 "svid=%d time_offset_ns=%.2f stateMask=0x%08x"
              "  received_sv_time_in_ns=%" PRIu64 " received_sv_time_uncertainty_in_ns=%" PRIu64
-             "  c_n0_dbhz=%.2f"
+             "  c_n0_dbhz=%.2f baseband_c_n0_dbhz=%.2f"
              "  pseudorange_rate_mps=%.2f pseudorange_rate_uncertainty_mps=%.2f"
              "  adrStateMask=0x%02x adrMeters=%.2f adrUncertaintyMeters=%.6f"
              "  carrierFrequencyHz=%.2f codeType=%d",
@@ -6020,6 +6029,7 @@ bool LocApiV02 :: convertGnssMeasurements(
              measurementData.receivedSvTimeNs,                                  // %PRIu64
              measurementData.receivedSvTimeUncertaintyNs,                       // %PRIu64
              measurementData.carrierToNoiseDbHz,                                // %g
+             measurementData.basebandCarrierToNoiseDbHz,                        // %g
              measurementData.pseudorangeRateMps,                                // %g
              measurementData.pseudorangeRateUncertaintyMps,                     // %g
              measurementData.adrStateMask,                                      // 0x%2x
