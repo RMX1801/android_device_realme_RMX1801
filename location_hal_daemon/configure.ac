@@ -58,7 +58,13 @@ AC_ARG_ENABLE([target-sdxpoorwills],
   target_sdxpoorwills=no)
 
 
-AM_CONDITIONAL(POWERMANAGER_ENABLED, [test "x$target_mdm9607" = "xyes" -o "x$target_sdxpoorwills" = xyes])
+AC_ARG_ENABLE([target-sdxprairie],
+  AC_HELP_STRING([--enable-target-sdxprairie],
+          [Enable conditional compile for target sdxprairie]),
+  [target_sdxprairie="${enableval}"],
+  target_sdxprairie=no)
+
+AM_CONDITIONAL(POWERMANAGER_ENABLED, [test "x$target_mdm9607" = "xyes" -o "x$target_sdxpoorwills" = xyes -o "x$target_sdxprairie" = "xyes"])
 AM_COND_IF(POWERMANAGER_ENABLED, [
     PKG_CHECK_MODULES([PM], [powermanager])
     AC_SUBST([PM_CFLAGS])
