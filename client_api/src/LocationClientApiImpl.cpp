@@ -1958,8 +1958,18 @@ void LocationClientApiImpl::updateLocationSystemInfoListener(
                     LOC_LOGd(">>> UpdateCallbacksReq new callBacksMask=0x%x, "
                              "old mask =0x%x, rc=%d",
                              mApiImpl->mCallbacksMask, callbackMaskCopy, rc);
+                    if (mResponseCb) {
+                        if (true == rc) {
+                            mResponseCb(LOCATION_RESPONSE_SUCCESS);
+                        } else {
+                            mResponseCb(LOCATION_RESPONSE_UNKOWN_FAILURE);
+                        }
+                    }
                 }
             } else {
+                if (mResponseCb) {
+                    mResponseCb(LOCATION_RESPONSE_SUCCESS);
+                }
                 LOC_LOGd("No updateCallbacks because same callback");
             }
         }
