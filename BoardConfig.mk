@@ -18,6 +18,9 @@ BOARD_VENDOR := realme
 
 DEVICE_PATH := device/realme/RMX1801
 
+## TMP
+BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
+
 # Arch
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
