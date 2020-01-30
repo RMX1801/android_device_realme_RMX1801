@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2018, 2020 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2020, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -2736,6 +2736,11 @@ void LocApiV02 :: reportPosition (
             {
                 locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_MAG_DEV;
                 locationExtended.magneticDeviation = location_report_ptr->magneticDeviation;
+            }
+
+            if (location_report_ptr->probabilityOfGoodFix_valid) {
+                locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_PROBABILITY_OF_GOOD_FIX;
+                locationExtended.probabilityOfGoodFix = location_report_ptr->probabilityOfGoodFix;
             }
 
             if (location_report_ptr->DOP_valid)
@@ -6428,6 +6433,42 @@ void LocApiV02 :: updatePowerState(PowerStateType powerState){
     }
 
     LOC_LOGd("Exit. err: %u", err);
+    }));
+}
+
+void LocApiV02::configRobustLocation
+        (bool enable, bool enableForE911, LocApiResponse *adapterResponse) {
+
+    sendMsg(new LocApiMsg([this, enable, enableForE911, adapterResponse] () {
+
+    LocationError err = LOCATION_ERROR_SUCCESS;
+    qmiLocSetRobustLocationReqMsgT_v02 req;
+    qmiLocGenReqStatusIndMsgT_v02 ind;
+    locClientStatusEnumType status;
+    locClientReqUnionType req_union;
+
+    LOC_LOGd("Enter. enabled %d, enableForE911", enable, enableForE911);
+    memset(&req, 0, sizeof(req));
+    memset(&ind, 0, sizeof(ind));
+    req.enable = enable;
+    req.enableForE911_valid = true;
+    req.enableForE911 = enableForE911;
+
+    req_union.pSetRobustLocationReq = &req;
+    status = locSyncSendReq(QMI_LOC_SET_ROBUST_LOCATION_CONFIG_REQ_V02,
+                            req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
+                            QMI_LOC_SET_ROBUST_LOCATION_CONFIG_IND_V02,
+                            &ind);
+    if (status != eLOC_CLIENT_SUCCESS || ind.status != eQMI_LOC_SUCCESS_V02) {
+        LOC_LOGe("failed. status: %s, ind status:%s\n",
+                 loc_get_v02_client_status_name(status),
+                 loc_get_v02_qmi_status_name(ind.status));
+        err = LOCATION_ERROR_GENERAL_FAILURE;
+    }
+    if (adapterResponse) {
+        adapterResponse->returnToSender(err);
+    }
+    LOC_LOGv("Exit. err: %u", err);
     }));
 }
 

@@ -599,6 +599,10 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT;
     }
 
+    if (GNSS_LOCATION_INFO_PROBABILITY_OF_GOOD_FIX_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_PROBABILITY_OF_GOOD_FIX_BIT;
+    }
+
     locationInfo.gnssInfoFlags = (GnssLocationInfoFlagMask)flags;
     locationInfo.altitudeMeanSeaLevel = halLocationInfo.altitudeMeanSeaLevel;
     locationInfo.pdop = halLocationInfo.pdop;
@@ -627,6 +631,8 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
             (LocOutputEngineType)halLocationInfo.locOutputEngType;
     locationInfo.locOutputEngMask =
             (PositioningEngineMask)halLocationInfo.locOutputEngMask;
+    locationInfo.probabilityOfGoodFix = halLocationInfo.probabilityOfGoodFix;
+
     parseGnssMeasUsageInfo(halLocationInfo, locationInfo.measUsageInfo);
 
     flags = 0;
@@ -2604,6 +2610,10 @@ uint32_t LocationClientApiImpl::configPositionAssistedClockEstimator(bool enable
 }
 
 uint32_t LocationClientApiImpl::configLeverArm(const LeverArmConfigInfo& configInfo) {
+    return 0;
+}
+
+uint32_t LocationClientApiImpl::configRobustLocation(bool enable, bool enableForE911) {
     return 0;
 }
 
