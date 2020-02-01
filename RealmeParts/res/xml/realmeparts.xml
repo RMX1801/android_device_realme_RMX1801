@@ -30,6 +30,22 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/touchscreen_gesture_category">
+
+        <Preference
+            android:key="touchscreen_gesture_category"
+            android:title="@string/touchscreen_gesture_settings_title"
+            android:summary="@string/touchscreen_gesture_settings_summary"
+            android:icon="@drawable/ic_gesture"
+            android:persistent="false" >
+            <intent android:action="android.intent.action.MAIN"
+                    android:targetPackage="com.realmeparts.settings"
+                    android:targetClass="com.realmeparts.settings.touch.TouchscreenGestureSettings" />
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/vibrator_intensity_control">
 
         <com.realmeparts.settings.vibration.VibratorStrengthPreference

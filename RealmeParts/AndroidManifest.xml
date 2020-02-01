@@ -27,6 +27,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <protected-broadcast android:name="com.android.systemui.doze.pulse" />
+    <protected-broadcast android:name="com.realmeparts.settings.UPDATE_SETTINGS" />
 
     <uses-sdk
         android:minSdkVersion="24"
@@ -85,6 +86,12 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".Startup" >
+            <intent-filter android:priority="100" >
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <service android:name=".doze.DozeService"
                  android:permission="RealmeDozeService">
         </service>
@@ -92,6 +99,12 @@
         <activity
             android:name=".doze.DozeSettingsActivity"
             android:label="@string/ambient_display_title"
+            android:theme="@style/Theme.Main">
+        </activity>
+
+        <activity
+            android:name=".touch.TouchscreenGestureSettings"
+            android:label="@string/touchscreen_gesture_settings_title"
             android:theme="@style/Theme.Main">
         </activity>
 
