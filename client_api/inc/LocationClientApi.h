@@ -310,7 +310,9 @@ enum GnssSvType {
     /**  SV is of BEIDOU constellation. <br/>   */
     GNSS_SV_TYPE_BEIDOU  = 5,
     /**  SV is of GALILEO constellation. <br/>   */
-    GNSS_SV_TYPE_GALILEO = 6
+    GNSS_SV_TYPE_GALILEO = 6,
+    /**  SV is of NAVIC constellation. <br/>   */
+    GNSS_SV_TYPE_NAVIC   = 7
 };
 
 

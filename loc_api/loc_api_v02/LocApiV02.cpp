@@ -1070,7 +1070,13 @@ void LocApiV02::injectPosition(const GnssLocationInfoNotification &locationInfo,
              injectPositionReq.gpsTime.gpsWeek = msecTotal / WEEK_MSECS;
              injectPositionReq.gpsTime.gpsTimeOfWeekMs = msecTotal % WEEK_MSECS;
          }
-    }
+      } else if (locationInfo.gnssSystemTime.gnssSystemTimeSrc == GNSS_LOC_SV_SYSTEM_NAVIC) {
+            injectPositionReq.gpsTime_valid = 1;
+            injectPositionReq.gpsTime.gpsWeek =
+                    locationInfo.gnssSystemTime.u.navicSystemTime.systemWeek;
+            injectPositionReq.gpsTime.gpsTimeOfWeekMs =
+                    locationInfo.gnssSystemTime.u.navicSystemTime.systemMsec;
+       }
 
     // velocity enu
     if ((GNSS_LOCATION_INFO_EAST_VEL_BIT & locationInfo.flags) &&
@@ -1226,6 +1232,9 @@ LocApiV02::deleteAidingData(const GnssAidingData& data, LocApiResponse *adapterR
               }
               if (GNSS_AIDING_DATA_SV_TYPE_GALILEO_BIT & data.sv.svTypeMask) {
                   delete_gnss_req.deleteSatelliteData.system |= QMI_LOC_SYSTEM_QZSS_V02;
+              }
+              if (GNSS_AIDING_DATA_SV_TYPE_NAVIC_BIT & data.sv.svTypeMask) {
+                  delete_gnss_req.deleteSatelliteData.system |= QMI_LOC_SYSTEM_NAVIC_V02;
               }
           }
 
@@ -3069,6 +3078,17 @@ void LocApiV02 :: reportPosition (
                                 locationExtended.measUsageInfo[idx].gnssSignalType =
                                         GNSS_SIGNAL_QZSS_L1CA;
                             }
+                        } else if ((gnssSvIdUsed >= NAVIC_SV_PRN_MIN) &&
+                                 (gnssSvIdUsed <= NAVIC_SV_PRN_MAX))
+                          {
+                            locationExtended.gnss_sv_used_ids.navic_sv_used_ids_mask |=
+                                (1 << (gnssSvIdUsed - NAVIC_SV_PRN_MIN));
+                            locationExtended.measUsageInfo[idx].gnssConstellation =
+                                GNSS_LOC_SV_SYSTEM_NAVIC;
+                            locationExtended.measUsageInfo[idx].gnssSignalType =
+                                (multiBandTypesAvailable ?
+                                    location_report_ptr->gnssSvUsedSignalTypeList[idx] :
+                                    GNSS_SIGNAL_NAVIC_L5);
                         }
                     }
                     locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_GNSS_SV_USED_DATA;
@@ -3322,7 +3342,9 @@ float LocApiV02::convertSignalTypeToCarrierFrequency(
     case QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q_V02:
         carrierFrequency = BEIDOU_B2A_Q_CARRIER_FREQUENCY;
         break;
-
+    case QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5_V02:
+        carrierFrequency = NAVIC_L5_CARRIER_FREQUENCY;
+        break;
     default:
         break;
     }
@@ -3406,7 +3428,10 @@ void  LocApiV02 :: reportSv (
                 case eQMI_LOC_SV_SYSTEM_QZSS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_QZSS;
                     break;
-
+                case eQMI_LOC_SV_SYSTEM_NAVIC_V02:
+                    gnssSv_ref.svId = sv_info_ptr->gnssSvId - 400;
+                    gnssSv_ref.type = GNSS_SV_TYPE_NAVIC;
+                    break;
                 default:
                     gnssSv_ref.type = GNSS_SV_TYPE_UNKNOWN;
                     break;
@@ -3503,7 +3528,9 @@ static Gnss_LocSvSystemEnumType getLocApiSvSystemType (qmiLocSvSystemEnumT_v02 q
     case eQMI_LOC_SV_SYSTEM_QZSS_V02:
         locSvSystemType = GNSS_LOC_SV_SYSTEM_QZSS;
         break;
-
+    case eQMI_LOC_SV_SYSTEM_NAVIC_V02:
+        locSvSystemType = GNSS_LOC_SV_SYSTEM_NAVIC;
+        break;
     default:
         break;
     }
@@ -3670,6 +3697,37 @@ void  LocApiV02 :: reportSvMeasurement (
         svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GAL_BDS_INTER_SYSTEM_BIAS;
     }
 
+   if (1 == gnss_raw_measurement_ptr->gpsNavicInterSystemBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+            (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->gpsNavicInterSystemBias;
+        getInterSystemTimeBias("gpsNavicInterSystemBias",
+            svMeasSetHead.gpsNavicInterSystemBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GPS_NAVIC_INTER_SYSTEM_BIAS;
+    }
+
+    if (1 == gnss_raw_measurement_ptr->galNavicInterSystemBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+            (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->galNavicInterSystemBias;
+       getInterSystemTimeBias("galNavicInterSystemBias",
+            svMeasSetHead.galNavicInterSystemBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GAL_NAVIC_INTER_SYSTEM_BIAS;
+    }
+    if (1 == gnss_raw_measurement_ptr->gloNavicInterSystemBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+            (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->gloNavicInterSystemBias;
+
+        getInterSystemTimeBias("gloNavicInterSystemBias",
+           svMeasSetHead.gloNavicInterSystemBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GLO_NAVIC_INTER_SYSTEM_BIAS;
+    }
+    if (1 == gnss_raw_measurement_ptr->bdsNavicInterSystemBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+            (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->bdsNavicInterSystemBias;
+        getInterSystemTimeBias("bdsNavicInterSystemBias",
+            svMeasSetHead.bdsNavicInterSystemBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_BDS_NAVIC_INTER_SYSTEM_BIAS;
+    }
+
     if (1 == gnss_raw_measurement_ptr->GpsL1L5TimeBias_valid) {
         qmiLocInterSystemBiasStructT_v02* interSystemBias =
                 (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->GpsL1L5TimeBias;
@@ -3752,6 +3810,11 @@ void  LocApiV02 :: reportSvMeasurement (
             systemTimeExtPtr = &svMeasSetHead.gloSystemTimeExt;
             systemTimeExtFlags = GNSS_SV_MEAS_HEADER_HAS_GLO_SYSTEM_TIME_EXT;
             break;
+        case GNSS_LOC_SV_SYSTEM_NAVIC:
+           systemTimePtr = &svMeasSetHead.navicSystemTime;
+           systemTimeExtPtr = &svMeasSetHead.navicSystemTimeExt;
+           systemTimeFlags = GNSS_SV_MEAS_HEADER_HAS_NAVIC_SYSTEM_TIME;
+           systemTimeExtFlags = GNSS_SV_MEAS_HEADER_HAS_NAVIC_SYSTEM_TIME_EXT;
         default:
             break;
         }
@@ -5466,7 +5529,10 @@ bool LocApiV02 :: convertGnssMeasurements (GnssMeasurementsData& measurementData
         case eQMI_LOC_SV_SYSTEM_QZSS_V02:
             measurementData.svType = GNSS_SV_TYPE_QZSS;
             break;
-
+        case eQMI_LOC_SV_SYSTEM_NAVIC_V02:
+            measurementData.svType = GNSS_SV_TYPE_NAVIC;
+            measurementData.svId = gnss_measurement_info.gnssSvId;
+            break;
         default:
             measurementData.svType = GNSS_SV_TYPE_UNKNOWN;
             break;
@@ -7224,7 +7290,12 @@ LocApiV02::convertToGnssSvTypeConfig(
                     ind.qzss_status == eQMI_LOC_CONSTELLATION_ENABLED_BY_CLIENT_V02)) {
         config.enabledSvTypesMask |= GNSS_SV_TYPES_MASK_QZSS_BIT;
     }
-
+    if (ind.navic_status_valid &&
+            (ind.navic_status == eQMI_LOC_CONSTELLATION_ENABLED_MANDATORY_V02 ||
+                    ind.navic_status == eQMI_LOC_CONSTELLATION_ENABLED_INTERNALLY_V02 ||
+                    ind.navic_status == eQMI_LOC_CONSTELLATION_ENABLED_BY_CLIENT_V02)) {
+        config.enabledSvTypesMask |= GNSS_SV_TYPES_MASK_NAVIC_BIT;
+    }
     // Disabled Mask
     if (ind.bds_status_valid &&
             (ind.bds_status == eQMI_LOC_CONSTELLATION_DISABLED_NOT_SUPPORTED_V02 ||
@@ -7253,6 +7324,13 @@ LocApiV02::convertToGnssSvTypeConfig(
                     ind.qzss_status == eQMI_LOC_CONSTELLATION_DISABLED_BY_CLIENT_V02 ||
                     ind.qzss_status == eQMI_LOC_CONSTELLATION_DISABLED_NO_MEMORY_V02)) {
         config.blacklistedSvTypesMask |= GNSS_SV_TYPES_MASK_QZSS_BIT;
+    }
+    if (ind.navic_status_valid &&
+            (ind.navic_status == eQMI_LOC_CONSTELLATION_DISABLED_NOT_SUPPORTED_V02 ||
+                    ind.navic_status == eQMI_LOC_CONSTELLATION_DISABLED_INTERNALLY_V02 ||
+                    ind.navic_status == eQMI_LOC_CONSTELLATION_DISABLED_BY_CLIENT_V02 ||
+                    ind.navic_status == eQMI_LOC_CONSTELLATION_DISABLED_NO_MEMORY_V02)) {
+        config.blacklistedSvTypesMask |= GNSS_SV_TYPES_MASK_NAVIC_BIT;
     }
 }
 
