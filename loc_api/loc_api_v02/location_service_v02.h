@@ -62,8 +62,8 @@
  *THIS IS AN AUTO GENERATED FILE. DO NOT ALTER IN ANY WAY
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
-/* This file was generated with Tool version 6.14.7
-   It was generated on: Wed Jan 29 2020 (Spin 0)
+/* This file was generated with Tool version 6.14.9
+   It was generated on: Wed Feb  5 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -21695,24 +21695,24 @@ typedef struct {
 /** @addtogroup loc_qmi_messages
     @{
   */
-/** Request Message; This message is used to enable Robust location  */
+/** Request Message; This message is used to configure Robust Location. */
 typedef struct {
 
   /* Mandatory */
   /*  Enable */
   uint8_t enable;
-  /**<   Indicates whether to disable or enable robust location  \n
-       - 0x00 (FALSE) -- Disable Robust Location  \n
-       - 0x01 (TRUE)  -- Enable Robust Location  \n
+  /**<   Specifies the Robust Location configuration.  \n
+       - 0x00 (FALSE) -- Disable \n
+       - 0x01 (TRUE)  -- Enable  \n
   */
 
   /* Optional */
-  /*  Override E911 */
+  /*  Enable for E911 */
   uint8_t enableForE911_valid;  /**< Must be set to true if enableForE911 is being passed */
   uint8_t enableForE911;
-  /**<    Specifies if robust location reporting should continue while in e911 state.  \n
-       - 0x00 (FALSE) -- Disable robust location reporting while in E911 state. \n
-       - 0x01 (TRUE)  -- Enable  robust location reporting while in E911 state \n
+  /**<    Specifies the Robust Location configuration during e911 state.  \n
+       - 0x00 (FALSE) -- Disable  \n
+       - 0x01 (TRUE)  -- Enable   \n
   */
 }qmiLocSetRobustLocationReqMsgT_v02;  /* Message */
 /**
@@ -21722,13 +21722,13 @@ typedef struct {
 /** @addtogroup loc_qmi_messages
     @{
   */
-/** Indication Message; This message queries the configuration of robust location */
+/** Indication Message; This message queries the Robust Location configuration. */
 typedef struct {
 
   /* Mandatory */
-  /*  Enable */
+  /*  Status */
   qmiLocStatusEnumT_v02 status;
-  /**<   Status of get robust location config Request.
+  /**<   Status of the request.
  Valid values: \n
       - eQMI_LOC_SUCCESS (0) --  Request was completed successfully \n
       - eQMI_LOC_GENERAL_FAILURE (1) --  Request failed because of a general failure \n
@@ -21744,21 +21744,22 @@ typedef struct {
       - eQMI_LOC_GNSS_DISABLED (11) --  Request failed because the location service is disabled
  */
 
-  /* Mandatory */
+  /* Optional */
   /*  Enable */
+  uint8_t isEnabled_valid;  /**< Must be set to true if isEnabled is being passed */
   uint8_t isEnabled;
-  /**<   Indicates whether robust location is enabled or disabled  \n
-       - 0x00 (FALSE) -- Disabled Robust Location  \n
-       - 0x01 (TRUE)  -- Enabled Robust Location  \n
+  /**<   Configuration of Robust Location.  \n
+       - 0x00 (FALSE) -- Disabled  \n
+       - 0x01 (TRUE)  -- Enabled   \n
   */
 
   /* Optional */
-  /*  Override E911 */
-  uint8_t overriddenE911_valid;  /**< Must be set to true if overriddenE911 is being passed */
-  uint8_t overriddenE911;
-  /**<    Specifies if robust location reporting is enabled while in e911 state. \n
-       - 0x00 (FALSE) -- Robust location reporting disabled while in E911 state. \n
-       - 0x01 (TRUE)  -- Robust location reporting disabled in E911 state \n
+  /*  Enable for E911 */
+  uint8_t isEnabledForE911_valid;  /**< Must be set to true if isEnabledForE911 is being passed */
+  uint8_t isEnabledForE911;
+  /**<    Configuration of Robust Location during e911 state. \n
+       - 0x00 (FALSE) -- Disabled \n
+       - 0x01 (TRUE)  -- Enabled  \n
   */
 }qmiLocGetRobustLocationConfigIndMsgT_v02;  /* Message */
 /**

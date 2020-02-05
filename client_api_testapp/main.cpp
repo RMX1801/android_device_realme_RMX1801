@@ -430,7 +430,7 @@ int main(int argc, char *argv[]) {
             token = strtok_r(NULL, " ", &save);
             if (token != NULL) {
                 enable = (atoi(token) == 1);
-                enableForE911 = strtok_r(NULL, " ", &save);
+                token = strtok_r(NULL, " ", &save);
                 if (token != NULL) {
                     enableForE911 = (atoi(token) == 1);
                 }
