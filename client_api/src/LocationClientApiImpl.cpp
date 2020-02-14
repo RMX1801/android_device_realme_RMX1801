@@ -599,8 +599,8 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT;
     }
 
-    if (GNSS_LOCATION_INFO_PROBABILITY_OF_GOOD_FIX_BIT & halLocationInfo.flags) {
-        flags |= GNSS_LOCATION_INFO_PROBABILITY_OF_GOOD_FIX_BIT;
+    if (GNSS_LOCATION_INFO_CONFORMITY_INDEX_FIX_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT;
     }
 
     locationInfo.gnssInfoFlags = (GnssLocationInfoFlagMask)flags;
@@ -631,7 +631,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
             (LocOutputEngineType)halLocationInfo.locOutputEngType;
     locationInfo.locOutputEngMask =
             (PositioningEngineMask)halLocationInfo.locOutputEngMask;
-    locationInfo.probabilityOfGoodFix = halLocationInfo.probabilityOfGoodFix;
+    locationInfo.conformityIndex = halLocationInfo.conformityIndex;
 
     parseGnssMeasUsageInfo(halLocationInfo, locationInfo.measUsageInfo);
 

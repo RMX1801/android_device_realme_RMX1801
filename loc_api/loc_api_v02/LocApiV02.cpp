@@ -2747,9 +2747,9 @@ void LocApiV02 :: reportPosition (
                 locationExtended.magneticDeviation = location_report_ptr->magneticDeviation;
             }
 
-            if (location_report_ptr->probabilityOfGoodFix_valid) {
-                locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_PROBABILITY_OF_GOOD_FIX;
-                locationExtended.probabilityOfGoodFix = location_report_ptr->probabilityOfGoodFix;
+            if (location_report_ptr->conformityIndex_valid) {
+                locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_CONFORMITY_INDEX;
+                locationExtended.conformityIndex = location_report_ptr->conformityIndex;
             }
 
             if (location_report_ptr->DOP_valid)

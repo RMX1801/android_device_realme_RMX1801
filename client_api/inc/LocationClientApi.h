@@ -416,10 +416,9 @@ enum GnssLocationInfoFlagMask {
     /** GnssLocation has valid
      *  GnssLocation::locOutputEngMask. <br/>   */
     GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT              = (1<<28),
-    /** GnssLocation has valid
-     *  GnssLocation::probabilityOfGoodFix. <br/>   */
-    GNSS_LOCATION_INFO_PROBABILITY_OF_GOOD_FIX_BIT      = (1<<29),
-
+    /** GnssLocation has valid GnssLocation::conformityIndex.
+     *  <br/> */
+    GNSS_LOCATION_INFO_CONFORMITY_INDEX_FIX_BIT         = (1<<29),
 };
 
 /** Specify the reliability level of
@@ -888,8 +887,12 @@ struct GnssLocation : public Location {
      *  indicates the set of engines contribute to the fix. <br/> */
     PositioningEngineMask locOutputEngMask;
     /** When robust location is enabled, this field
-     * will indicate proability of good fix, range [0.0, 1.0] </br> */
-    float probabilityOfGoodFix;
+     * will indicate how well the various input data considered for
+     * navigation solution conform to expectations.
+     * Range: [0.0, 1.0], with 0.0 for least conforming and 1.0 for
+     * most conforming.
+     * </br> */
+    float conformityIndex;
 
     /* Default constructor to initalize GnssLocation structure */
     inline GnssLocation() :
@@ -912,7 +915,7 @@ struct GnssLocation : public Location {
             calibrationStatus((DrCalibrationStatusMask)0),
             locOutputEngType ((LocOutputEngineType)0),
             locOutputEngMask((PositioningEngineMask)0),
-            probabilityOfGoodFix(0.0f) {
+            conformityIndex(0.0f) {
     }
 };
 

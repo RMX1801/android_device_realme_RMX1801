@@ -413,15 +413,15 @@ public:
 
 
     /** @brief
-        Enable/disable roubst location feature and enable/disable
+        Enable/disable robust location feature and enable/disable
         robust location while device is on E911.
 
         @param
-        enable: true to enable roubst location and false to disable
+        enable: true to enable robust location and false to disable
         robust location.
 
         @param
-        enableForE911: true to enable roubst location when device is
+        enableForE911: true to enable robust location when device is
         on E911 session and false to disable on E911 session. <br/>
         This parameter is only valid if robust location is enabled.
         </br>
