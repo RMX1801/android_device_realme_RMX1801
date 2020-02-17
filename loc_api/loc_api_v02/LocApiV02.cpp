@@ -4105,6 +4105,12 @@ void LocApiV02::reportSvMeasurementSvLoop(
             if (qmiSvMeas.validMask & QMI_LOC_SV_CARRIER_PHASE_VALID_V02) {
                 svMeas.carrierPhaseValid = 1;
                 svMeas.carrierPhase = qmiSvMeas.carrierPhase;
+                /* Set carrier phase unc valid only when carrier phase is set to valid */
+                if (validCarrierPhaseUnc) {
+                    svMeas.carrierPhaseUncValid = 1;
+                    svMeas.carrierPhaseUnc =
+                        gnss_raw_measurement_ptr->svCarrierPhaseUncertainty[i];
+                }
             }
             if (qmiSvMeas.validMask & QMI_LOC_SV_SV_DIRECTION_VALID_V02) {
                 svMeas.svDirectionValid = 1;
@@ -4115,13 +4121,6 @@ void LocApiV02::reportSvMeasurementSvLoop(
                 svMeas.cycleSlipCountValid = 1;
                 svMeas.cycleSlipCount = qmiSvMeas.cycleSlipCount;
             }
-
-            if (validCarrierPhaseUnc) {
-                svMeas.carrierPhaseUncValid = 1;
-                svMeas.carrierPhaseUnc =
-                    gnss_raw_measurement_ptr->svCarrierPhaseUncertainty[i];
-            }
-
             if (validDgnssSvMeas) {
                 svMeas.dgnssSvMeas.dgnssMeasStatus = (LocSvDgnssMeasStatusMask)
                         (dgnss_sv_meas_ptr + i)->dgnssMeasStatus,
