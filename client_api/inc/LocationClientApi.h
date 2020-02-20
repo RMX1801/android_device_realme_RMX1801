@@ -418,7 +418,7 @@ enum GnssLocationInfoFlagMask {
     GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT              = (1<<28),
     /** GnssLocation has valid GnssLocation::conformityIndex.
      *  <br/> */
-    GNSS_LOCATION_INFO_CONFORMITY_INDEX_FIX_BIT         = (1<<29),
+    GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT         = (1<<29),
 };
 
 /** Specify the reliability level of
