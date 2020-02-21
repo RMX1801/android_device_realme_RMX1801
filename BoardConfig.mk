@@ -160,6 +160,9 @@ BOARD_ROOT_EXTRA_SYMLINKS := \
     /vendor/dsp:/dsp \
     /vendor/firmware_mnt:/firmware
 
+# Security patch level
+VENDOR_SECURITY_PATCH := 2019-11-05
+
 # Telephony
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
 
