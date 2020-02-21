@@ -59,7 +59,6 @@ media.stagefright.enable-qcp=true
 media.stagefright.enable-scan=true
 mm.enable.smoothstreaming=true
 mmp.enable.3g2=true
-media.settings.xml=/vendor/etc/media_profiles_vendor.xml
 persist.mm.enable.prefetch=true
 vendor.mm.enable.qcom_parser=13631487
 
