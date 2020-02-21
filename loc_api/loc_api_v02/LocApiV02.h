@@ -71,6 +71,61 @@ typedef struct
     uint8_t cycleSlipCount;
 } adrData;
 
+typedef uint64_t GpsSvMeasHeaderFlags;
+#define BIAS_GPSL1_VALID                0x00000001
+#define BIAS_GPSL1_UNC_VALID            0x00000002
+#define BIAS_GPSL1_GPSL5_VALID          0x00000004
+#define BIAS_GPSL1_GPSL5_UNC_VALID      0x00000008
+#define BIAS_GPSL1_GLOG1_VALID          0x00000010
+#define BIAS_GPSL1_GLOG1_UNC_VALID      0x00000020
+#define BIAS_GPSL1_GALE1_VALID          0x00000040
+#define BIAS_GPSL1_GALE1_UNC_VALID      0x00000080
+#define BIAS_GPSL1_BDSB1_VALID          0x00000100
+#define BIAS_GPSL1_BDSB1_UNC_VALID      0x00000200
+#define BIAS_GPSL1_NAVIC_VALID          0x00000400
+#define BIAS_GPSL1_NAVIC_UNC_VALID      0x00000800
+
+#define BIAS_GALE1_VALID                0x00001000
+#define BIAS_GALE1_UNC_VALID            0x00002000
+#define BIAS_GALE1_GALE5A_VALID         0x00004000
+#define BIAS_GALE1_GALE5A_UNC_VALID     0x00008000
+#define BIAS_BDSB1_VALID                0x00010000
+#define BIAS_BDSB1_UNC_VALID            0x00020000
+#define BIAS_BDSB1_BDSB1C_VALID         0x00040000
+#define BIAS_BDSB1_BDSB1C_UNC_VALID     0x00080000
+#define BIAS_BDSB1_BDSB2A_VALID         0x00100000
+#define BIAS_BDSB1_BDSB2A_UNC_VALID     0x00200000
+
+typedef struct {
+    uint64_t flags;
+
+    /* used directly */
+    float gpsL1;
+    float gpsL1Unc;
+    float gpsL1_gpsL5;
+    float gpsL1_gpsL5Unc;
+    float gpsL1_gloG1;
+    float gpsL1_gloG1Unc;
+    float gpsL1_galE1;
+    float gpsL1_galE1Unc;
+    float gpsL1_bdsB1;
+    float gpsL1_bdsB1Unc;
+    float gpsL1_navic;
+    float gpsL1_navicUnc;
+
+    /* used for intermediate computations */
+    float galE1;
+    float galE1Unc;
+    float galE1_galE5a;
+    float galE1_galE5aUnc;
+    float bdsB1;
+    float bdsB1Unc;
+    float bdsB1_bdsB1c;
+    float bdsB1_bdsB1cUnc;
+    float bdsB1_bdsB2a;
+    float bdsB1_bdsB2aUnc;
+} timeBiases;
+
 /* This class derives from the LocApiBase class.
    The members of this class are responsible for converting
    the Loc API V02 data structures into Loc Adapter data structures.
@@ -96,6 +151,7 @@ private:
   bool mGPSreceived;
   int  mMsInWeek;
   bool mAgcIsPresent;
+  timeBiases mTimeBiases;
 
   size_t mBatchSize, mDesiredBatchSize;
   size_t mTripBatchSize, mDesiredTripBatchSize;
@@ -236,10 +292,13 @@ private:
       mGnssMeasurements->gnssSvMeasurementSet.isNhz = false;
       mGnssMeasurements->gnssSvMeasurementSet.svMeasSetHeader.size =
           sizeof(GnssSvMeasurementHeader);
+      memset(&mTimeBiases, 0, sizeof(mTimeBiases));
       mGPSreceived = false;
       mMsInWeek = -1;
       mAgcIsPresent = false;
   }
+
+  void setGnssBiases();
 
   /* convert and report ODCPI request */
   void requestOdcpi(
