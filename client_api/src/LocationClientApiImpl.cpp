@@ -270,7 +270,8 @@ static void parseGnssMeasUsageInfo(const ::GnssLocationInfoNotification &halLoca
 }
 
 static GnssLocationPositionDynamics parseLocationPositionDynamics(
-        const ::GnssLocationPositionDynamics &halPositionDynamics) {
+        const ::GnssLocationPositionDynamics &halPositionDynamics,
+        const ::GnssLocationPositionDynamicsExt &halPositionDynamicsExt) {
     GnssLocationPositionDynamics positionDynamics = {};
     uint32_t bodyFrameDataMask = 0;
 
@@ -286,15 +287,6 @@ static GnssLocationPositionDynamics parseLocationPositionDynamics(
         bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_VERT_ACCEL_BIT;
         positionDynamics.vertAccel = halPositionDynamics.vertAccel;
     }
-    if (::LOCATION_NAV_DATA_HAS_YAW_RATE_BIT & halPositionDynamics.bodyFrameDataMask) {
-        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_YAW_RATE_BIT;
-        positionDynamics.yawRate = halPositionDynamics.yawRate;
-    }
-    if (::LOCATION_NAV_DATA_HAS_PITCH_BIT & halPositionDynamics.bodyFrameDataMask) {
-        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_PITCH_BIT;
-        positionDynamics.pitch = halPositionDynamics.pitch;
-    }
-
     if (::LOCATION_NAV_DATA_HAS_LONG_ACCEL_UNC_BIT & halPositionDynamics.bodyFrameDataMask) {
         bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_LONG_ACCEL_UNC_BIT;
         positionDynamics.longAccelUnc = halPositionDynamics.longAccelUnc;
@@ -307,15 +299,57 @@ static GnssLocationPositionDynamics parseLocationPositionDynamics(
         bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_VERT_ACCEL_UNC_BIT;
         positionDynamics.vertAccelUnc = halPositionDynamics.vertAccelUnc;
     }
-    if (::LOCATION_NAV_DATA_HAS_YAW_RATE_UNC_BIT & halPositionDynamics.bodyFrameDataMask) {
-        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_YAW_RATE_UNC_BIT;
-        positionDynamics.yawRateUnc = halPositionDynamics.yawRateUnc;
+
+    if (::LOCATION_NAV_DATA_HAS_ROLL_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_ROLL_BIT;
+        positionDynamics.roll = halPositionDynamicsExt.roll;
+    }
+    if (::LOCATION_NAV_DATA_HAS_ROLL_UNC_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_ROLL_UNC_BIT;
+        positionDynamics.rollUnc = halPositionDynamicsExt.rollUnc;
+    }
+    if (::LOCATION_NAV_DATA_HAS_ROLL_RATE_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_ROLL_RATE_BIT;
+        positionDynamics.rollRate = halPositionDynamicsExt.rollRate;
+    }
+    if (::LOCATION_NAV_DATA_HAS_ROLL_RATE_UNC_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_ROLL_RATE_UNC_BIT;
+        positionDynamics.rollRateUnc = halPositionDynamicsExt.rollRateUnc;
+    }
+
+    if (::LOCATION_NAV_DATA_HAS_PITCH_BIT & halPositionDynamics.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_PITCH_BIT;
+        positionDynamics.pitch = halPositionDynamics.pitch;
     }
     if (::LOCATION_NAV_DATA_HAS_PITCH_UNC_BIT & halPositionDynamics.bodyFrameDataMask) {
         bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_PITCH_UNC_BIT;
         positionDynamics.pitchUnc = halPositionDynamics.pitchUnc;
     }
+    if (::LOCATION_NAV_DATA_HAS_PITCH_RATE_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_PITCH_RATE_BIT;
+        positionDynamics.pitchRate = halPositionDynamicsExt.pitchRate;
+    }
+    if (::LOCATION_NAV_DATA_HAS_PITCH_RATE_UNC_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_PITCH_RATE_UNC_BIT;
+        positionDynamics.pitchRateUnc = halPositionDynamicsExt.pitchRateUnc;
+    }
 
+    if (::LOCATION_NAV_DATA_HAS_YAW_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_YAW_BIT;
+        positionDynamics.yaw = halPositionDynamicsExt.yaw;
+    }
+    if (::LOCATION_NAV_DATA_HAS_YAW_UNC_BIT & halPositionDynamicsExt.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_YAW_UNC_BIT;
+        positionDynamics.yawUnc = halPositionDynamicsExt.yawUnc;
+    }
+    if (::LOCATION_NAV_DATA_HAS_YAW_RATE_BIT & halPositionDynamics.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_YAW_RATE_BIT;
+        positionDynamics.yawRate = halPositionDynamics.yawRate;
+    }
+    if (::LOCATION_NAV_DATA_HAS_YAW_RATE_UNC_BIT & halPositionDynamics.bodyFrameDataMask) {
+        bodyFrameDataMask |= LOCATION_NAV_DATA_HAS_YAW_RATE_UNC_BIT;
+        positionDynamics.yawRateUnc = halPositionDynamics.yawRateUnc;
+    }
     positionDynamics.bodyFrameDataMask = (GnssLocationPosDataMask)bodyFrameDataMask;
 
     return positionDynamics;
@@ -618,6 +652,14 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT;
     }
 
+    if (::GNSS_LOCATION_INFO_LLA_VRP_BASED_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_LLA_VRP_BASED_BIT;
+    }
+
+    if (::GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT;
+    }
+
     locationInfo.gnssInfoFlags = (GnssLocationInfoFlagMask)flags;
     locationInfo.altitudeMeanSeaLevel = halLocationInfo.altitudeMeanSeaLevel;
     locationInfo.pdop = halLocationInfo.pdop;
@@ -647,7 +689,13 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     locationInfo.locOutputEngMask =
             (PositioningEngineMask)halLocationInfo.locOutputEngMask;
     locationInfo.conformityIndex = halLocationInfo.conformityIndex;
-
+    locationInfo.llaVRPBased.latitude = halLocationInfo.llaVRPBased.latitude;
+    locationInfo.llaVRPBased.longitude = halLocationInfo.llaVRPBased.longitude;
+    locationInfo.llaVRPBased.altitude = halLocationInfo.llaVRPBased.altitude;
+    // copy VRP-based north, east, up velocity
+    locationInfo.enuVelocityVRPBased[0] = halLocationInfo.enuVelocityVRPBased[0];
+    locationInfo.enuVelocityVRPBased[1] = halLocationInfo.enuVelocityVRPBased[1];
+    locationInfo.enuVelocityVRPBased[2] = halLocationInfo.enuVelocityVRPBased[2];
     parseGnssMeasUsageInfo(halLocationInfo, locationInfo.measUsageInfo);
 
     flags = 0;
@@ -706,7 +754,8 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= LOCATION_POS_TECH_PPE_BIT;
     }
     locationInfo.posTechMask = (GnssLocationPosTechMask)flags;
-    locationInfo.bodyFrameData = parseLocationPositionDynamics(halLocationInfo.bodyFrameData);
+    locationInfo.bodyFrameData = parseLocationPositionDynamics(
+            halLocationInfo.bodyFrameData, halLocationInfo.bodyFrameDataExt);
     locationInfo.gnssSystemTime = parseSystemTime(halLocationInfo.gnssSystemTime);
     locationInfo.leapSeconds = halLocationInfo.leapSeconds;
     locationInfo.timeUncMs = halLocationInfo.timeUncMs;

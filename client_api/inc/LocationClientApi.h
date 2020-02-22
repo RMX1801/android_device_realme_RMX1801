@@ -448,6 +448,9 @@ enum GnssLocationInfoFlagMask {
     /** GnssLocation has valid
      *  GnssLocation::llaVRPBased. <br/>   */
     GNSS_LOCATION_INFO_LLA_VRP_BASED_BIT                = (1<<30),
+    /** GnssLocation has valid GnssLocation::enuVelocityVRPBased.
+     *  <br/> */
+    GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT       = (1<<31),
 };
 
 /** Specify the reliability level of
@@ -611,10 +614,6 @@ struct GnssLocationPositionDynamics {
     /** Vertical acceleration in body frame, in unit of
      *  meters/second^2. <br/>   */
     float           vertAccel;
-    /** Heading rate, in unit of radians/second. <br/>   */
-    float           yawRate;
-    /** Body pitch, in unit of radians. <br/>   */
-    float           pitch;
     /** Uncertainty of forward acceleration in body frame, in unit
      *  of meters/second^2. <br/>   */
     float           longAccelUnc;
@@ -624,33 +623,37 @@ struct GnssLocationPositionDynamics {
     /** Uncertainty of vertical acceleration in body frame, in unit
      *  of meters/second^2. <br/>   */
     float           vertAccelUnc;
-    /** Uncertainty of heading rate, in unit of radians/second.
-     *  <br/> */
-    float           yawRateUnc;
+    /** Body pitch, in unit of radians. <br/>   */
+    float           pitch;
     /** Uncertainty of body pitch, in unit of radians. <br/>   */
     float           pitchUnc;
     /** Body pitch rate, in unit of radians/second.  <br/> */
-    float pitchRate;
+    float           pitchRate;
     /** Uncertainty of pitch rate, in unit of radians/second.  <br/> */
-    float pitchRateUnc;
+    float           pitchRateUnc;
     /** Roll of body frame, clockwise is positive, in unit of
      *  radian.  <br/> */
-    float roll;
+    float           roll;
     /** Uncertainty of roll, 68% confidence level, in unit of
     radian. <br/>  */
-    float rollUnc;
+    float           rollUnc;
     /** Roll rate of body frame, clockwise is
     positive, in unit of radian/second. <br/> */
-    float rollRate;
+    float           rollRate;
     /** Uncertainty of roll rate, 68% confidence level, in unit of
      *  radian/second. <br/>  */
-    float rollRateUnc;
+    float           rollRateUnc;
     /** Yaw of body frame, clockwise is positive, in unit of
      *  radian. <br/> */
-    float yaw;
+    float           yaw;
     /** Uncertainty of yaw, 68% confidence level, in unit of radian.
      *  <br/> */
-    float yawUnc;
+    float           yawUnc;
+    /** Heading rate, in unit of radians/second. <br/>   */
+    float           yawRate;
+    /** Uncertainty of heading rate, in unit of radians/second.
+     *  <br/> */
+    float           yawRateUnc;
 };
 
 /** Specify none-Glonass GNSS system time info. */
@@ -962,6 +965,8 @@ struct GnssLocation : public Location {
     float conformityIndex;
     /** VRR-based latitude/longitude/altitude.  <br/> */
     LLAInfo llaVRPBased;
+    /** VRR-based east, north, and up velocity */
+    float enuVelocityVRPBased[3];
 
     /* Default constructor to initalize GnssLocation structure */
     inline GnssLocation() :
@@ -985,7 +990,8 @@ struct GnssLocation : public Location {
             locOutputEngType ((LocOutputEngineType)0),
             locOutputEngMask((PositioningEngineMask)0),
             conformityIndex(0.0f),
-            llaVRPBased({}) {
+            llaVRPBased({}),
+            enuVelocityVRPBased{0.0f, 0.0f, 0.0f} {
     }
 };
 

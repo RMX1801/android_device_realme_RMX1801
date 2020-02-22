@@ -35,13 +35,24 @@ void translateDiagGnssLocationPositionDynamics(clientDiagGnssLocationPositionDyn
     out.longAccel = in.longAccel;
     out.latAccel = in.latAccel;
     out.vertAccel = in.vertAccel;
-    out.yawRate = in.yawRate;
-    out.pitch = in.pitch;
     out.longAccelUnc = in.longAccelUnc;
     out.latAccelUnc = in.latAccelUnc;
     out.vertAccelUnc = in.vertAccelUnc;
-    out.yawRateUnc = in.yawRateUnc;
+
+    out.roll = in.roll;
+    out.rollUnc = in.rollUnc;
+    out.rollRate = in.rollRate;
+    out.rollRateUnc = in.rollRateUnc;
+
+    out.pitch = in.pitch;
     out.pitchUnc = in.pitchUnc;
+    out.pitchRate = in.pitchRate;
+    out.pitchRateUnc = in.pitchRateUnc;
+
+    out.yaw = in.yaw;
+    out.yawUnc = in.yawUnc;
+    out.yawRate = in.yawRate;
+    out.yawRateUnc = in.yawRateUnc;
 }
 
 clientDiagGnss_LocSvSystemEnumType parseDiagGnssConstellation(
@@ -330,6 +341,12 @@ void populateClientDiagLocation(clientDiagGnssLocationStructType* diagGnssLocPtr
     diagGnssLocPtr->calibrationConfidencePercent = gnssLocation.calibrationConfidencePercent;
     diagGnssLocPtr->calibrationStatus = gnssLocation.calibrationStatus;
     diagGnssLocPtr->conformityIndex = gnssLocation.conformityIndex;
+    diagGnssLocPtr->llaVRPBased.latitude = gnssLocation.llaVRPBased.latitude;
+    diagGnssLocPtr->llaVRPBased.longitude = gnssLocation.llaVRPBased.longitude;
+    diagGnssLocPtr->llaVRPBased.altitude = gnssLocation.llaVRPBased.altitude;
+    diagGnssLocPtr->enuVelocityVRPBased[0] = gnssLocation.enuVelocityVRPBased[0];
+    diagGnssLocPtr->enuVelocityVRPBased[1] = gnssLocation.enuVelocityVRPBased[1];
+    diagGnssLocPtr->enuVelocityVRPBased[2] = gnssLocation.enuVelocityVRPBased[2];
 
     struct timespec ts;
     clock_gettime(CLOCK_BOOTTIME, &ts);

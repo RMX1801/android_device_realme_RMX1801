@@ -486,9 +486,10 @@ typedef enum {
     CLIENT_DIAG_GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT              = (1<<28),
     /** valid output conformityIndex */
     CLIENT_DIAG_GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT             = (1<<29),
-    /** GnssLocation has valid
-     *  GnssLocation::llaVRPBased.  */
+    /** valid llaVRPBased.  */
     CLIENT_DIAG_GNSS_LOCATION_INFO_LLA_VRP_BASED_BIT                = (1<<30),
+    /** valid enuVelocityVRPBased. */
+    CLIENT_DIAG_GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT       = (1<<31),
 } clientDiagGnssLocationInfoFlagBits;
 
 typedef enum {
@@ -684,6 +685,8 @@ typedef PACKED struct PACKED_POST {
     float conformityIndex;
     /** VRR-based latitude/longitude/altitude. */
     clientDiagLLAInfo llaVRPBased;
+    /** VRR-based east, north, and up velocity */
+    float enuVelocityVRPBased[3];
 } clientDiagGnssLocationStructType;
 
 typedef uint32_t clientDiagGnssMeasurementsDataFlagsMask;
