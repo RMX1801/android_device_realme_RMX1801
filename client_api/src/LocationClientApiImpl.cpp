@@ -599,7 +599,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT;
     }
 
-    if (GNSS_LOCATION_INFO_CONFORMITY_INDEX_FIX_BIT & halLocationInfo.flags) {
+    if (GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT & halLocationInfo.flags) {
         flags |= GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT;
     }
 
