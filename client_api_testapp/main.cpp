@@ -217,6 +217,7 @@ void setRequiredPermToRunAsLocClient()
         numGrpIds = getgroups(LOC_PROCESS_MAX_NUM_GROUPS, appGrpsIds);
         if(numGrpIds == -1) {
             printf("Could not find groups. ngroups:%d\n", numGrpIds);
+            numGrpIds = 0;
         }
         else {
             printf("Curr num_groups = %d, Current GIDs: ", numGrpIds);
