@@ -472,6 +472,15 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             break;
         }
 
+        case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID: {
+            if (sizeof(LocConfigMinGpsWeekReqMsg) != length) {
+                LOC_LOGe("invalid message");
+                break;
+            }
+            configMinGpsWeek(reinterpret_cast<LocConfigMinGpsWeekReqMsg*>(pMsg));
+            break;
+        }
+
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID: {
             if (sizeof(LocConfigGetRobustLocationConfigReqMsg) != length) {
                 LOC_LOGe("invalid message");
@@ -480,6 +489,16 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_ROBUST_LOCATION_BIT);
             break;
         }
+
+        case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID: {
+            if (sizeof(LocConfigGetMinGpsWeekReqMsg) != length) {
+                LOC_LOGe("invalid message");
+                break;
+            }
+            getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_MIN_GPS_WEEK_BIT);
+            break;
+        }
+
         default: {
             LOC_LOGe("Unknown message");
             break;
@@ -911,11 +930,10 @@ void LocationApiService::pingTest(LocAPIPingTestReqMsg* pMsg) {
 void LocationApiService::configConstrainedTunc(
         const LocConfigConstrainedTuncReqMsg* pMsg){
 
-    std::lock_guard<std::mutex> lock(mMutex);
-    if (!pMsg || !mLocationControlApi) {
+    if (!pMsg) {
         return;
     }
-
+    std::lock_guard<std::mutex> lock(mMutex);
     uint32_t sessionId = mLocationControlApi->configConstrainedTimeUncertainty(
             pMsg->mEnable, pMsg->mTuncConstraint, pMsg->mEnergyBudget);
     LOC_LOGi(">-- enable: %d, tunc constraint %f, energy budget %d, session ID = %d",
@@ -939,13 +957,12 @@ void LocationApiService::configPositionAssistedClockEstimator(
     addConfigRequestToMap(sessionId, pMsg);
 }
 
-void LocationApiService::configConstellations(
-        const LocConfigSvConstellationReqMsg* pMsg){
+void LocationApiService::configConstellations(const LocConfigSvConstellationReqMsg* pMsg) {
 
-    std::lock_guard<std::mutex> lock(mMutex);
     if (!pMsg) {
         return;
     }
+    std::lock_guard<std::mutex> lock(mMutex);
 
     uint32_t sessionId = 0;
     if (pMsg->mResetToDefault) {
@@ -963,13 +980,12 @@ void LocationApiService::configConstellations(
     addConfigRequestToMap(sessionId, pMsg);
 }
 
-void LocationApiService::configAidingDataDeletion(
-        LocConfigAidingDataDeletionReqMsg* pMsg) {
+void LocationApiService::configAidingDataDeletion(LocConfigAidingDataDeletionReqMsg* pMsg) {
 
-    std::lock_guard<std::mutex> lock(mMutex);
     if (!pMsg) {
         return;
     }
+    std::lock_guard<std::mutex> lock(mMutex);
 
     LOC_LOGi(">-- client %s, deleteAll %d",
              pMsg->mSocketName, pMsg->mAidingData.deleteAll);
@@ -995,26 +1011,42 @@ void LocationApiService::configAidingDataDeletion(
 
 void LocationApiService::configLeverArm(const LocConfigLeverArmReqMsg* pMsg){
 
-    std::lock_guard<std::mutex> lock(mMutex);
     if (!pMsg) {
         return;
     }
+    std::lock_guard<std::mutex> lock(mMutex);
+
     uint32_t sessionId = mLocationControlApi->configLeverArm(pMsg->mLeverArmConfigInfo);
     addConfigRequestToMap(sessionId, pMsg);
 }
 
-void LocationApiService::configRobustLocation(
-        const LocConfigRobustLocationReqMsg* pMsg){
+void LocationApiService::configRobustLocation(const LocConfigRobustLocationReqMsg* pMsg){
 
-    std::lock_guard<std::mutex> lock(mMutex);
     if (!pMsg) {
         return;
     }
+    std::lock_guard<std::mutex> lock(mMutex);
+
     LOC_LOGi(">-- client %s, enable %d, enableForE911 %d",
              pMsg->mSocketName, pMsg->mEnable, pMsg->mEnableForE911);
 
     uint32_t sessionId = mLocationControlApi->configRobustLocation(
             pMsg->mEnable, pMsg->mEnableForE911);
+    addConfigRequestToMap(sessionId, pMsg);
+}
+
+void LocationApiService::configMinGpsWeek(const LocConfigMinGpsWeekReqMsg* pMsg){
+
+    if (!pMsg) {
+        return;
+    }
+    std::lock_guard<std::mutex> lock(mMutex);
+
+    LOC_LOGi(">-- client %s, minGpsWeek %u",
+             pMsg->mSocketName, pMsg->mMinGpsWeek);
+
+    uint32_t sessionId =
+            mLocationControlApi->configMinGpsWeek(pMsg->mMinGpsWeek);
     addConfigRequestToMap(sessionId, pMsg);
 }
 

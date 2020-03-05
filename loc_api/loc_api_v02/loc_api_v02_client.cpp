@@ -757,6 +757,12 @@ static const locClientRespIndTableStructT locClientRespIndTable[]= {
 
    { QMI_LOC_GET_ROBUST_LOCATION_CONFIG_IND_V02,
      sizeof(qmiLocGetRobustLocationConfigIndMsgT_v02) },
+
+   { QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_IND_V02,
+     sizeof(qmiLocGenReqStatusIndMsgT_v02) },
+
+   { QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_IND_V02,
+     sizeof(qmiLocGetMinGpsWeekNumberIndMsgT_v02) },
 };
 
 
@@ -1808,6 +1814,12 @@ bool validateRequest(
         break;
     }
 
+    case QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_REQ_V02:
+    {
+        *pOutLen = sizeof(qmiLocSetMinGpsWeekNumberReqMsgT_v02);
+        break;
+    }
+
     // ALL requests with no payload
     case QMI_LOC_GET_SERVICE_REVISION_REQ_V02:
     case QMI_LOC_GET_FIX_CRITERIA_REQ_V02:
@@ -1832,6 +1844,7 @@ bool validateRequest(
     case QMI_LOC_GET_BLACKLIST_SV_REQ_V02:
     case QMI_LOC_GET_CONSTELLATION_CONTROL_REQ_V02:
     case QMI_LOC_GET_ROBUST_LOCATION_CONFIG_REQ_V02:
+    case QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_REQ_V02:
     {
       noPayloadFlag = true;
       break;

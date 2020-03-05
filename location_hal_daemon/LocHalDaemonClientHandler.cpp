@@ -591,6 +591,13 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
             msgLen = sizeof(LocConfigGetRobustLocationConfigRespMsg);
         }
         break;
+    case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
+        if (gnssConfig.flags & GNSS_CONFIG_FLAGS_MIN_GPS_WEEK_BIT) {
+            LOC_LOGe("--< onGnssConfigCb, minGpsWeek = %d", gnssConfig.minGpsWeek);
+            msg = (uint8_t*) new LocConfigGetMinGpsWeekRespMsg(SERVICE_NAME, gnssConfig.minGpsWeek);
+            msgLen = sizeof (LocConfigGetMinGpsWeekRespMsg);
+        }
+        break;
     default:
         break;
     }

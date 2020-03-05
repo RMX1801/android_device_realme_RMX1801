@@ -60,9 +60,16 @@ static LocConfigTypeEnum getLocConfigTypeFromMsgId(ELocMsgID  msgId) {
     case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID:
         configType = CONFIG_ROBUST_LOCATION;
         break;
+    case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
+        configType = CONFIG_MIN_GPS_WEEK;
+        break;
     case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
     case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID:
         configType = GET_ROBUST_LOCATION_CONFIG;
+        break;
+    case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
+    case E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID:
+        configType = GET_MIN_GPS_WEEK;
         break;
     default:
         break;
@@ -255,13 +262,25 @@ void IpcListener::onListenerReady() {
             case E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG_ID:
             case E_INTAPI_CONFIG_LEVER_ARM_MSG_ID:
             case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID:
+            case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
             case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
+            case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
             {
                 if (sizeof(LocAPIGenericRespMsg) != mMsgData.length()) {
                     LOC_LOGw("payload size does not match for message with id: %d",
                              pMsg->msgId);
                 }
                 mApiImpl.processConfigRespCb((LocAPIGenericRespMsg*)pMsg);
+                break;
+            }
+
+            case E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID:
+            {
+                if (sizeof(LocConfigGetMinGpsWeekRespMsg) != mMsgData.length()) {
+                    LOC_LOGw("payload size does not match for message with id: %d",
+                             pMsg->msgId);
+                }
+                mApiImpl.processGetMinGpsWeekRespCb((LocConfigGetMinGpsWeekRespMsg*)pMsg);
                 break;
             }
 
@@ -525,6 +544,52 @@ uint32_t LocationIntegrationApiImpl::getRobustLocationConfig() {
     return 0;
 }
 
+uint32_t LocationIntegrationApiImpl::configMinGpsWeek(uint16_t minGpsWeek) {
+    struct ConfigMinGpsWeekReq : public LocMsg {
+        ConfigMinGpsWeekReq(LocationIntegrationApiImpl* apiImpl,
+                            uint16_t minGpsWeek) :
+                mApiImpl(apiImpl),
+                mMinGpsWeek(minGpsWeek) {}
+        virtual ~ConfigMinGpsWeekReq() {}
+        void proc() const {
+            LocConfigMinGpsWeekReqMsg msg(mApiImpl->mSocketName, mMinGpsWeek);
+            mApiImpl->sendConfigMsgToHalDaemon(CONFIG_MIN_GPS_WEEK,
+                                               reinterpret_cast<uint8_t*>(&msg),
+                                               sizeof(msg));
+        }
+        LocationIntegrationApiImpl* mApiImpl;
+        uint16_t mMinGpsWeek;
+    };
+
+    mMsgTask->sendMsg(new (nothrow) ConfigMinGpsWeekReq(this, minGpsWeek));
+
+    return 0;
+}
+
+uint32_t LocationIntegrationApiImpl::getMinGpsWeek() {
+
+    struct GetMinGpsWeekReq : public LocMsg {
+        GetMinGpsWeekReq(LocationIntegrationApiImpl* apiImpl) :
+                mApiImpl(apiImpl) {}
+        virtual ~GetMinGpsWeekReq() {}
+        void proc() const {
+            LocConfigGetMinGpsWeekReqMsg msg(mApiImpl->mSocketName);
+            mApiImpl->sendConfigMsgToHalDaemon(GET_MIN_GPS_WEEK,
+                                               reinterpret_cast<uint8_t*>(&msg),
+                                               sizeof(msg));
+        }
+        LocationIntegrationApiImpl* mApiImpl;
+    };
+
+    if (mIntegrationCbs.getMinGpsWeekCb == nullptr) {
+        LOC_LOGe("no callback passed in constructor to receive gps week info");
+        // return 1 to signal error
+        return 1;
+    }
+    mMsgTask->sendMsg(new (nothrow) GetMinGpsWeekReq(this));
+
+    return 0;
+}
 void LocationIntegrationApiImpl::sendConfigMsgToHalDaemon(
         LocConfigTypeEnum configType, uint8_t* pMsg,
         size_t msgSize, bool invokeResponseCb) {
@@ -617,6 +682,8 @@ void LocationIntegrationApiImpl::processHalReadyMsg() {
                                  reinterpret_cast<uint8_t*>(&msg),
                                  sizeof(msg));
     }
+    // Do not reconfigure min gps week, as min gps week setting
+    // can be overwritten by modem over  time
 }
 
 void LocationIntegrationApiImpl::addConfigReq(LocConfigTypeEnum configType) {
@@ -694,6 +761,16 @@ void LocationIntegrationApiImpl::processGetRobustLocationConfigRespCb(
 
         robustConfig.validMask = (RobustLocationConfigValidMask) validMask;
         mIntegrationCbs.getRobustLocationConfigCb(robustConfig);
+    }
+}
+
+void LocationIntegrationApiImpl::processGetMinGpsWeekRespCb(
+        const LocConfigGetMinGpsWeekRespMsg* pRespMsg) {
+
+    LOC_LOGd("<<< response message id: %d, min gps week: %d",
+             pRespMsg->msgId, pRespMsg->mMinGpsWeek);
+    if (mIntegrationCbs.getMinGpsWeekCb) {
+        mIntegrationCbs.getMinGpsWeekCb(pRespMsg->mMinGpsWeek);
     }
 }
 

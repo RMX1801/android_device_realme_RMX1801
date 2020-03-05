@@ -181,6 +181,7 @@ public:
     virtual uint32_t configPositionAssistedClockEstimator(bool enable) override;
     virtual uint32_t configLeverArm(const LeverArmConfigInfo& configInfo) override;
     virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
+    virtual uint32_t configMinGpsWeek(uint16_t minGpsWeek) override;
 
     // other interface
     void updateNetworkAvailability(bool available);

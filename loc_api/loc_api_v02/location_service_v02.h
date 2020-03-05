@@ -63,7 +63,7 @@
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.9
-   It was generated on: Thu Feb 13 2020 (Spin 1)
+   It was generated on: Tue Mar 24 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -89,11 +89,11 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
 /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x77
+#define LOC_V02_IDL_MINOR_VERS 0x7A
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
-#define LOC_V02_MAX_MESSAGE_ID 0x00D2
+#define LOC_V02_MAX_MESSAGE_ID 0x00D5
 /**
     @}
   */
@@ -132,6 +132,10 @@ extern "C" {
 /**  Maximum length of the list containing station IDs providing DGNSS
      correction.  */
 #define QMI_LOC_DGNSS_STATION_ID_ARRAY_LENGTH_V02 3
+
+/**  Maximum length of the list containing the SVs Enviroment Aiding Correction
+     Data to be Injected.  */
+#define QMI_LOC_ENV_AIDING_CORRECTION_MAX_SV_USED_V02 60
 
 /**  Maximum number of satellites in the satellite report.  */
 #define QMI_LOC_SV_INFO_LIST_MAX_SIZE_V02 80
@@ -18066,7 +18070,8 @@ typedef enum {
   eQMI_LOC_SUPPORTED_FEATURE_XTRA_INTEGRITY_V02 = 7, /**<  Support the XTRA integrity feature \n */
   eQMI_LOC_SUPPORTED_FEATURE_FDCL_2_V02 = 8, /**<  Support the FDCL version 2 feature \n */
   eQMI_LOC_SUPPORTED_FEATURE_LOCATION_PRIVACY_V02 = 9, /**<  Support the location privacy feature \n */
-  eQMI_LOC_SUPPORTED_FEATURE_NAVIC_V02 = 10, /**<  Support the NavIC constellation  */
+  eQMI_LOC_SUPPORTED_FEATURE_NAVIC_V02 = 10, /**<  Support the NavIC constellation \n */
+  eQMI_LOC_SUPPORTED_FEATURE_ENV_AIDING_V02 = 11, /**<  Support Environment Aiding  */
   QMILOCSUPPORTEDFEATUREENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
 }qmiLocSupportedFeatureEnumT_v02;
 /**
@@ -19617,6 +19622,20 @@ typedef struct {
   /**<   Specifies the SBAS SV mask to remove from persistent blacklist. SV ID mapping: \n
        - SV IDs 120-158 map to bits 0-38
        - SV IDs 183-191 map to bits 39-47 */
+
+  /* Optional */
+  /*  NAVIC SV IDs to Blacklist */
+  uint8_t navic_persist_blacklist_sv_valid;  /**< Must be set to true if navic_persist_blacklist_sv is being passed */
+  uint64_t navic_persist_blacklist_sv;
+  /**<   Specifies the NAVIC SV mask to disable/blacklist. SV ID mapping: \n
+       - SV IDs 401-414 map to bits 0-13 */
+
+  /* Optional */
+  /*  NAVIC SV IDs to Remove from Blacklist */
+  uint8_t navic_clear_persist_blacklist_sv_valid;  /**< Must be set to true if navic_clear_persist_blacklist_sv is being passed */
+  uint64_t navic_clear_persist_blacklist_sv;
+  /**<   Specifies the NAVIC SV mask to remove from persistent blacklist. SV ID mapping: \n
+       - SV IDs 401-414 map to bits 0-13 */
 }qmiLocSetBlacklistSvReqMsgT_v02;  /* Message */
 /**
     @}
@@ -19683,6 +19702,13 @@ typedef struct {
   /**<   Specifies the Blacklisted SBAS SV mask. SV ID mapping: \n
        - SV IDs 120-158 map to bits 0-38
        - SV IDs 183-191 map to bits 39-47 */
+
+  /* Optional */
+  /*  NAVIC SV IDs Blacklisted */
+  uint8_t navic_persist_blacklist_sv_valid;  /**< Must be set to true if navic_persist_blacklist_sv is being passed */
+  uint64_t navic_persist_blacklist_sv;
+  /**<   Specifies the Blacklisted NAVIC SV mask. SV ID mapping: \n
+       - SV IDs 401-414 map to bits 0-13 */
 }qmiLocGetBlacklistSvIndMsgT_v02;  /* Message */
 /**
     @}
@@ -21766,6 +21792,257 @@ typedef struct {
     @}
   */
 
+typedef uint64_t qmiLocEnvAidingSvCorrectionValidMaskT_v02;
+#define QMI_LOC_ENV_AIDING_SV_CORRECTION_LINE_OF_SIGHT_PROBABILITY_VALID_V02 ((qmiLocEnvAidingSvCorrectionValidMaskT_v02)0x00000001ull) /**<  Validity of the field probabilitySvIsLineofSight.  */
+#define QMI_LOC_ENV_AIDING_SV_CORRECTION_EXCESS_PATH_LENGTH_VALID_V02 ((qmiLocEnvAidingSvCorrectionValidMaskT_v02)0x00000002ull) /**<  Validity of the field excessPathLengthMeters.  */
+#define QMI_LOC_ENV_AIDING_SV_CORRECTION_EXCESS_PATH_LENGTH_UNC_VALID_V02 ((qmiLocEnvAidingSvCorrectionValidMaskT_v02)0x00000004ull) /**<  Validity of the field excessPathLengthUncMeters.  */
+#define QMI_LOC_ENV_AIDING_SV_CORRECTION_REFLECTING_PLANE_VALID_V02 ((qmiLocEnvAidingSvCorrectionValidMaskT_v02)0x00000008ull) /**<  Validity of the field reflectingPlane.  */
+/** @addtogroup loc_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  double latitudeDegrees;
+  /**<   Latitude of the reflecting plane. \n
+       - Units: Degrees */
+
+  double longitudeDegrees;
+  /**<   Longitude of the reflecting plane. \n
+       - Units: Degrees */
+
+  double altitudeMeters;
+  /**<   Altitude of the reflecting point in the plane above the WGS-84 reference ellipsoid. \n
+       - Units: Meters */
+
+  double azimuthDegrees;
+  /**<   Azimuth clockwise from north of the reflecting plane. \n
+       - Units: Degrees */
+}qmiLocEnvAidingReflectingPlaneStructT_v02;  /* Type */
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  qmiLocEnvAidingSvCorrectionValidMaskT_v02 svCorrectionFlags;
+  /**<   Indicates which correction values are valid.
+      - QMI_LOC_ENV_AIDING_SV_CORRECTION_LINE_OF_SIGHT_PROBABILITY_VALID (0x00000001) --  Validity of the field probabilitySvIsLineofSight.
+      - QMI_LOC_ENV_AIDING_SV_CORRECTION_EXCESS_PATH_LENGTH_VALID (0x00000002) --  Validity of the field excessPathLengthMeters.
+      - QMI_LOC_ENV_AIDING_SV_CORRECTION_EXCESS_PATH_LENGTH_UNC_VALID (0x00000004) --  Validity of the field excessPathLengthUncMeters.
+      - QMI_LOC_ENV_AIDING_SV_CORRECTION_REFLECTING_PLANE_VALID (0x00000008) --  Validity of the field reflectingPlane.  */
+
+  qmiLocSvSystemEnumT_v02 constellation;
+  /**<   Constellation of the given satellite. \n
+      - eQMI_LOC_SV_SYSTEM_GPS (1) --  GPS satellite \n
+      - eQMI_LOC_SV_SYSTEM_GALILEO (2) --  Galileo satellite \n
+      - eQMI_LOC_SV_SYSTEM_SBAS (3) --  SBAS satellite \n
+      - eQMI_LOC_SV_SYSTEM_COMPASS (4) --  COMPASS satellite (Deprecated) \n
+      - eQMI_LOC_SV_SYSTEM_GLONASS (5) --  GLONASS satellite \n
+      - eQMI_LOC_SV_SYSTEM_BDS (6) --  BDS satellite \n
+      - eQMI_LOC_SV_SYSTEM_QZSS (7) --  QZSS satellite \n
+      - eQMI_LOC_SV_SYSTEM_NAVIC (8) --  NavIC satellite  */
+
+  uint16_t svid;
+  /**<   GNSS SV ID. Range: \n
+       - For GPS:     1 to 32 \n
+       - For GLONASS: 65 to 96 \n
+       - For QZSS:    193 to 197 \n
+       - For BDS:     201 to 237 \n
+       - For Galileo: 301 to 336 \n
+       - For NavIC:   401 to 414 */
+
+  float carrierFrequencyHz;
+  /**<   Carrier frequency of the signal to be corrected. \n
+       For example, it can be the GPS L1 center frequency 1,575,420,000 Hz,
+       or varying GLO channels etc. \n
+       For a receiver with capabilities to track multiple frequencies for the same satellite,
+       multiple corrections for the same satellite may be provided. \n
+       - Units: Hz  */
+
+  float probabilitySvIsLineofSight;
+  /**<   The probability that the satellite is estimated to be in Line-of-Sight condition at the given location.
+       Validity is determined by relevant bit being set in the svCorrectionFlags.  \n
+       - Range: 0-1  */
+
+  float excessPathLengthMeters;
+  /**<   Excess path length to be subtracted from pseudorange before using it for positioning. \n
+       Validity is determined by relevant bit being set in the svCorrectionFlags. \n
+       - Units: Meters */
+
+  float excessPathLengthUncMeters;
+  /**<   Error estimate (1-sigma) for the Excess path length estimate. \n
+       Validity is determined by relevant bit being set in svCorrectionFlags. \n
+       - Units: Meters */
+
+  qmiLocEnvAidingReflectingPlaneStructT_v02 reflectingPlane;
+  /**<   Reflecting plane characteristics such as location and azimuth. \n
+       Validity is determined by relevant bit being set in svCorrectionFlags */
+}qmiLocEnvAidingSVCorrectionStructT_v02;  /* Type */
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Request Message; Used by the control point to inject environment aided
+                     measurement corrections */
+typedef struct {
+
+  /* Mandatory */
+  /*  Current Message Sequence Number  */
+  uint8_t seqNum;
+  /**<   Current message number. Used for segmentation/assembly of Environment Aiding
+       Injection Data. */
+
+  /* Mandatory */
+  /*  Maximum Number of Messages to send */
+  uint8_t maxMessageNum;
+  /**<   Maximum number of messages to send for Injecting Environment Aiding Data. */
+
+  /* Optional */
+  /*  Environment Bearing Validity */
+  uint8_t envBearingValidity_valid;  /**< Must be set to true if envBearingValidity is being passed */
+  uint8_t envBearingValidity;
+  /**<   Indicates whether the environment bearing is valid */
+
+  /* Optional */
+  /*  Environment Bearing */
+  uint8_t envBearingDegrees_valid;  /**< Must be set to true if envBearingDegrees is being passed */
+  float envBearingDegrees;
+  /**<   Environment bearing in degrees clockwise from true North (0.0 to 360.0],
+       in direction of user motion. Environment bearing is provided when it is
+       known with high probability that velocity is aligned with an environment
+       feature, such as a building or road. If user speed is zero,
+       envBearingDegrees represents bearing of most recent speed that was > 0.
+       As position approaches another road, envBearingUncDegrees will grow, and
+       at some stage envBearingDegrees becomes invalid. As position moves towards
+       an open area, envBearingUncDegrees will grow, and at some stage
+       envBearingDegrees becomes invalid. If the road is curved in the vicinity
+       of the user location, then envBearingUncDegrees will include the amount
+       by which the road direction changes in the area of position uncertainty.
+    */
+
+  /* Optional */
+  /*  Environment Bearing Uncertainty */
+  uint8_t envBearingUncDegrees_valid;  /**< Must be set to true if envBearingUncDegrees is being passed */
+  float envBearingUncDegrees;
+  /**<   Environment bearing uncertainty   \n
+       - Range: 0 to 180.      \n
+       - Units: Degrees          */
+
+  /* Optional */
+  /*  Latitude */
+  uint8_t latitudeDegrees_valid;  /**< Must be set to true if latitudeDegrees is being passed */
+  double latitudeDegrees;
+  /**<   Latitude at which the corrections are computed.    \n
+       - Units: Degrees  */
+
+  /* Optional */
+  /*  Longitude */
+  uint8_t longitudeDegrees_valid;  /**< Must be set to true if longitudeDegrees is being passed */
+  double longitudeDegrees;
+  /**<   Longitude at which the corrections are computed.    \n
+       - Units: Degrees   */
+
+  /* Optional */
+  /*  Horizontal Position Uncertainty */
+  uint8_t horizontalPositionUncMeters_valid;  /**< Must be set to true if horizontalPositionUncMeters is being passed */
+  double horizontalPositionUncMeters;
+  /**<   Horizontal uncertainty (68% confidence) on the device position at which
+       the corrections are provided. This value is useful for example to judge
+       how accurate are the provided corrections.  \n
+       - Units: Meters  */
+
+  /* Optional */
+  /*  Altitude */
+  uint8_t altitudeMeters_valid;  /**< Must be set to true if altitudeMeters is being passed */
+  double altitudeMeters;
+  /**<   Altitude above the WGS-84 reference ellipsoid at which the corrections are computed.  \n
+       - Units: Meters */
+
+  /* Optional */
+  /*  Altitude Uncertainty */
+  uint8_t altitudeUncMeters_valid;  /**< Must be set to true if altitudeUncMeters is being passed */
+  double altitudeUncMeters;
+  /**<   Altitude uncertainty (68% confidence) on the device position at which the
+       corrections are provided. This value is useful for example to judge how
+       accurate the provided corrections are.   \n
+       - Units: Meters */
+
+  /* Optional */
+  /*  Time of Applicability */
+  uint8_t toaGpsNanosecondsOfWeek_valid;  /**< Must be set to true if toaGpsNanosecondsOfWeek is being passed */
+  uint64_t toaGpsNanosecondsOfWeek;
+  /**<   Time of applicability, GPS time of week.    \n
+       - Units: Nanoseconds */
+
+  /* Optional */
+  /*  SV Corrections */
+  uint8_t svCorrection_valid;  /**< Must be set to true if svCorrection is being passed */
+  uint32_t svCorrection_len;  /**< Must be set to # of elements in svCorrection */
+  qmiLocEnvAidingSVCorrectionStructT_v02 svCorrection[QMI_LOC_ENV_AIDING_CORRECTION_MAX_SV_USED_V02];
+  /**<   Measurement corrections for satellites in view */
+}qmiLocEventInjectEnvAidingReqMsgT_v02;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Request Message; This message is used by control point to
+                     set the minimum GPS week number */
+typedef struct {
+
+  /* Mandatory */
+  /*  Minimum GPS Week Number */
+  uint16_t minGpsWeekNumber;
+  /**<   Minimum GPS week number */
+}qmiLocSetMinGpsWeekNumberReqMsgT_v02;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Indication Message; This message used by control point to
+                     query the minimum GPS week number */
+typedef struct {
+
+  /* Mandatory */
+  /*  Status */
+  qmiLocStatusEnumT_v02 status;
+  /**<   Status of the request.
+ Valid values: \n
+      - eQMI_LOC_SUCCESS (0) --  Request was completed successfully \n
+      - eQMI_LOC_GENERAL_FAILURE (1) --  Request failed because of a general failure \n
+      - eQMI_LOC_UNSUPPORTED (2) --  Request failed because it is not supported \n
+      - eQMI_LOC_INVALID_PARAMETER (3) --  Request failed because it contained invalid parameters \n
+      - eQMI_LOC_ENGINE_BUSY (4) --  Request failed because the engine is busy \n
+      - eQMI_LOC_PHONE_OFFLINE (5) --  Request failed because the phone is offline \n
+      - eQMI_LOC_TIMEOUT (6) --  Request failed because it has timed out \n
+      - eQMI_LOC_CONFIG_NOT_SUPPORTED (7) --  Request failed because an undefined configuration was requested \n
+      - eQMI_LOC_INSUFFICIENT_MEMORY (8) --  Request failed because the engine could not allocate sufficient memory for the request \n
+      - eQMI_LOC_MAX_GEOFENCE_PROGRAMMED (9) --  Request failed because the maximum number of Geofences are already programmed \n
+      - eQMI_LOC_XTRA_VERSION_CHECK_FAILURE (10) --  Location service failed because of an XTRA version-based file format check failure \n
+      - eQMI_LOC_GNSS_DISABLED (11) --  Request failed because the location service is disabled
+ */
+
+  /* Optional */
+  /*  Minimum GPS Week Number */
+  uint8_t minGpsWeekNumber_valid;  /**< Must be set to true if minGpsWeekNumber is being passed */
+  uint16_t minGpsWeekNumber;
+  /**<   Minimum GPS week number */
+}qmiLocGetMinGpsWeekNumberIndMsgT_v02;  /* Message */
+/**
+    @}
+  */
+
 /* Conditional compilation tags for message removal */
 //#define REMOVE_QMI_LOC_ADD_CIRCULAR_GEOFENCE_V02
 //#define REMOVE_QMI_LOC_ADD_GEOFENCE_CONTEXT_V02
@@ -21849,6 +22126,7 @@ typedef struct {
 //#define REMOVE_QMI_LOC_GET_FIX_CRITERIA_V02
 //#define REMOVE_QMI_LOC_GET_GEOFENCE_ENGINE_CONFIG_V02
 //#define REMOVE_QMI_LOC_GET_LOW_POWER_MODE_V02
+//#define REMOVE_QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_V02
 //#define REMOVE_QMI_LOC_GET_NI_GEOFENCE_ID_LIST_V02
 //#define REMOVE_QMI_LOC_GET_NMEA_TYPES_V02
 //#define REMOVE_QMI_LOC_GET_OPERATION_MODE_V02
@@ -21874,6 +22152,7 @@ typedef struct {
 //#define REMOVE_QMI_LOC_INFORM_NI_USER_RESPONSE_V02
 //#define REMOVE_QMI_LOC_INJECT_APCACHE_DATA_V02
 //#define REMOVE_QMI_LOC_INJECT_APDONOTCACHE_DATA_V02
+//#define REMOVE_QMI_LOC_INJECT_ENV_AIDING_V02
 //#define REMOVE_QMI_LOC_INJECT_FDCL_DATA_V02
 //#define REMOVE_QMI_LOC_INJECT_GSM_CELL_INFO_V02
 //#define REMOVE_QMI_LOC_INJECT_GTP_CLIENT_DOWNLOADED_DATA_V02
@@ -21923,6 +22202,7 @@ typedef struct {
 //#define REMOVE_QMI_LOC_SET_GNSS_CONSTELL_REPORT_CONFIG_V02
 //#define REMOVE_QMI_LOC_SET_INTERNAL_STATUS_CONFIG_V02
 //#define REMOVE_QMI_LOC_SET_LOW_POWER_MODE_V02
+//#define REMOVE_QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_V02
 //#define REMOVE_QMI_LOC_SET_NMEA_TYPES_V02
 //#define REMOVE_QMI_LOC_SET_OPERATION_MODE_V02
 //#define REMOVE_QMI_LOC_SET_POSITION_ENGINE_CONFIG_PARAMETERS_V02
@@ -22383,6 +22663,15 @@ typedef struct {
 #define QMI_LOC_GET_ROBUST_LOCATION_CONFIG_REQ_V02 0x00D2
 #define QMI_LOC_GET_ROBUST_LOCATION_CONFIG_RESP_V02 0x00D2
 #define QMI_LOC_GET_ROBUST_LOCATION_CONFIG_IND_V02 0x00D2
+#define QMI_LOC_INJECT_ENV_AIDING_REQ_V02 0x00D3
+#define QMI_LOC_INJECT_ENV_AIDING_RESP_V02 0x00D3
+#define QMI_LOC_INJECT_ENV_AIDING_IND_V02 0x00D3
+#define QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_REQ_V02 0x00D4
+#define QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_RESP_V02 0x00D4
+#define QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_IND_V02 0x00D4
+#define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_REQ_V02 0x00D5
+#define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_RESP_V02 0x00D5
+#define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_IND_V02 0x00D5
 /**
     @}
   */

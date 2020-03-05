@@ -71,6 +71,8 @@ static sem_t sem_pingcbreceived;
 #define CONFIG_LEVER_ARM   "configLeverArm"
 #define CONFIG_ROBUST_LOCATION  "configRobustLocation"
 #define GET_ROBUST_LOCATION_CONFIG "getRobustLocationConfig"
+#define CONFIG_MIN_GPS_WEEK        "configMinGpsWeek"
+#define GET_MIN_GPS_WEEK           "getMinGpsWeek"
 
 // debug utility
 static uint64_t getTimestamp() {
@@ -191,6 +193,10 @@ static void onGetRobustLocationConfigCb(RobustLocationConfig robustLocationConfi
            robustLocationConfig.enabledForE911);
 }
 
+static void onGetMinGpsWeekCb(uint32_t minGpsWeek) {
+    printf("<<< onGetMinGpsWeekCb, minGpsWeek %d\n", minGpsWeek);
+}
+
 static void printHelp() {
     printf("g: Gnss report session with 1000 ms interval\n");
     printf("u: Update a session with 2000 ms interval\n");
@@ -210,6 +216,8 @@ static void printHelp() {
     printf("%s: config lever arm\n", CONFIG_LEVER_ARM);
     printf("%s: config robust location\n", CONFIG_ROBUST_LOCATION);
     printf("%s: get robust location config\n", GET_ROBUST_LOCATION_CONFIG);
+    printf("%s: set min gps week\n", CONFIG_MIN_GPS_WEEK);
+    printf("%s: get min gps week\n", GET_MIN_GPS_WEEK);
 }
 
 void setRequiredPermToRunAsLocClient()
@@ -359,6 +367,7 @@ int main(int argc, char *argv[]) {
     intCbs.configCb = LocConfigCb(onConfigResponseCb);
     intCbs.getRobustLocationConfigCb =
             LocConfigGetRobustLocationConfigCb(onGetRobustLocationConfigCb);
+    intCbs.getMinGpsWeekCb = LocConfigGetMinGpsWeekCb(onGetMinGpsWeekCb);
 
     LocConfigPriorityMap priorityMap;
     location_integration::LocationIntegrationApi* pIntClient =
@@ -456,6 +465,20 @@ int main(int argc, char *argv[]) {
         } else if (strncmp(buf, GET_ROBUST_LOCATION_CONFIG,
                            strlen(GET_ROBUST_LOCATION_CONFIG)) == 0) {
             pIntClient->getRobustLocationConfig();
+        } else if (strncmp(buf, CONFIG_MIN_GPS_WEEK, strlen(CONFIG_MIN_GPS_WEEK)) == 0) {
+            // get enable and enableForE911
+            static char *save = nullptr;
+            uint16_t gpsWeekNum = 0;
+            // skip first one of configRobustLocation
+            char* token = strtok_r(buf, " ", &save);
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+                gpsWeekNum = (uint16_t) atoi(token);
+            }
+            printf("gps week num %d\n", gpsWeekNum);
+            pIntClient->configMinGpsWeek(gpsWeekNum);
+        } else if (strncmp(buf, GET_MIN_GPS_WEEK, strlen(GET_MIN_GPS_WEEK)) == 0) {
+            pIntClient->getMinGpsWeek();
         } else {
             int command = buf[0];
             switch(command) {

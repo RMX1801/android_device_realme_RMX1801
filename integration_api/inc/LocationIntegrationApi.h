@@ -59,9 +59,15 @@ enum LocConfigTypeEnum{
     CONFIG_LEVER_ARM = 5,
     /** Config robust location feature. </br> */
     CONFIG_ROBUST_LOCATION = 6,
+    /** Config minimum GPS week used by GNSS engine. </br> */
+    CONFIG_MIN_GPS_WEEK = 7,
+
     /** Get configuration regarding robust location setting used by
      *  GNSS engine.  </br> */
     GET_ROBUST_LOCATION_CONFIG = 100,
+    /** Get minimum GPS week configuration used by GNSS engine.
+     *  </br> */
+    GET_MIN_GPS_WEEK = 101,
 } ;
 
 /**
@@ -262,6 +268,16 @@ typedef std::function<void(
 )> LocConfigGetRobustLocationConfigCb;
 
 /**
+ *  Specify the callback to retrieve the minimum GPS week
+ *  configuration used by modem GNSS engine. The callback will
+ *  be invoked for successful processing of getMinGpsWeek. The
+ *  callback shall be passed to the LocationIntegrationApi
+ *  constructor. <br/> */
+typedef std::function<void(
+   uint16_t minGpsWeek
+)> LocConfigGetMinGpsWeekCb;
+
+/**
  *  Specify the set of callbacks that can be passed to
  *  LocationIntegrationAPI constructor to receive configuration
  *  command processing status and the requested data.
@@ -272,6 +288,9 @@ struct LocIntegrationCbs {
     LocConfigCb configCb;
     /** Callback to receive the robust location setting.  <br/> */
     LocConfigGetRobustLocationConfigCb getRobustLocationConfigCb;
+    /** Callback to receive the minimum GPS week setting used by
+     *  GNSS engine on modem. <br/> */
+    LocConfigGetMinGpsWeekCb getMinGpsWeekCb;
 };
 
 class LocationIntegrationApiImpl;
@@ -509,6 +528,45 @@ public:
                 invoked.
     */
     bool getRobustLocationConfig();
+
+    /** @brief
+        Config the minimum GPS week used by modem GNSS engine.
+
+        Client should wait for the command to finish, e.g.: via
+        configCb received before issuing a second configMinGpsWeek
+        command. Behavior is not defined if client issues a second
+        request of configMinGpsWeek without waiting for the previous
+        configMinGpsWeek to finish.
+
+        @param
+        minGpsWeek: minimum GPS week to be used by modem GNSS engine.
+
+        @return true, if minimum GPS week configuration has been
+                accepted for further processing. When returning
+                true, configCb will be invoked to deliver
+                asynchronous processing status.
+
+        @return false, if configuring minimum GPS week is not
+                accepted for further processing. When returning
+                false, configCb will not be invoked.
+    */
+    bool configMinGpsWeek(uint16_t minGpsWeek);
+
+    /** @brief
+        Retrieve minimum GPS week configuration used by GNSS engine
+        on modem. If processing of the command fails, the failure
+        status will be returned via configCb. If the processing of
+        the command is successful, the successful status will be
+        returned via configCB, and the minimum GPS week info will be
+        returned via getMinGpsWeekCb passed via the constructor.
+
+        @return true, if the API request has been accepted.
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, configCb
+                and getMinGpsWeekCb will not be invoked.
+    */
+    bool getMinGpsWeek();
 
 private:
     LocationIntegrationApiImpl* mApiImpl;

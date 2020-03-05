@@ -222,10 +222,15 @@ enum ELocMsgID {
     E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG_ID  = 203,
     E_INTAPI_CONFIG_LEVER_ARM_MSG_ID  = 204,
     E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID  = 205,
+    E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID  = 207,
 
     // integration API config retrieval request/response
     E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID  = 300,
     E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID  = 301,
+
+    E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID  = 302,
+    E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID  = 303,
+
 };
 
 typedef uint32_t LocationCallbacksMask;
@@ -780,6 +785,17 @@ struct LocConfigRobustLocationReqMsg: LocAPIMsgHeader
         mEnableForE911(enableForE911) { }
 };
 
+struct LocConfigMinGpsWeekReqMsg: LocAPIMsgHeader
+{
+    uint16_t mMinGpsWeek;
+
+    inline LocConfigMinGpsWeekReqMsg(const char* name,
+                                     uint16_t minGpsWeek) :
+        LocAPIMsgHeader(name, E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID),
+        mMinGpsWeek(minGpsWeek) { }
+};
+
+
 /******************************************************************************
 IPC message structure - Location Integration API Get request/response message
 ******************************************************************************/
@@ -799,6 +815,22 @@ struct LocConfigGetRobustLocationConfigRespMsg: LocAPIMsgHeader
         LocAPIMsgHeader(name, E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID),
         mRobustLoationConfig(robustLoationConfig) { }
 };
+
+struct LocConfigGetMinGpsWeekReqMsg: LocAPIMsgHeader
+{
+    inline LocConfigGetMinGpsWeekReqMsg(const char* name) :
+        LocAPIMsgHeader(name, E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID) { }
+};
+
+struct LocConfigGetMinGpsWeekRespMsg: LocAPIMsgHeader
+{
+    uint32_t mMinGpsWeek;
+    inline LocConfigGetMinGpsWeekRespMsg(const char* name,
+                                     uint32_t minGpsWeek) :
+        LocAPIMsgHeader(name, E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID),
+        mMinGpsWeek(minGpsWeek) { }
+};
+
 
 /******************************************************************************
 IPC message structure - ping

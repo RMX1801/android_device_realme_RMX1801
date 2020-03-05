@@ -203,6 +203,8 @@ static const loc_name_val_s_type loc_v02_event_name[] =
     NAME_VAL(QMI_LOC_INJECT_PLATFORM_POWER_STATE_REQ_V02),
     NAME_VAL(QMI_LOC_SET_ROBUST_LOCATION_CONFIG_REQ_V02),
     NAME_VAL(QMI_LOC_GET_ROBUST_LOCATION_CONFIG_REQ_V02),
+    NAME_VAL(QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_REQ_V02),
+    NAME_VAL(QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_REQ_V02),
 };
 
 static const int loc_v02_event_num = sizeof(loc_v02_event_name) / sizeof(loc_name_val_s_type);
