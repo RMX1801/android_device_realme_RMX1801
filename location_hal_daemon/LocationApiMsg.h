@@ -222,7 +222,8 @@ enum ELocMsgID {
     E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG_ID  = 203,
     E_INTAPI_CONFIG_LEVER_ARM_MSG_ID  = 204,
     E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID  = 205,
-    E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID  = 207,
+    E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID  = 206,
+    E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID = 207,
 
     // integration API config retrieval request/response
     E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID  = 300,
@@ -795,6 +796,14 @@ struct LocConfigMinGpsWeekReqMsg: LocAPIMsgHeader
         mMinGpsWeek(minGpsWeek) { }
 };
 
+struct LocConfigB2sMountParamsReqMsg: LocAPIMsgHeader
+{
+    BodyToSensorMountParams mB2sParams;
+    inline LocConfigB2sMountParamsReqMsg(const char* name,
+                                         const BodyToSensorMountParams& b2sParams) :
+        LocAPIMsgHeader(name, E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID),
+        mB2sParams(b2sParams) { }
+};
 
 /******************************************************************************
 IPC message structure - Location Integration API Get request/response message

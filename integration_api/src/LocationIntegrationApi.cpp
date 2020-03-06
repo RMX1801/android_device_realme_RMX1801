@@ -300,5 +300,21 @@ bool LocationIntegrationApi::getMinGpsWeek() {
     }
 }
 
+bool LocationIntegrationApi::configBodyToSensorMountParams(
+        const BodyToSensorMountParams& b2sParams) {
+    if (mApiImpl) {
+        ::BodyToSensorMountParams halB2sParams = {};
+        halB2sParams.rollOffset  = b2sParams.rollOffset;
+        halB2sParams.pitchOffset = b2sParams.pitchOffset;
+        halB2sParams.yawOffset   = b2sParams.yawOffset;
+        halB2sParams.offsetUnc   = b2sParams.offsetUnc;
+        mApiImpl->configBodyToSensorMountParams(halB2sParams);
+        return true;
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
+        return false;
+    }
+}
+
 } // namespace location_integration
 

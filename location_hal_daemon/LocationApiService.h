@@ -166,6 +166,7 @@ private:
     void configLeverArm(const LocConfigLeverArmReqMsg* pMsg);
     void configRobustLocation(const LocConfigRobustLocationReqMsg* pMsg);
     void configMinGpsWeek(const LocConfigMinGpsWeekReqMsg* pMsg);
+    void configB2sMountParams(const LocConfigB2sMountParamsReqMsg* pMsg);
 
     // Location configuration API get/read requests
     void getGnssConfig(const LocAPIMsgHeader* pReqMsg,

@@ -2445,4 +2445,9 @@ uint32_t LocationClientApiImpl::configMinGpsWeek(uint16_t minGpsWeek) {
     return 0;
 }
 
+uint32_t LocationClientApiImpl::configBodyToSensorMountParams(
+            const BodyToSensorMountParams& b2sParams) {
+    return 0;
+}
+
 } // namespace location_client

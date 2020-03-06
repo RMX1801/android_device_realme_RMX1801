@@ -62,7 +62,9 @@ enum LocConfigTypeEnum{
     CONFIG_ROBUST_LOCATION = 6,
     /** Config minimum GPS week used by GNSS engine. </br> */
     CONFIG_MIN_GPS_WEEK = 7,
-
+    /** Config vehicle Body-to-Sensor mount angles for dead
+     *  reckoning position engine. </br> */
+    CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS = 8,
     /** Get configuration regarding robust location setting used by
      *  GNSS engine.  </br> */
     GET_ROBUST_LOCATION_CONFIG = 100,
@@ -171,6 +173,34 @@ struct LeverArmParams {
     float sidewaysOffsetMeters;
     /** Offset along the vehicle up axis, in unit of meters  */
     float upOffsetMeters;
+};
+
+/**
+ * Specify vehicle body-to-Sensor mount parameters to be used
+ * by dead reckoning positioning engine. </br> */
+struct BodyToSensorMountParams {
+    /** The misalignment of the sensor board along the
+     *  horizontal plane of the vehicle chassis measured looking
+     *  from the vehicle to forward direction. </br>
+     *  In unit of degrees. </br>   */
+    float rollOffset;
+    /** The misalignment along the horizontal plane of the vehicle
+     *  chassis measured looking from the vehicle to the right
+     *  side. Positive pitch indicates vehicle is inclined such
+     *  that forward wheels are at higher elevation than rear
+     *  wheels. </br>
+     *  In unit of degrees. </br>  */
+    float yawOffset;
+    /** The angle between the vehicle forward direction and the
+     *  sensor axis as seen from the top of the vehicle, and
+     *  measured in counterclockwise direction. </br>
+     *  In unit of degrees. </br> */
+    float pitchOffset;
+    /** Single uncertainty number that may be the largest of the
+     *  uncertainties for roll offset, pitch offset and yaw
+     *  offset. </br>
+     *  In unit of degrees. </br> */
+    float offsetUnc;
 };
 
 /**
@@ -643,6 +673,31 @@ public:
                 and getMinGpsWeekCb will not be invoked.
     */
     bool getMinGpsWeek();
+
+    /** @brief
+        Configure the vehicle body-to-Sensor mount parameters
+        for dead reckoning position engine.
+
+        Client should wait for the command to finish, e.g.:
+        via configCb received before issuing a second
+        configBodyToSensorMountParams command. Behavior is not
+        defined if client issues a second request of
+        configBodyToSensorMountParams without waiting for the finish
+        of the previous configBodyToSensorMountParams request.
+
+        @param
+        b2sParams: vehicle body-to-Sensor mount angles and
+        uncertainty.
+
+        @return true, if the request is accepted for further
+                processing. When returning true, configCb will be
+                invoked to deliver asynchronous processing status.
+
+        @return false, if the request is not accepted for further
+                processing. When returning false, configCb will not
+                be invoked.
+    */
+    bool configBodyToSensorMountParams(const BodyToSensorMountParams& b2sParams);
 
 private:
     LocationIntegrationApiImpl* mApiImpl;
