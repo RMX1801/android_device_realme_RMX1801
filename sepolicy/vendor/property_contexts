@@ -18,6 +18,7 @@ persist.audio.dirac.music.state                  u:object_r:dirac_prop:s0
 persist.audio.dirac.speaker                      u:object_r:dirac_prop:s0
 
 # Fingerprint
+fpc_kpi                                          u:object_r:oppo_fp_prop:s0
 oppo.fpc.sw.version                              u:object_r:oppo_fp_prop:s0
 persist.vendor.fingerprint.                      u:object_r:oppo_fp_prop:s0
 
