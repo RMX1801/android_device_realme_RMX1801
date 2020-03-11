@@ -146,6 +146,7 @@ firmware_directories /vendor/firmware_mnt/image/
 /dev/adsprpc-smd-secure   0644   system     system
 /dev/system_health_monitor 0644  radio      system
 /dev/mdss_rotator         0664   system     system
+/dev/cpu_dma_latency      0660   root       system
 
 #QDSS
 /dev/byte-cntr            0660   system    oem_2902
@@ -242,6 +243,7 @@ firmware_directories /vendor/firmware_mnt/image/
 
 # GNSS PPS Device premissions
 /dev/pps*                  0660   gps     gps
+/dev/gnss_sirf             0660   gps     gps
 
 # wlan
 /dev/wcnss_wlan           0660   system     system
