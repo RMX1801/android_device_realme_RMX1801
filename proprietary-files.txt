@@ -3329,10 +3329,6 @@ vendor/lib64/vendor.qti.hardware.radio.uim_remote_client@1.0.so
 vendor/lib64/vendor.qti.hardware.radio.uim_remote_server@1.0.so
 vendor/radio/qcril_database/qcril.db
 
-# SDM
-lib/libsdm-disp-apis.so
-lib64/libsdm-disp-apis.so
-
 # Sensors
 vendor/bin/sensors.qti
 vendor/lib/hw/activity_recognition.sdm660.so
