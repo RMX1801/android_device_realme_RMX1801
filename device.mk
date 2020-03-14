@@ -286,18 +286,13 @@ PRODUCT_PACKAGES += \
     libjson
 
 # Radio
-PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE := true
-PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
-SIM_COUNT := 2
-
 PRODUCT_PACKAGES += \
     android.hardware.radio@1.2 \
     android.hardware.radio.config@1.0 \
     android.hardware.secure_element@1.0 \
     libprotobuf-cpp-full \
     librmnetctl \
-    libxml2 \
-    rild
+    libxml2
 
 # RCS
 PRODUCT_PACKAGES += \
