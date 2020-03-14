@@ -97,12 +97,10 @@ vendor/etc/acdbdata/MTP/sdm660-tavil-snd-card/MTP_WCD9340_Speaker_cal.acdb
 vendor/etc/acdbdata/MTP/sdm660-tavil-snd-card/MTP_WCD9340_workspaceFile.qwsp
 
 # Audio-Hardware
-vendor/lib/hw/audio.primary.default.so
 vendor/lib/hw/audio.primary.sdm660.so
 vendor/lib/libaudioEngineerTest.so
 vendor/lib/libaudio_log_utils.so
 vendor/lib/libtinycompress_vendor.so
-vendor/lib64/hw/audio.primary.default.so
 vendor/lib64/hw/audio.primary.sdm660.so
 vendor/lib64/libaudioEngineerTest.so
 vendor/lib64/libaudio_log_utils.so
@@ -2752,7 +2750,6 @@ vendor/lib/vendor.oppo.hardware.commondcs@1.0.so
 vendor/lib/vendor.qti.hardware.fingerprint@1.0.so
 vendor/lib64/android.frameworks.fingerprintservice@1.0.so
 vendor/lib64/libqfp-service.so
-vendor/lib64/vendor.oppo.hardware.biometrics.fingerprint@2.1.so
 vendor/lib64/vendor.oppo.hardware.commondcs@1.0.so
 vendor/lib64/vendor.qti.hardware.fingerprint@1.0.so
 vendor/lib/libalipay_factory.so
