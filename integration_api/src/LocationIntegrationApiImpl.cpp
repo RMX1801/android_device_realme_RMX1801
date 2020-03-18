@@ -127,7 +127,8 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         mTuncConfigInfo{},
         mPaceConfigInfo{},
         mSVConfigInfo{},
-        mLeverArmConfigInfo{} {
+        mLeverArmConfigInfo{},
+        mRobustLocationConfigInfo{} {
     if (integrationClientAllowed() == false) {
         return;
     }
@@ -757,6 +758,12 @@ void LocationIntegrationApiImpl::processGetRobustLocationConfigRespCb(
                 GNSS_CONFIG_ROBUST_LOCATION_ENABLED_FOR_E911_VALID_BIT) {
             validMask |= ROBUST_LOCATION_CONFIG_VALID_ENABLED_FOR_E911;
             robustConfig.enabledForE911 = pRespMsg->mRobustLoationConfig.enabledForE911;
+        }
+        if (pRespMsg->mRobustLoationConfig.validMask &
+                GNSS_CONFIG_ROBUST_LOCATION_VERSION_VALID_BIT) {
+            validMask |= ROBUST_LOCATION_CONFIG_VALID_VERSION;
+            robustConfig.version.major = pRespMsg->mRobustLoationConfig.version.major;
+            robustConfig.version.minor = pRespMsg->mRobustLoationConfig.version.minor;
         }
 
         robustConfig.validMask = (RobustLocationConfigValidMask) validMask;

@@ -6580,15 +6580,26 @@ void LocApiV02 :: getRobustLocationConfig(uint32_t sessionId, LocApiResponse *ad
         if (getRobustLocationConfigInd.isEnabledForE911_valid) {
             robustLocationValidMask |= GNSS_CONFIG_ROBUST_LOCATION_ENABLED_FOR_E911_VALID_BIT;
         }
+        if (getRobustLocationConfigInd.robustLocationVersion_valid) {
+            robustLocationValidMask |= GNSS_CONFIG_ROBUST_LOCATION_VERSION_VALID_BIT ;
+        }
+
         config.robustLocationConfig.validMask =
                 (GnssConfigRobustLocationValidMask) robustLocationValidMask;
         config.robustLocationConfig.enabled = getRobustLocationConfigInd.isEnabled;
         config.robustLocationConfig.enabledForE911 = getRobustLocationConfigInd.isEnabledForE911;
-        LOC_LOGd("session id: %d, enabled (%d %d), enabledForE911 (%d, %d)",
-                 sessionId, getRobustLocationConfigInd.isEnabled_valid,
-                 getRobustLocationConfigInd.isEnabledForE911_valid,
+        config.robustLocationConfig.version.major =
+                getRobustLocationConfigInd.robustLocationVersion.major;
+        config.robustLocationConfig.version.minor =
+                getRobustLocationConfigInd.robustLocationVersion.minor;
+
+        LOC_LOGd("session id: %d, mask: 0x%x, enabled: %d, enabledForE911: %d, version: %d %d",
+                 sessionId, config.robustLocationConfig.validMask,
                  config.robustLocationConfig.enabled,
-                 config.robustLocationConfig.enabledForE911);
+                 config.robustLocationConfig.enabledForE911,
+                 config.robustLocationConfig.version.major,
+                 config.robustLocationConfig.version.minor);
+
         LocApiBase::reportGnssConfig(sessionId, config);
     }
 

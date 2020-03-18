@@ -30,7 +30,7 @@
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.9
-   It was generated on: Tue Mar 24 2020 (Spin 0)
+   It was generated on: Wed Mar 25 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 #include "stdint.h"
@@ -1872,6 +1872,16 @@ static const uint8_t qmiLocEnvAidingSVCorrectionStructT_data_v02[] = {
   QMI_IDL_FLAG_END_VALUE
 };
 
+static const uint8_t qmiLocRobustLocationVersionT_data_v02[] = {
+  QMI_IDL_GENERIC_1_BYTE,
+  QMI_IDL_OFFSET8(qmiLocRobustLocationVersionT_v02, major),
+
+  QMI_IDL_GENERIC_2_BYTE,
+  QMI_IDL_OFFSET8(qmiLocRobustLocationVersionT_v02, minor),
+
+  QMI_IDL_FLAG_END_VALUE
+};
+
 /*Message Definitions*/
 /*
  * qmiLocGenReqMsgT is empty
@@ -2245,10 +2255,20 @@ static const uint8_t qmiLocEventPositionReportIndMsgT_data_v02[] = {
    QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_4_BYTE,
   QMI_IDL_OFFSET16ARRAY(qmiLocEventPositionReportIndMsgT_v02, dgnssDataAgeMsec),
 
-  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, conformityIndex) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, conformityIndex_valid)),
+  QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, conformityIndex) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, conformityIndex_valid)),
   0x3E,
    QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_4_BYTE,
-  QMI_IDL_OFFSET16ARRAY(qmiLocEventPositionReportIndMsgT_v02, conformityIndex)
+  QMI_IDL_OFFSET16ARRAY(qmiLocEventPositionReportIndMsgT_v02, conformityIndex),
+
+  QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, systemTick) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, systemTick_valid)),
+  0x3F,
+   QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_8_BYTE,
+  QMI_IDL_OFFSET16ARRAY(qmiLocEventPositionReportIndMsgT_v02, systemTick),
+
+  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, systemTickUnc) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventPositionReportIndMsgT_v02, systemTickUnc_valid)),
+  0x40,
+   QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_4_BYTE,
+  QMI_IDL_OFFSET16ARRAY(qmiLocEventPositionReportIndMsgT_v02, systemTickUnc)
 };
 
 static const uint8_t qmiLocEventGnssSvInfoIndMsgT_data_v02[] = {
@@ -2272,12 +2292,19 @@ static const uint8_t qmiLocEventGnssSvInfoIndMsgT_data_v02[] = {
   QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, expandedSvList) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, expandedSvList_len),
   QMI_IDL_TYPE88(0, 8),
 
-  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList_valid)),
+  QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList_valid)),
   0x12,
   QMI_IDL_FLAGS_IS_ARRAY | QMI_IDL_FLAGS_IS_VARIABLE_LEN |  QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_8_BYTE,
   QMI_IDL_OFFSET16ARRAY(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList),
   QMI_LOC_EXPANDED_SV_INFO_LIST_MAX_SIZE_V02,
-  QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList_len)
+  QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, gnssSignalTypeList_len),
+
+  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, rfLoss) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, rfLoss_valid)),
+  0x13,
+  QMI_IDL_FLAGS_IS_ARRAY | QMI_IDL_FLAGS_IS_VARIABLE_LEN |  QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_4_BYTE,
+  QMI_IDL_OFFSET16ARRAY(qmiLocEventGnssSvInfoIndMsgT_v02, rfLoss),
+  QMI_LOC_EXPANDED_SV_INFO_LIST_MAX_SIZE_V02,
+  QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, rfLoss) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvInfoIndMsgT_v02, rfLoss_len)
 };
 
 static const uint8_t qmiLocEventNmeaIndMsgT_data_v02[] = {
@@ -5797,10 +5824,20 @@ static const uint8_t qmiLocEventGnssSvMeasInfoIndMsgT_data_v02[] = {
   QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, dgnssSvMeasurement) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, dgnssSvMeasurement_len),
   QMI_IDL_TYPE88(0, 65),
 
-  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, refCountTicksUnc) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, refCountTicksUnc_valid)),
+  QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, refCountTicksUnc) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, refCountTicksUnc_valid)),
   0x35,
    QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_4_BYTE,
-  QMI_IDL_OFFSET16ARRAY(qmiLocEventGnssSvMeasInfoIndMsgT_v02, refCountTicksUnc)
+  QMI_IDL_OFFSET16ARRAY(qmiLocEventGnssSvMeasInfoIndMsgT_v02, refCountTicksUnc),
+
+  QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, subSeqNum) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, subSeqNum_valid)),
+  0x36,
+   QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_1_BYTE,
+  QMI_IDL_OFFSET16ARRAY(qmiLocEventGnssSvMeasInfoIndMsgT_v02, subSeqNum),
+
+  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, maxSubSeqNum) - QMI_IDL_OFFSET16RELATIVE(qmiLocEventGnssSvMeasInfoIndMsgT_v02, maxSubSeqNum_valid)),
+  0x37,
+   QMI_IDL_FLAGS_OFFSET_IS_16 | QMI_IDL_GENERIC_1_BYTE,
+  QMI_IDL_OFFSET16ARRAY(qmiLocEventGnssSvMeasInfoIndMsgT_v02, maxSubSeqNum)
 };
 
 static const uint8_t qmiLocEventGnssSvPolyIndMsgT_data_v02[] = {
@@ -7703,10 +7740,16 @@ static const uint8_t qmiLocGetRobustLocationConfigIndMsgT_data_v02[] = {
    QMI_IDL_GENERIC_1_BYTE,
   QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, isEnabled),
 
-  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, isEnabledForE911) - QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, isEnabledForE911_valid)),
+  QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, isEnabledForE911) - QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, isEnabledForE911_valid)),
   0x11,
    QMI_IDL_GENERIC_1_BYTE,
-  QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, isEnabledForE911)
+  QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, isEnabledForE911),
+
+  QMI_IDL_TLV_FLAGS_LAST_TLV | QMI_IDL_TLV_FLAGS_OPTIONAL | (QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, robustLocationVersion) - QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, robustLocationVersion_valid)),
+  0x12,
+   QMI_IDL_AGGREGATE,
+  QMI_IDL_OFFSET8(qmiLocGetRobustLocationConfigIndMsgT_v02, robustLocationVersion),
+  QMI_IDL_TYPE88(0, 96)
 };
 
 static const uint8_t qmiLocEventInjectEnvAidingReqMsgT_data_v02[] = {
@@ -7886,7 +7929,8 @@ static const qmi_idl_type_table_entry  loc_type_table_v02[] = {
   {sizeof(qmiLocKlobucharIonoModelT_v02), qmiLocKlobucharIonoModelT_data_v02},
   {sizeof(qmiLocMePerGnssRfStructType_v02), qmiLocMePerGnssRfStructType_data_v02},
   {sizeof(qmiLocEnvAidingReflectingPlaneStructT_v02), qmiLocEnvAidingReflectingPlaneStructT_data_v02},
-  {sizeof(qmiLocEnvAidingSVCorrectionStructT_v02), qmiLocEnvAidingSVCorrectionStructT_data_v02}
+  {sizeof(qmiLocEnvAidingSVCorrectionStructT_v02), qmiLocEnvAidingSVCorrectionStructT_data_v02},
+  {sizeof(qmiLocRobustLocationVersionT_v02), qmiLocRobustLocationVersionT_data_v02}
 };
 
 /* Message Table */
@@ -8484,8 +8528,8 @@ static const qmi_idl_service_message_table_entry loc_service_response_messages_v
 };
 
 static const qmi_idl_service_message_table_entry loc_service_indication_messages_v02[] = {
-  {QMI_LOC_EVENT_POSITION_REPORT_IND_V02, QMI_IDL_TYPE16(0, 7), 2456},
-  {QMI_LOC_EVENT_GNSS_SV_INFO_IND_V02, QMI_IDL_TYPE16(0, 8), 8768},
+  {QMI_LOC_EVENT_POSITION_REPORT_IND_V02, QMI_IDL_TYPE16(0, 7), 2474},
+  {QMI_LOC_EVENT_GNSS_SV_INFO_IND_V02, QMI_IDL_TYPE16(0, 8), 9476},
   {QMI_LOC_EVENT_NMEA_IND_V02, QMI_IDL_TYPE16(0, 9), 4301},
   {QMI_LOC_EVENT_NI_NOTIFY_VERIFY_REQ_IND_V02, QMI_IDL_TYPE16(0, 10), 1342},
   {QMI_LOC_EVENT_INJECT_TIME_REQ_IND_V02, QMI_IDL_TYPE16(0, 11), 776},
@@ -8582,7 +8626,7 @@ static const qmi_idl_service_message_table_entry loc_service_indication_messages
   {QMI_LOC_GET_AVAILABLE_WWAN_POSITION_IND_V02, QMI_IDL_TYPE16(0, 184), 145},
   {QMI_LOC_SET_PREMIUM_SERVICES_CONFIG_IND_V02, QMI_IDL_TYPE16(0, 186), 7},
   {QMI_LOC_SET_XTRA_VERSION_CHECK_IND_V02, QMI_IDL_TYPE16(0, 188), 7},
-  {QMI_LOC_EVENT_GNSS_MEASUREMENT_REPORT_IND_V02, QMI_IDL_TYPE16(0, 191), 3143},
+  {QMI_LOC_EVENT_GNSS_MEASUREMENT_REPORT_IND_V02, QMI_IDL_TYPE16(0, 191), 3151},
   {QMI_LOC_EVENT_SV_POLYNOMIAL_REPORT_IND_V02, QMI_IDL_TYPE16(0, 192), 416},
   {QMI_LOC_SET_GNSS_CONSTELL_REPORT_CONFIG_IND_V02, QMI_IDL_TYPE16(0, 190), 7},
   {QMI_LOC_ADD_GEOFENCE_CONTEXT_IND_V02, QMI_IDL_TYPE16(0, 194), 28},
@@ -8637,7 +8681,7 @@ static const qmi_idl_service_message_table_entry loc_service_indication_messages
   {QMI_LOC_EVENT_ENGINE_LOCK_STATE_IND_V02, QMI_IDL_TYPE16(0, 264), 25},
   {QMI_LOC_SYSTEM_INFO_IND_V02, QMI_IDL_TYPE16(0, 268), 28},
   {QMI_LOC_GET_CONSTELLATION_CONTROL_IND_V02, QMI_IDL_TYPE16(0, 269), 49},
-  {QMI_LOC_EVENT_UNPROPAGATED_POSITION_REPORT_IND_V02, QMI_IDL_TYPE16(0, 7), 2456},
+  {QMI_LOC_EVENT_UNPROPAGATED_POSITION_REPORT_IND_V02, QMI_IDL_TYPE16(0, 7), 2474},
   {QMI_LOC_ENABLE_POSITION_INJECTION_TEST_MODE_IND_V02, QMI_IDL_TYPE16(0, 271), 14},
   {QMI_LOC_INJECT_TEST_POSITION_IND_V02, QMI_IDL_TYPE16(0, 273), 7},
   {QMI_LOC_EVENT_BS_OBS_DATA_SERVICE_REQ_IND_V02, QMI_IDL_TYPE16(0, 274), 5},
@@ -8655,7 +8699,7 @@ static const qmi_idl_service_message_table_entry loc_service_indication_messages
   {QMI_LOC_LOCATION_REQUEST_NOTIFICATION_IND_V02, QMI_IDL_TYPE16(0, 290), 66},
   {QMI_LOC_INJECT_PLATFORM_POWER_STATE_IND_V02, QMI_IDL_TYPE16(0, 292), 7},
   {QMI_LOC_SET_ROBUST_LOCATION_CONFIG_IND_V02, QMI_IDL_TYPE16(0, 2), 7},
-  {QMI_LOC_GET_ROBUST_LOCATION_CONFIG_IND_V02, QMI_IDL_TYPE16(0, 294), 15},
+  {QMI_LOC_GET_ROBUST_LOCATION_CONFIG_IND_V02, QMI_IDL_TYPE16(0, 294), 21},
   {QMI_LOC_INJECT_ENV_AIDING_IND_V02, QMI_IDL_TYPE16(0, 2), 7},
   {QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_IND_V02, QMI_IDL_TYPE16(0, 2), 7},
   {QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_IND_V02, QMI_IDL_TYPE16(0, 297), 12}
@@ -8672,7 +8716,7 @@ struct qmi_idl_service_object loc_qmi_idl_service_object_v02 = {
     sizeof(loc_service_indication_messages_v02)/sizeof(qmi_idl_service_message_table_entry) },
   { loc_service_command_messages_v02, loc_service_response_messages_v02, loc_service_indication_messages_v02},
   &loc_qmi_idl_type_table_object_v02,
-  0x7A,
+  0x7B,
   NULL
 };
 
