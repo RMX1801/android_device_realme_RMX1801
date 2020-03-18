@@ -1,0 +1,1 @@
+allow netd sysfs_wlan:file rw_file_perms;

@@ -1,0 +1,11 @@
+allow priv_app proc_pci:file open;
+allow priv_app proc_interrupts:file open;
+allow priv_app proc_modules:file { open getattr };
+allow priv_app sysfs_android_usb:file rw_file_perms;
+allow priv_app sysfs_wlan:file { r_file_perms getattr };
+
+dontaudit priv_app bt_firmware_file:filesystem getattr;
+dontaudit priv_app firmware_file:filesystem getattr;
+dontaudit priv_app mnt_vendor_file:dir search;
+
+binder_call(priv_app, hal_memtrack_default)

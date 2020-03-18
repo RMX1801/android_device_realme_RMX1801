@@ -1,5 +1,52 @@
-# Custom HALs
-/vendor/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-service\.realme_sdm660    u:object_r:hal_fingerprint_sdm660_exec:s0
-/vendor/bin/hw/android\.hardware\.light@2\.0-service\.realme_sdm660    u:object_r:hal_light_sdm660_exec:s0
-/vendor/bin/hw/vendor\.lineage\.touch@1\.0-service\.realme_sdm660          u:object_r:hal_touch_sdm660_exec:s0
+# Camera
+/data/media                                                                                                    u:object_r:media_rw_data_file:s0
+/mnt/vendor/persist/camera(/.*)?                                                                               u:object_r:persist_camera_file:s0
+/mnt/vendor/opporeserve/media(/.*)?                                                                            u:object_r:oppo_reserve_media_file:s0
+/mnt/vendor/opporeserve/media/Camera(/.*)?                                                                     u:object_r:oppo_reserve_media_camera:s0
+/vendor/bin/hw/vendor\.oppo\.hardware\.ktv@1\.0-service                                                        u:object_r:hal_camera_default_exec:s0
 
+# CryptoEng
+/vendor/bin/hw/vendor\.oppo\.hardware\.cryptoeng@1\.0-service                                           u:object_r:hal_cryptoeng_default_exec:s0
+
+# Fingerprint
+/data/system/users/0/fpdata(/.*)?                                                                       u:object_r:fingerprintd_data_file:s0
+/vendor/bin/hw/android\.hardware\.biometrics\.fingerprint@2\.1-service\.realme_sdm660                   u:object_r:hal_fingerprint_sdm660_exec:s0
+/vendor/bin/hw/vendor\.oppo\.hardware\.biometrics\.fingerprint@2\.1-service                             u:object_r:hal_fingerprint_oppo_exec:s0
+
+# Light
+/vendor/bin/hw/android\.hardware\.light@2\.0-service\.realme_sdm660                                     u:object_r:hal_light_sdm660_exec:s0
+/sys/devices(/platform)?/soc/[0-9a-f]+.qcom,spmi/spmi-[0-9]+/spmi[0-9]+-[0-9]+/[0-9a-z]+.qcom,spmi:qcom,pm660l@[0-9]+:qcom,leds@[a-z0-9]+/leds/button-backlight(/.*)?  u:object_r:sysfs_leds:s0
+/sys/devices(/platform)?/soc/[0-9a-f]+.qcom,spmi/spmi-[0-9]+/spmi[0-9]+-[0-9]+/[0-9a-z]+.qcom,spmi:qcom,pm660l@[0-9]+:qcom,leds@[a-z0-9]+/leds/white(/.*)?  u:object_r:sysfs_leds:s0
+
+# MMC
+/sys/devices(/platform)?/soc/[a-z0-9]+.sdhci/mmc_host/mmc[0-2]/mmc[0-2]:[0-9]+(/.*)?                    u:object_r:sysfs_mmc:s0
+
+# NV
+/data/opponvitems(/.*)?                                                                                 u:object_r:nv_data_file:s0
+/cache/opponvitems(/.*)?                                                                                u:object_r:nv_data_file:s0
+/dev/block/platform/soc/c0c4000.sdhci/by-name/oppodycnvbk                                               u:object_r:modem_efs_partition_device:s0
+/dev/block/platform/soc/c0c4000.sdhci/by-name/oppostanvbk                                               u:object_r:modem_efs_partition_device:s0
+
+# Opporeserve
+/dev/block/platform/soc/c0c4000.sdhci/by-name/opporeserve1                                             u:object_r:oppo_block_device:s0
+/dev/block/platform/soc/c0c4000.sdhci/by-name/opporeserve2                                             u:object_r:oppo_block_device:s0
+/mnt/vendor/opporeserve(/.*)?                                                                          u:object_r:oppo_reserve_file:s0
+
+# Power supply
+/sys/devices(/platform)?/soc/[a-z0-9]+.qcom,spmi/spmi-[0-9]/spmi[0-9]-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,qpnp-smb2/power_supply/ac(/.*)?  u:object_r:sysfs_battery_supply:s0
+
+# RTC
+/sys/devices(/platform)?/soc/[a-z0-9]+.qcom,spmi/spmi-[0-9]/spmi[0-9]-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,pm660_rtc/rtc/rtc0(/.*)?  u:object_r:sysfs_rtc:s0
+
+# Sharedmem
+/sys/devices(/platform)?/soc/[0-9]+.qcom,oembackup_sharedmem/uio/uio[0-1](/.*)?                         u:object_r:sysfs_oembackup:s0
+
+# Touch
+/vendor/bin/hw/vendor\.lineage\.touch@1\.0-service\.realme_sdm660                                       u:object_r:hal_touch_sdm660_exec:s0
+
+# Touchpanel
+/proc/touchpanel/tp_fw_update                                                                           u:object_r:proc_touchpanel:s0
+
+# Wlan
+/sys/devices(/platform)?/soc/[0-9]+.qcom,icnss/net/wlan[0-1](/.*)?                                      u:object_r:sysfs_wlan:s0
+/sys/devices(/platform)?/soc/[0-9]+.qcom,icnss/net/p2p0(/.*)?                                           u:object_r:sysfs_wlan:s0

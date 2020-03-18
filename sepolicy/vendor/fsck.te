@@ -1,0 +1,3 @@
+allow fsck oppo_block_device:blk_file { read open write ioctl };
+
+dontaudit fsck self:capability { dac_override dac_read_search };

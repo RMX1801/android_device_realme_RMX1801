@@ -3,3 +3,10 @@ hal_server_domain(hal_fingerprint_sdm660, hal_fingerprint)
 
 type hal_fingerprint_sdm660_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(hal_fingerprint_sdm660)
+
+allow hal_fingerprint_sdm660 hal_fingerprint_sdm660:binder { call };
+allow hal_fingerprint_sdm660 sysfs_fingerprint:file rw_file_perms;
+allow hal_fingerprint_sdm660 tee_device:chr_file { ioctl };
+
+allow hal_fingerprint_sdm660 hal_fingerprint_oppo:binder { call transfer };
+allow hal_fingerprint_sdm660 hal_fingerprint_oppo_hwservice:hwservice_manager { find };

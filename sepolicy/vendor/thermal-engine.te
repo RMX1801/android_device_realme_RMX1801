@@ -1,0 +1,2 @@
+allow thermal-engine sysfs_oembackup:dir search;
+allow thermal-engine sysfs_oembackup:file { r_file_perms getattr };
