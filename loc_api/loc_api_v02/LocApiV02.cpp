@@ -3429,7 +3429,6 @@ void  LocApiV02 :: reportSv (
                     gnssSv_ref.type = GNSS_SV_TYPE_QZSS;
                     break;
                 case eQMI_LOC_SV_SYSTEM_NAVIC_V02:
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId - 400;
                     gnssSv_ref.type = GNSS_SV_TYPE_NAVIC;
                     break;
                 default:
@@ -5483,7 +5482,6 @@ bool LocApiV02 :: convertGnssMeasurements (GnssMeasurementsData& measurementData
     const qmiLocEventGnssSvMeasInfoIndMsgT_v02& gnss_measurement_report_ptr,
     int index)
 {
-    uint8_t gloFrequency = 0;
     bool bAgcIsPresent = false;
 
     LOC_LOGV ("%s:%d]: entering\n", __func__, __LINE__);
@@ -5518,7 +5516,7 @@ bool LocApiV02 :: convertGnssMeasurements (GnssMeasurementsData& measurementData
 
         case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
             measurementData.svType = GNSS_SV_TYPE_GLONASS;
-            gloFrequency = gnss_measurement_info.gloFrequency;
+            measurementData.gloFrequency = gnss_measurement_info.gloFrequency;
             break;
 
         case eQMI_LOC_SV_SYSTEM_BDS_V02:
@@ -5530,7 +5528,6 @@ bool LocApiV02 :: convertGnssMeasurements (GnssMeasurementsData& measurementData
             break;
         case eQMI_LOC_SV_SYSTEM_NAVIC_V02:
             measurementData.svType = GNSS_SV_TYPE_NAVIC;
-            measurementData.svId = gnss_measurement_info.gnssSvId;
             break;
         default:
             measurementData.svType = GNSS_SV_TYPE_UNKNOWN;
@@ -5656,9 +5653,9 @@ bool LocApiV02 :: convertGnssMeasurements (GnssMeasurementsData& measurementData
     // carrier frequency
     if (gnss_measurement_report_ptr.gnssSignalType_valid) {
         LOC_LOGv("gloFrequency = 0x%X, sigType=0x%X",
-                 gloFrequency, gnss_measurement_report_ptr.gnssSignalType);
+                 gnss_measurement_info.gloFrequency, gnss_measurement_report_ptr.gnssSignalType);
         measurementData.carrierFrequencyHz = convertSignalTypeToCarrierFrequency(
-                gnss_measurement_report_ptr.gnssSignalType, gloFrequency);
+                gnss_measurement_report_ptr.gnssSignalType, gnss_measurement_info.gloFrequency);
         measurementData.flags |= GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT;
     }
     else {
@@ -5666,8 +5663,8 @@ bool LocApiV02 :: convertGnssMeasurements (GnssMeasurementsData& measurementData
         // GLONASS is FDMA system, so each channel has its own carrier frequency
         // The formula is f(k) = fc + k * 0.5625;
         // This is applicable for GLONASS G1 only, where fc = 1602MHz
-        if ((gloFrequency >= 1 && gloFrequency <= 14)) {
-            measurementData.carrierFrequencyHz += ((gloFrequency - 8) * 562500);
+        if (gnss_measurement_info.gloFrequency >= 1 && gnss_measurement_info.gloFrequency <= 14) {
+            measurementData.carrierFrequencyHz += (gnss_measurement_info.gloFrequency - 8) * 562500;
         }
         measurementData.carrierFrequencyHz += CarrierFrequencies[measurementData.svType];
         measurementData.flags |= GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT;
