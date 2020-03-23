@@ -205,6 +205,21 @@ bool LocationIntegrationApi::deleteAllAidingData() {
     }
 }
 
+bool LocationIntegrationApi::deleteAidingData(AidingDataDeletionMask aidingDataMask) {
+    if (mApiImpl) {
+        GnssAidingData aidingData = {};
+        aidingData.deleteAll = false;
+        aidingData.sv.svTypeMask = GNSS_AIDING_DATA_SV_TYPE_MASK_ALL;
+        aidingData.sv.svMask = GNSS_AIDING_DATA_SV_EPHEMERIS_BIT;
+        aidingData.posEngineMask = POSITION_ENGINE_MASK_ALL;
+        mApiImpl->gnssDeleteAidingData(aidingData);
+        return true;
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
+        return false;
+    }
+}
+
 bool LocationIntegrationApi::configLeverArm(const LeverArmParamsMap& configInfo) {
 
     if (mApiImpl) {
