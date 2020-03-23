@@ -77,6 +77,9 @@ clientDiagGnss_LocSvSystemEnumType parseDiagGnssConstellation(
         case GNSS_LOC_SV_SYSTEM_QZSS:
             constellation = CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_QZSS;
             break;
+        case GNSS_LOC_SV_SYSTEM_NAVIC:
+            constellation = CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_NAVIC;
+            break;
         default:
             constellation = (clientDiagGnss_LocSvSystemEnumType)~0;
             break;
@@ -180,6 +183,9 @@ void translateDiagSystemTime(clientDiagGnssSystemTime& out,
         case GNSS_LOC_SV_SYSTEM_QZSS:
            out.u.qzssSystemTime = parseDiagGnssTime(in.u.qzssSystemTime);
            break;
+        case GNSS_LOC_SV_SYSTEM_NAVIC:
+           out.u.navicSystemTime = parseDiagGnssTime(in.u.navicSystemTime);
+           break;
         default:
            break;
     }
@@ -194,6 +200,7 @@ clientDiagGnssLocationSvUsedInPosition parseDiagLocationSvUsedInPosition(
     clientSv.galSvUsedIdsMask = halSv.galSvUsedIdsMask;
     clientSv.bdsSvUsedIdsMask = halSv.bdsSvUsedIdsMask;
     clientSv.qzssSvUsedIdsMask = halSv.qzssSvUsedIdsMask;
+    clientSv.navicSvUsedIdsMask = halSv.navicSvUsedIdsMask;
 
     return clientSv;
 }
@@ -281,7 +288,8 @@ void translateDiagGnssMeasUsageInfo(clientDiagGnssMeasUsageInfo& out,
      For SBAS:     120 to 151
      For QZSS-L1CA:193 to 197
      For BDS:      201 to 237
-     For GAL:      301 to 336 */
+     For GAL:      301 to 336
+     For NAVIC:    401 to 414 */
     out.gnssSvId = in.gnssSvId;
 }
 
@@ -425,7 +433,7 @@ void translateDiagGnssSv(clientDiagGnssSv& out, const GnssSv& in) {
 
     /** Unique Identifier */
     out.svId = in.svId;
-    /** type of SV (GPS, SBAS, GLONASS, QZSS, BEIDOU, GALILEO) */
+    /** type of SV (GPS, SBAS, GLONASS, QZSS, BEIDOU, GALILEO, NAVIC) */
     out.type = (clientDiagGnssSvType)in.type;
     /** signal strength */
     out.cN0Dbhz = in.cN0Dbhz;

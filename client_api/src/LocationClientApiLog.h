@@ -39,7 +39,7 @@
 
 #define CLIENT_DIAG_GNSS_SV_MAX            (176)
 #define CLIENT_DIAG_GNSS_MEASUREMENTS_MAX  (128)
-#define LOG_CLIENT_LOCATION_DIAG_MSG_VERSION        (2)
+#define LOG_CLIENT_LOCATION_DIAG_MSG_VERSION        (3)
 #define LOG_CLIENT_SV_REPORT_DIAG_MSG_VERSION       (2)
 #define LOG_CLIENT_NMEA_REPORT_DIAG_MSG_VERSION     (1)
 #define LOG_CLIENT_MEASUREMENTS_DIAG_MSG_VERSION    (1)
@@ -133,7 +133,9 @@ typedef enum
     /** BDS satellite. */
     CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_BDS                    = 6,
     /** QZSS satellite. */
-    CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_QZSS                   = 7
+    CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_QZSS                   = 7,
+    /** NAVIC satellite. */
+    CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_NAVIC                  = 8
 } clientDiagGnss_LocSvSystemEnumType;
 
 typedef uint32_t clientDiagGnssSystemTimeStructTypeFlags;
@@ -234,6 +236,7 @@ typedef PACKED union PACKED_POST {
     clientDiagGnssSystemTimeStructType bdsSystemTime;
     clientDiagGnssSystemTimeStructType qzssSystemTime;
     clientDiagGnssGloTimeStructType gloSystemTime;
+    clientDiagGnssSystemTimeStructType navicSystemTime;
 } clientDiagSystemTimeStructUnion;
 
 typedef PACKED struct PACKED_POST {
@@ -352,7 +355,8 @@ typedef PACKED struct PACKED_POST {
      For SBAS:     120 to 151
      For QZSS-L1CA:193 to 197
      For BDS:      201 to 237
-     For GAL:      301 to 336 */
+     For GAL:      301 to 336
+     For NAVIC:    401 to 414 */
     uint16_t gnssSvId;
 } clientDiagGnssMeasUsageInfo;
 
@@ -364,6 +368,7 @@ typedef enum {
     CLIENT_DIAG_GNSS_SV_TYPE_QZSS,
     CLIENT_DIAG_GNSS_SV_TYPE_BEIDOU,
     CLIENT_DIAG_GNSS_SV_TYPE_GALILEO,
+    CLIENT_DIAG_GNSS_SV_TYPE_NAVIC
 } clientDiagGnssSvType;
 
 typedef uint16_t clientDiagGnssSvOptionsMask;
@@ -377,7 +382,7 @@ typedef enum {
 typedef PACKED struct PACKED_POST {
     /** Unique Identifier */
     uint16_t svId;
-    /** type of SV (GPS, SBAS, GLONASS, QZSS, BEIDOU, GALILEO) */
+    /** type of SV (GPS, SBAS, GLONASS, QZSS, BEIDOU, GALILEO, NAVIC) */
     clientDiagGnssSvType type;
     /** signal strength */
     float cN0Dbhz;
@@ -506,6 +511,7 @@ typedef PACKED struct PACKED_POST {
     uint64_t galSvUsedIdsMask;
     uint64_t bdsSvUsedIdsMask;
     uint64_t qzssSvUsedIdsMask;
+    uint64_t navicSvUsedIdsMask;
 } clientDiagGnssLocationSvUsedInPosition;
 
 typedef uint32_t clientDiagGnssLocationNavSolutionMask;

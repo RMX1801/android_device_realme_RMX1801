@@ -176,7 +176,7 @@ static GnssLocationSvUsedInPosition parseLocationSvUsedInPosition(
     clientSv.galSvUsedIdsMask = halSv.galSvUsedIdsMask;
     clientSv.bdsSvUsedIdsMask = halSv.bdsSvUsedIdsMask;
     clientSv.qzssSvUsedIdsMask = halSv.qzssSvUsedIdsMask;
-
+    clientSv.navicSvUsedIdsMask = halSv.navicSvUsedIdsMask;
     return clientSv;
 }
 
@@ -487,6 +487,10 @@ static GnssSystemTime parseSystemTime(const ::GnssSystemTime &halSystemTime) {
         case ::GNSS_LOC_SV_SYSTEM_QZSS:
            systemTime.gnssSystemTimeSrc = GNSS_LOC_SV_SYSTEM_QZSS;
            systemTime.u.qzssSystemTime = parseGnssTime(halSystemTime.u.qzssSystemTime);
+           break;
+        case GNSS_LOC_SV_SYSTEM_NAVIC:
+           systemTime.gnssSystemTimeSrc = GNSS_LOC_SV_SYSTEM_NAVIC;
+           systemTime.u.navicSystemTime = parseGnssTime(halSystemTime.u.navicSystemTime);
            break;
     }
 

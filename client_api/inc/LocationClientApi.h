@@ -487,7 +487,9 @@ enum Gnss_LocSvSystemEnumType {
     /**  SV is of BDS constellation. <br/>   */
     GNSS_LOC_SV_SYSTEM_BDS     = 5,
     /**  SV is of QZSS constellation. <br/>   */
-    GNSS_LOC_SV_SYSTEM_QZSS    = 6
+    GNSS_LOC_SV_SYSTEM_QZSS    = 6,
+    /** SV is of NAVIC constellation. <br/>   */
+    GNSS_LOC_SV_SYSTEM_NAVIC   = 7
 };
 
 /** Specify the valid fields in GnssSystemTimeStructType.
@@ -581,9 +583,14 @@ struct GnssLocationSvUsedInPosition {
     uint64_t bdsSvUsedIdsMask;
     /** Specify the set of SVs from QZSS constellation that are used
      *  to compute the position. <br/>
-     *  Bit 0 to Bit 4 corresponds to BDS SV id 193 to 197.
+     *  Bit 0 to Bit 4 corresponds to QZSS SV id 193 to 197.
      *  <br/> */
     uint64_t qzssSvUsedIdsMask;
+    /** Specify the set of SVs from NAVIC constellation that are used
+     *  to compute the position. <br/>
+     *  Bit 0 to Bit 13 corresponds to NAVIC SV id 401 to 414.
+     *  <br/> */
+    uint64_t navicSvUsedIdsMask;
 };
 
 /** Specify the SV measurements that are used to calculate
@@ -743,6 +750,8 @@ union SystemTimeStructUnion {
     GnssSystemTimeStructType qzssSystemTime;
     /** System time info from GLONASS constellation. <br/>   */
     GnssGloTimeStructType gloSystemTime;
+    /** System time info from NAVIC constellation. <br/>   */
+    GnssSystemTimeStructType navicSystemTime;
 };
 
 /**  GNSS system time in GnssLocation. <br/>
