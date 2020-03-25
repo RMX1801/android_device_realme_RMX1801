@@ -26,6 +26,7 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <LocationClientApiImpl.h>
+#include <loc_misc_utils.h>
 
 namespace location_client {
 
@@ -356,15 +357,15 @@ void populateClientDiagLocation(clientDiagGnssLocationStructType* diagGnssLocPtr
     diagGnssLocPtr->enuVelocityVRPBased[1] = gnssLocation.enuVelocityVRPBased[1];
     diagGnssLocPtr->enuVelocityVRPBased[2] = gnssLocation.enuVelocityVRPBased[2];
 
-    struct timespec ts;
-    clock_gettime(CLOCK_BOOTTIME, &ts);
-    diagGnssLocPtr->bootTimestampNs =
-            (ts.tv_sec * 1000000000ULL + ts.tv_nsec);
-
     diagGnssLocPtr->locOutputEngType =
             (clientDiagLocOutputEngineType) gnssLocation.locOutputEngType;
     diagGnssLocPtr->locOutputEngMask =
             (clientDiagPositioningEngineMask) gnssLocation.locOutputEngMask;
+
+    struct timespec ts;
+    clock_gettime(CLOCK_BOOTTIME, &ts);
+    diagGnssLocPtr->bootTimestampNs = (ts.tv_sec * 1000000000ULL + ts.tv_nsec);
+    diagGnssLocPtr->qtimerTickCnt = getQTimerTickCount();
 }
 
 void populateClientDiagMeasurements(clientDiagGnssMeasurementsStructType* diagGnssMeasPtr,
