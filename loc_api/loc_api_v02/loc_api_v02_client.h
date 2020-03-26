@@ -802,6 +802,11 @@ typedef union
     const qmiLocSetRobustLocationReqMsgT_v02
             *pSetRobustLocationReq;
     /*QMI_LOC_SET_ROBUST_LOCATION_CONFIG_REQ*/
+
+    qmiLocSetMinGpsWeekNumberReqMsgT_v02
+            *pSetMinGpsWeekReq;
+    /*QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_REQ_V02*/
+
 }locClientReqUnionType;
 
 

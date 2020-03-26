@@ -231,6 +231,7 @@ private:
   void registerMasterClient();
   int getGpsLock(uint8_t subType);
   void getRobustLocationConfig(uint32_t sessionId, LocApiResponse* adapterResponse);
+  void getMinGpsWeek(uint32_t sessionId, LocApiResponse* adapterResponse);
 
   /* Convert get blacklist sv info to GnssSvIdConfig */
   void reportGnssSvIdConfig
@@ -342,6 +343,8 @@ public:
   virtual void requestForAidingData(GnssAidingDataSvMask svDataMask);
   virtual void configRobustLocation(bool enable, bool enableForE911,
                                     LocApiResponse *adapterResponse=nullptr);
+  virtual void configMinGpsWeek(uint16_t minGpsWeek,
+                                LocApiResponse *adapterResponse=nullptr);
   /*
   Returns
   Current value of GPS Lock on success
