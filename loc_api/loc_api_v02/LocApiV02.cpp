@@ -3164,7 +3164,7 @@ void LocApiV02 :: reportPosition (
                 if (location_report_ptr->timeUnc_valid)
                 {
                     locationExtended.gnssSystemTime.u.gpsSystemTime.systemClkTimeUncMs =
-                            locationExtended.timeUncMs;
+                            location_report_ptr->timeUnc;
                     locationExtended.gnssSystemTime.u.gpsSystemTime.validityMask |=
                             GNSS_SYSTEM_CLK_TIME_BIAS_UNC_VALID;
                 }
