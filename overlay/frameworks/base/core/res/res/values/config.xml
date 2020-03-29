@@ -323,10 +323,6 @@
     <!-- Height of the status bar in landscape -->
     <dimen name="status_bar_height_landscape">28.0dp</dimen>
 
-    <!-- The status bar padding before and after icons -->
-    <dimen name="rounded_corner_content_padding">12dp</dimen>
-    <dimen name="rounded_corner_content_padding_alt">12dp</dimen>
-
     <!-- Default radius of the software rounded corners. -->
     <dimen name="rounded_corner_radius">36dp</dimen>
 
