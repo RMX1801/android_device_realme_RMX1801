@@ -693,6 +693,10 @@ typedef PACKED struct PACKED_POST {
     clientDiagLLAInfo llaVRPBased;
     /** VRR-based east, north, and up velocity */
     float enuVelocityVRPBased[3];
+    /** qtimer tick count when this diag log packet is
+     *  created and filled with the info at location client api
+     *  layer. This field is always valid. */
+    uint64_t qtimerTickCnt;
 } clientDiagGnssLocationStructType;
 
 typedef uint32_t clientDiagGnssMeasurementsDataFlagsMask;
