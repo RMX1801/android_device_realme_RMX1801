@@ -5,3 +5,7 @@ allow init system_data_file:dir add_name;
 
 # For mount tracefs tracefs /sys/kernel/tracing
 allow init debugfs_tracing_debug:dir mounton;
+
+# Root directories
+allow init bt_firmware_file:filesystem getattr;
+allow init firmware_file:filesystem getattr;
