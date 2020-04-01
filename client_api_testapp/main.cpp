@@ -189,9 +189,11 @@ static void onConfigResponseCb(location_integration::LocConfigTypeEnum    reques
 }
 
 static void onGetRobustLocationConfigCb(RobustLocationConfig robustLocationConfig) {
-    printf("<<< onGetRobustLocationConfigCb, valid flags 0x%x, enabled %d, enabledForE911 %d\n",
+    printf("<<< onGetRobustLocationConfigCb, valid flags 0x%x, enabled %d, enabledForE911 %d, "
+           "version (major %u, minor %u)\n",
            robustLocationConfig.validMask, robustLocationConfig.enabled,
-           robustLocationConfig.enabledForE911);
+           robustLocationConfig.enabledForE911, robustLocationConfig.version.major,
+           robustLocationConfig.version.minor);
 }
 
 static void onGetMinGpsWeekCb(uint32_t minGpsWeek) {

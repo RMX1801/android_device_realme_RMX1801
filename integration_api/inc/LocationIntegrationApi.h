@@ -236,7 +236,7 @@ typedef std::function<void(
 /** Specify the valid mask for robust location configuration
  *  used by GNSS engine on modem. The robust location
  *  configuraiton can be retrieved by invoking
- *  LocConfigGetRobustLocationConfigCb. <br/> */
+ *  getRobustLocationConfig. <br/> */
 enum RobustLocationConfigValidMask {
     /** RobustLocationConfig has valid
      *  RobustLocationConfig::enabled. <br/> */
@@ -244,11 +244,26 @@ enum RobustLocationConfigValidMask {
     /** RobustLocationConfig has valid
      *  RobustLocationConfig::enabledForE911. <br/> */
     ROBUST_LOCATION_CONFIG_VALID_ENABLED_FOR_E911 = (1<<1),
+    /** RobustLocationConfig has valid
+     *  RobustLocationConfig::version. <br/> */
+    ROBUST_LOCATION_CONFIG_VALID_VERSION = (1<<2),
+};
+
+/** Specify the robust location versioning info of modem
+ *  GNSS robust location module. The versioning info is part of
+ *  RobustLocationConfig and will be returned when invoking
+ *  getRobustLocationConfig. RobustLocationConfig will be
+ *  returned via LocConfigGetRobustLocationConfigCb. <br/> */
+struct RobustLocationVersion {
+    /** Major version number. <br/> */
+    uint8_t major;
+    /** Minor version number. <br/> */
+    uint16_t minor;
 };
 
 /** Specify the robust location configuration used by modem GNSS
  *  engine that will be returned when invoking
- *  LocConfigGetRobustLocationConfigCb. The configuration will
+ *  getRobustLocationConfig. The configuration will
  *  be returned via LocConfigGetRobustLocationConfigCb. <br/> */
 struct RobustLocationConfig {
     /** Bitwise OR of RobustLocationConfigValidMask to specify
@@ -260,6 +275,9 @@ struct RobustLocationConfig {
     /** Specify whether robust location feature is enabled or not
      *  when device is on E911 call. <br/> */
     bool enabledForE911;
+    /** Specify the version info of robust location module used
+     *  by GNSS engine on modem. <br/> */
+    RobustLocationVersion version;
 };
 
 /**
@@ -537,8 +555,15 @@ public:
 
 
     /** @brief
-        Enable/disable robust location feature and enable/disable
-        robust location while device is on E911.
+        Enable or disable robust location 2.0 feature. When enabled,
+        location_client::GnssLocation shall report conformity index
+        of the GNSS navigation solution, which is a measure of
+        robustness of the underlying navigation solution. It
+        indicates how well the various input data considered for
+        navigation solution conform to expectations. In the presence
+        of detected spoofed inputs, the navigation solution may take
+        corrective actions to mitigate the spoofed inputs and
+        improve robustness of the solution.
 
         @param
         enable: true to enable robust location and false to disable
@@ -561,10 +586,12 @@ public:
     bool configRobustLocation(bool enable, bool enableForE911=false);
 
     /** @brief
-        Request robust location setting used by GNSS engine. If
-        processing of the command fails, the failure status will be
-        returned via configCb. If the processing of the command is
-        successful, the successful status will be returned via
+        Query robust location 2.0 setting and version info used by
+        GNSS engine.
+
+        If processing of the command fails, the failure status will
+        be returned via configCb. If the processing of the command
+        is successful, the successful status will be returned via
         configCB, and the robust location config info will be
         returned via getRobustLocationConfigCb passed via the
         constructor.

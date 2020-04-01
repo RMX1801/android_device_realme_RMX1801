@@ -63,7 +63,7 @@
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.9
-   It was generated on: Tue Mar 24 2020 (Spin 0)
+   It was generated on: Wed Mar 25 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -89,7 +89,7 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
 /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x7A
+#define LOC_V02_IDL_MINOR_VERS 0x7B
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
@@ -1713,8 +1713,8 @@ typedef struct {
       - For GPS:     1 to 32 \n
       - For GLONASS: 65 to 96 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
-      - For Galileo:     301 to 336 \n
+      - For BDS:     201 to 263 \n
+      - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
       */
 
@@ -1821,8 +1821,8 @@ typedef struct {
       - For GPS:     1 to 32 \n
       - For GLONASS: 65 to 96 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
-      - For Galileo:     301 to 336 \n
+      - For BDS:     201 to 263 \n
+      - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
       */
 
@@ -1913,6 +1913,18 @@ typedef struct {
   /**<   Indicates how well the various input data considered for navigation solution conform to expectations
        - Range: 0 (least conforming) to 1 (most conforming)
   */
+
+  /* Optional */
+  /*  System Tick at GPS Time */
+  uint8_t systemTick_valid;  /**< Must be set to true if systemTick is being passed */
+  uint64_t systemTick;
+  /**<   System tick at GPS time of week. */
+
+  /* Optional */
+  /*  Uncertainty for System Tick at GPS Time */
+  uint8_t systemTickUnc_valid;  /**< Must be set to true if systemTickUnc is being passed */
+  float systemTickUnc;
+  /**<   Uncertainty for system tick at GPS time of week. */
 }qmiLocEventPositionReportIndMsgT_v02;  /* Message */
 /**
     @}
@@ -2000,7 +2012,7 @@ typedef struct {
           - For GLONASS:  1 to 32 \n
           - For SBAS:     120 to 158 and 183 to 191 \n
           - For QZSS:     193 to 197 \n
-          - For BDS:      201 to 237 \n
+          - For BDS:      201 to 263 \n
           - For Galileo:  301 to 336 \n
           - For NavIC:    401 to 414 \n
 
@@ -2098,7 +2110,7 @@ typedef struct {
   uint8_t gnssSignalTypeList_valid;  /**< Must be set to true if gnssSignalTypeList is being passed */
   uint32_t gnssSignalTypeList_len;  /**< Must be set to # of elements in gnssSignalTypeList */
   qmiLocGnssSignalTypeMaskT_v02 gnssSignalTypeList[QMI_LOC_EXPANDED_SV_INFO_LIST_MAX_SIZE_V02];
-  /**<   Indicates the signal type of each satellite in expandedGnssSvUsedList. The
+  /**<   Indicates the signal type of each satellite in expandedSvList. The
  signal type list is aligned with the SVs in svList. Value of 0 means
  invalid.
       - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_GPS_L1CA (0x00000001) --  GPS L1CA RF band \n
@@ -2121,6 +2133,16 @@ typedef struct {
       - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_SBAS_L1_CA (0x00020000) --  SBAS L1_CA RF band
       - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_NAVIC_L5 (0x00040000) --  NavIC L5 RF band \n
       - QMI_LOC_MASK_GNSS_SIGNAL_TYPE_BEIDOU_B2A_Q (0x00080000) --  BeiDou B2A_Q RF band  */
+
+  /* Optional */
+  /*  RF Loss from Antenna to Baseband */
+  uint8_t rfLoss_valid;  /**< Must be set to true if rfLoss is being passed */
+  uint32_t rfLoss_len;  /**< Must be set to # of elements in rfLoss */
+  float rfLoss[QMI_LOC_EXPANDED_SV_INFO_LIST_MAX_SIZE_V02];
+  /**<   Indicates the RF loss from antenna to baseband of each satellite in expandedSvList.
+       rfLoss is aligned with the SVs in expandedSvList.\n
+       - Units: dB-Hz \n
+  */
 }qmiLocEventGnssSvInfoIndMsgT_v02;  /* Message */
 /**
     @}
@@ -4097,8 +4119,8 @@ typedef struct {
          - For GLONASS: 65 to 96 \n
          - For SBAS:    120 to 158 and 183 to 191 \n
          - For QZSS:    193 to 197 \n
-         - For BDS:     201 to 237 \n
-         - For Galileo:     301 to 336 \n
+         - For BDS:     201 to 263 \n
+         - For Galileo: 301 to 336 \n
          - For NavIC:   401 to 414
         */
 
@@ -4113,7 +4135,7 @@ typedef struct {
   uint8_t expandedGnssSvUsedList_valid;  /**< Must be set to true if expandedGnssSvUsedList is being passed */
   uint32_t expandedGnssSvUsedList_len;  /**< Must be set to # of elements in expandedGnssSvUsedList */
   uint16_t expandedGnssSvUsedList[QMI_LOC_EXPANDED_SV_INFO_LIST_MAX_SIZE_V02];
-  /**<   If the service reports expandedGnssSvUsedList, expandedGnssSvUsedList is
+  /**<   If the service reports expandedGnssSvUsedList, gnssSvUsedList is
       not reported. Each entry in the list contains the SV ID of a satellite
       used to calculate this position report. The following
       information is associated with each SV ID. \n
@@ -4121,8 +4143,8 @@ typedef struct {
       - For GPS:     1 to 32 \n
       - For GLONASS: 65 to 96 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
-      - For Galileo:     301 to 336 \n
+      - For BDS:     201 to 263 \n
+      - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
       */
 
@@ -4314,7 +4336,7 @@ typedef struct {
          - For GLONASS: 65 to 96 \n
          - For SBAS:    120 to 158 and 183 to 191 \n
          - For QZSS:    193 to 197 \n
-         - For BDS:     201 to 237 \n
+         - For BDS:     201 to 263 \n
          - For Galileo: 301 to 336 \n
          - For NavIC:   401 to 414
         */
@@ -4338,8 +4360,8 @@ typedef struct {
       - For GPS:     1 to 32 \n
       - For GLONASS: 65 to 96 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
-      - For Galileo:     301 to 336 \n
+      - For BDS:     201 to 263 \n
+      - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
       */
 
@@ -5633,8 +5655,8 @@ typedef struct {
       - For GPS:     1 to 32 \n
       - For GLONASS: 65 to 96 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
-      - For Galileo:     301 to 336 \n
+      - For BDS:     201 to 263 \n
+      - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
       */
 
@@ -6598,7 +6620,7 @@ typedef struct {
 
   uint16_t gnssSvId;
   /**<   SV ID of the satellite whose data is to be deleted. \n
-       Range for BDS:     201 to 237 */
+       Range for BDS:     201 to 263 */
 
   qmiLocDeleteSvInfoMaskT_v02 deleteSvInfoMask;
   /**<   Indicates whether to delete the ephemeris or almanac for a satellite. \n
@@ -11515,7 +11537,7 @@ typedef struct {
        - For GLONASS: 65 to 96 \n
        - For SBAS:    120 to 158 and 183 to 191 \n
        - For QZSS:    193 to 197 \n
-       - For BDS:     201 to 237 \n
+       - For BDS:     201 to 263 \n
        - For Galileo: 301 to 336 \n
        - For NavIC:   401 to 414
        */
@@ -11549,8 +11571,8 @@ typedef struct {
       - For GPS:     1 to 32 \n
       - For GLONASS: 65 to 96 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
-      - For Galileo:     301 to 336 \n
+      - For BDS:     201 to 263 \n
+      - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
       */
 
@@ -14556,7 +14578,7 @@ typedef struct {
          \item    For GPS:     1 to 32
          \item    For GLONASS: 65 to 96. When slot-number to SV ID mapping is unknown, set as 255.
          \item    For QZSS:    193 to 197
-         \item    For BDS:     201 to 237
+         \item    For BDS:     201 to 263
          \item    For Galileo: 301 to 336
          \item    For NavIC:   401 to 414
          \vspace{-0.18in}  \end{itemize1} */
@@ -15108,6 +15130,23 @@ typedef struct {
   uint8_t refCountTicksUnc_valid;  /**< Must be set to true if refCountTicksUnc is being passed */
   float refCountTicksUnc;
   /**<   Uncertainty for Receiver frame counter value in ticks. */
+
+  /* Optional */
+  /*  Sub-Sequence Number */
+  uint8_t subSeqNum_valid;  /**< Must be set to true if subSeqNum is being passed */
+  uint8_t subSeqNum;
+  /**<   Current sub-sequence number for a given sequence number (TLV 0x01).
+       Used for segmentation/assembly of individual sequence numbers.
+       If the number of SV measurements in one sequence number exceeds 24,
+       multiple indications shall be sent with unique subSeqNum and common maxSubSeqNum.
+       The control point shall be responsible for assembling the data for that
+       sequence number using these fields. */
+
+  /* Optional */
+  /*  Maximum Sub-Sequence Number */
+  uint8_t maxSubSeqNum_valid;  /**< Must be set to true if maxSubSeqNum is being passed */
+  uint8_t maxSubSeqNum;
+  /**<   Maximum number of sub-sequence numbers for a given sequence number */
 }qmiLocEventGnssSvMeasInfoIndMsgT_v02;  /* Message */
 /**
     @}
@@ -15134,11 +15173,11 @@ typedef struct {
   uint16_t gnssSvId;
   /**<   GNSS SV ID. Range:    \begin{itemize1}
          \item    For GPS:     1 to 32
-         \item    For GLONASS: 65 to 96 (when the slot number to SV ID mapping is unknown, set to 255)
+         \item    For GLONASS: 65 to 96
          \item    For SBAS:    120 to 158 and 183 to 191
          \item    For QZSS:    193 to 197
-         \item    For BDS:     201 to 237
-         \item    For Galileo:     301 to 336
+         \item    For BDS:     201 to 263
+         \item    For Galileo: 301 to 336
          \item    For NavIC:   401 to 414
        \vspace{-0.18in} \end{itemize1}  */
 
@@ -16788,7 +16827,7 @@ typedef struct {
       - For GLONASS: 65 to 96 \n
       - For SBAS:    120 to 158 and 183 to 191 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
+      - For BDS:     201 to 263 \n
       - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
   */
@@ -16828,7 +16867,7 @@ typedef struct {
       - For GPS:     1 to 32 \n
       - For GLONASS: 65 to 96 \n
       - For QZSS:    193 to 197 \n
-      - For BDS:     201 to 237 \n
+      - For BDS:     201 to 263 \n
       - For Galileo: 301 to 336 \n
       - For NavIC:   401 to 414
       */
@@ -17219,7 +17258,7 @@ typedef enum {
        - For SBAS:    33 to 64  \n
        - For GLONASS: 65 to 96 \n
        - For QZSS:    193 to 197 \n
-       - For BDS:     201 to 237
+       - For BDS:     201 to 263
      */
   eQMI_LOC_SECURE_GET_AVAILABLE_POS_REP_PARAM_TDOP_V02 = 36, /**<  Parameter ID for Time Dilution of Precision associated with this position. Optional field.\n
            - Parameter type: Float
@@ -20552,7 +20591,7 @@ typedef struct {
        Range:    \begin{itemize1}
          \item    For GPS:     1 to 32
          \item    For QZSS:    193 to 197
-         \item    For BDS:     201 to 237
+         \item    For BDS:     201 to 263
          \item    For GAL:     301 to 336
          \item    For NavIC;   401 to 414
        \vspace{-0.18in}  \end{itemize1} */
@@ -21745,6 +21784,21 @@ typedef struct {
     @}
   */
 
+/** @addtogroup loc_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uint8_t major;
+  /**<   Major Version Number */
+
+  uint16_t minor;
+  /**<   Minor Version Number */
+}qmiLocRobustLocationVersionT_v02;  /* Type */
+/**
+    @}
+  */
+
 /** @addtogroup loc_qmi_messages
     @{
   */
@@ -21787,6 +21841,12 @@ typedef struct {
        - 0x00 (FALSE) -- Disabled \n
        - 0x01 (TRUE)  -- Enabled  \n
   */
+
+  /* Optional */
+  /*  Robust Location Version */
+  uint8_t robustLocationVersion_valid;  /**< Must be set to true if robustLocationVersion is being passed */
+  qmiLocRobustLocationVersionT_v02 robustLocationVersion;
+  /**<    Major and minor version of the supported robust location feature */
 }qmiLocGetRobustLocationConfigIndMsgT_v02;  /* Message */
 /**
     @}
@@ -21850,7 +21910,7 @@ typedef struct {
        - For GPS:     1 to 32 \n
        - For GLONASS: 65 to 96 \n
        - For QZSS:    193 to 197 \n
-       - For BDS:     201 to 237 \n
+       - For BDS:     201 to 263 \n
        - For Galileo: 301 to 336 \n
        - For NavIC:   401 to 414 */
 
