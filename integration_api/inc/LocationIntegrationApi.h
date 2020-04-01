@@ -147,7 +147,7 @@ struct GnssSvIdInfo {
     /** sv id range for the constellation: <br/>
      * GLONASS SV id range: 65 to 96 <br/>
      * QZSS SV id range: 193 to 197 <br/>
-     * BDS SV id range: 201 to 237 <br/>
+     * BDS SV id range: 201 to 263 <br/>
      * GAL SV id range: 301 to 336 <br/>
      * SBAS SV id range: 120 to 158 and 183 to 191 <br/>
      * NAVIC SV id range: 401 to 414 <br/>
@@ -252,7 +252,7 @@ typedef std::unordered_map<LeverArmType, LeverArmParams> LeverArmParamsMap;
  *
  * GLONASS SV id range: 65 to 96 <br/>
  * QZSS SV id range: 193 to 197 <br/>
- * BDS SV id range: 201 to 237 <br/>
+ * BDS SV id range: 201 to 263 <br/>
  * GAL SV id range: 301 to 336 <br/>
  * SBAS SV id range: 120 to 158 and 183 to 191 <br/>
  */

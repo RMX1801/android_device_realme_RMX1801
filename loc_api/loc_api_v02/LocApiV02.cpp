@@ -5396,17 +5396,32 @@ void LocApiV02 :: reportGnssMeasurementData(
     static bool bGPSreceived = false;
     static int msInWeek = -1;
     static bool bAgcIsPresent = false;
+    uint8_t maxSubSeqNum = 0;
+    uint8_t subSeqNum = 0;
 
-    LOC_LOGd("SeqNum: %d, MaxMsgNum: %d",
-        gnss_measurement_report_ptr.seqNum,
-        gnss_measurement_report_ptr.maxMessageNum);
+    if (gnss_measurement_report_ptr.maxSubSeqNum_valid &&
+        gnss_measurement_report_ptr.subSeqNum_valid) {
+        maxSubSeqNum = gnss_measurement_report_ptr.maxSubSeqNum;
+        subSeqNum = gnss_measurement_report_ptr.subSeqNum;
+    } else {
+        maxSubSeqNum = 0;
+        subSeqNum = 0;
+    }
 
-    if (gnss_measurement_report_ptr.seqNum > gnss_measurement_report_ptr.maxMessageNum) {
+    LOC_LOGd("SeqNum: %d, MaxMsgNum: %d, "
+             "SubSeqNum: %d, MaxSubMsgNum: %d",
+             gnss_measurement_report_ptr.seqNum,
+             gnss_measurement_report_ptr.maxMessageNum,
+             subSeqNum,
+             maxSubSeqNum);
+
+    if (gnss_measurement_report_ptr.seqNum > gnss_measurement_report_ptr.maxMessageNum ||
+        subSeqNum > maxSubSeqNum) {
         LOC_LOGe("Invalid seqNum, do not proceed");
         return;
     }
 
-    if (1 == gnss_measurement_report_ptr.seqNum)
+    if (1 == gnss_measurement_report_ptr.seqNum && subSeqNum <= 1)
     {
         bGPSreceived = false;
         msInWeek = -1;
@@ -5484,14 +5499,14 @@ void LocApiV02 :: reportGnssMeasurementData(
     }
     // the GPS clock time reading
     if (eQMI_LOC_SV_SYSTEM_GPS_V02 == gnss_measurement_report_ptr.system &&
-        false == bGPSreceived) {
+        subSeqNum <= 1 && false == bGPSreceived) {
         bGPSreceived = true;
         msInWeek = convertGnssClock(measurementsNotify.clock,
                                     gnss_measurement_report_ptr);
     }
 
-    if (gnss_measurement_report_ptr.maxMessageNum == gnss_measurement_report_ptr.seqNum
-            && measurementsNotify.count != 0 && true == bGPSreceived) {
+    if (gnss_measurement_report_ptr.maxMessageNum == gnss_measurement_report_ptr.seqNum &&
+        maxSubSeqNum == subSeqNum && measurementsNotify.count != 0 && true == bGPSreceived) {
         // calling the base
         if (bAgcIsPresent) {
             /* If we can get AGC from QMI LOC there is no need to get it from NMEA */
