@@ -579,7 +579,7 @@ struct GnssLocationSvUsedInPosition {
     uint64_t galSvUsedIdsMask;
     /** ISpecify the set of SVs from BEIDOU constellation that are
      *  used to compute the position. <br/>
-     *  Bit 0 to Bit 36 corresponds to BDS SV id 201 to 237.
+     *  Bit 0 to Bit 36 corresponds to BDS SV id 201 to 263.
      *  <br/> */
     uint64_t bdsSvUsedIdsMask;
     /** Specify the set of SVs from QZSS constellation that are used
@@ -1042,7 +1042,7 @@ struct GnssSv {
      *    - For GLONASS: 65 to 96 <br/>
      *    - For SBAS:    120 to 158 and 183 to 191 <br/>
      *    - For QZSS:    193 to 197 <br/>
-     *    - For BDS:     201 to 237 <br/>
+     *    - For BDS:     201 to 263 <br/>
      *    - For GAL:     301 to 336 <br/>
      *    - For NAVIC:   401 to 414 <br/>   */
     uint16_t svId;

@@ -4865,13 +4865,27 @@ void LocApiV02::reportGnssMeasurementData(
 
     static uint32_t prevRefFCount = 0;
     static bool newMeasProcessed = false;
+    uint8_t maxSubSeqNum = 0;
+    uint8_t subSeqNum = 0;
+
+    if (gnss_measurement_report_ptr.maxSubSeqNum_valid &&
+        gnss_measurement_report_ptr.subSeqNum_valid) {
+        maxSubSeqNum = gnss_measurement_report_ptr.maxSubSeqNum;
+        subSeqNum = gnss_measurement_report_ptr.subSeqNum;
+    } else {
+        maxSubSeqNum = 0;
+        subSeqNum = 0;
+    }
 
     LOC_LOGd("[SvMeas] nHz (%d, %d), SeqNum: %d, MaxMsgNum: %d, "
+             "SubSeqNum: %d, MaxSubMsgNum: %d, "
              "SvSystem: %d SignalType: %" PRIu64 " MeasValid: %d, #of SV: %d",
              gnss_measurement_report_ptr.nHzMeasurement_valid,
              gnss_measurement_report_ptr.nHzMeasurement,
              gnss_measurement_report_ptr.seqNum,
              gnss_measurement_report_ptr.maxMessageNum,
+             subSeqNum,
+             maxSubSeqNum,
              gnss_measurement_report_ptr.system,
              gnss_measurement_report_ptr.gnssSignalType,
              gnss_measurement_report_ptr.svMeasurement_valid,
@@ -4887,14 +4901,15 @@ void LocApiV02::reportGnssMeasurementData(
         newMeasProcessed = false;
     }
 
-    if (gnss_measurement_report_ptr.seqNum > gnss_measurement_report_ptr.maxMessageNum) {
-        LOC_LOGe("Invalid seqNum, do not proceed");
+    if (gnss_measurement_report_ptr.seqNum > gnss_measurement_report_ptr.maxMessageNum ||
+        subSeqNum > maxSubSeqNum) {
+        LOC_LOGe("Invalid seqNum or subSeqNum, do not proceed");
         return;
     }
 
     // in case the measurement with seqNum of 1 is dropped, we will use ref count
     // to reset the measurement
-    if ((gnss_measurement_report_ptr.seqNum == 1) ||
+    if ((gnss_measurement_report_ptr.seqNum == 1 && subSeqNum <= 1) ||
         (gnss_measurement_report_ptr.systemTimeExt_valid &&
          gnss_measurement_report_ptr.systemTimeExt.refFCount != prevRefFCount)) {
         // we have received some valid info since we last reported when
@@ -4924,7 +4939,9 @@ void LocApiV02::reportGnssMeasurementData(
     // set up indication that we have processed some new measurement
     newMeasProcessed = true;
 
-    convertGnssMeasurementsHeader(locSvSystemType, gnss_measurement_report_ptr);
+    if (subSeqNum <= 1) {
+        convertGnssMeasurementsHeader(locSvSystemType, gnss_measurement_report_ptr);
+    }
 
     // check whether we have valid dgnss measurement
     bool validDgnssMeas = false;
@@ -5013,13 +5030,15 @@ void LocApiV02::reportGnssMeasurementData(
     }
     // the GPS clock time reading
     if (eQMI_LOC_SV_SYSTEM_GPS_V02 == gnss_measurement_report_ptr.system &&
+        subSeqNum <= 1 &&
         false == mGPSreceived) {
         mGPSreceived = true;
         mMsInWeek = convertGnssClock(mGnssMeasurements->gnssMeasNotification.clock,
                                      gnss_measurement_report_ptr);
     }
 
-    if (gnss_measurement_report_ptr.maxMessageNum == gnss_measurement_report_ptr.seqNum) {
+    if (gnss_measurement_report_ptr.maxMessageNum == gnss_measurement_report_ptr.seqNum &&
+        maxSubSeqNum == subSeqNum) {
         LOC_LOGv("Report the measurements to the upper layer");
         reportSvMeasurementInternal();
         resetSvMeasurementReport();

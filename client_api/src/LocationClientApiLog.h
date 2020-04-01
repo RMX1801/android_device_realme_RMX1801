@@ -354,7 +354,7 @@ typedef PACKED struct PACKED_POST {
      For GLONASS:  65 to 96. When slot-number to SV ID mapping is unknown, set as 255.
      For SBAS:     120 to 151
      For QZSS-L1CA:193 to 197
-     For BDS:      201 to 237
+     For BDS:      201 to 263
      For GAL:      301 to 336
      For NAVIC:    401 to 414 */
     uint16_t gnssSvId;
