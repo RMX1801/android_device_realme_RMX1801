@@ -68,6 +68,7 @@ static sem_t sem_pingcbreceived;
 #define CONFIG_SV          "configSV"
 #define MULTI_CONFIG_SV    "multiConfigSV"
 #define DELETE_ALL         "deleteAll"
+#define DELETE_EPH         "deleteEph"
 #define CONFIG_LEVER_ARM   "configLeverArm"
 #define CONFIG_ROBUST_LOCATION  "configRobustLocation"
 #define GET_ROBUST_LOCATION_CONFIG "getRobustLocationConfig"
@@ -213,6 +214,7 @@ static void printHelp() {
     printf("%s: configure sv \n", CONFIG_SV);
     printf("%s: mulitple config SV \n", MULTI_CONFIG_SV);
     printf("%s: delete all aiding data\n", DELETE_ALL);
+    printf("%s: delete ephemeris data\n", DELETE_EPH);
     printf("%s: config lever arm\n", CONFIG_LEVER_ARM);
     printf("%s: config robust location\n", CONFIG_ROBUST_LOCATION);
     printf("%s: get robust location config\n", GET_ROBUST_LOCATION_CONFIG);
@@ -418,6 +420,8 @@ int main(int argc, char *argv[]) {
             pIntClient->configPositionAssistedClockEstimator(true);
         } else if (strncmp(buf, DELETE_ALL, strlen(DELETE_ALL)) == 0) {
             pIntClient->deleteAllAidingData();
+        } else if (strncmp(buf, DELETE_EPH, strlen(DELETE_EPH)) == 0) {
+            pIntClient->deleteAidingData(AIDING_DATA_DELETION_EPHEMERIS);
         } else if (strncmp(buf, RESET_SV_CONFIG, strlen(RESET_SV_CONFIG)) == 0) {
             pIntClient->configConstellations(nullptr);
         } else if (strncmp(buf, CONFIG_SV, strlen(CONFIG_SV)) == 0) {

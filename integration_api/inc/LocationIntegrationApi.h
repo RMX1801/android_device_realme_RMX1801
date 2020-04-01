@@ -53,7 +53,8 @@ enum LocConfigTypeEnum{
     /** Enable/disable the position assisted clock estimator
      *  feature. </br> */
     CONFIG_POSITION_ASSISTED_CLOCK_ESTIMATOR = 3,
-    /** Delete all aiding data. </br> */
+    /** Delete aiding data. This enum is applicable for
+     *  deleteAllAidingData() and deleteAidingData(). </br> */
     CONFIG_AIDING_DATA_DELETION = 4,
     /** Config lever arm parameters. </br> */
     CONFIG_LEVER_ARM = 5,
@@ -134,6 +135,14 @@ struct GnssSvIdInfo {
      * SBAS SV id range: 120 to 158 and 183 to 191
      */
     uint32_t              svId;
+};
+
+/**
+ *  Mask used to specify the set of aiding data that can be
+ *  deleted via deleteAidingData. <br/> */
+enum AidingDataDeletionMask {
+    /** Mask to delete ephemeris aiding data */
+    AIDING_DATA_DELETION_EPHEMERIS  = (1 << 0),
 };
 
 /**
@@ -433,18 +442,58 @@ public:
     bool configPositionAssistedClockEstimator(bool enable);
 
    /** @brief
-        Request all forms of aiding data to be deleted from all
-        position engines.
+        Request deletion of all aiding data from all position
+        engines on the device.
 
-        @return true, if aiding data delete request is successfully
-                performed. When returning true, configCb will be
-                invoked to deliver asynchronous processing status.
+        Invoking this API will trigger cold start of all position
+        engines on the device. This will cause significant delay
+        for the position engines to produce next fix and may have
+        other performance impact. So, this API should only be
+        exercised with caution and only for very limited usage
+        scenario, e.g.: for performance test and certification
+        process.
 
-        @return false, if aiding data delete request is not
-                successfully performed. When returning false,
-                configCb will not be invoked.
+        @return true, if the API request has been accepted for
+                further processing. When returning true, configCb
+                with configType set to CONFIG_AIDING_DATA_DELETION
+                will be invoked to deliver the asynchronous
+                processing status.
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, configCb
+                will not be invoked.
     */
     bool deleteAllAidingData();
+
+
+   /** @brief
+        Request deletion of the specified aiding data from all
+        position engines on the device.
+
+        Invoking this API may cause noticeable delay for the
+        position engine to produce first fix and may have other
+        performance impact. For example, remove ephemeris data may
+        trigger GNSS engine to do warm start. So, this API should
+        only be exercised with caution and only for very limited
+        usage scenario, e.g.: for performance test and
+        certification process.
+
+        @param aidingDataMask, specify the set of aiding data to
+                be deleted from all position engines. Currently,
+                only ephemeris deletion is supported.
+
+        @return true, if the API request has been accepted for
+                further processing. When returning true, configCb
+                with configType set to CONFIG_AIDING_DATA_DELETION
+                will be invoked to deliver the asynchronous
+                processing status.
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, configCb
+                will not be invoked.
+    */
+    bool deleteAidingData(AidingDataDeletionMask aidingDataMask);
+
 
     /** @brief
         Sets the lever arm parameters for the vehicle.
