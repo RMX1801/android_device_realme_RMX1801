@@ -3264,6 +3264,18 @@ void LocApiV02 :: reportPosition (
                     location_report_ptr->dgnssDataAgeMsec;
         }
 
+        if (location_report_ptr->systemTick_valid &&
+            location_report_ptr->systemTickUnc_valid) {
+            /* deal with Qtimer for ElapsedRealTimeNanos */
+            location.gpsLocation.flags |= LOC_GPS_LOCATION_HAS_ELAPSED_REAL_TIME;
+            location.gpsLocation.elapsedRealTime = location_report_ptr->systemTick;
+
+            /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
+               is the uncertainty of the Qtimer in the modem */
+            location.gpsLocation.elapsedRealTimeUnc =
+                    qTimerTicksToNanos((double)location_report_ptr->systemTickUnc);
+        }
+
         LOC_LOGv("report position mask: 0x%" PRIx64 ", dgnss info: 0x%x %d %d %d %d,",
                  locationExtended.flags,
                  locationExtended.dgnssConstellationUsage,
@@ -5040,6 +5052,21 @@ void LocApiV02::reportGnssMeasurementData(
     if (gnss_measurement_report_ptr.maxMessageNum == gnss_measurement_report_ptr.seqNum &&
         maxSubSeqNum == subSeqNum) {
         LOC_LOGv("Report the measurements to the upper layer");
+        if (gnss_measurement_report_ptr.refCountTicks_valid &&
+            gnss_measurement_report_ptr.refCountTicksUnc_valid) {
+            /* deal with Qtimer for ElapsedRealTimeNanos */
+
+            mGnssMeasurements->gnssMeasNotification.clock.flags |=
+                    GNSS_MEASUREMENTS_CLOCK_FLAGS_ELAPSED_REAL_TIME_BIT;
+
+            mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTime =
+                    gnss_measurement_report_ptr.refCountTicks;
+
+            /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
+            is the uncertainty of the Qtimer in the modem */
+             mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTimeUnc =
+                    qTimerTicksToNanos((double)gnss_measurement_report_ptr.refCountTicksUnc);
+        }
         reportSvMeasurementInternal();
         resetSvMeasurementReport();
         // set up flag to indicate that no new info in mGnssMeasurements
