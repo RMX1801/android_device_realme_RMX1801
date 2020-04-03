@@ -7651,18 +7651,24 @@ LocApiV02::setBlacklistSvSync(const GnssSvIdConfig& config)
     setBlacklistSvMsg.sbas_clear_persist_blacklist_sv_valid = true;
     setBlacklistSvMsg.sbas_clear_persist_blacklist_sv = ~config.sbasBlacklistSvMask;
 
+    setBlacklistSvMsg.navic_persist_blacklist_sv_valid = true;
+    setBlacklistSvMsg.navic_persist_blacklist_sv = config.navicBlacklistSvMask,
+    setBlacklistSvMsg.navic_clear_persist_blacklist_sv_valid = true;
+    setBlacklistSvMsg.navic_clear_persist_blacklist_sv = ~config.navicBlacklistSvMask;
+
     LOC_LOGd(">>> configConstellations, "
              "glo blacklist mask =0x%" PRIx64 ", "
              "qzss blacklist mask =0x%" PRIx64 ",\n"
              "bds blacklist mask =0x%" PRIx64 ", "
              "gal blacklist mask =0x%" PRIx64 ",\n"
-             "sbas blacklist mask =0x%" PRIx64 ", ",
+             "sbas blacklist mask =0x%" PRIx64 ", "
+             "navic blacklist mask =0x%" PRIx64 ", ",
              setBlacklistSvMsg.glo_persist_blacklist_sv,
              setBlacklistSvMsg.qzss_persist_blacklist_sv,
              setBlacklistSvMsg.bds_persist_blacklist_sv,
              setBlacklistSvMsg.gal_persist_blacklist_sv,
-             setBlacklistSvMsg.sbas_persist_blacklist_sv);
-
+             setBlacklistSvMsg.sbas_persist_blacklist_sv,
+             setBlacklistSvMsg.navic_persist_blacklist_sv);
     // Update in request union
     req_union.pSetBlacklistSvReq = &setBlacklistSvMsg;
 
@@ -7883,7 +7889,9 @@ LocApiV02::reportGnssSvIdConfig(
     if (ind.glo_persist_blacklist_sv_valid) {
         config.gloBlacklistSvMask = ind.glo_persist_blacklist_sv;
     }
-
+    if (ind.navic_persist_blacklist_sv_valid) {
+       config.navicBlacklistSvMask = ind.navic_persist_blacklist_sv;
+    }
     // Pass on GnssSvConfig
     LocApiBase::reportGnssSvIdConfig(config);
 }
