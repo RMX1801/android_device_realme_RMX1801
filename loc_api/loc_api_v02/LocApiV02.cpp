@@ -3351,6 +3351,38 @@ float LocApiV02::convertSignalTypeToCarrierFrequency(
     return carrierFrequency;
 }
 
+static GnssSignalTypeMask getDefaultGnssSignalTypeMask(qmiLocSvSystemEnumT_v02 qmiSvSystemType)
+{
+    GnssSignalTypeMask gnssSignalType = 0;
+
+    switch (qmiSvSystemType) {
+    case eQMI_LOC_SV_SYSTEM_GPS_V02:
+        gnssSignalType = GNSS_SIGNAL_GPS_L1CA;
+        break;
+    case eQMI_LOC_SV_SYSTEM_GALILEO_V02:
+        gnssSignalType = GNSS_SIGNAL_GALILEO_E1;
+        break;
+    case eQMI_LOC_SV_SYSTEM_SBAS_V02:
+        gnssSignalType = GNSS_SIGNAL_SBAS_L1;
+        break;
+    case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
+        gnssSignalType = GNSS_SIGNAL_GLONASS_G1;
+        break;
+    case eQMI_LOC_SV_SYSTEM_BDS_V02:
+    case eQMI_LOC_SV_SYSTEM_COMPASS_V02:
+        gnssSignalType = GNSS_SIGNAL_BEIDOU_B1I;
+        break;
+    case eQMI_LOC_SV_SYSTEM_QZSS_V02:
+        gnssSignalType = GNSS_SIGNAL_QZSS_L1CA;
+        break;
+    default:
+        break;
+    }
+
+    return gnssSignalType;
+}
+
+
 /* convert satellite report to location api format and send the converted
    report to base */
 void  LocApiV02 :: reportSv (
@@ -3460,8 +3492,8 @@ void  LocApiV02 :: reportSv (
                     }
                 }
 
+                mask |= GNSS_SV_OPTIONS_HAS_GNSS_SIGNAL_TYPE_BIT;
                 if (gnss_report_ptr->gnssSignalTypeList_valid) {
-                    mask |= GNSS_SV_OPTIONS_HAS_GNSS_SIGNAL_TYPE_BIT;
                     if (SvNotify.count > gnss_report_ptr->gnssSignalTypeList_len - 1) {
                         LOC_LOGv("Frequency not available for this SV");
                     }
@@ -3486,6 +3518,8 @@ void  LocApiV02 :: reportSv (
                         }
                     }
                 } else {
+                    gnssSv_ref.gnssSignalTypeMask =
+                            getDefaultGnssSignalTypeMask(sv_info_ptr->system);
                     mask |= GNSS_SV_OPTIONS_HAS_CARRIER_FREQUENCY_BIT;
                     gnssSv_ref.carrierFrequencyHz = CarrierFrequencies[gnssSv_ref.type];
                 }
@@ -4019,11 +4053,13 @@ void LocApiV02::reportSvMeasurementSvLoop(
             if (gnss_raw_measurement_ptr->gnssSignalType_valid) {
                 svMeas.gnssSignalTypeMask = convertQmiGnssSignalType(
                         gnss_raw_measurement_ptr->gnssSignalType);
-                LOC_LOGd("sv id %d, qmi signal type: 0x%" PRIx64 ", hal signal type: 0x%x",
-                         qmiSvMeas.gnssSvId, gnss_raw_measurement_ptr->gnssSignalType,
-                         svMeas.gnssSignalTypeMask);
-
+            } else {
+                svMeas.gnssSignalTypeMask =
+                        getDefaultGnssSignalTypeMask(gnss_raw_measurement_ptr->system);
             }
+            LOC_LOGd("sv id %d, qmi signal type: 0x%" PRIx64 ", hal signal type: 0x%x",
+                     qmiSvMeas.gnssSvId, gnss_raw_measurement_ptr->gnssSignalType,
+                     svMeas.gnssSignalTypeMask);
             svMeas.gnssSvId = qmiSvMeas.gnssSvId;
             svMeas.gloFrequency = qmiSvMeas.gloFrequency;
 
