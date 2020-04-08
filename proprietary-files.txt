@@ -3067,8 +3067,11 @@ vendor/lib64/vendor.qti.hardware.vpp@1.1.so
 vendor/etc/libnfc-nci.conf
 
 # Perf
+vendor/bin/energy-awareness
+vendor/bin/msm_irqbalance
 vendor/bin/hw/vendor.qti.hardware.perf@1.0-service
 vendor/etc/init/vendor.qti.hardware.perf@1.0-service.rc
+vendor/etc/msm_irqbalance.conf
 vendor/etc/perf/commonresourceconfigs.xml
 vendor/etc/perf/perfboostsconfig.xml
 vendor/etc/perf/targetconfig.xml
