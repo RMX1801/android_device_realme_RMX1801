@@ -1,14 +1,14 @@
 # Camera
-oppo.camera.debug.logfile                        u:object_r:vendor_camera_prop:s0
-oppo.camera.hal.change                           u:object_r:vendor_camera_prop:s0
-oppo.camera.oppo.bokeh                           u:object_r:vendor_camera_prop:s0
-oppo.camera.switch.time                          u:object_r:vendor_camera_prop:s0
-oppo.open.camera.name                            u:object_r:vendor_camera_prop:s0
-persist.camera.stats.debugexif                   u:object_r:vendor_camera_prop:s0
-persist.vendor.camera.HAL3.enabled               u:object_r:vendor_camera_prop:s0
-vendor.oppo.camera.                              u:object_r:vendor_camera_prop:s0
-vendor.oppo.camera.fovc.enable                   u:object_r:vendor_camera_prop:s0
-vendor.oppo.camera.hal3.enable                   u:object_r:vendor_camera_prop:s0
+oppo.camera.debug.logfile                        u:object_r:camera_prop:s0
+oppo.camera.hal.change                           u:object_r:camera_prop:s0
+oppo.camera.oppo.bokeh                           u:object_r:camera_prop:s0
+oppo.camera.switch.time                          u:object_r:camera_prop:s0
+oppo.open.camera.name                            u:object_r:camera_prop:s0
+persist.camera.stats.debugexif                   u:object_r:camera_prop:s0
+persist.vendor.camera.HAL3.enabled               u:object_r:camera_prop:s0
+vendor.oppo.camera.                              u:object_r:camera_prop:s0
+vendor.oppo.camera.fovc.enable                   u:object_r:camera_prop:s0
+vendor.oppo.camera.hal3.enable                   u:object_r:camera_prop:s0
 
 # Fingerprint
 oppo.fpc.sw.version                              u:object_r:oppo_fp_prop:s0

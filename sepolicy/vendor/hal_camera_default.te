@@ -25,8 +25,8 @@ allow hal_camera_default sysfs_net:dir { search };
 allow hal_camera_default sysfs_net:file { read open };
 allow hal_camera_default sysfs:file { read open };
 
-get_prop(hal_camera_default, vendor_camera_prop)
-set_prop(hal_camera_default, vendor_camera_prop)
+get_prop(hal_camera_default, camera_prop)
+set_prop(hal_camera_default, camera_prop)
 
 dontaudit hal_camera_default self:tcp_socket { create };
 dontaudit hal_camera_default vendor_shell_exec:file { execute_no_trans };

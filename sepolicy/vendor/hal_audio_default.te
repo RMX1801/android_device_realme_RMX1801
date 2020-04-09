@@ -1,2 +1,2 @@
 allow hal_audio_default oppo_ver_proc:dir search;
-allow hal_audio_default oppo_ver_proc:file r_file_perms;
+allow hal_audio_default oppo_ver_proc:file { read open };
