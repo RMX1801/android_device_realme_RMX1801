@@ -77,6 +77,11 @@ typedef struct {
     bool enableForE911;
 } RobustLocationConfigInfo;
 
+typedef struct {
+    bool isValid;
+    ::BodyToSensorMountParams b2sParams;
+} BodyToSensorMountConfigInfo;
+
 class IpcListener;
 
 class LocationIntegrationApiImpl : public ILocationControlAPI {
@@ -100,6 +105,8 @@ public:
     virtual uint32_t configPositionAssistedClockEstimator(bool enable) override;
     virtual uint32_t configLeverArm(const LeverArmConfigInfo& configInfo) override;
     virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
+    virtual uint32_t configBodyToSensorMountParams(
+            const ::BodyToSensorMountParams& b2sParams) override;
 
     // rest of ILocationController API that are not used in integration API
     virtual uint32_t* gnssUpdateConfig(GnssConfig config) override;
@@ -143,6 +150,7 @@ private:
     SVConfigInfo             mSVConfigInfo;
     LeverArmConfigInfo       mLeverArmConfigInfo;
     RobustLocationConfigInfo mRobustLocationConfigInfo;
+    BodyToSensorMountConfigInfo mB2sConfigInfo;
 
     LocConfigReqCntMap       mConfigReqCntMap;
     LocIntegrationCbs        mIntegrationCbs;

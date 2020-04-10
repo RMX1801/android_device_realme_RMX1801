@@ -182,6 +182,8 @@ public:
     virtual uint32_t configLeverArm(const LeverArmConfigInfo& configInfo) override;
     virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
     virtual uint32_t configMinGpsWeek(uint16_t minGpsWeek) override;
+    virtual uint32_t configBodyToSensorMountParams(
+            const ::BodyToSensorMountParams& b2sParams) override;
 
     // other interface
     void updateNetworkAvailability(bool available);

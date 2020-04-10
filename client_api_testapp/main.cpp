@@ -72,8 +72,9 @@ static sem_t sem_pingcbreceived;
 #define CONFIG_LEVER_ARM   "configLeverArm"
 #define CONFIG_ROBUST_LOCATION  "configRobustLocation"
 #define GET_ROBUST_LOCATION_CONFIG "getRobustLocationConfig"
-#define CONFIG_MIN_GPS_WEEK        "configMinGpsWeek"
-#define GET_MIN_GPS_WEEK           "getMinGpsWeek"
+#define CONFIG_MIN_GPS_WEEK "configMinGpsWeek"
+#define GET_MIN_GPS_WEEK    "getMinGpsWeek"
+#define CONFIG_B2S_PARAMS   "configB2sParams"
 
 // debug utility
 static uint64_t getTimestamp() {
@@ -222,6 +223,7 @@ static void printHelp() {
     printf("%s: get robust location config\n", GET_ROBUST_LOCATION_CONFIG);
     printf("%s: set min gps week\n", CONFIG_MIN_GPS_WEEK);
     printf("%s: get min gps week\n", GET_MIN_GPS_WEEK);
+    printf("%s: config b2s params\n", CONFIG_B2S_PARAMS);
 }
 
 void setRequiredPermToRunAsLocClient()
@@ -341,6 +343,41 @@ void parseLeverArm (char* buf, LeverArmParamsMap &leverArmMap) {
         token = strtok_r(NULL, " ", &save);
     }
 }
+
+void parseB2sParams (char* buf, BodyToSensorMountParams& b2sParams) {
+    static char *save = nullptr;
+    char* token = strtok_r(buf, " ", &save); // skip first one of "configB2sParams"
+    do {
+        token = strtok_r(NULL, " ", &save);
+        if (token == NULL) {
+            printf("missing roll offset\n");
+            break;
+        }
+        b2sParams.rollOffset = atof(token);
+
+        token = strtok_r(NULL, " ", &save);
+        if (token == NULL) {
+            printf("missing pitch offset\n");
+            break;
+        }
+        b2sParams.pitchOffset = atof(token);
+
+        token = strtok_r(NULL, " ", &save);
+        if (token == NULL) {
+            printf("missing yaw offset\n");
+            break;
+        }
+        b2sParams.yawOffset = atof(token);
+
+        token = strtok_r(NULL, " ", &save);
+        if (token == NULL) {
+            printf("missing offset uncertainty\n");
+            break;
+        }
+        b2sParams.offsetUnc = atof(token);
+    } while (0);
+}
+
 
 /******************************************************************************
 Main function
@@ -485,6 +522,10 @@ int main(int argc, char *argv[]) {
             pIntClient->configMinGpsWeek(gpsWeekNum);
         } else if (strncmp(buf, GET_MIN_GPS_WEEK, strlen(GET_MIN_GPS_WEEK)) == 0) {
             pIntClient->getMinGpsWeek();
+        } else if (strncmp(buf, CONFIG_B2S_PARAMS, strlen(CONFIG_B2S_PARAMS)) == 0) {
+            BodyToSensorMountParams b2sParams = {};
+            parseB2sParams(buf, b2sParams);
+            pIntClient->configBodyToSensorMountParams(b2sParams);
         } else {
             int command = buf[0];
             switch(command) {

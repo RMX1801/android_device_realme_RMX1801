@@ -71,6 +71,9 @@ static LocConfigTypeEnum getLocConfigTypeFromMsgId(ELocMsgID  msgId) {
     case E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID:
         configType = GET_MIN_GPS_WEEK;
         break;
+    case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID:
+        configType = CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS;
+        break;
     default:
         break;
     }
@@ -128,7 +131,8 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         mPaceConfigInfo{},
         mSVConfigInfo{},
         mLeverArmConfigInfo{},
-        mRobustLocationConfigInfo{} {
+        mRobustLocationConfigInfo{},
+        mB2sConfigInfo{} {
     if (integrationClientAllowed() == false) {
         return;
     }
@@ -264,6 +268,7 @@ void IpcListener::onListenerReady() {
             case E_INTAPI_CONFIG_LEVER_ARM_MSG_ID:
             case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID:
             case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
+            case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID:
             case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
             {
@@ -342,7 +347,7 @@ uint32_t LocationIntegrationApiImpl::resetConstellationConfig() {
 
 uint32_t LocationIntegrationApiImpl::configConstellations(
         const GnssSvTypeConfig& svTypeConfig,
-        const GnssSvIdConfig&   svIdConfig) {
+        const GnssSvIdConfig& svIdConfig) {
 
     struct ConfigConstellationsReq : public LocMsg {
         ConfigConstellationsReq(LocationIntegrationApiImpl* apiImpl,
@@ -489,7 +494,6 @@ uint32_t LocationIntegrationApiImpl::configLeverArm(
     return 0;
 }
 
-
 uint32_t LocationIntegrationApiImpl::configRobustLocation(
         bool enable, bool enableForE911) {
     struct ConfigRobustLocationReq : public LocMsg {
@@ -563,7 +567,6 @@ uint32_t LocationIntegrationApiImpl::configMinGpsWeek(uint16_t minGpsWeek) {
     };
 
     mMsgTask->sendMsg(new (nothrow) ConfigMinGpsWeekReq(this, minGpsWeek));
-
     return 0;
 }
 
@@ -591,6 +594,33 @@ uint32_t LocationIntegrationApiImpl::getMinGpsWeek() {
 
     return 0;
 }
+
+uint32_t LocationIntegrationApiImpl::configBodyToSensorMountParams(
+        const ::BodyToSensorMountParams& b2sParams) {
+    struct ConfigB2sMountParamsReq : public LocMsg {
+        ConfigB2sMountParamsReq(LocationIntegrationApiImpl* apiImpl,
+                                ::BodyToSensorMountParams b2sParams) :
+                mApiImpl(apiImpl),
+                mB2sParams(b2sParams){}
+        virtual ~ConfigB2sMountParamsReq() {}
+        void proc() const {
+            mApiImpl->mB2sConfigInfo.isValid = true;
+            mApiImpl->mB2sConfigInfo.b2sParams = mB2sParams;
+            LocConfigB2sMountParamsReqMsg msg(mApiImpl->mSocketName,
+                                              mApiImpl->mB2sConfigInfo.b2sParams);
+            mApiImpl->sendConfigMsgToHalDaemon(CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS,
+                                               reinterpret_cast<uint8_t*>(&msg),
+                                               sizeof(msg));
+        }
+        LocationIntegrationApiImpl* mApiImpl;
+        ::BodyToSensorMountParams mB2sParams;
+    };
+
+    mMsgTask->sendMsg(new (nothrow) ConfigB2sMountParamsReq(this, b2sParams));
+
+    return 0;
+}
+
 void LocationIntegrationApiImpl::sendConfigMsgToHalDaemon(
         LocConfigTypeEnum configType, uint8_t* pMsg,
         size_t msgSize, bool invokeResponseCb) {
@@ -685,6 +715,13 @@ void LocationIntegrationApiImpl::processHalReadyMsg() {
     }
     // Do not reconfigure min gps week, as min gps week setting
     // can be overwritten by modem over  time
+
+    if (mB2sConfigInfo.isValid) {
+        LocConfigB2sMountParamsReqMsg msg(mSocketName, mB2sConfigInfo.b2sParams);
+        sendConfigMsgToHalDaemon(CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS,
+                                 reinterpret_cast<uint8_t*>(&msg),
+                                 sizeof(msg));
+    }
 }
 
 void LocationIntegrationApiImpl::addConfigReq(LocConfigTypeEnum configType) {
