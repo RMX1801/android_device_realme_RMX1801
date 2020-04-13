@@ -69,3 +69,6 @@ on boot
 
     # Disable edge limit control interface
     write /proc/touchpanel/oppo_tp_limit_enable 0
+
+    # Enable oppo's touchpanel direction
+    write /proc/touchpanel/oppo_tp_direction 1
