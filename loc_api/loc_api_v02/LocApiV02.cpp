@@ -7654,6 +7654,205 @@ LocApiV02::setEmergencyExtensionWindowSync(const uint32_t emergencyExtensionSeco
 }
 
 LocationError
+LocApiV02::setMeasurementCorrections(const GnssMeasurementCorrections gnssMeasurementCorrections)
+{
+    LocationError err = LOCATION_ERROR_SUCCESS;
+    locClientStatusEnumType result = eLOC_CLIENT_SUCCESS;
+    locClientReqUnionType req_union = {};
+
+    qmiLocEventInjectEnvAidingReqMsgT_v02 setEnvAidingReqMsg;
+    qmiLocGenReqStatusIndMsgT_v02 genReqStatusIndMsg;
+
+    memset(&setEnvAidingReqMsg, 0, sizeof(setEnvAidingReqMsg));
+    memset(&genReqStatusIndMsg, 0, sizeof(genReqStatusIndMsg));
+
+    LOC_LOGv("GnssMeasurementCorrections from modem:\n"
+             " hasEnvironmentBearing = %d"
+             " environmentBearingDegrees = %.2f"
+             " environmentBearingUncertaintyDegrees = %.2f"
+             " latitudeDegrees = %.2f"
+             " longitudeDegrees = %.2f"
+             " horizontalPositionUncertaintyMeters = %.2f"
+             " altitudeMeters = %.2f"
+             " verticalPositionUncertaintyMeters = %.2f"
+             " toaGpsNanosecondsOfWeek = %" PRIu64,
+             gnssMeasurementCorrections.hasEnvironmentBearing,
+             gnssMeasurementCorrections.environmentBearingDegrees,
+             gnssMeasurementCorrections.environmentBearingUncertaintyDegrees,
+             gnssMeasurementCorrections.latitudeDegrees,
+             gnssMeasurementCorrections.longitudeDegrees,
+             gnssMeasurementCorrections.horizontalPositionUncertaintyMeters,
+             gnssMeasurementCorrections.altitudeMeters,
+             gnssMeasurementCorrections.verticalPositionUncertaintyMeters,
+             gnssMeasurementCorrections.toaGpsNanosecondsOfWeek);
+
+    for (int i = 0; i < gnssMeasurementCorrections.satCorrections.size(); i++) {
+        LOC_LOGv("gnssMeasurementCorrections.satCorrections:\n"
+            "satCorrections[%d].svType = %d "
+            "satCorrections[%d].svId = %d "
+            "satCorrections[%d].carrierFrequencyHz = %.2f "
+            "satCorrections[%d].probSatIsLos = %.2f "
+            "satCorrections[%d].excessPathLengthMeters = %.2f "
+            "satCorrections[%d].excessPathLengthUncertaintyMeters = %.2f "
+            "satCorrections[%d].reflectingPlane.latitudeDegree = %.2f "
+            "satCorrections[%d].reflectingPlane.longitudeDegrees = %.2f "
+            "satCorrections[%d].reflectingPlane.altitudeMeters = %.2f "
+            "satCorrections[%d].reflectingPlane.azimuthDegrees = %.2f ",
+            i, gnssMeasurementCorrections.satCorrections[i].svType,
+            i, gnssMeasurementCorrections.satCorrections[i].svId,
+            i, gnssMeasurementCorrections.satCorrections[i].carrierFrequencyHz,
+            i, gnssMeasurementCorrections.satCorrections[i].probSatIsLos,
+            i, gnssMeasurementCorrections.satCorrections[i].excessPathLengthMeters,
+            i, gnssMeasurementCorrections.satCorrections[i].excessPathLengthUncertaintyMeters,
+            i, gnssMeasurementCorrections.satCorrections[i].reflectingPlane.latitudeDegrees,
+            i, gnssMeasurementCorrections.satCorrections[i].reflectingPlane.longitudeDegrees,
+            i, gnssMeasurementCorrections.satCorrections[i].reflectingPlane.altitudeMeters,
+            i, gnssMeasurementCorrections.satCorrections[i].reflectingPlane.azimuthDegrees);
+    }
+
+    setEnvAidingReqMsg.maxMessageNum = 1;
+    setEnvAidingReqMsg.seqNum = 1;
+
+    setEnvAidingReqMsg.envBearingValidity_valid = true;
+    setEnvAidingReqMsg.envBearingValidity = gnssMeasurementCorrections.hasEnvironmentBearing;
+    setEnvAidingReqMsg.envBearingDegrees_valid = true;
+    setEnvAidingReqMsg.envBearingDegrees = gnssMeasurementCorrections.environmentBearingDegrees;
+    setEnvAidingReqMsg.envBearingUncDegrees_valid = true;
+    setEnvAidingReqMsg.envBearingUncDegrees =
+            gnssMeasurementCorrections.environmentBearingUncertaintyDegrees;
+
+    setEnvAidingReqMsg.latitudeDegrees_valid = true;
+    setEnvAidingReqMsg.latitudeDegrees = gnssMeasurementCorrections.latitudeDegrees;
+    setEnvAidingReqMsg.longitudeDegrees_valid = true;
+    setEnvAidingReqMsg.longitudeDegrees = gnssMeasurementCorrections.longitudeDegrees;
+    setEnvAidingReqMsg.horizontalPositionUncMeters_valid = true;
+    setEnvAidingReqMsg.horizontalPositionUncMeters =
+            gnssMeasurementCorrections.horizontalPositionUncertaintyMeters;
+    setEnvAidingReqMsg.altitudeMeters_valid = true;
+    setEnvAidingReqMsg.altitudeMeters = gnssMeasurementCorrections.altitudeMeters;
+    setEnvAidingReqMsg.altitudeUncMeters_valid = true;
+    setEnvAidingReqMsg.altitudeUncMeters =
+            gnssMeasurementCorrections.verticalPositionUncertaintyMeters;
+    setEnvAidingReqMsg.toaGpsNanosecondsOfWeek_valid = true;
+    setEnvAidingReqMsg.toaGpsNanosecondsOfWeek =
+            gnssMeasurementCorrections.toaGpsNanosecondsOfWeek;
+
+    uint32_t len = gnssMeasurementCorrections.satCorrections.size();
+    if (len > 0) {
+        if (len >= QMI_LOC_ENV_AIDING_CORRECTION_MAX_SV_USED_V02) {
+            setEnvAidingReqMsg.svCorrection_len = QMI_LOC_ENV_AIDING_CORRECTION_MAX_SV_USED_V02;
+        } else {
+            setEnvAidingReqMsg.svCorrection_len = len;
+        }
+        setEnvAidingReqMsg.svCorrection_valid = true;
+        for (int i = 0; i < setEnvAidingReqMsg.svCorrection_len; i++) {
+            setEnvAidingReqMsg.svCorrection[i].svCorrectionFlags = 0;
+            if (gnssMeasurementCorrections.satCorrections[i].flags &
+                (GNSS_MEAS_CORR_HAS_SAT_IS_LOS_PROBABILITY_BIT)) {
+                setEnvAidingReqMsg.svCorrection[i].probabilitySvIsLineofSight =
+                        gnssMeasurementCorrections.satCorrections[i].probSatIsLos;
+                setEnvAidingReqMsg.svCorrection[i].svCorrectionFlags |=
+                        QMI_LOC_ENV_AIDING_SV_CORRECTION_LINE_OF_SIGHT_PROBABILITY_VALID_V02;
+            }
+            if (gnssMeasurementCorrections.satCorrections[i].flags &
+                (GNSS_MEAS_CORR_HAS_EXCESS_PATH_LENGTH_BIT)) {
+                setEnvAidingReqMsg.svCorrection[i].excessPathLengthMeters =
+                        gnssMeasurementCorrections.satCorrections[i].excessPathLengthMeters;
+                setEnvAidingReqMsg.svCorrection[i].svCorrectionFlags |=
+                        QMI_LOC_ENV_AIDING_SV_CORRECTION_EXCESS_PATH_LENGTH_VALID_V02;
+            }
+            if (gnssMeasurementCorrections.satCorrections[i].flags &
+                (GNSS_MEAS_CORR_HAS_EXCESS_PATH_LENGTH_UNC_BIT)) {
+                setEnvAidingReqMsg.svCorrection[i].excessPathLengthUncMeters =
+                        gnssMeasurementCorrections.satCorrections[i].
+                                excessPathLengthUncertaintyMeters;
+                setEnvAidingReqMsg.svCorrection[i].svCorrectionFlags |=
+                        QMI_LOC_ENV_AIDING_SV_CORRECTION_EXCESS_PATH_LENGTH_UNC_VALID_V02;
+            }
+            if (gnssMeasurementCorrections.satCorrections[i].flags &
+                (GNSS_MEAS_CORR_HAS_REFLECTING_PLANE_BIT)) {
+                setEnvAidingReqMsg.svCorrection[i].reflectingPlane.latitudeDegrees =
+                        gnssMeasurementCorrections.satCorrections[i].
+                                reflectingPlane.latitudeDegrees;
+                setEnvAidingReqMsg.svCorrection[i].reflectingPlane.longitudeDegrees =
+                        gnssMeasurementCorrections.satCorrections[i].
+                                reflectingPlane.longitudeDegrees;
+                setEnvAidingReqMsg.svCorrection[i].reflectingPlane.altitudeMeters =
+                        gnssMeasurementCorrections.satCorrections[i].
+                                reflectingPlane.altitudeMeters;
+                setEnvAidingReqMsg.svCorrection[i].reflectingPlane.azimuthDegrees =
+                        gnssMeasurementCorrections.satCorrections[i].
+                                reflectingPlane.azimuthDegrees;
+                setEnvAidingReqMsg.svCorrection[i].svCorrectionFlags |=
+                        QMI_LOC_ENV_AIDING_SV_CORRECTION_REFLECTING_PLANE_VALID_V02;
+            }
+            switch (gnssMeasurementCorrections.satCorrections[i].svType) {
+            case GNSS_SV_TYPE_GPS:
+                setEnvAidingReqMsg.svCorrection[i].constellation =
+                        eQMI_LOC_SV_SYSTEM_GPS_V02;
+                break;
+
+            case GNSS_SV_TYPE_SBAS:
+                setEnvAidingReqMsg.svCorrection[i].constellation =
+                        eQMI_LOC_SV_SYSTEM_SBAS_V02;
+                break;
+
+            case GNSS_SV_TYPE_GLONASS:
+                setEnvAidingReqMsg.svCorrection[i].constellation =
+                        eQMI_LOC_SV_SYSTEM_GLONASS_V02;
+                break;
+
+            case GNSS_SV_TYPE_QZSS:
+                setEnvAidingReqMsg.svCorrection[i].constellation =
+                        eQMI_LOC_SV_SYSTEM_QZSS_V02;
+                break;
+
+            case GNSS_SV_TYPE_BEIDOU:
+                setEnvAidingReqMsg.svCorrection[i].constellation =
+                        eQMI_LOC_SV_SYSTEM_BDS_V02;
+                break;
+
+            case GNSS_SV_TYPE_GALILEO:
+                setEnvAidingReqMsg.svCorrection[i].constellation =
+                        eQMI_LOC_SV_SYSTEM_GALILEO_V02;
+                break;
+
+            case GNSS_SV_TYPE_NAVIC:
+                setEnvAidingReqMsg.svCorrection[i].constellation =
+                        eQMI_LOC_SV_SYSTEM_NAVIC_V02;
+                break;
+
+            case GNSS_SV_TYPE_UNKNOWN:
+            default:
+                break;
+            }
+            setEnvAidingReqMsg.svCorrection[i].svid =
+                    gnssMeasurementCorrections.satCorrections[i].svId;
+            setEnvAidingReqMsg.svCorrection[i].carrierFrequencyHz =
+                    gnssMeasurementCorrections.satCorrections[i].carrierFrequencyHz;
+        }
+    }
+
+    req_union.pEnvAidingReqMsg = &setEnvAidingReqMsg;
+
+    result = locSyncSendReq(QMI_LOC_INJECT_ENV_AIDING_REQ_V02,
+                            req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
+                            QMI_LOC_INJECT_ENV_AIDING_IND_V02,
+                            &genReqStatusIndMsg);
+
+    if (result != eLOC_CLIENT_SUCCESS ||
+        eQMI_LOC_SUCCESS_V02 != genReqStatusIndMsg.status)
+    {
+        LOC_LOGe("Error status = %s, ind..status = %s ",
+            loc_get_v02_client_status_name(result),
+            loc_get_v02_qmi_status_name(genReqStatusIndMsg.status));
+        err = LOCATION_ERROR_GENERAL_FAILURE;
+    }
+
+    return err;
+}
+
+LocationError
 LocApiV02::setBlacklistSvSync(const GnssSvIdConfig& config)
 {
     locClientStatusEnumType status = eLOC_CLIENT_FAILURE_GENERAL;
