@@ -94,7 +94,6 @@ ifeq ($(HOST_OS),linux)
     WITH_DEXPREOPT ?= true
   endif
 endif
-PRODUCT_DEXPREOPT_SPEED_APPS += SystemUI
 
 # DRM
 TARGET_ENABLE_MEDIADRM_64 := true
