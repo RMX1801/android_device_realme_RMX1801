@@ -60,6 +60,20 @@ static LocConfigTypeEnum getLocConfigTypeFromMsgId(ELocMsgID  msgId) {
     case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID:
         configType = CONFIG_ROBUST_LOCATION;
         break;
+    case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
+        configType = CONFIG_MIN_GPS_WEEK;
+        break;
+    case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
+    case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID:
+        configType = GET_ROBUST_LOCATION_CONFIG;
+        break;
+    case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
+    case E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID:
+        configType = GET_MIN_GPS_WEEK;
+        break;
+    case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID:
+        configType = CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS;
+        break;
     default:
         break;
     }
@@ -116,7 +130,9 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         mTuncConfigInfo{},
         mPaceConfigInfo{},
         mSVConfigInfo{},
-        mLeverArmConfigInfo{} {
+        mLeverArmConfigInfo{},
+        mRobustLocationConfigInfo{},
+        mB2sConfigInfo{} {
     if (integrationClientAllowed() == false) {
         return;
     }
@@ -223,17 +239,17 @@ void IpcListener::onListenerReady() {
     mMsgTask.sendMsg(new (nothrow) ClientRegisterReq(mApiImpl));
 }
 
-void IpcListener::onReceive(const char* data, uint32_t length,
-                            const LocIpcRecver* recver) {
+    void IpcListener::onReceive(const char* data, uint32_t length,
+                                const LocIpcRecver* recver) {
     struct OnReceiveHandler : public LocMsg {
         OnReceiveHandler(LocationIntegrationApiImpl& apiImpl, IpcListener& listener,
                          const char* data, uint32_t length) :
                 mApiImpl(apiImpl), mListener(listener), mMsgData(data, length) {}
 
+
         virtual ~OnReceiveHandler() {}
         void proc() const {
             LocAPIMsgHeader *pMsg = (LocAPIMsgHeader *)(mMsgData.data());
-
             switch (pMsg->msgId) {
             case E_LOCAPI_HAL_READY_MSG_ID:
                 LOC_LOGd("<<< HAL ready");
@@ -251,19 +267,37 @@ void IpcListener::onReceive(const char* data, uint32_t length,
             case E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG_ID:
             case E_INTAPI_CONFIG_LEVER_ARM_MSG_ID:
             case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID:
+            case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
+            case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID:
+            case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
+            case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
             {
                 if (sizeof(LocAPIGenericRespMsg) != mMsgData.length()) {
                     LOC_LOGw("payload size does not match for message with id: %d",
                              pMsg->msgId);
                 }
-                const LocAPIGenericRespMsg* pRespMsg = (LocAPIGenericRespMsg*)(pMsg);
-                LocConfigTypeEnum configType = getLocConfigTypeFromMsgId(pMsg->msgId);
-                LocIntegrationResponse intResponse = getLocIntegrationResponse(pRespMsg->err);
-                LOC_LOGd("<<< response message id: %d, msg err: %d, "
-                         "config type: %d, int response %d",
-                         pMsg->msgId, pRespMsg->err, configType, intResponse);
+                mApiImpl.processConfigRespCb((LocAPIGenericRespMsg*)pMsg);
+                break;
+            }
 
-                mApiImpl.invokeConfigRespCb(configType, intResponse);
+            case E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID:
+            {
+                if (sizeof(LocConfigGetMinGpsWeekRespMsg) != mMsgData.length()) {
+                    LOC_LOGw("payload size does not match for message with id: %d",
+                             pMsg->msgId);
+                }
+                mApiImpl.processGetMinGpsWeekRespCb((LocConfigGetMinGpsWeekRespMsg*)pMsg);
+                break;
+            }
+
+            case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID:
+            {
+                if (sizeof(LocConfigGetRobustLocationConfigRespMsg) != mMsgData.length()) {
+                    LOC_LOGw("payload size does not match for message with id: %d",
+                             pMsg->msgId);
+                }
+                mApiImpl.processGetRobustLocationConfigRespCb(
+                        (LocConfigGetRobustLocationConfigRespMsg*)pMsg);
                 break;
             }
 
@@ -313,7 +347,7 @@ uint32_t LocationIntegrationApiImpl::resetConstellationConfig() {
 
 uint32_t LocationIntegrationApiImpl::configConstellations(
         const GnssSvTypeConfig& svTypeConfig,
-        const GnssSvIdConfig&   svIdConfig) {
+        const GnssSvIdConfig& svIdConfig) {
 
     struct ConfigConstellationsReq : public LocMsg {
         ConfigConstellationsReq(LocationIntegrationApiImpl* apiImpl,
@@ -460,7 +494,6 @@ uint32_t LocationIntegrationApiImpl::configLeverArm(
     return 0;
 }
 
-
 uint32_t LocationIntegrationApiImpl::configRobustLocation(
         bool enable, bool enableForE911) {
     struct ConfigRobustLocationReq : public LocMsg {
@@ -487,6 +520,103 @@ uint32_t LocationIntegrationApiImpl::configRobustLocation(
 
     mMsgTask->sendMsg(new (nothrow)
                       ConfigRobustLocationReq(this, enable, enableForE911));
+
+    return 0;
+}
+
+uint32_t LocationIntegrationApiImpl::getRobustLocationConfig() {
+
+    struct GetRobustLocationConfigReq : public LocMsg {
+        GetRobustLocationConfigReq(LocationIntegrationApiImpl* apiImpl) :
+                mApiImpl(apiImpl) {}
+        virtual ~GetRobustLocationConfigReq() {}
+        void proc() const {
+            LocConfigGetRobustLocationConfigReqMsg msg(mApiImpl->mSocketName);
+            mApiImpl->sendConfigMsgToHalDaemon(GET_ROBUST_LOCATION_CONFIG,
+                                               reinterpret_cast<uint8_t*>(&msg),
+                                               sizeof(msg));
+        }
+        LocationIntegrationApiImpl* mApiImpl;
+    };
+
+    if (mIntegrationCbs.getRobustLocationConfigCb == nullptr) {
+        LOC_LOGe("no callback passed in constructor to receive robust location config");
+        // return 1 to signal error
+        return 1;
+    }
+    mMsgTask->sendMsg(new (nothrow) GetRobustLocationConfigReq(this));
+
+    return 0;
+}
+
+uint32_t LocationIntegrationApiImpl::configMinGpsWeek(uint16_t minGpsWeek) {
+    struct ConfigMinGpsWeekReq : public LocMsg {
+        ConfigMinGpsWeekReq(LocationIntegrationApiImpl* apiImpl,
+                            uint16_t minGpsWeek) :
+                mApiImpl(apiImpl),
+                mMinGpsWeek(minGpsWeek) {}
+        virtual ~ConfigMinGpsWeekReq() {}
+        void proc() const {
+            LocConfigMinGpsWeekReqMsg msg(mApiImpl->mSocketName, mMinGpsWeek);
+            mApiImpl->sendConfigMsgToHalDaemon(CONFIG_MIN_GPS_WEEK,
+                                               reinterpret_cast<uint8_t*>(&msg),
+                                               sizeof(msg));
+        }
+        LocationIntegrationApiImpl* mApiImpl;
+        uint16_t mMinGpsWeek;
+    };
+
+    mMsgTask->sendMsg(new (nothrow) ConfigMinGpsWeekReq(this, minGpsWeek));
+    return 0;
+}
+
+uint32_t LocationIntegrationApiImpl::getMinGpsWeek() {
+
+    struct GetMinGpsWeekReq : public LocMsg {
+        GetMinGpsWeekReq(LocationIntegrationApiImpl* apiImpl) :
+                mApiImpl(apiImpl) {}
+        virtual ~GetMinGpsWeekReq() {}
+        void proc() const {
+            LocConfigGetMinGpsWeekReqMsg msg(mApiImpl->mSocketName);
+            mApiImpl->sendConfigMsgToHalDaemon(GET_MIN_GPS_WEEK,
+                                               reinterpret_cast<uint8_t*>(&msg),
+                                               sizeof(msg));
+        }
+        LocationIntegrationApiImpl* mApiImpl;
+    };
+
+    if (mIntegrationCbs.getMinGpsWeekCb == nullptr) {
+        LOC_LOGe("no callback passed in constructor to receive gps week info");
+        // return 1 to signal error
+        return 1;
+    }
+    mMsgTask->sendMsg(new (nothrow) GetMinGpsWeekReq(this));
+
+    return 0;
+}
+
+uint32_t LocationIntegrationApiImpl::configBodyToSensorMountParams(
+        const ::BodyToSensorMountParams& b2sParams) {
+    struct ConfigB2sMountParamsReq : public LocMsg {
+        ConfigB2sMountParamsReq(LocationIntegrationApiImpl* apiImpl,
+                                ::BodyToSensorMountParams b2sParams) :
+                mApiImpl(apiImpl),
+                mB2sParams(b2sParams){}
+        virtual ~ConfigB2sMountParamsReq() {}
+        void proc() const {
+            mApiImpl->mB2sConfigInfo.isValid = true;
+            mApiImpl->mB2sConfigInfo.b2sParams = mB2sParams;
+            LocConfigB2sMountParamsReqMsg msg(mApiImpl->mSocketName,
+                                              mApiImpl->mB2sConfigInfo.b2sParams);
+            mApiImpl->sendConfigMsgToHalDaemon(CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS,
+                                               reinterpret_cast<uint8_t*>(&msg),
+                                               sizeof(msg));
+        }
+        LocationIntegrationApiImpl* mApiImpl;
+        ::BodyToSensorMountParams mB2sParams;
+    };
+
+    mMsgTask->sendMsg(new (nothrow) ConfigB2sMountParamsReq(this, b2sParams));
 
     return 0;
 }
@@ -526,8 +656,14 @@ void LocationIntegrationApiImpl::sendClientRegMsgToHalDaemon(){
 }
 
 void LocationIntegrationApiImpl::processHalReadyMsg() {
-    // when hal daemon crashes, we need to find the new node/port
-    // when remote socket api is used
+    // when location hal daemon crashes and restarts,
+    // we flush out all pending requests and notify each client
+    // that the request has failed.
+    flushConfigReqs();
+
+    // when hal daemon crashes and then restarted,
+    // we need to find the new node/port when remote socket api is used,
+    //
     // this code can not be moved to inside of onListenerReady as
     // onListenerReady can be invoked from other places
     if (mIpcSender != nullptr) {
@@ -577,6 +713,15 @@ void LocationIntegrationApiImpl::processHalReadyMsg() {
                                  reinterpret_cast<uint8_t*>(&msg),
                                  sizeof(msg));
     }
+    // Do not reconfigure min gps week, as min gps week setting
+    // can be overwritten by modem over  time
+
+    if (mB2sConfigInfo.isValid) {
+        LocConfigB2sMountParamsReqMsg msg(mSocketName, mB2sConfigInfo.b2sParams);
+        sendConfigMsgToHalDaemon(CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS,
+                                 reinterpret_cast<uint8_t*>(&msg),
+                                 sizeof(msg));
+    }
 }
 
 void LocationIntegrationApiImpl::addConfigReq(LocConfigTypeEnum configType) {
@@ -592,15 +737,19 @@ void LocationIntegrationApiImpl::addConfigReq(LocConfigTypeEnum configType) {
     }
 }
 
-void LocationIntegrationApiImpl::invokeConfigRespCb(LocConfigTypeEnum configType,
-                                                    LocIntegrationResponse response) {
+void LocationIntegrationApiImpl::processConfigRespCb(const LocAPIGenericRespMsg* pRespMsg) {
+    LocConfigTypeEnum configType = getLocConfigTypeFromMsgId(pRespMsg->msgId);
+    LocIntegrationResponse intResponse = getLocIntegrationResponse(pRespMsg->err);
+    LOC_LOGd("<<< response message id: %d, msg err: %d, "
+             "config type: %d, int response %d",
+             pRespMsg->msgId, pRespMsg->err, configType, intResponse);
 
     if (mIntegrationCbs.configCb) {
         auto configReqData = mConfigReqCntMap.find(configType);
         if (configReqData != std::end(mConfigReqCntMap)) {
             int reqCnt = configReqData->second;
             if (reqCnt > 0) {
-                mIntegrationCbs.configCb(configType, response);
+                mIntegrationCbs.configCb(configType, intResponse);
             }
             mConfigReqCntMap.erase(configReqData);
             // there are still some request pending for this config type
@@ -624,6 +773,50 @@ void LocationIntegrationApiImpl::flushConfigReqs() {
     mConfigReqCntMap.clear();
 }
 
+void LocationIntegrationApiImpl::processGetRobustLocationConfigRespCb(
+        const LocConfigGetRobustLocationConfigRespMsg* pRespMsg) {
+
+    LOC_LOGd("<<< response message id: %d, mask 0x%x, enabled: %d, enabledFor911: %d",
+             pRespMsg->msgId,
+             pRespMsg->mRobustLoationConfig.validMask,
+             pRespMsg->mRobustLoationConfig.enabled,
+             pRespMsg->mRobustLoationConfig.enabledForE911);
+
+    if (mIntegrationCbs.getRobustLocationConfigCb) {
+        // conversion between the enums
+        RobustLocationConfig robustConfig = {};
+        uint32_t validMask = 0;;
+        if (pRespMsg->mRobustLoationConfig.validMask &
+                GNSS_CONFIG_ROBUST_LOCATION_ENABLED_VALID_BIT) {
+            validMask |= ROBUST_LOCATION_CONFIG_VALID_ENABLED;
+            robustConfig.enabled = pRespMsg->mRobustLoationConfig.enabled;
+        }
+        if (pRespMsg->mRobustLoationConfig.validMask &
+                GNSS_CONFIG_ROBUST_LOCATION_ENABLED_FOR_E911_VALID_BIT) {
+            validMask |= ROBUST_LOCATION_CONFIG_VALID_ENABLED_FOR_E911;
+            robustConfig.enabledForE911 = pRespMsg->mRobustLoationConfig.enabledForE911;
+        }
+        if (pRespMsg->mRobustLoationConfig.validMask &
+                GNSS_CONFIG_ROBUST_LOCATION_VERSION_VALID_BIT) {
+            validMask |= ROBUST_LOCATION_CONFIG_VALID_VERSION;
+            robustConfig.version.major = pRespMsg->mRobustLoationConfig.version.major;
+            robustConfig.version.minor = pRespMsg->mRobustLoationConfig.version.minor;
+        }
+
+        robustConfig.validMask = (RobustLocationConfigValidMask) validMask;
+        mIntegrationCbs.getRobustLocationConfigCb(robustConfig);
+    }
+}
+
+void LocationIntegrationApiImpl::processGetMinGpsWeekRespCb(
+        const LocConfigGetMinGpsWeekRespMsg* pRespMsg) {
+
+    LOC_LOGd("<<< response message id: %d, min gps week: %d",
+             pRespMsg->msgId, pRespMsg->mMinGpsWeek);
+    if (mIntegrationCbs.getMinGpsWeekCb) {
+        mIntegrationCbs.getMinGpsWeekCb(pRespMsg->mMinGpsWeek);
+    }
+}
 
 /******************************************************************************
 LocationIntegrationApiImpl - Not implemented ILocationControlAPI functions

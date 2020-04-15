@@ -807,6 +807,10 @@ typedef union
             *pEnvAidingReqMsg;
     /*QMI_LOC_INJECT_ENV_AIDING_REQ_V02*/
 
+    const qmiLocSetMinGpsWeekNumberReqMsgT_v02
+            *pSetMinGpsWeekReq;
+    /*QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_REQ_V02*/
+
 }locClientReqUnionType;
 
 

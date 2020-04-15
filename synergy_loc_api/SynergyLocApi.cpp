@@ -2734,7 +2734,6 @@ SynergyLocApi::resetConstellationControl(LocApiResponse *adapterResponse) {
     }));
 }
 
-
 void
 SynergyLocApi::startTimeBasedTracking(const TrackingOptions& options,
          LocApiResponse* adapterResponse) {

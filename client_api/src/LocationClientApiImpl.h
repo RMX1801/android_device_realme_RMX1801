@@ -30,9 +30,8 @@
 #define LOCATIONCLIENTAPIIMPL_H
 
 #include <mutex>
-#include <unordered_set>
-#include <unordered_map>
 
+#include <loc_pla.h>
 #include <LocIpc.h>
 #include <LocationDataTypes.h>
 #include <ILocationAPI.h>
@@ -42,6 +41,14 @@
 #ifndef FEATURE_EXTERNAL_AP
 #include <LocDiagIface.h>
 #include <LocationClientApiLog.h>
+#endif
+
+#ifdef NO_UNORDERED_SET_OR_MAP
+    #include <set>
+    #include <map>
+#else
+    #include <unordered_set>
+    #include <unordered_map>
 #endif
 
 using namespace std;
@@ -77,8 +84,6 @@ void populateClientDiagGnssSv(clientDiagGnssSvStructType* diagGnssSvPtr,
         std::vector<GnssSv>& gnssSvs);
 void populateClientDiagNmea(clientDiagGnssNmeaStructType *diagGnssNmeaPtr,
         const LocAPINmeaSerializedPayload &nmeaSerializedPayload);
-void populateClientDiagSvPoly(clientDiagGnssSvPoly *diagGnssSvPolyPtr,
-        const GnssSvPoly &gnssSvPoly);
 #endif // FEATURE_EXTERNAL_AP
 
 enum ReportCbEnumType {
@@ -176,6 +181,9 @@ public:
     virtual uint32_t configPositionAssistedClockEstimator(bool enable) override;
     virtual uint32_t configLeverArm(const LeverArmConfigInfo& configInfo) override;
     virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
+    virtual uint32_t configMinGpsWeek(uint16_t minGpsWeek) override;
+    virtual uint32_t configBodyToSensorMountParams(
+            const ::BodyToSensorMountParams& b2sParams) override;
 
     // other interface
     void updateNetworkAvailability(bool available);
@@ -243,7 +251,6 @@ private:
     GnssNmeaCb              mGnssNmeaCb;
     GnssDataCb              mGnssDataCb;
     GnssMeasurementsCb      mGnssMeasurementsCb;
-    GnssSvPolyCb            mGnssSvPolyCb;
 
     GnssEnergyConsumedCb    mGnssEnergyConsumedInfoCb;
     ResponseCb              mGnssEnergyConsumedResponseCb;

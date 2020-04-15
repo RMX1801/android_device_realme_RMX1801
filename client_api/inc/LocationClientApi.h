@@ -34,6 +34,8 @@
 #include <functional>
 #include <memory>
 
+using std::string;
+
 namespace location_client
 {
 class Geofence;
@@ -230,7 +232,31 @@ enum GnssLocationPosDataMask {
     LOCATION_NAV_DATA_HAS_YAW_RATE_UNC_BIT    = (1<<8),
     /** GnssLocationPositionDynamics has valid
      *  GnssLocationPositionDynamics::pitchUnc. <br/>   */
-    LOCATION_NAV_DATA_HAS_PITCH_UNC_BIT       = (1<<9)
+    LOCATION_NAV_DATA_HAS_PITCH_UNC_BIT       = (1<<9),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::pitchRate. <br/>   */
+    LOCATION_NAV_DATA_HAS_PITCH_RATE_BIT      = (1<<10),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::pitchRateUnc. <br/>   */
+    LOCATION_NAV_DATA_HAS_PITCH_RATE_UNC_BIT  = (1<<11),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::roll. <br/>   */
+    LOCATION_NAV_DATA_HAS_ROLL_BIT            = (1<<12),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::rollUnc. <br/>   */
+    LOCATION_NAV_DATA_HAS_ROLL_UNC_BIT        = (1<<13),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::rollRate. <br/>   */
+    LOCATION_NAV_DATA_HAS_ROLL_RATE_BIT       = (1<<14),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::rollRateUnc. <br/>   */
+    LOCATION_NAV_DATA_HAS_ROLL_RATE_UNC_BIT   = (1<<15),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::yaw. <br/>   */
+    LOCATION_NAV_DATA_HAS_YAW_BIT             = (1<<16),
+    /** GnssLocationPositionDynamics has valid
+     *  GnssLocationPositionDynamics::yawUnc. <br/>   */
+    LOCATION_NAV_DATA_HAS_YAW_UNC_BIT         = (1<<17),
 };
 
 /** Specify the mask for available GNSS signal type and RF band
@@ -289,9 +315,11 @@ enum LocationResponse {
     /** LocationClientApi call is successful. <br/>   */
     LOCATION_RESPONSE_SUCCESS = 0,
     /** LocationClientApi call has failed. <br/>   */
-    LOCATION_RESPONSE_UNKOWN_FAILURE,
+    LOCATION_RESPONSE_UNKOWN_FAILURE = 1,
     /** LocationClientApi call is not supported. <br/>   */
-    LOCATION_RESPONSE_NOT_SUPPORTED
+    LOCATION_RESPONSE_NOT_SUPPORTED = 2,
+    /** LocationClientApi call has invalid parameter. <br/>   */
+    LOCATION_RESPONSE_PARAM_INVALID = 3,
 };
 
 /** Specify the SV constellation type in GnssSv
@@ -312,9 +340,8 @@ enum GnssSvType {
     /**  SV is of GALILEO constellation. <br/>   */
     GNSS_SV_TYPE_GALILEO = 6,
     /**  SV is of NAVIC constellation. <br/>   */
-    GNSS_SV_TYPE_NAVIC = 7,
+    GNSS_SV_TYPE_NAVIC   = 7
 };
-
 
 /** Specify the valid fields in GnssLocation.
  *  <br/>
@@ -418,7 +445,13 @@ enum GnssLocationInfoFlagMask {
     GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT              = (1<<28),
     /** GnssLocation has valid GnssLocation::conformityIndex.
      *  <br/> */
-    GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT         = (1<<29),
+    GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT             = (1<<29),
+    /** GnssLocation has valid
+     *  GnssLocation::llaVRPBased. <br/>   */
+    GNSS_LOCATION_INFO_LLA_VRP_BASED_BIT                = (1<<30),
+    /** GnssLocation has valid GnssLocation::enuVelocityVRPBased.
+     *  <br/> */
+    GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT       = (1<<31),
 };
 
 /** Specify the reliability level of
@@ -456,8 +489,8 @@ enum Gnss_LocSvSystemEnumType {
     GNSS_LOC_SV_SYSTEM_BDS     = 5,
     /**  SV is of QZSS constellation. <br/>   */
     GNSS_LOC_SV_SYSTEM_QZSS    = 6,
-    /**  SV is of NAVIC constellation. <br/>   */
-    GNSS_LOC_SV_SYSTEM_NAVIC   = 7,
+    /** SV is of NAVIC constellation. <br/>   */
+    GNSS_LOC_SV_SYSTEM_NAVIC   = 7
 };
 
 /** Specify the valid fields in GnssSystemTimeStructType.
@@ -532,8 +565,8 @@ enum DrCalibrationStatusMask {
  *  GnssLocation. <br/>  */
 struct GnssLocationSvUsedInPosition {
     /** Specify the set of SVs from GPS constellation that are used
-     *  to compute the position.<br/>
-     *  Bit 0 to Bit 31 corresponds to GPS SV id 1 to 32. <br/> */
+     *  to compute the position. <br/> Bit 0 to Bit 31 corresponds
+     *  to GPS SV id 1 to 32.  <br/>  */
     uint64_t gpsSvUsedIdsMask;
     /** Specify the set of SVs from GLONASS constellation that are
      *  used to compute the position. <br/>
@@ -551,14 +584,17 @@ struct GnssLocationSvUsedInPosition {
     uint64_t bdsSvUsedIdsMask;
     /** Specify the set of SVs from QZSS constellation that are used
      *  to compute the position. <br/>
-     *  Bit 0 to Bit 4 corresponds to BDS SV id 193 to 197.
+     *  Bit 0 to Bit 4 corresponds to QZSS SV id 193 to 197.
      *  <br/> */
     uint64_t qzssSvUsedIdsMask;
-    /** Specify the set of SVs from NAVIC constellation that are
-     *  used to compute the position. <br/>
-     *  Bit 0 to Bit 13 corresponds to BDS SV id 401 to 414.
+    /** Specify the set of SVs from NAVIC constellation that are used
+     *  to compute the position. <br/>
+     *  Bit 0 to Bit 13 corresponds to NAVIC SV id 401 to 414.
      *  <br/> */
     uint64_t navicSvUsedIdsMask;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify the SV measurements that are used to calculate
@@ -573,6 +609,9 @@ struct GnssMeasUsageInfo {
     uint16_t gnssSvId;
     /** Specify the signal type mask of the SV.  <br/> */
     GnssSignalTypeMask gnssSignalType;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify device body frame parameters. <br/>   */
@@ -589,10 +628,6 @@ struct GnssLocationPositionDynamics {
     /** Vertical acceleration in body frame, in unit of
      *  meters/second^2. <br/>   */
     float           vertAccel;
-    /** Heading rate, in unit of radians/second. <br/>   */
-    float           yawRate;
-    /** Body pitch, in unit of radians. <br/>   */
-    float           pitch;
     /** Uncertainty of forward acceleration in body frame, in unit
      *  of meters/second^2. <br/>   */
     float           longAccelUnc;
@@ -602,11 +637,40 @@ struct GnssLocationPositionDynamics {
     /** Uncertainty of vertical acceleration in body frame, in unit
      *  of meters/second^2. <br/>   */
     float           vertAccelUnc;
+    /** Body pitch, in unit of radians. <br/>   */
+    float           pitch;
+    /** Uncertainty of body pitch, in unit of radians. <br/>   */
+    float           pitchUnc;
+    /** Body pitch rate, in unit of radians/second.  <br/> */
+    float           pitchRate;
+    /** Uncertainty of pitch rate, in unit of radians/second.  <br/> */
+    float           pitchRateUnc;
+    /** Roll of body frame, clockwise is positive, in unit of
+     *  radian.  <br/> */
+    float           roll;
+    /** Uncertainty of roll, 68% confidence level, in unit of
+    radian. <br/>  */
+    float           rollUnc;
+    /** Roll rate of body frame, clockwise is
+    positive, in unit of radian/second. <br/> */
+    float           rollRate;
+    /** Uncertainty of roll rate, 68% confidence level, in unit of
+     *  radian/second. <br/>  */
+    float           rollRateUnc;
+    /** Yaw of body frame, clockwise is positive, in unit of
+     *  radian. <br/> */
+    float           yaw;
+    /** Uncertainty of yaw, 68% confidence level, in unit of radian.
+     *  <br/> */
+    float           yawUnc;
+    /** Heading rate, in unit of radians/second. <br/>   */
+    float           yawRate;
     /** Uncertainty of heading rate, in unit of radians/second.
      *  <br/> */
     float           yawRateUnc;
-    /** Uncertainty of body pitch, in unit of radians. <br/>   */
-    float           pitchUnc;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify none-Glonass GNSS system time info. */
@@ -647,6 +711,9 @@ struct GnssSystemTimeStructType {
     /** Number of clock resets/discontinuities detected, which
      *  affects the local hardware counter value. <br/>   */
     uint32_t numClockResets;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify Glonass system time info. <br/>   */
@@ -681,6 +748,9 @@ struct GnssGloTimeStructType {
     /** Number of clock resets/discontinuities detected,
      *  affecting the local hardware counter value. <br/> */
     uint32_t numClockResets;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Union to hold GNSS system time from different
@@ -698,6 +768,9 @@ union SystemTimeStructUnion {
     GnssGloTimeStructType gloSystemTime;
     /** System time info from NAVIC constellation. <br/>   */
     GnssSystemTimeStructType navicSystemTime;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /**  GNSS system time in GnssLocation. <br/>
@@ -709,6 +782,9 @@ struct GnssSystemTime {
     /** Specify the GNSS system time corresponding to the source.
      *  <br/> */
     SystemTimeStructUnion u;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify the set of engines whose position reports are
@@ -716,7 +792,7 @@ struct GnssSystemTime {
     LocReqEngineTypeMask, const EngineReportCbs&,ResponseCb).
     <br/>
 */
-typedef enum {
+enum LocReqEngineTypeMask {
     /** Mask to indicate that client requests the fused/default
       position via registering location_client::EngineLocationsCb
       for the tracking session. <br/>
@@ -734,10 +810,10 @@ typedef enum {
       for the tracking session. <br/>
     */
     LOC_REQ_ENGINE_PPE_BIT   = (1<<2),
-} LocReqEngineTypeMask;
+};
 
 /** Specify the position engine type that produced GnssLocation. <br/> */
-typedef enum {
+enum LocOutputEngineType {
     /** This is the propagated/aggregated report from the fixes of
      *  all engines running on the system (e.g.: DR/SPE/PPE).
      *  <br/> */
@@ -749,19 +825,19 @@ typedef enum {
     LOC_OUTPUT_ENGINE_PPE   = 2,
     /** This is the entry count of this enum. <br/>   */
     LOC_OUTPUT_ENGINE_COUNT,
-} LocOutputEngineType;
+};
 
 
 /** Specify the set of position engines supported by
  *  LocationClientAPI. <br/>   */
-typedef enum {
+enum PositioningEngineMask {
     /** Mask for standard GNSS position engine. <br/>   */
     STANDARD_POSITIONING_ENGINE = (1 << 0),
     /** Mask for dead reckoning position engine. <br/>   */
     DEAD_RECKONING_ENGINE       = (1 << 1),
     /** Mask for precise position engine. <br/>   */
     PRECISE_POSITIONING_ENGINE  = (1 << 2)
-} PositioningEngineMask;
+};
 
 /** Specify the location info received by client via
  *  startPositionSession(uint32_t, uint32_t
@@ -796,7 +872,26 @@ struct Location {
     float bearingAccuracy;
     /** Sets of technology that contributed to the fix. <br/>   */
     LocationTechnologyMask techMask;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
+
+/** Specify latitude, longitude and altitude info of location.
+ *  <br/>
+ */
+typedef struct {
+    /**  Latitude, in unit of degrees, range [-90.0, 90.0]. <br/> */
+    double latitude;
+
+    /**  Longitude, in unit of degrees, range [-180.0, 180.0]. <br/>
+    */
+    double longitude;
+
+    /** Altitude above the WGS 84 reference ellipsoid, in unit
+    of meters. <br/> */
+    float altitude;
+} LLAInfo;
 
 /** Specify the location info received by client via
  *  startPositionSession(uint32_t, const
@@ -899,8 +994,13 @@ struct GnssLocation : public Location {
      * will indicate how well the various input data considered for
      * navigation solution conform to expectations.
      * Range: [0.0, 1.0], with 0.0 for least conforming and 1.0 for
-     * most conforming. </br> */
+     * most conforming.
+     * </br> */
     float conformityIndex;
+    /** VRR-based latitude/longitude/altitude.  <br/> */
+    LLAInfo llaVRPBased;
+    /** VRR-based east, north, and up velocity */
+    float enuVelocityVRPBased[3];
 
     /* Default constructor to initalize GnssLocation structure */
     inline GnssLocation() :
@@ -923,8 +1023,13 @@ struct GnssLocation : public Location {
             calibrationStatus((DrCalibrationStatusMask)0),
             locOutputEngType ((LocOutputEngineType)0),
             locOutputEngMask((PositioningEngineMask)0),
-            conformityIndex(0.0f) {
+            conformityIndex(0.0f),
+            llaVRPBased({}),
+            enuVelocityVRPBased{0.0f, 0.0f, 0.0f} {
     }
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** GNSS SV report that comes when clients registers for
@@ -967,14 +1072,17 @@ struct GnssSv {
      *  This field is valid if gnssSvOptionsMask has
      *  GNSS_SV_OPTIONS_HAS_GNSS_SIGNAL_TYPE_BIT. <br/> */
     GnssSignalTypeMask gnssSignalTypeMask;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify the GNSS signal type and RF band for jammer info and
- *  automatic gain control metric in GnssData. <br/>
- *  To find out the jammer info and automatic gain control
- *  metric for a particular GNSS signal type, refer to the array
- *  element with index set to the signal type. <br/>
- */
+- *  automatic gain control metric in GnssData. <br/>
+- *  To find out the jammer info and automatic gain control
+- *  metric for a particular GNSS signal type, refer to the array
+- *  element with index set to the signal type. <br/>
+- */
 enum GnssSignalTypes {
     /**  GNSS signal is of GPS L1CA RF band.  <br/>   */
     GNSS_SIGNAL_TYPE_GPS_L1CA = 0,
@@ -1056,6 +1164,9 @@ struct GnssData {
     double        jammerInd[GNSS_MAX_NUMBER_OF_SIGNAL_TYPES];
     /** Automatic gain control metric, in unit of dB.  <br/>   */
     double        agc[GNSS_MAX_NUMBER_OF_SIGNAL_TYPES];
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify valid fields in
@@ -1277,6 +1388,9 @@ struct GnssMeasurementsData {
     double signalToNoiseRatioDb;
     /** Automatic gain control level, in unit of dB <br/> */
     double agcLevelDb;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify GNSS measurements clock. <br/>
@@ -1310,6 +1424,9 @@ struct GnssMeasurementsClock {
     /** HW clock discontinuity count - incremented
      *  for each discontinuity in HW clock. <br/>   */
     uint32_t hwClockDiscontinuityCount;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify GNSS measurements clock and data. <br/>   */
@@ -1318,6 +1435,9 @@ struct GnssMeasurements {
     GnssMeasurementsClock clock;
     /** GNSS measurements data. <br/>   */
     std::vector<GnssMeasurementsData> measurements;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify the valid fields in LeapSecondSystemInfo. <br/> */
@@ -1352,6 +1472,9 @@ struct LeapSecondChangeInfo {
      *  <br/>
      *  In unit of seconds. <br/> */
     uint8_t leapSecondsAfterChange;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify leap second system info, including current leap
@@ -1384,15 +1507,18 @@ struct LeapSecondSystemInfo {
         to choose leapSecondBefore or leapSecondAfter as current
         leap second. <br/> */
     LeapSecondChangeInfo  leapSecondChangeInfo;
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString();
 };
 
 /** Specify the set of valid fields in
  *  LocationSystemInfo. <br/>   */
-typedef enum {
+enum LocationSystemInfoMask {
     /** LocationSystemInfo has valid
      *  LocationSystemInfo::leapSecondSysInfo. <br/>   */
     LOC_SYS_INFO_LEAP_SECOND = (1ULL << 0),
-} LocationSystemInfoMask;
+};
 
 /** Specify the location system info that can be received via
  *  LocationSystemInfoCb. <br/>
@@ -1408,302 +1534,10 @@ struct LocationSystemInfo {
     LocationSystemInfoMask systemInfoMask;
     /** Current leap second and leap second info. <br/>   */
     LeapSecondSystemInfo   leapSecondSysInfo;
-};
-
-/** Specify the valid fields in GnssSvPoly. <br/> */
-enum GnssSvPolyValidityMask {
-    /** GnssSvPoly has valid GnssSvPoly::svId. <br/>
-     *  This flag should always be set. <br/> */
-    GNSS_SV_POLY_HAS_SV_ID              = 0x0000000001,
-    /** GnssSvPoly has valid GnssSvPoly::svConstellation. <br/>
-     *  This flag should always be set. <br/> */
-    GNSS_SV_POLY_HAS_SV_CONSTELLATION   = 0x0000000002,
-    /** GnssSvPoly has valid GnssSvPoly::gloFrequency. <br/>
-     *  This flag should be set only if this is Glonass SV. <br/> */
-    GNSS_SV_POLY_HAS_GLO_FREQUENCY      = 0x0000000004,
-    /** GnssSvPoly has valid GnssSvPoly::actionType. <br/>
-     *  This flag should always be set. <br/> */
-    GNSS_SV_POLY_HAS_ACTION_TYPE        = 0x0000000008,
-    /** GnssSvPoly has valid GnssSvPoly::statusMask. <br/> */
-    GNSS_SV_POLY_HAS_STATUS_MASK        = 0x0000000010,
-    /** GnssSvPoly has valid GnssSvPoly::T0. <br/> */
-    GNSS_SV_POLY_HAS_T0                 = 0x0000000020,
-    /** GnssSvPoly has valid GnssSvPoly::polyCofXYZ0. <br/> */
-    GNSS_SV_POLY_HAS_POLY_COF_XYZ0      = 0x0000000040,
-    /** GnssSvPoly has valid GnssSvPoly::polyCofXYZN. <br/> */
-    GNSS_SV_POLY_HAS_POLY_COF_XYZN      = 0x0000000080,
-    /** GnssSvPoly has valid GnssSvPoly::polyCofClockBias. <br/> */
-    GNSS_SV_POLY_HAS_POLY_COF_CLK_BIAS  = 0x0000000100,
-    /** GnssSvPoly has valid GnssSvPoly::iode. <br/> */
-    GNSS_SV_POLY_HAS_IODE               = 0x0000000200,
-    /** GnssSvPoly has valid GnssSvPoly::enhancedIOD. <br/> */
-    GNSS_SV_POLY_HAS_ENHANCED_IOD       = 0x0000000400,
-    /** GnssSvPoly has valid GnssSvPoly::svPosUnc. <br/> */
-    GNSS_SV_POLY_HAS_SV_POS_UNC         = 0x0000000800,
-    /** GnssSvPoly has valid GnssSvPoly::ionoDelay. <br/> */
-    GNSS_SV_POLY_HAS_IONO_DELAY         = 0x0000001000,
-    /** GnssSvPoly has valid GnssSvPoly::ionoDot.  <br/> */
-    GNSS_SV_POLY_HAS_IONO_DOT           = 0x0000002000,
-    /** GnssSvPoly has valid GnssSvPoly::sbasIonoDelay. <br/> */
-    GNSS_SV_POLY_HAS_SBAS_IONO_DELAY    = 0x0000004000,
-    /** GnssSvPoly has valid GnssSvPoly::sbasIonoDot. <br/> */
-    GNSS_SV_POLY_HAS_SBAS_IONO_DOT      = 0x0000008000,
-    /** GnssSvPoly has valid GnssSvPoly::tropoDelay. <br/> */
-    GNSS_SV_POLY_HAS_TROPO_DELAY        = 0x0000010000,
-    /** GnssSvPoly has valid GnssSvPoly::elevation. <br/> */
-    GNSS_SV_POLY_HAS_ELEVATION          = 0x0000020000,
-    /** GnssSvPoly has valid GnssSvPoly::elevationDot. <br/> */
-    GNSS_SV_POLY_HAS_ELEVATION_DOT      = 0x0000040000,
-    /** GnssSvPoly has valid GnssSvPoly::elevationUnc. <br/> */
-    GNSS_SV_POLY_HAS_ELEVATION_UNC      = 0x0000080000,
-    /** GnssSvPoly has valid GnssSvPoly::velCof. <br/> */
-    GNSS_SV_POLY_HAS_VEL_COF            = 0x0000100000,
-    /** GnssSvPoly has valid GnssSvPoly::gpsIscL1ca. <br/> */
-    GNSS_SV_POLY_HAS_GPS_ISC_L1CA       = 0x0000200000,
-    /** GnssSvPoly has valid GnssSvPoly::gpsIscL2c. <br/> */
-    GNSS_SV_POLY_HAS_GPS_ISC_L2C        = 0x0000400000,
-    /** GnssSvPoly has valid GnssSvPoly::gpsIscL5I5. <br/> */
-    GNSS_SV_POLY_HAS_GPS_ISC_L5I5       = 0x0000800000,
-    /** GnssSvPoly has valid GnssSvPoly::gpsIscL5Q5. <br/> */
-    GNSS_SV_POLY_HAS_GPS_ISC_L5Q5       = 0x0001000000,
-    /** GnssSvPoly has valid GnssSvPoly::gpsTgd.  <br/> */
-    GNSS_SV_POLY_HAS_GPS_TGD            = 0x0002000000,
-    /** GnssSvPoly has valid GnssSvPoly::gloTgdG1G2. <br/> */
-    GNSS_SV_POLY_HAS_GLO_TGD_G1G2       = 0x0004000000,
-    /** GnssSvPoly has valid GnssSvPoly::bdsTgdB1. <br/> */
-    GNSS_SV_POLY_HAS_BDS_TGD_B1         = 0x00080000000,
-    /** GnssSvPoly has valid GnssSvPoly::bdsTgdB2. <br/> */
-    GNSS_SV_POLY_HAS_BDS_TGD_B2         = 0x00100000000,
-    /** GnssSvPoly has valid GnssSvPoly::bdsTgdB2a. <br/> */
-    GNSS_SV_POLY_HAS_BDS_TGD_B2A        = 0x00200000000,
-    /** GnssSvPoly has valid GnssSvPoly::bdsIscB2a. <br/> */
-    GNSS_SV_POLY_HAS_BDS_ISC_B2A        = 0x00400000000,
-    /** GnssSvPoly has valid GnssSvPoly::galBgdE1E5a. <br/> */
-    GNSS_SV_POLY_HAS_GAL_BGD_E1E5A      = 0x00800000000,
-    /** GnssSvPoly has valid GnssSvPoly::galBgdE1E5b. <br/> */
-    GNSS_SV_POLY_HAS_GAL_BGD_E1E5B      = 0x01000000000,
-    /** GnssSvPoly has valid GnssSvPoly::navicTgdL5. <br/> */
-    GNSS_SV_POLY_HAS_NAVIC_TDG_L5       = 0x02000000000,
-};
-
-/** Specify the SV polynomial report status. <br/> */
-enum GnssSvPolyStatusMask {
-    /** Polynomials based on XTRA. <br/> */
-    GNSS_SV_POLY_STATUS_SRC_ALM_CORR = 0x01,
-    /** GLONASS string 4 has been received. <br/> */
-    GNSS_SV_POLY_STATUS_GLO_STR4 = 0x2,
-    /** GALILEO polynomial computed from I/Nav navigation
-     *  message. <br/> */
-    GNSS_SV_POLY_STATUS_GAL_FNAV = 0x04,
-    /** GALILEO polynomial computed from F/Nav navigation message.
+    /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    GNSS_SV_POLY_STATUS_GAL_INAV = 0x08,
+    string toString();
 };
-
-/** Action to be performed for the received polynomial for this
- *  satellite. <br/> */
-enum GnssSvPolyActionType {
-    /** Update Polynomial for this satellite. <br/> */
-    GNSS_SV_POLY_ACTION_UPDATE = 1,
-    /** Invalidate any previously received polynomial. <br/> */
-    GNSS_SV_POLY_ACTION_INVALIDATE = 2,
-};
-
-/** Const define for the array size of
- *  GnssSvPoly::polyCofXYZ0. <br/>  */
-#define GNSS_SV_POLY_XYZ_0_TH_ORDER_COF_SIZE  3
-/** Const define for the array size of
- *  GnssSvPoly::polyCofXYZN. <br/>  */
-#define GNSS_SV_POLY_XYZ_N_TH_ORDER_COF_SIZE  9
-/** Const define for the array size of
- *  GnssSvPoly::polyCofClockBias. <br/>  */
-#define GNSS_SV_POLY_SV_CLKBIAS_COF_SIZE      4
-/** Const define for the array size of GnssSvPoly::velCoef.
- *  <br/>  */
-#define GNSS_SV_POLY_VELOCITY_COF_SIZE       12
-
-struct GnssSvPoly {
-    /** Bitwise OR of GnssSvPolyValidityMask to specify the
-     *  valid fields in GnssSvPoly. <br/> */
-    GnssSvPolyValidityMask validityMask;
-
-    /** Specify satellite vehicle ID number. <br/>
-     *  For SV id range of each supported constellations, refer to
-     *  documentation in GnssSv::svId. <br/>
-     */
-    uint16_t svId;
-
-    /** Specify GNSS Constellation Type for the SV. */
-    Gnss_LocSvSystemEnumType svConstellation;
-
-    /**  GLONASS frequency number + 8. This field will only be
-     *   marked as valid via validityMask for GLONASS SVs. <br/>
-     *   Range: 1 to 14 <br/>   */
-    uint8_t gloFrequency;
-
-    /** SV polynomial action type, update or invalidate. <br/> */
-    GnssSvPolyActionType actionType;
-
-    /**  SV polynomial report status. <br/> */
-    GnssSvPolyStatusMask statusMask;
-
-    /**  Reference time for polynomial calculations. <br/>
-     * - GPS, QZSS: Seconds in the week <br/>
-     * - GLONASS: Full seconds since Jan. 1, 1996 <br/>
-     * - BDS: Full seconds since Jan. 1, 2006 <br/>
-     * - Galileo: Calculated from 00:00 UT on Sunday, August 22,
-     *     1999 (midnight between August 21 and August 22) <br/>
-     */
-    double T0;
-
-    /** Polynomial Coefficient's 0th Term for X, Y, and Z
-     *  Coordinates (C0X, C0Y, C0Z). <br/>
-     *  If this field is indicated as valid via validityMask, then
-     *  every element in the array is valid. <br/> */
-    double polyCofXYZ0[GNSS_SV_POLY_XYZ_0_TH_ORDER_COF_SIZE];
-
-    /** Polynomial coefficient's 1st, 2nd, and 3rd terms for X, Y
-     *  and Z coordinates (C1X, C2X,... C2Z, C3Z). <br/>
-     *  If this field is indicated as valid via validityMask, then
-     *  every element in the array is valid. <br/>
-     *  Units are specified as below: <br/>
-     *       - 1st term -- Meters/second <br/>
-     *       - 2nd term -- Meters/second^2 <br/>
-     *       - 3rd term -- Meters/seconds^3 <br/> */
-    double polyCofXYZN[GNSS_SV_POLY_XYZ_N_TH_ORDER_COF_SIZE];
-
-    /** Polynomial coefficients for satellite clock bias
-     *  correction (C0T, C1T, C2T, C3T). <br/>
-     *  If this field is indicated as valid via validityMask, then
-     *  every element in the array is valid. <br/>
-     *  Units are specified below <br/>
-     *        - 0th term -- Milliseconds/second <br/>
-     *        - 1st term -- Milliseconds/second^2 <br/>
-     *        - 2nd term -- Milliseconds/second^3 <br/>
-     *        - 3rd term -- Milliseconds/second^4 <br/> */
-    float polyCofClockBias[GNSS_SV_POLY_SV_CLKBIAS_COF_SIZE];
-
-    /**  Ephemeris reference time. <br/>
-     *       - GPS -- Issue of data ephemeris used (unitless) <br/>
-     *       - GLONASS -- Tb 7-bit <br/>
-     *       - Galileo -- 10-bit <br/>  */
-    uint16_t iode;
-
-    /** Enhanced Reference Time, for BDS ephemeris, this is TOE.
-     *  <br/> */
-    uint32_t enhancedIOD;
-
-    /** SV Position Uncertainty, in unit of meters. <br/> */
-    float svPosUnc;
-
-    /** Ionospheric delay at T0, in unit of meters. <br/> */
-    float ionoDelay;
-
-    /** Ionospheric delay rate, in unit of Meters/second. <br/>
-     */
-    float ionoDot;
-
-    /** SBAS ionospheric delay at T0, in unit of  Meters. <br/>
-    */
-    float sbasIonoDelay;
-
-    /** SBAS ionospheric delay rate, in unit of Meters/second. <br/>
-    */
-    float sbasIonoDot;
-
-    /** Tropospheric delay, in unit of Meters. <br/>
-    */
-    float tropoDelay;
-
-    /** Satellite elevation at T0, in unit of Radians. <br/>
-    */
-    float elevation;
-
-    /** Satellite elevation rate, in unit of Radians/second. <br/>
-    */
-    float elevationDot;
-
-    /** SV elevation uncertainty, in unit of Radians. <br/>
-    */
-    float elevationUnc;
-
-    /** Polynomial coefficients for SV velocity (C0X, C1X, C2X,
-     *  C3X,... C2Z, C3Z). <br/>
-     *  If this field is indicated as valid via validityMask, then
-     *    every element in the array is valid. <br/>
-     *    Units: <br/>
-     *    - 0th term -- Meters/second <br/>
-     *    - 1st term -- Meters/second^2 <br/>
-     *    - 2nd term -- Meters/second^3 <br/>
-     *   - 3rd term -- Meters/second^4 <br/> */
-    double velCof[GNSS_SV_POLY_VELOCITY_COF_SIZE];
-
-    /** Inter-signal correction - GPS/QZSS L1C/A, in unit of
-     *  milliseconds. <br/>
-     */
-    float gpsIscL1ca;
-
-    /** Inter-signal correction - GPS/QZSS L2C, in unit of
-     *  milliseconds. <br/>
-     */
-    float gpsIscL2c;
-
-    /** Inter-signal correction - GPS/QZSS L5I5, in unit of
-     *  milliseconds. <br/>
-     */
-    float gpsIscL5I5;
-
-    /** Inter-signal correction - GPS/QZSS L5Q5, in unit of
-     *  milliseconds. <br/>
-     */
-    float gpsIscL5Q5;
-
-    /** Time of group delay - GPS/QZSS, 13 bits from CNAV, 8 bits
-     *  from LNAV, in unit of  milliseconds. <br/>
-     */
-    float gpsTgd;
-
-    /** Time of group delay - GLONASS G1-G2, in unit of
-     *  milliseconds. <br/>
-     */
-    float gloTgdG1G2;
-
-    /** Time of group delay - BDS B1, in unit of
-     *  milliseconds. <br/>
-     */
-    float bdsTgdB1;
-
-    /** Time of group delay - BDS B2, in unit of
-     *  milliseconds. <br/>
-     */
-    float bdsTgdB2;
-
-    /** Time of group delay - BDS B2A, in unit of milliseconds.
-     *  <br/>
-     */
-    float bdsTgdB2a;
-
-    /** Inter-signal correction - BDS B2A, in unit of milliseconds.
-     *  <br/>
-     */
-    float bdsIscB2a;
-
-    /** Broadcast group delay - Galileo E1-E5a, in unit of
-     *  milliseconds. <br/>
-     */
-    float galBgdE1E5a;
-
-    /** Broadcast group delay - Galileo E1-E5b, in unit of
-     *  milliseconds. <br/>
-     */
-    float galBgdE1E5b;
-
-    /** Time of group delay - NavIC L5, in unit of
-     *  milliseconds. <br/>
-     */
-    float navicTgdL5;
-};
-
 
 enum BatchingStatus {
     BATCHING_STATUS_INACTIVE    = 0,
@@ -1834,16 +1668,6 @@ typedef std::function<void(
 )> GnssMeasurementsCb;
 
 /** @brief
-    GnssSvPolyCb is for receiving SV polynomial information
-    when LocationClientApi is in a positioning session. <br/>
-
-    @param gnssSvPoly: SV polynomial info in a session
-*/
-typedef std::function<void(
-    const GnssSvPoly& gnssSvPoly
-)> GnssSvPolyCb;
-
-/** @brief
     LocationSystemInfoCb is for receiving rare occuring location
     system information update as defined in
     LocationSystemInfo. <br/>
@@ -1942,9 +1766,6 @@ struct EngineReportCbs {
     /** Callback to receive GnssMeasurements from modem GNSS engine.
      *  <br/> */
     GnssMeasurementsCb gnssMeasurementsCallback;
-    /** Callback to receive GnssSvPoly from modem GNSS engine.
-     *  <br/> */
-    GnssSvPolyCb gnssSvPolyCallback;
 };
 
 /**
@@ -1965,7 +1786,9 @@ struct GnssEnergyConsumedInfo {
     GnssEnergyConsumedInfoMask flags;
 
     /** Energy consumed by the modem GNSS engine since device first
-     *  ever bootup, in unit of 0.1 milli watt seconds. <br/>
+     *  ever bootup, in unit of 0.1 milli watt seconds.
+     *  A value of 0xffffffffffffffff indicates an invalid reading.
+     *  <br/>
      */
     uint64_t totalEnergyConsumedSinceFirstBoot;
 };

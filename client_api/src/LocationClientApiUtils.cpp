@@ -26,6 +26,7 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <LocationClientApiImpl.h>
+#include <loc_misc_utils.h>
 
 namespace location_client {
 
@@ -35,13 +36,24 @@ void translateDiagGnssLocationPositionDynamics(clientDiagGnssLocationPositionDyn
     out.longAccel = in.longAccel;
     out.latAccel = in.latAccel;
     out.vertAccel = in.vertAccel;
-    out.yawRate = in.yawRate;
-    out.pitch = in.pitch;
     out.longAccelUnc = in.longAccelUnc;
     out.latAccelUnc = in.latAccelUnc;
     out.vertAccelUnc = in.vertAccelUnc;
-    out.yawRateUnc = in.yawRateUnc;
+
+    out.roll = in.roll;
+    out.rollUnc = in.rollUnc;
+    out.rollRate = in.rollRate;
+    out.rollRateUnc = in.rollRateUnc;
+
+    out.pitch = in.pitch;
     out.pitchUnc = in.pitchUnc;
+    out.pitchRate = in.pitchRate;
+    out.pitchRateUnc = in.pitchRateUnc;
+
+    out.yaw = in.yaw;
+    out.yawUnc = in.yawUnc;
+    out.yawRate = in.yawRate;
+    out.yawRateUnc = in.yawRateUnc;
 }
 
 clientDiagGnss_LocSvSystemEnumType parseDiagGnssConstellation(
@@ -65,6 +77,9 @@ clientDiagGnss_LocSvSystemEnumType parseDiagGnssConstellation(
             break;
         case GNSS_LOC_SV_SYSTEM_QZSS:
             constellation = CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_QZSS;
+            break;
+        case GNSS_LOC_SV_SYSTEM_NAVIC:
+            constellation = CLIENT_DIAG_GNSS_LOC_SV_SYSTEM_NAVIC;
             break;
         default:
             constellation = (clientDiagGnss_LocSvSystemEnumType)~0;
@@ -169,6 +184,9 @@ void translateDiagSystemTime(clientDiagGnssSystemTime& out,
         case GNSS_LOC_SV_SYSTEM_QZSS:
            out.u.qzssSystemTime = parseDiagGnssTime(in.u.qzssSystemTime);
            break;
+        case GNSS_LOC_SV_SYSTEM_NAVIC:
+           out.u.navicSystemTime = parseDiagGnssTime(in.u.navicSystemTime);
+           break;
         default:
            break;
     }
@@ -183,6 +201,7 @@ clientDiagGnssLocationSvUsedInPosition parseDiagLocationSvUsedInPosition(
     clientSv.galSvUsedIdsMask = halSv.galSvUsedIdsMask;
     clientSv.bdsSvUsedIdsMask = halSv.bdsSvUsedIdsMask;
     clientSv.qzssSvUsedIdsMask = halSv.qzssSvUsedIdsMask;
+    clientSv.navicSvUsedIdsMask = halSv.navicSvUsedIdsMask;
 
     return clientSv;
 }
@@ -270,7 +289,8 @@ void translateDiagGnssMeasUsageInfo(clientDiagGnssMeasUsageInfo& out,
      For SBAS:     120 to 151
      For QZSS-L1CA:193 to 197
      For BDS:      201 to 237
-     For GAL:      301 to 336 */
+     For GAL:      301 to 336
+     For NAVIC:    401 to 414 */
     out.gnssSvId = in.gnssSvId;
 }
 
@@ -330,16 +350,22 @@ void populateClientDiagLocation(clientDiagGnssLocationStructType* diagGnssLocPtr
     diagGnssLocPtr->calibrationConfidencePercent = gnssLocation.calibrationConfidencePercent;
     diagGnssLocPtr->calibrationStatus = gnssLocation.calibrationStatus;
     diagGnssLocPtr->conformityIndex = gnssLocation.conformityIndex;
-
-    struct timespec ts;
-    clock_gettime(CLOCK_BOOTTIME, &ts);
-    diagGnssLocPtr->bootTimestampNs =
-            (ts.tv_sec * 1000000000ULL + ts.tv_nsec);
+    diagGnssLocPtr->llaVRPBased.latitude = gnssLocation.llaVRPBased.latitude;
+    diagGnssLocPtr->llaVRPBased.longitude = gnssLocation.llaVRPBased.longitude;
+    diagGnssLocPtr->llaVRPBased.altitude = gnssLocation.llaVRPBased.altitude;
+    diagGnssLocPtr->enuVelocityVRPBased[0] = gnssLocation.enuVelocityVRPBased[0];
+    diagGnssLocPtr->enuVelocityVRPBased[1] = gnssLocation.enuVelocityVRPBased[1];
+    diagGnssLocPtr->enuVelocityVRPBased[2] = gnssLocation.enuVelocityVRPBased[2];
 
     diagGnssLocPtr->locOutputEngType =
             (clientDiagLocOutputEngineType) gnssLocation.locOutputEngType;
     diagGnssLocPtr->locOutputEngMask =
             (clientDiagPositioningEngineMask) gnssLocation.locOutputEngMask;
+
+    struct timespec ts;
+    clock_gettime(CLOCK_BOOTTIME, &ts);
+    diagGnssLocPtr->bootTimestampNs = (ts.tv_sec * 1000000000ULL + ts.tv_nsec);
+    diagGnssLocPtr->qtimerTickCnt = getQTimerTickCount();
 }
 
 void populateClientDiagMeasurements(clientDiagGnssMeasurementsStructType* diagGnssMeasPtr,
@@ -408,7 +434,7 @@ void translateDiagGnssSv(clientDiagGnssSv& out, const GnssSv& in) {
 
     /** Unique Identifier */
     out.svId = in.svId;
-    /** type of SV (GPS, SBAS, GLONASS, QZSS, BEIDOU, GALILEO) */
+    /** type of SV (GPS, SBAS, GLONASS, QZSS, BEIDOU, GALILEO, NAVIC) */
     out.type = (clientDiagGnssSvType)in.type;
     /** signal strength */
     out.cN0Dbhz = in.cN0Dbhz;
@@ -441,85 +467,6 @@ void populateClientDiagNmea(clientDiagGnssNmeaStructType *diagGnssNmeaPtr,
     diagGnssNmeaPtr->timestamp = nmeaSerializedPayload.timestamp;
     diagGnssNmeaPtr->nmeaLength = nmeaSerializedPayload.length;
     memcpy(&diagGnssNmeaPtr->nmea, nmeaSerializedPayload.nmea, nmeaSerializedPayload.length);
-}
-
-void populateClientDiagSvPoly(clientDiagGnssSvPoly *diagGnssSvPolyPtr,
-        const GnssSvPoly &gnssSvPoly) {
-
-    diagGnssSvPolyPtr->validityMask =
-            (clientDiagGnssSvPolyValidityMask)gnssSvPoly.validityMask;
-    diagGnssSvPolyPtr->svId = gnssSvPoly.svId;
-    diagGnssSvPolyPtr->svConstellation =
-            (clientDiagGnss_LocSvSystemEnumType) gnssSvPoly.svConstellation;
-    diagGnssSvPolyPtr->gloFrequency = gnssSvPoly.gloFrequency;
-    diagGnssSvPolyPtr->actionType =
-            (clientDiagGnssSvPolyActionType) gnssSvPoly.actionType;
-    diagGnssSvPolyPtr->statusMask =
-            (clientDiagGnssSvPolyStatusMask) gnssSvPoly.statusMask;
-    diagGnssSvPolyPtr->T0 = gnssSvPoly.T0;
-    uint32_t index = 0;
-    if (GNSS_SV_POLY_XYZ_0_TH_ORDER_COF_SIZE ==
-            CLIENT_DIAG_GNSS_SV_POLY_XYZ_0_TH_ORDER_COF_SIZE) {
-        for (index = 0; index < GNSS_SV_POLY_XYZ_0_TH_ORDER_COF_SIZE; index++) {
-            diagGnssSvPolyPtr->polyCofXYZ0[index] = gnssSvPoly.polyCofXYZ0[index];
-        }
-    } else {
-        LOC_LOGe("array size for polyCofXYZ0 not match");
-    }
-
-    if (GNSS_SV_POLY_XYZ_N_TH_ORDER_COF_SIZE ==
-            CLIENT_DIAG_GNSS_SV_POLY_XYZ_N_TH_ORDER_COF_SIZE) {
-        for (index = 0; index < GNSS_SV_POLY_XYZ_N_TH_ORDER_COF_SIZE; index++) {
-            diagGnssSvPolyPtr->polyCofXYZN[index] = gnssSvPoly.polyCofXYZN[index];
-        }
-    } else {
-        LOC_LOGe("array size for polyCofXYZN not match");
-    }
-
-    if (GNSS_SV_POLY_SV_CLKBIAS_COF_SIZE ==
-            CLIENT_DIAG_GNSS_SV_POLY_SV_CLKBIAS_COF_SIZE) {
-        for (index = 0; index < GNSS_SV_POLY_SV_CLKBIAS_COF_SIZE; index++) {
-            diagGnssSvPolyPtr->polyCofClockBias[index] = gnssSvPoly.polyCofClockBias[index];
-        }
-    } else {
-        LOC_LOGe("array size for polyCofClockBias not match");
-    }
-
-    diagGnssSvPolyPtr->iode = gnssSvPoly.iode;
-    diagGnssSvPolyPtr->enhancedIOD = gnssSvPoly.enhancedIOD;
-    diagGnssSvPolyPtr->svPosUnc = gnssSvPoly.svPosUnc;
-    diagGnssSvPolyPtr->ionoDelay = gnssSvPoly.ionoDelay;
-    diagGnssSvPolyPtr->ionoDot = gnssSvPoly.ionoDot;
-    diagGnssSvPolyPtr->sbasIonoDelay = gnssSvPoly.sbasIonoDelay;
-    diagGnssSvPolyPtr->sbasIonoDot = gnssSvPoly.sbasIonoDot;
-    diagGnssSvPolyPtr->tropoDelay = gnssSvPoly.tropoDelay;
-    diagGnssSvPolyPtr->elevation = gnssSvPoly.elevation;
-    diagGnssSvPolyPtr->elevationDot = gnssSvPoly.elevationDot;
-    diagGnssSvPolyPtr->elevationUnc = gnssSvPoly.elevationUnc;
-    if (GNSS_SV_POLY_VELOCITY_COF_SIZE ==
-            CLIENT_DIAG_GNSS_SV_POLY_VELOCITY_COF_SIZE) {
-        for (index = 0; index < GNSS_SV_POLY_VELOCITY_COF_SIZE; index++) {
-            diagGnssSvPolyPtr->velCof[index] = gnssSvPoly.velCof[index];
-        }
-    } else {
-        LOC_LOGe("array size for velCof not match");
-    }
-
-    diagGnssSvPolyPtr->gpsIscL1ca = gnssSvPoly.gpsIscL1ca;
-    diagGnssSvPolyPtr->gpsIscL2c = gnssSvPoly.gpsIscL2c;
-    diagGnssSvPolyPtr->gpsIscL5I5 = gnssSvPoly.gpsIscL5I5;
-    diagGnssSvPolyPtr->gpsIscL5Q5 = gnssSvPoly.gpsIscL5Q5;
-    diagGnssSvPolyPtr->gpsTgd = gnssSvPoly.gpsTgd;
-
-    diagGnssSvPolyPtr->gloTgdG1G2 = gnssSvPoly.gloTgdG1G2;
-    diagGnssSvPolyPtr->bdsTgdB1 = gnssSvPoly.bdsTgdB1;
-    diagGnssSvPolyPtr->bdsTgdB2 = gnssSvPoly.bdsTgdB2;
-    diagGnssSvPolyPtr->bdsTgdB2a = gnssSvPoly.bdsTgdB2a;
-    diagGnssSvPolyPtr->bdsIscB2a = gnssSvPoly.bdsIscB2a;
-    diagGnssSvPolyPtr->galBgdE1E5a = gnssSvPoly.galBgdE1E5a;
-    diagGnssSvPolyPtr->galBgdE1E5b = gnssSvPoly.galBgdE1E5b;
-    diagGnssSvPolyPtr->navicTgdL5 = gnssSvPoly.navicTgdL5;
-
 }
 
 }

@@ -28,7 +28,14 @@
 
 #ifndef LOCATION_INTEGRATION_API_H
 #define LOCATION_INTEGRATION_API_H
-#include <unordered_map>
+
+#include <loc_pla.h>
+
+#ifdef NO_UNORDERED_SET_OR_MAP
+    #include <map>
+#else
+    #include <unordered_map>
+#endif
 
 namespace location_integration
 {
@@ -46,12 +53,40 @@ enum LocConfigTypeEnum{
     /** Enable/disable the position assisted clock estimator
      *  feature. </br> */
     CONFIG_POSITION_ASSISTED_CLOCK_ESTIMATOR = 3,
-    /** Delete all aiding data. </br> */
+    /** Delete aiding data. This enum is applicable for
+     *  deleteAllAidingData() and deleteAidingData(). </br> */
     CONFIG_AIDING_DATA_DELETION = 4,
     /** Config lever arm parameters. </br> */
     CONFIG_LEVER_ARM = 5,
     /** Config robust location feature. </br> */
     CONFIG_ROBUST_LOCATION = 6,
+    /** Config minimum GPS week used by GNSS engine. </br> */
+    CONFIG_MIN_GPS_WEEK = 7,
+    /** Config vehicle Body-to-Sensor mount angles for dead
+     *  reckoning position engine. </br> */
+    CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS = 8,
+    /** Get configuration regarding robust location setting used by
+     *  GNSS engine.  </br> */
+    GET_ROBUST_LOCATION_CONFIG = 100,
+    /** Get minimum GPS week configuration used by GNSS engine.
+     *  </br> */
+    GET_MIN_GPS_WEEK = 101,
+} ;
+
+/**
+ *  Specify the asynchronous response when calling location
+ *  integration API. */
+enum LocIntegrationResponse {
+    /** Location integration API request is processed
+     *  successfully */
+    LOC_INT_RESPONSE_SUCCESS = 1,
+    /** Location integration API request is not processed
+     *  successfully */
+    LOC_INT_RESPONSE_FAILURE = 2,
+    /** Location integration API request is not supported */
+    LOC_INT_RESPONSE_NOT_SUPPORTED = 3,
+    /** Location integration API request has invalid parameter */
+    LOC_INT_RESPONSE_PARAM_INVALID = 4,
 } ;
 
 /**
@@ -105,6 +140,14 @@ struct GnssSvIdInfo {
 };
 
 /**
+ *  Mask used to specify the set of aiding data that can be
+ *  deleted via deleteAidingData. <br/> */
+enum AidingDataDeletionMask {
+    /** Mask to delete ephemeris aiding data */
+    AIDING_DATA_DELETION_EPHEMERIS  = (1 << 0),
+};
+
+/**
  *  Lever ARM type */
 enum LeverArmType {
     /** Lever arm parameters regarding the VRP (Vehicle Reference
@@ -130,6 +173,34 @@ struct LeverArmParams {
     float sidewaysOffsetMeters;
     /** Offset along the vehicle up axis, in unit of meters  */
     float upOffsetMeters;
+};
+
+/**
+ * Specify vehicle body-to-Sensor mount parameters to be used
+ * by dead reckoning positioning engine. </br> */
+struct BodyToSensorMountParams {
+    /** The misalignment of the sensor board along the
+     *  horizontal plane of the vehicle chassis measured looking
+     *  from the vehicle to forward direction. </br>
+     *  In unit of degrees. </br>   */
+    float rollOffset;
+    /** The misalignment along the horizontal plane of the vehicle
+     *  chassis measured looking from the vehicle to the right
+     *  side. Positive pitch indicates vehicle is inclined such
+     *  that forward wheels are at higher elevation than rear
+     *  wheels. </br>
+     *  In unit of degrees. </br>  */
+    float yawOffset;
+    /** The angle between the vehicle forward direction and the
+     *  sensor axis as seen from the top of the vehicle, and
+     *  measured in counterclockwise direction. </br>
+     *  In unit of degrees. </br> */
+    float pitchOffset;
+    /** Single uncertainty number that may be the largest of the
+     *  uncertainties for roll offset, pitch offset and yaw
+     *  offset. </br>
+     *  In unit of degrees. </br> */
+    float offsetUnc;
 };
 
 /**
@@ -171,22 +242,6 @@ typedef std::unordered_map<LeverArmType, LeverArmParams> LeverArmParamsMap;
 #define GNSS_SV_ID_BLACKLIST_ALL (0)
 typedef std::vector<GnssSvIdInfo> LocConfigBlacklistedSvIdList;
 
-/**
- *  Specify the asynchronous response when calling location
- *  integration API. */
-enum LocIntegrationResponse {
-    /** Location integration API request is processed
-     *  successfully */
-    LOC_INT_RESPONSE_SUCCESS = 1,
-    /** Location integration API request is not processed
-     *  successfully */
-    LOC_INT_RESPONSE_FAILURE = 2,
-    /** Location integration API request is not supported */
-    LOC_INT_RESPONSE_NOT_SUPPORTED = 3,
-    /** Location integration API request has invalid parameter */
-    LOC_INT_RESPONSE_PARAM_INVALID = 4,
-};
-
 /** @fn
     @brief
     Used to get the asynchronous notification of the processing
@@ -208,15 +263,92 @@ typedef std::function<void(
     LocIntegrationResponse response
 )> LocConfigCb;
 
+/** Specify the valid mask for robust location configuration
+ *  used by GNSS engine on modem. The robust location
+ *  configuraiton can be retrieved by invoking
+ *  getRobustLocationConfig. <br/> */
+enum RobustLocationConfigValidMask {
+    /** RobustLocationConfig has valid
+     *  RobustLocationConfig::enabled. <br/> */
+    ROBUST_LOCATION_CONFIG_VALID_ENABLED          = (1<<0),
+    /** RobustLocationConfig has valid
+     *  RobustLocationConfig::enabledForE911. <br/> */
+    ROBUST_LOCATION_CONFIG_VALID_ENABLED_FOR_E911 = (1<<1),
+    /** RobustLocationConfig has valid
+     *  RobustLocationConfig::version. <br/> */
+    ROBUST_LOCATION_CONFIG_VALID_VERSION = (1<<2),
+};
+
+/** Specify the robust location versioning info of modem
+ *  GNSS robust location module. The versioning info is part of
+ *  RobustLocationConfig and will be returned when invoking
+ *  getRobustLocationConfig. RobustLocationConfig will be
+ *  returned via LocConfigGetRobustLocationConfigCb. <br/> */
+struct RobustLocationVersion {
+    /** Major version number. <br/> */
+    uint8_t major;
+    /** Minor version number. <br/> */
+    uint16_t minor;
+};
+
+/** Specify the robust location configuration used by modem GNSS
+ *  engine that will be returned when invoking
+ *  getRobustLocationConfig. The configuration will
+ *  be returned via LocConfigGetRobustLocationConfigCb. <br/> */
+struct RobustLocationConfig {
+    /** Bitwise OR of RobustLocationConfigValidMask to specify
+     *  the valid fields. <br/> */
+    RobustLocationConfigValidMask validMask;
+    /** Specify whether robust location feature is enabled or
+     *  not. <br/> */
+    bool enabled;
+    /** Specify whether robust location feature is enabled or not
+     *  when device is on E911 call. <br/> */
+    bool enabledForE911;
+    /** Specify the version info of robust location module used
+     *  by GNSS engine on modem. <br/> */
+    RobustLocationVersion version;
+};
+
+/**
+ *  Specify the callback to retrieve the robust location setting
+ *  used by modem GNSS engine. The callback will be invoked
+ *  for successful processing of getRobustLocationConfig().
+ *  <br/>
+ *
+ *  In order to receive the robust location configuration, user
+ *  shall instantiate the callback and pass it to the
+ *  LocationIntegrationApi constructor and then invoke
+ *  getRobustLocationConfig(). <br/> */
+typedef std::function<void(
+    RobustLocationConfig robustLocationConfig
+)> LocConfigGetRobustLocationConfigCb;
+
+/**
+ *  Specify the callback to retrieve the minimum GPS week
+ *  configuration used by modem GNSS engine. The callback will
+ *  be invoked for successful processing of getMinGpsWeek. The
+ *  callback shall be passed to the LocationIntegrationApi
+ *  constructor. <br/> */
+typedef std::function<void(
+   uint16_t minGpsWeek
+)> LocConfigGetMinGpsWeekCb;
+
 /**
  *  Specify the set of callbacks that can be passed to
  *  LocationIntegrationAPI constructor to receive configuration
  *  command processing status and the requested data.
  */
 struct LocIntegrationCbs {
+    /** Callback to receive the procesings status, e.g.: success
+     *  or failure.  <br/> */
     LocConfigCb configCb;
+    /** Callback to receive the robust location setting.  <br/> */
+    LocConfigGetRobustLocationConfigCb getRobustLocationConfigCb;
+    /** Callback to receive the minimum GPS week setting used by
+     *  GNSS engine on modem. <br/> */
+    LocConfigGetMinGpsWeekCb getMinGpsWeekCb;
 };
-
 
 class LocationIntegrationApiImpl;
 class LocationIntegrationApi
@@ -358,18 +490,58 @@ public:
     bool configPositionAssistedClockEstimator(bool enable);
 
    /** @brief
-        Request all forms of aiding data to be deleted from all
-        position engines.
+        Request deletion of all aiding data from all position
+        engines on the device.
 
-        @return true, if aiding data delete request is successfully
-                performed. When returning true, configCb will be
-                invoked to deliver asynchronous processing status.
+        Invoking this API will trigger cold start of all position
+        engines on the device. This will cause significant delay
+        for the position engines to produce next fix and may have
+        other performance impact. So, this API should only be
+        exercised with caution and only for very limited usage
+        scenario, e.g.: for performance test and certification
+        process.
 
-        @return false, if aiding data delete request is not
-                successfully performed. When returning false,
-                configCb will not be invoked.
+        @return true, if the API request has been accepted for
+                further processing. When returning true, configCb
+                with configType set to CONFIG_AIDING_DATA_DELETION
+                will be invoked to deliver the asynchronous
+                processing status.
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, configCb
+                will not be invoked.
     */
     bool deleteAllAidingData();
+
+
+   /** @brief
+        Request deletion of the specified aiding data from all
+        position engines on the device.
+
+        Invoking this API may cause noticeable delay for the
+        position engine to produce first fix and may have other
+        performance impact. For example, remove ephemeris data may
+        trigger GNSS engine to do warm start. So, this API should
+        only be exercised with caution and only for very limited
+        usage scenario, e.g.: for performance test and
+        certification process.
+
+        @param aidingDataMask, specify the set of aiding data to
+                be deleted from all position engines. Currently,
+                only ephemeris deletion is supported.
+
+        @return true, if the API request has been accepted for
+                further processing. When returning true, configCb
+                with configType set to CONFIG_AIDING_DATA_DELETION
+                will be invoked to deliver the asynchronous
+                processing status.
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, configCb
+                will not be invoked.
+    */
+    bool deleteAidingData(AidingDataDeletionMask aidingDataMask);
+
 
     /** @brief
         Sets the lever arm parameters for the vehicle.
@@ -413,8 +585,15 @@ public:
 
 
     /** @brief
-        Enable/disable robust location feature and enable/disable
-        robust location while device is on E911.
+        Enable or disable robust location 2.0 feature. When enabled,
+        location_client::GnssLocation shall report conformity index
+        of the GNSS navigation solution, which is a measure of
+        robustness of the underlying navigation solution. It
+        indicates how well the various input data considered for
+        navigation solution conform to expectations. In the presence
+        of detected spoofed inputs, the navigation solution may take
+        corrective actions to mitigate the spoofed inputs and
+        improve robustness of the solution.
 
         @param
         enable: true to enable robust location and false to disable
@@ -435,6 +614,90 @@ public:
                 configCb will not be invoked.
     */
     bool configRobustLocation(bool enable, bool enableForE911=false);
+
+    /** @brief
+        Query robust location 2.0 setting and version info used by
+        GNSS engine.
+
+        If processing of the command fails, the failure status will
+        be returned via configCb. If the processing of the command
+        is successful, the successful status will be returned via
+        configCB, and the robust location config info will be
+        returned via getRobustLocationConfigCb passed via the
+        constructor.
+
+        @return true, if the API request has been accepted.
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, configCb
+                and getRobustLocationConfigCb will not be
+                invoked.
+    */
+    bool getRobustLocationConfig();
+
+    /** @brief
+        Config the minimum GPS week used by modem GNSS engine.
+
+        Client should wait for the command to finish, e.g.: via
+        configCb received before issuing a second configMinGpsWeek
+        command. Behavior is not defined if client issues a second
+        request of configMinGpsWeek without waiting for the previous
+        configMinGpsWeek to finish.
+
+        @param
+        minGpsWeek: minimum GPS week to be used by modem GNSS engine.
+
+        @return true, if minimum GPS week configuration has been
+                accepted for further processing. When returning
+                true, configCb will be invoked to deliver
+                asynchronous processing status.
+
+        @return false, if configuring minimum GPS week is not
+                accepted for further processing. When returning
+                false, configCb will not be invoked.
+    */
+    bool configMinGpsWeek(uint16_t minGpsWeek);
+
+    /** @brief
+        Retrieve minimum GPS week configuration used by GNSS engine
+        on modem. If processing of the command fails, the failure
+        status will be returned via configCb. If the processing of
+        the command is successful, the successful status will be
+        returned via configCB, and the minimum GPS week info will be
+        returned via getMinGpsWeekCb passed via the constructor.
+
+        @return true, if the API request has been accepted.
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, configCb
+                and getMinGpsWeekCb will not be invoked.
+    */
+    bool getMinGpsWeek();
+
+    /** @brief
+        Configure the vehicle body-to-Sensor mount parameters
+        for dead reckoning position engine.
+
+        Client should wait for the command to finish, e.g.:
+        via configCb received before issuing a second
+        configBodyToSensorMountParams command. Behavior is not
+        defined if client issues a second request of
+        configBodyToSensorMountParams without waiting for the finish
+        of the previous configBodyToSensorMountParams request.
+
+        @param
+        b2sParams: vehicle body-to-Sensor mount angles and
+        uncertainty.
+
+        @return true, if the request is accepted for further
+                processing. When returning true, configCb will be
+                invoked to deliver asynchronous processing status.
+
+        @return false, if the request is not accepted for further
+                processing. When returning false, configCb will not
+                be invoked.
+    */
+    bool configBodyToSensorMountParams(const BodyToSensorMountParams& b2sParams);
 
 private:
     LocationIntegrationApiImpl* mApiImpl;

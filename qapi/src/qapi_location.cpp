@@ -347,8 +347,7 @@ extern "C" {
         LOC_LOGd("gDebug=%u LOC_PATH_GPS_CONF=%s", gDebug, LOC_PATH_GPS_CONF);
 
         UTIL_READ_CONF(LOC_PATH_QAPI_CONF, gQapiConfigTable);
-        LOC_LOGd("gSingleshotTimeout=%u LOC_PATH_QAPI_CONF=%s",
-                gSingleshotTimeout, LOC_PATH_QAPI_CONF);
+        LOC_LOGd("gSingleshotTimeout=%u LOC_PATH_QAPI_CONF=%s", gSingleshotTimeout, LOC_PATH_QAPI_CONF);
 
         ClientCallbacks locationCallbacks = gLocationCallbacks;
 

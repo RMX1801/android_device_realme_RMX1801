@@ -45,13 +45,26 @@ PKG_CHECK_MODULES([GPSUTILS], [gps-utils])
 AC_SUBST([GPSUTILS_CFLAGS])
 AC_SUBST([GPSUTILS_LIBS])
 
-AC_ARG_ENABLE(target,
-    [AS_HELP_STRING([--enable-target=TARGET], [Specify the target product to build])],
-    [TARGET=$enableval],
-    [TARGET=none]
-)
+AC_ARG_ENABLE([target-mdm9607],
+  AC_HELP_STRING([--enable-target-mdm9607],
+          [Enable conditional compile for target mdm9607]),
+  [target_mdm9607="${enableval}"],
+  target_mdm9607=no)
 
-AM_CONDITIONAL(POWERMANAGER_ENABLED, [test "x$TARGET" = "xmdm9607"])
+AC_ARG_ENABLE([target-sdxpoorwills],
+  AC_HELP_STRING([--enable-target-sdxpoorwills],
+          [Enable conditional compile for target sdxpoorwills]),
+  [target_sdxpoorwills="${enableval}"],
+  target_sdxpoorwills=no)
+
+
+AC_ARG_ENABLE([target-sdxprairie],
+  AC_HELP_STRING([--enable-target-sdxprairie],
+          [Enable conditional compile for target sdxprairie]),
+  [target_sdxprairie="${enableval}"],
+  target_sdxprairie=no)
+
+AM_CONDITIONAL(POWERMANAGER_ENABLED, [test "x$target_mdm9607" = "xyes" -o "x$target_sdxpoorwills" = xyes -o "x$target_sdxprairie" = "xyes"])
 AM_COND_IF(POWERMANAGER_ENABLED, [
     PKG_CHECK_MODULES([PM], [powermanager])
     AC_SUBST([PM_CFLAGS])
