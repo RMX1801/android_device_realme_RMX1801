@@ -28,43 +28,43 @@
 #ifndef LOC_SERVICE_02_H
 #define LOC_SERVICE_02_H
 /**
-@file location_service_v02.h
+  @file location_service_v02.h
 
-@brief This is the public header file which defines the loc service Data structures.
+  @brief This is the public header file which defines the loc service Data structures.
 
-This header file defines the types and structures that were defined in
-loc. It contains the constant values defined, enums, structures,
-messages, and service message IDs (in that order) Structures that were
-defined in the IDL as messages contain mandatory elements, optional
-elements, a combination of mandatory and optional elements (mandatory
-always come before optionals in the structure), or nothing (null message)
+  This header file defines the types and structures that were defined in
+  loc. It contains the constant values defined, enums, structures,
+  messages, and service message IDs (in that order) Structures that were
+  defined in the IDL as messages contain mandatory elements, optional
+  elements, a combination of mandatory and optional elements (mandatory
+  always come before optionals in the structure), or nothing (null message)
 
-An optional element in a message is preceded by a uint8_t value that must be
-set to true if the element is going to be included. When decoding a received
-message, the uint8_t values will be set to true or false by the decode
-routine, and should be checked before accessing the values that they
-correspond to.
+  An optional element in a message is preceded by a uint8_t value that must be
+  set to true if the element is going to be included. When decoding a received
+  message, the uint8_t values will be set to true or false by the decode
+  routine, and should be checked before accessing the values that they
+  correspond to.
 
-Variable sized arrays are defined as static sized arrays with an unsigned
-integer (32 bit) preceding it that must be set to the number of elements
-in the array that are valid. For Example:
+  Variable sized arrays are defined as static sized arrays with an unsigned
+  integer (32 bit) preceding it that must be set to the number of elements
+  in the array that are valid. For Example:
 
-uint32_t test_opaque_len;
-uint8_t test_opaque[16];
+  uint32_t test_opaque_len;
+  uint8_t test_opaque[16];
 
-If only 4 elements are added to test_opaque[] then test_opaque_len must be
-set to 4 before sending the message.  When decoding, the _len value is set
-by the decode routine and should be checked so that the correct number of
-elements in the array will be accessed.
+  If only 4 elements are added to test_opaque[] then test_opaque_len must be
+  set to 4 before sending the message.  When decoding, the _len value is set
+  by the decode routine and should be checked so that the correct number of
+  elements in the array will be accessed.
 
 */
 /*====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*
-*THIS IS AN AUTO GENERATED FILE. DO NOT ALTER IN ANY WAY
-*====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
+ *THIS IS AN AUTO GENERATED FILE. DO NOT ALTER IN ANY WAY
+ *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.9
-It was generated on: Wed Mar 25 2020 (Spin 0)
-From IDL File: location_service_v02.idl */
+   It was generated on: Tue Apr 14 2020 (Spin 0)
+   From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
 /** @defgroup loc_qmi_msg_ids Constant values for QMI message IDs */
@@ -89,11 +89,11 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
 /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x7B
+#define LOC_V02_IDL_MINOR_VERS 0x7C
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
-#define LOC_V02_MAX_MESSAGE_ID 0x00D5
+#define LOC_V02_MAX_MESSAGE_ID 0x00D6
 /**
     @}
   */
@@ -617,6 +617,8 @@ typedef uint64_t qmiLocEventRegMaskT_v02;
        QMI_LOC_SET_GNSS_CONSTELL_REPORT_CONFIG.   */
 #define QMI_LOC_EVENT_MASK_GNSS_EVENT_REPORT_V02 ((qmiLocEventRegMaskT_v02)0x100000000000ull) /**<  The control point must enable this mask to receive
        the QMI_LOC_EVENT_REPORT indication.  */
+#define QMI_LOC_EVENT_MASK_QUERY_XTRA_INFO_V02 ((qmiLocEventRegMaskT_v02)0x200000000000ull) /**<  The control point must enable this mask to receive the
+       event indication to trigger XTRA config query from the control point  */
 /** @addtogroup loc_qmi_enums
     @{
   */
@@ -760,6 +762,8 @@ typedef struct {
        QMI_LOC_SET_GNSS_CONSTELL_REPORT_CONFIG.
       - QMI_LOC_EVENT_MASK_GNSS_EVENT_REPORT (0x100000000000) --  The control point must enable this mask to receive
        the QMI_LOC_EVENT_REPORT indication.
+      - QMI_LOC_EVENT_MASK_QUERY_XTRA_INFO (0x200000000000) --  The control point must enable this mask to receive the
+       event indication to trigger XTRA config query from the control point
 
  Multiple events can be registered by ORing the individual masks and
  sending them in this TLV. All unused bits in this mask must be set to 0.
@@ -3076,6 +3080,23 @@ typedef struct {
     @}
   */
 
+typedef uint64_t qmiLocServerParamUpdateMaskT_v02;
+#define QMI_LOC_PREDICTED_ORBITS_INJECT_REQUEST_V02 ((qmiLocServerParamUpdateMaskT_v02)0x00000001ull) /**<  Request for injection of predicted orbits  */
+#define QMI_LOC_PREDICTED_ORBITS_SERVER_UPDATE_V02 ((qmiLocServerParamUpdateMaskT_v02)0x00000002ull) /**<  Update server list  */
+#define QMI_LOC_PREDICTED_ORBITS_REFRESH_UPDATE_RATE_V02 ((qmiLocServerParamUpdateMaskT_v02)0x00000004ull) /**<  Refresh periodicity of injection  */
+/** @addtogroup loc_qmi_enums
+    @{
+  */
+typedef enum {
+  QMILOCINJECTEDORBITUPDATETYPEENUMT_MIN_ENUM_VAL_V02 = -2147483647, /**< To force a 32 bit signed enum.  Do not change or use*/
+  eQMI_LOC_INJECTED_ORBIT_RATE_UPDATE_V02 = 1, /**<  Injected orbit rate update \n */
+  eQMI_LOC_INTEGRITY_RATE_UPDATE_V02 = 2, /**<  Integrity rate update  */
+  QMILOCINJECTEDORBITUPDATETYPEENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
+}qmiLocInjectedOrbitUpdateTypeEnumT_v02;
+/**
+    @}
+  */
+
 /** @addtogroup loc_qmi_aggregates
     @{
   */
@@ -3125,6 +3146,31 @@ typedef struct {
   qmiLocPredictedOrbitsServerListStructT_v02 serverList;
   /**<   \vspace{0.06in} \n List of servers that the client can use to download
        predicted orbits data. */
+
+  /* Optional */
+  /*  Server Request Update Mask */
+  uint8_t serverUpdateMask_valid;  /**< Must be set to true if serverUpdateMask is being passed */
+  qmiLocServerParamUpdateMaskT_v02 serverUpdateMask;
+  /**<   \vspace{0.06in} \n Mask indicating parameters updated in server request
+ of predicted orbits data.
+      - QMI_LOC_PREDICTED_ORBITS_INJECT_REQUEST (0x00000001) --  Request for injection of predicted orbits
+      - QMI_LOC_PREDICTED_ORBITS_SERVER_UPDATE (0x00000002) --  Update server list
+      - QMI_LOC_PREDICTED_ORBITS_REFRESH_UPDATE_RATE (0x00000004) --  Refresh periodicity of injection  */
+
+  /* Optional */
+  /*  Update Rate Type */
+  uint8_t updateType_valid;  /**< Must be set to true if updateType is being passed */
+  qmiLocInjectedOrbitUpdateTypeEnumT_v02 updateType;
+  /**<   \vspace{0.06in} \n Data type for which rate is being updated
+      - eQMI_LOC_INJECTED_ORBIT_RATE_UPDATE (1) --  Injected orbit rate update \n
+      - eQMI_LOC_INTEGRITY_RATE_UPDATE (2) --  Integrity rate update  */
+
+  /* Optional */
+  /*  Update Rate */
+  uint8_t updateRate_valid;  /**< Must be set to true if updateRate is being passed */
+  uint32_t updateRate;
+  /**<   \vspace{0.06in} \n Update rate for the data type indicated \n
+       - Units: Seconds  */
 }qmiLocEventInjectPredictedOrbitsReqIndMsgT_v02;  /* Message */
 /**
     @}
@@ -5234,6 +5280,21 @@ typedef struct {
     @}
   */
 
+/** @addtogroup loc_qmi_enums
+    @{
+  */
+typedef enum {
+  QMILOCCOARSETIMEENUMT_MIN_ENUM_VAL_V02 = -2147483647, /**< To force a 32 bit signed enum.  Do not change or use*/
+  eQMI_LOC_COARSE_TIME_UNKNOWN_V02 = 0, /**<  Origin unknown, default setting, cross check  \n */
+  eQMI_LOC_COARSE_TIME_AP_V02 = 1, /**<  AP based time injection, origin unknown \n */
+  eQMI_LOC_COARSE_TIME_NTP_XTRA_V02 = 2, /**<  NTP based injection  \n */
+  eQMI_LOC_COARSE_TIME_NTS_XTRA_V02 = 3, /**<  Network Time Security  \n */
+  QMILOCCOARSETIMEENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
+}qmiLocCoarseTimeEnumT_v02;
+/**
+    @}
+  */
+
 /** @addtogroup loc_qmi_messages
     @{
   */
@@ -5251,6 +5312,18 @@ typedef struct {
   uint32_t timeUnc;
   /**<   Time uncertainty.\n
        - Units: Milliseconds */
+
+  /* Optional */
+  /*  Time Source */
+  uint8_t timeSrc_valid;  /**< Must be set to true if timeSrc is being passed */
+  qmiLocCoarseTimeEnumT_v02 timeSrc;
+  /**<   Specifies the source of the coarse time.
+ Valid values: \n
+      - eQMI_LOC_COARSE_TIME_UNKNOWN (0) --  Origin unknown, default setting, cross check  \n
+      - eQMI_LOC_COARSE_TIME_AP (1) --  AP based time injection, origin unknown \n
+      - eQMI_LOC_COARSE_TIME_NTP_XTRA (2) --  NTP based injection  \n
+      - eQMI_LOC_COARSE_TIME_NTS_XTRA (3) --  Network Time Security  \n
+ */
 }qmiLocInjectUtcTimeReqMsgT_v02;  /* Message */
 /**
     @}
@@ -7390,6 +7463,8 @@ typedef struct {
        QMI_LOC_SET_GNSS_CONSTELL_REPORT_CONFIG.
       - QMI_LOC_EVENT_MASK_GNSS_EVENT_REPORT (0x100000000000) --  The control point must enable this mask to receive
        the QMI_LOC_EVENT_REPORT indication.
+      - QMI_LOC_EVENT_MASK_QUERY_XTRA_INFO (0x200000000000) --  The control point must enable this mask to receive the
+       event indication to trigger XTRA config query from the control point
  */
 }qmiLocGetRegisteredEventsIndMsgT_v02;  /* Message */
 /**
@@ -18776,6 +18851,21 @@ typedef struct {
     @}
   */
 
+/** @addtogroup loc_qmi_aggregates
+    @{
+  */
+typedef struct {
+
+  uint8_t majorVersion;
+  /**<   Major version number. */
+
+  uint8_t minorVersion;
+  /**<   Minor version number. */
+}qmiLocVersionStructT_v02;  /* Type */
+/**
+    @}
+  */
+
 /** @addtogroup loc_qmi_messages
     @{
   */
@@ -18790,6 +18880,12 @@ typedef struct {
       - QMI_LOC_XTRA_CONFIG_DISABLE_AUTO_DOWNLOAD_TIMER (0x00000001) --  Ask the engine to disable the XTRA auto download timer
       - QMI_LOC_XTRA_CONFIG_NAVIC_EPH_ASSIST (0x00000002) --  Inform the engine of NAVIC eph assist support
  */
+
+  /* Optional */
+  /*  XTRA Client Version */
+  uint8_t xcVersion_valid;  /**< Must be set to true if xcVersion is being passed */
+  qmiLocVersionStructT_v02 xcVersion;
+  /**<   Xtra Client Version. */
 }qmiLocQueryXtraInfoReqMsgT_v02;  /* Message */
 /**
     @}
@@ -18824,6 +18920,12 @@ typedef struct {
   /*  XTRA Info */
   qmiLocXtraInfoStructT_v02 xtraInfo;
   /**<   The XTRA information returned from the engine. */
+
+  /* Optional */
+  /*  MP XTRA Version */
+  uint8_t mpVersion_valid;  /**< Must be set to true if mpVersion is being passed */
+  qmiLocVersionStructT_v02 mpVersion;
+  /**<   MP XTRA Version. */
 }qmiLocQueryXtraInfoIndMsgT_v02;  /* Message */
 /**
     @}
@@ -22103,6 +22205,21 @@ typedef struct {
     @}
   */
 
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Indication Message; Requests the control point to query XTRA info. */
+typedef struct {
+  /* This element is a placeholder to prevent the declaration of
+     an empty struct.  DO NOT USE THIS FIELD UNDER ANY CIRCUMSTANCE */
+  char __placeholder;
+}qmiLocEventQueryXtraInfoReqIndMsgT_v02;
+
+  /* Message */
+/**
+    @}
+  */
+
 /* Conditional compilation tags for message removal */
 //#define REMOVE_QMI_LOC_ADD_CIRCULAR_GEOFENCE_V02
 //#define REMOVE_QMI_LOC_ADD_GEOFENCE_CONTEXT_V02
@@ -22157,6 +22274,7 @@ typedef struct {
 //#define REMOVE_QMI_LOC_EVENT_NMEA_V02
 //#define REMOVE_QMI_LOC_EVENT_PEDOMETER_CONTROL_V02
 //#define REMOVE_QMI_LOC_EVENT_POSITION_REPORT_V02
+//#define REMOVE_QMI_LOC_EVENT_QUERY_XTRA_INFO_REQ_V02
 //#define REMOVE_QMI_LOC_EVENT_QZSS_EPHEMERIS_REPORT_V02
 //#define REMOVE_QMI_LOC_EVENT_REPORT_V02
 //#define REMOVE_QMI_LOC_EVENT_SENSOR_STREAMING_READY_STATUS_V02
@@ -22732,6 +22850,7 @@ typedef struct {
 #define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_REQ_V02 0x00D5
 #define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_RESP_V02 0x00D5
 #define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_IND_V02 0x00D5
+#define QMI_LOC_EVENT_QUERY_XTRA_INFO_REQ_IND_V02 0x00D6
 /**
     @}
   */

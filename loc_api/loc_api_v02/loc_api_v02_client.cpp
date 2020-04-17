@@ -343,6 +343,11 @@ static const locClientEventIndTableStructT locClientEventIndTable[]= {
   { QMI_LOC_LOCATION_REQUEST_NOTIFICATION_IND_V02,
     sizeof(qmiLocLocationRequestNotificationIndMsgT_v02),
     QMI_LOC_LOCATION_REQUEST_NOTIFICATION_IND_V02},
+
+  // XTRA config query request
+  { QMI_LOC_EVENT_QUERY_XTRA_INFO_REQ_IND_V02,
+    sizeof(qmiLocEventQueryXtraInfoReqIndMsgT_v02),
+    QMI_LOC_EVENT_MASK_QUERY_XTRA_INFO_V02},
 };
 
 /* table to relate the respInd Id with its size */

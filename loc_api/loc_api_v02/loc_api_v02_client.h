@@ -1136,6 +1136,10 @@ typedef union
    /** Sent by the engine to inform of location system info event
    QMI_LOC_LOCATION_REQUEST_NOTIFICATION_IND_V02 */
 
+   const qmiLocEventQueryXtraInfoReqIndMsgT_v02 *pLocQueryXtraReqEvent;
+   /** Sent by the engine to notify client about query reqest
+   QMI_LOC_EVENT_QUERY_XTRA_INFO_REQ_IND_V02 */
+
 }locClientEventIndUnionType;
 
 
