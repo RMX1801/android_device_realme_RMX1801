@@ -1,3 +1,9 @@
+# AD
+PRODUCT_PROPERTY_OVERRIDES +=  \
+    ro.vendor.display.ad=1 \
+    ro.vendor.display.ad.sdr_calib_data=/vendor/etc/OPPO_OLED_AD_calib.cfg \
+    ro.vendor.display.sensortype=2
+
 # Audio
 PRODUCT_PROPERTY_OVERRIDES +=  \
     af.fast_track_multiplier=1 \
@@ -36,8 +42,17 @@ PRODUCT_PROPERTY_OVERRIDES +=  \
 
 # Bluetooth
 PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.btstack.enable.splita2dp=true \
     persist.vendor.bt.a2dp_offload_cap=sbc-aptx-aptxtws-aptxhd-aac-ldac \
+    vendor.bluetooth.soc=cherokee \
     vendor.qcom.bluetooth.soc=cherokee
+
+# Camera
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.camera.expose.aux=1 \
+    persist.vendor.camera.preview.ubwc=0 \
+    persist.vendor.qti.telephony.vt_cam_interface=1 \
+    vidc.enc.dcvs.extra-buff-count=2
 
 # CNE/ DPM
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -53,6 +68,12 @@ PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.heapstartsize=16m \
     dalvik.vm.heaptargetutilization=0.75 \
 
+# Data modules
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.data.df.dev_name=rmnet_usb0 \
+    persist.vendor.data.mode=concurrent \
+    ro.vendor.use_data_netmgrd=true \
+
 # DRM
 PRODUCT_PROPERTY_OVERRIDES += \
     drm.service.enabled=true
@@ -63,12 +84,41 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
+    debug.sf.enable_hwc_vds=1 \
     debug.sf.disable_backpressure=1 \
-    ro.opengles.version=196610
+    debug.sf.hw=1 \
+    debug.sf.latch_unsignaled=1 \
+    persist.debug.wfd.enable=1 \
+    persist.demo.hdmirotationlock=false \
+    ro.opengles.version=196610 \
+    sdm.debug.disable_skip_validate=1 \
+    vendor.display.disable_skip_validate=1 \
+    vendor.display.enable_default_color_mode=1 \
+    vendor.gralloc.enable_fb_ubwc=1 \
+    vendor.vidc.enc.disable_bframes=1 \
+    vendor.vidc.enc.disable.pq=false \
+    vendor.vidc.dec.enable.downscalar=0 \
+    vidc.enc.target_support_bframe=1
 
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
-    audio.offload.video=true
+    audio.offload.video=true \
+    debug.stagefright.omx_default_rank.sw-audio=1 \
+    debug.stagefright.omx_default_rank=0 \
+    media.aac_51_output_enabled=true \
+    media.stagefright.enable-aac=true \
+    media.stagefright.enable-http=true \
+    media.stagefright.enable-player=true \
+    media.stagefright.enable-qcp=true \
+    media.stagefright.enable-scan=true \
+    mm.enable.smoothstreaming=true \
+    mmp.enable.3g2=true \
+    persist.mm.enable.prefetch=true \
+    vendor.mm.enable.qcom_parser=13631487
+
+# Netflix custom property
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.netflix.bsp_rev=Q660-13149-1
 
 # OEM Unlock reporting
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
@@ -76,7 +126,9 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 # Perf
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.extension_library=libqti-perfd-client.so
+    ro.vendor.extension_library=libqti-perfd-client.so \
+    ro.vendor.qti.core_ctl_min_cpu=2 \
+    ro.vendor.qti.core_ctl_max_cpu=4
 
 # RCS and IMS
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -88,7 +140,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.radio.calls.on.ims=1 \
     persist.radio.multisim.config=dsds \
+    persist.vendor.radio.add_power_save=1 \
     persist.vendor.radio.apm_sim_not_pwdn=1 \
+    persist.vendor.radio.atfwd.start=true \
     persist.vendor.radio.custom_ecc=1 \
     persist.vendor.radio.data_ltd_sys_ind=1 \
     persist.vendor.radio.data_con_rprt=1 \
@@ -97,3 +151,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
     rild.libpath=/vendor/lib64/libril-qc-hal-qmi.so \
     ro.telephony.default_network=22,22 \
     telephony.lteOnCdmaDevice=1
+
+# Sensors
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.sensors.dev_ori=true \
+    ro.vendor.sensors.mot_detect=true \
+    ro.vendor.sensors.pmd=true \
+    ro.vendor.sensors.sta_detect=true
+
+# Time-Service
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.delta_time.enable=true
