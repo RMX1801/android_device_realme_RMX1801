@@ -2901,9 +2901,11 @@ vendor/etc/init/imsrcsd.rc
 vendor/etc/init/ims_rtp_daemon.rc
 vendor/etc/init/init.qdmastats.rc
 vendor/etc/init/init.time_daemon.rc
-vendor/etc/init/netmgrd.rc
 vendor/etc/init/port-bridge.rc
 vendor/etc/init/qcrild.rc
+
+# Init - modified
+vendor/etc/init/netmgrd.rc|213d147cfcfe175aa4cdf1a345f3b148ea72982d
 
 # Keybox
 vendor/bin/hw/vendor.oppo.hardware.cryptoeng@1.0-service
