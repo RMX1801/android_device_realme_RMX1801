@@ -4,6 +4,15 @@ persist.bt.a2dp.aac_disable=true
 ro.bluetooth.emb_wp_mode=false
 ro.bluetooth.wipower=false
 
+# Camera
+persist.camera.aifb=1
+persist.camera.filter.version=1
+persist.dualcam.lpm.enable=1
+ro.camera.dualcam.type=2
+ro.camera.hfr.enable=1
+ro.camera.sensor.aux2m=1
+ro.camera.temperature.limit=450
+
 # Memory optimizations
 ro.vendor.qti.sys.fw.bservice_enable=true
 
