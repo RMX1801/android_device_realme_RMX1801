@@ -15,9 +15,9 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_RMX1801.mk
+    $(LOCAL_DIR)/aosp_RMX1801.mk
 
 COMMON_LUNCH_CHOICES := \
-    lineage_RMX1801-user \
-    lineage_RMX1801-userdebug \
-    lineage_RMX1801-eng
+    aosp_RMX1801-user \
+    aosp_RMX1801-userdebug \
+    aosp_RMX1801-eng
