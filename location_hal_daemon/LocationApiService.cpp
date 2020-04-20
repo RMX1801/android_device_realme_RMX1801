@@ -680,7 +680,7 @@ void LocationApiService::updateNetworkAvailability(bool availability) {
         // In next phase, when we support third party connectivity manager,
         // we plan to deplicate this API.
         gnssInterface->updateConnectionStatus(
-                availability, loc_core::NetworkInfoDataItemBase::TYPE_MOBILE);
+                availability, loc_core::TYPE_MOBILE, false, NETWORK_HANDLE_UNKNOWN);
     }
 }
 
@@ -1183,7 +1183,7 @@ void LocationApiService::onPowerEvent(PowerStateType powerState) {
         LOC_LOGe(">-- getGnssEnergyConsumed null GnssInterface");
         return;
     }
-    gnssInterface->updatePowerState(powerState);
+    gnssInterface->updateSystemPowerState(powerState);
 }
 #endif
 
