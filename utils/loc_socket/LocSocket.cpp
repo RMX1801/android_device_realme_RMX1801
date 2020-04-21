@@ -1,4 +1,4 @@
-/* Copyright (c) 2019 The Linux Foundation. All rights reserved.
+/* Copyright (c) 2019 - 2020 The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -99,8 +99,9 @@ protected:
                            sizeof(mAddr));
     }
 public:
-    inline LocIpcQsockSender(const shared_ptr<Sock>& sock, const qsockaddr_ipcr& destAddr) :
-            LocIpcSender(), mSock(sock),
+    inline LocIpcQsockSender(const qsockaddr_ipcr& destAddr) :
+            LocIpcSender(),
+            mSock(make_shared<Sock>(::socket(AF_IPC_ROUTER, SOCK_DGRAM, 0))),
             mServiceInfo(0, 0), mAddr(destAddr), mLookupPending(false) {
     }
     inline LocIpcQsockSender(int service, int instance) :
@@ -144,7 +145,7 @@ public:
         }
     }
     inline virtual unique_ptr<LocIpcSender> getLastSender() const override {
-        return make_unique<LocIpcQsockSender>(mSock, mAddr);
+        return make_unique<LocIpcQsockSender>(mAddr);
     }
     inline virtual const char* getName() const override {
         return mServiceInfo.getName();
@@ -233,8 +234,9 @@ protected:
         return mSock->send(data, length, 0, (struct sockaddr*)&mAddr, sizeof(mAddr));
     }
 public:
-    inline LocIpcQrtrSender(const shared_ptr<Sock>& sock, const sockaddr_qrtr& destAddr) :
-            LocIpcSender(), mServiceInfo(0, 0), mSock(sock),
+    inline LocIpcQrtrSender(const sockaddr_qrtr& destAddr) :
+            LocIpcSender(), mServiceInfo(0, 0),
+            mSock(make_shared<Sock>(::socket(AF_QIPCRTR, SOCK_DGRAM, 0))),
             mAddr(destAddr), mCtrlPkt({}), mLookupPending(false) {
     }
     inline LocIpcQrtrSender(int service, int instance) : LocIpcSender(),
@@ -312,7 +314,7 @@ public:
     }
     inline ~LocIpcQrtrRecver() { ctrlCmdAndResponse(QRTR_TYPE_DEL_SERVER); }
     inline virtual unique_ptr<LocIpcSender> getLastSender() const override {
-        return make_unique<LocIpcQrtrSender>(mSock, mAddr);
+        return make_unique<LocIpcQrtrSender>(mAddr);
     }
     inline virtual const char* getName() const override {
         return mServiceInfo.getName();

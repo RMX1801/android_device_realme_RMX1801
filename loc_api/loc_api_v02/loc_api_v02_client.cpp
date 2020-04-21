@@ -1837,6 +1837,7 @@ bool validateRequest(
     case QMI_LOC_INJECT_ENV_AIDING_REQ_V02:
     {
         *pOutLen = sizeof(qmiLocEventInjectEnvAidingReqMsgT_v02);
+        break;
     }
 
     case QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_REQ_V02:
