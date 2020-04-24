@@ -63,7 +63,7 @@
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.9
-   It was generated on: Fri Apr 24 2020 (Spin 0)
+   It was generated on: Wed May 20 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -89,7 +89,7 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
 /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x7D
+#define LOC_V02_IDL_MINOR_VERS 0x7E
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
@@ -8550,6 +8550,8 @@ typedef enum {
 typedef uint32_t qmiLocLppConfigMaskT_v02;
 #define QMI_LOC_LPP_CONFIG_ENABLE_USER_PLANE_V02 ((qmiLocLppConfigMaskT_v02)0x00000001) /**<  Enable user plane configuration for LTE Positioning Profile (LPP) \n  */
 #define QMI_LOC_LPP_CONFIG_ENABLE_CONTROL_PLANE_V02 ((qmiLocLppConfigMaskT_v02)0x00000002) /**<  Enable control plane configuration for LPP  */
+#define QMI_LOC_LPP_CONFIG_ENABLE_USER_PLANE_OVER_NR5G_SA_V02 ((qmiLocLppConfigMaskT_v02)0x00000004) /**<  Enable user plane configuration for NR5G (LPP) \n  */
+#define QMI_LOC_LPP_CONFIG_ENABLE_CONTROL_PLANE_OVER_NR5G_SA_V02 ((qmiLocLppConfigMaskT_v02)0x00000008) /**<  Enable control plane configuration for NR5G (LPP)  */
 typedef uint32_t qmiLocAssistedGlonassProtocolMaskT_v02;
 #define QMI_LOC_ASSISTED_GLONASS_PROTOCOL_MASK_RRC_CP_V02 ((qmiLocAssistedGlonassProtocolMaskT_v02)0x00000001) /**<  Assisted GLONASS is supported over RRC in the control plane \n */
 #define QMI_LOC_ASSISTED_GLONASS_PROTOCOL_MASK_RRLP_UP_V02 ((qmiLocAssistedGlonassProtocolMaskT_v02)0x00000002) /**<  Assisted GLONASS is supported over RRLP in the user plane \n  */
@@ -8654,13 +8656,24 @@ typedef struct {
   /*  LPP Configuration */
   uint8_t lppConfig_valid;  /**< Must be set to true if lppConfig is being passed */
   qmiLocLppConfigMaskT_v02 lppConfig;
-  /**<   LTE Positioning Profile (LPP) configuration.
+  /**<   LTE Positioning Protocol (LPP) configuration. This allows LPP to be used
+ as an assisted GNSS positioning (AGNSS) protocol over different communication layers
+ such as LTE and NR User Plane and Control Plane.
 
-      Valid bitmasks: \begin{itemize1}
-      \item    0x00000001 -- LPP_CONFIG_ ENABLE_USER_PLANE
-      \item    0x00000002 -- LPP_CONFIG_ ENABLE_CONTROL_PLANE
-      \vspace{-0.18in} \end{itemize1}
-  */
+ If LPP is enabled on a LTE or NR, LPP is the preferred AGNSS protcol over
+ other AGNSS protocols such as RRLP on the respective communication layer.
+
+ To use other AGNSS protocols such as RRLP over LTE and NR, this configuration must be
+ turned off. In addition the appropriate NV items to enable RRLP must be set.
+
+ Please refer to Qualcomm documents 90-ND184-1, 80-YA518-1 and 80-VU905-1 for more details.
+
+ Valid bitmasks: \n
+      - QMI_LOC_LPP_CONFIG_ENABLE_USER_PLANE (0x00000001) --  Enable user plane configuration for LTE Positioning Profile (LPP) \n
+      - QMI_LOC_LPP_CONFIG_ENABLE_CONTROL_PLANE (0x00000002) --  Enable control plane configuration for LPP
+      - QMI_LOC_LPP_CONFIG_ENABLE_USER_PLANE_OVER_NR5G_SA (0x00000004) --  Enable user plane configuration for NR5G (LPP) \n
+      - QMI_LOC_LPP_CONFIG_ENABLE_CONTROL_PLANE_OVER_NR5G_SA (0x00000008) --  Enable control plane configuration for NR5G (LPP)
+ */
 
   /* Optional */
   /*  Assisted GLONASS Protocol Mask */
@@ -18251,6 +18264,7 @@ typedef enum {
   eQMI_LOC_SUPPORTED_FEATURE_NAVIC_V02 = 10, /**<  Support the NavIC constellation \n */
   eQMI_LOC_SUPPORTED_FEATURE_ENV_AIDING_V02 = 11, /**<  Support Environment Aiding \n */
   eQMI_LOC_SUPPORTED_FEATURE_ROBUST_LOCATION_V02 = 12, /**<  Support Robust Location feature  */
+  eQMI_LOC_SUPPORTED_FEATURE_EDGNSS_V02 = 13, /**<  Support Enhanced DGNSS  */
   QMILOCSUPPORTEDFEATUREENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
 }qmiLocSupportedFeatureEnumT_v02;
 /**

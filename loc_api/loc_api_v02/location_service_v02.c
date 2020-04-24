@@ -30,7 +30,7 @@
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.9
-   It was generated on: Fri Apr 24 2020 (Spin 0)
+   It was generated on: Wed May 20 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 #include "stdint.h"
@@ -8833,7 +8833,7 @@ struct qmi_idl_service_object loc_qmi_idl_service_object_v02 = {
     sizeof(loc_service_indication_messages_v02)/sizeof(qmi_idl_service_message_table_entry) },
   { loc_service_command_messages_v02, loc_service_response_messages_v02, loc_service_indication_messages_v02},
   &loc_qmi_idl_type_table_object_v02,
-  0x7D,
+  0x7E,
   NULL
 };
 
