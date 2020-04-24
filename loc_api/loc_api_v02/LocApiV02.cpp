@@ -6576,7 +6576,12 @@ void LocApiV02::configRobustLocation
         LOC_LOGe("failed. status: %s, ind status:%s\n",
                  loc_get_v02_client_status_name(status),
                  loc_get_v02_qmi_status_name(ind.status));
-        err = LOCATION_ERROR_GENERAL_FAILURE;
+        if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED ||
+                status == eLOC_CLIENT_FAILURE_INVALID_MESSAGE_ID) {
+            err = LOCATION_ERROR_NOT_SUPPORTED;
+        } else {
+            err = LOCATION_ERROR_GENERAL_FAILURE;
+        }
     }
     if (adapterResponse) {
         adapterResponse->returnToSender(err);
@@ -6607,7 +6612,8 @@ void LocApiV02 :: getRobustLocationConfig(uint32_t sessionId, LocApiResponse *ad
         LOC_LOGe("getRobustLocationConfig: failed. status: %s, ind status:%s",
                  loc_get_v02_client_status_name(status),
                  loc_get_v02_qmi_status_name(getRobustLocationConfigInd.status));
-        if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED) {
+        if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED ||
+                status == eLOC_CLIENT_FAILURE_INVALID_MESSAGE_ID) {
             err = LOCATION_ERROR_NOT_SUPPORTED;
         } else {
             err = LOCATION_ERROR_GENERAL_FAILURE;
@@ -6676,7 +6682,12 @@ void LocApiV02::configMinGpsWeek(uint16_t minGpsWeek, LocApiResponse *adapterRes
         LOC_LOGe("failed. status: %s, ind status:%s",
                  loc_get_v02_client_status_name(status),
                  loc_get_v02_qmi_status_name(ind.status));
-        err = LOCATION_ERROR_GENERAL_FAILURE;
+        if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED ||
+                status == eLOC_CLIENT_FAILURE_INVALID_MESSAGE_ID) {
+            err = LOCATION_ERROR_NOT_SUPPORTED;
+        } else {
+            err = LOCATION_ERROR_GENERAL_FAILURE;
+        }
     }
     if (adapterResponse) {
         adapterResponse->returnToSender(err);
@@ -6704,12 +6715,13 @@ void LocApiV02 :: getMinGpsWeek(uint32_t sessionId, LocApiResponse *adapterRespo
             getInd.minGpsWeekNumber_valid) {
         minGpsWeek = getInd.minGpsWeekNumber;
         err = LOCATION_ERROR_SUCCESS;
-        LOC_LOGe("min GPS week is: ", getInd.minGpsWeekNumber);
+        LOC_LOGe("min GPS week is: %d ", getInd.minGpsWeekNumber);
     }else {
         LOC_LOGe("failed. status: %s, ind status:%s",
                  loc_get_v02_client_status_name(status),
                  loc_get_v02_qmi_status_name(getInd.status));
-        if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED) {
+        if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED ||
+                status == eLOC_CLIENT_FAILURE_INVALID_MESSAGE_ID) {
             err = LOCATION_ERROR_NOT_SUPPORTED;
         } else {
             err = LOCATION_ERROR_GENERAL_FAILURE;
@@ -6727,6 +6739,118 @@ void LocApiV02 :: getMinGpsWeek(uint32_t sessionId, LocApiResponse *adapterRespo
     }
 
     LOC_LOGe("Exit. err: %u", err);
+    }));
+}
+
+LocationError LocApiV02::setParameterSync(const GnssConfig & gnssConfig) {
+    LocationError err = LOCATION_ERROR_NOT_SUPPORTED;
+    qmiLocSetParameterReqMsgT_v02 req = {};
+    qmiLocGenReqStatusIndMsgT_v02 ind = {};
+    locClientStatusEnumType status = eLOC_CLIENT_FAILURE_GENERAL;
+    locClientReqUnionType req_union = {};
+
+    req.paramType = eQMI_LOC_PARAMETER_TYPE_RESERVED_V02;
+    if (gnssConfig.flags & GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT) {
+        req.paramType = eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION_V02;
+        req.minSvElevation_valid = 1;
+        req.minSvElevation = gnssConfig.minSvElevation;
+    }
+
+    if (req.paramType != eQMI_LOC_PARAMETER_TYPE_RESERVED_V02) {
+        req_union.pSetParameterReq = &req;
+        status = locSyncSendReq(QMI_LOC_SET_PARAMETER_REQ_V02,
+                                req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
+                                QMI_LOC_SET_PARAMETER_IND_V02,
+                                &ind);
+        if (status != eLOC_CLIENT_SUCCESS || ind.status != eQMI_LOC_SUCCESS_V02) {
+            LOC_LOGe("failed. status: %s, ind status:%s\n",
+                     loc_get_v02_client_status_name(status),
+                     loc_get_v02_qmi_status_name(ind.status));
+            if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED ||
+                    status == eLOC_CLIENT_FAILURE_INVALID_MESSAGE_ID) {
+                err = LOCATION_ERROR_NOT_SUPPORTED;
+            } else {
+                err = LOCATION_ERROR_GENERAL_FAILURE;
+            }
+        }
+    }
+
+    LOC_LOGv("Exit. err: %u", err);
+    return err;
+}
+
+void LocApiV02 :: getParameter(uint32_t sessionId, GnssConfigFlagsMask flags,
+                               LocApiResponse* adapterResponse) {
+
+    LOC_LOGe ("get parameter 0x%x", flags);
+    sendMsg(new LocApiMsg([this, sessionId, flags, adapterResponse] () {
+
+    LocationError err = LOCATION_ERROR_GENERAL_FAILURE;
+    locClientStatusEnumType status = eLOC_CLIENT_FAILURE_GENERAL;
+    locClientReqUnionType req_union = {};
+    qmiLocGetParameterReqMsgT_v02 getParameterReq = {};
+    qmiLocGetParameterIndMsgT_v02 getParameterInd = {};
+    GnssConfig config = {};
+
+    do {
+        getParameterReq.paramType = eQMI_LOC_PARAMETER_TYPE_RESERVED_V02;
+        switch (flags) {
+        case GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT:
+            getParameterReq.paramType = eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION_V02;
+            break;
+        default:
+            break;
+        }
+
+        if (getParameterReq.paramType == eQMI_LOC_PARAMETER_TYPE_RESERVED_V02) {
+            err = LOCATION_ERROR_NOT_SUPPORTED;
+            break;
+        }
+
+        req_union.pGetParameterReq = &getParameterReq;
+        status = locSyncSendReq(QMI_LOC_GET_PARAMETER_REQ_V02,
+                                req_union, LOC_ENGINE_SYNC_REQUEST_LONG_TIMEOUT,
+                                QMI_LOC_GET_PARAMETER_IND_V02,
+                                &getParameterInd);
+
+        if (!((status == eLOC_CLIENT_SUCCESS) &&
+              (getParameterInd.status == eQMI_LOC_SUCCESS_V02))) {
+            LOC_LOGe("getParameterConfig: failed. status: %s, ind status:%s",
+                     loc_get_v02_client_status_name(status),
+                     loc_get_v02_qmi_status_name(getParameterInd.status));
+            if (status == eLOC_CLIENT_FAILURE_UNSUPPORTED ||
+                    status == eLOC_CLIENT_FAILURE_INVALID_MESSAGE_ID) {
+                err = LOCATION_ERROR_NOT_SUPPORTED;
+            } else {
+                err = LOCATION_ERROR_GENERAL_FAILURE;
+            }
+            break;
+        }
+
+        switch (flags) {
+        case GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT:
+            if ((getParameterInd.paramType == eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION_V02) &&
+                    (getParameterInd.minSvElevation_valid == 1)) {
+                config.flags = GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT;
+                config.minSvElevation = getParameterInd.minSvElevation;
+                err = LOCATION_ERROR_SUCCESS;
+            }
+            break;
+        default:
+            break;
+        }
+    } while (0);
+
+    if (config.flags) {
+        LocApiBase::reportGnssConfig(sessionId, config);
+    } else {
+        // return to the caller on failure
+        if (adapterResponse) {
+            adapterResponse->returnToSender(err);
+        }
+    }
+    LOC_LOGv("Exit. err: %u", err);
+
     }));
 }
 

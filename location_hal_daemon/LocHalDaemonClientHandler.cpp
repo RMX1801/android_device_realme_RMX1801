@@ -356,7 +356,7 @@ void LocHalDaemonClientHandler::pingTest() {
 
     if (nullptr != mIpcSender) {
         LocAPIPingTestIndMsg msg(SERVICE_NAME);
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
 
         // purge this client if failed
         if (!rc) {
@@ -412,7 +412,7 @@ void LocHalDaemonClientHandler::onResponseCb(LocationError err, uint32_t id) {
             mPendingMessages.pop();
         }
 
-        int rc = 0;
+        bool rc = false;
         // send corresponding indication message if pending
         switch (pendingMsgId) {
             case E_LOCAPI_START_TRACKING_MSG_ID: {
@@ -569,7 +569,7 @@ void LocHalDaemonClientHandler::onControlResponseCb(LocationError err, ELocMsgID
     if (nullptr != mIpcSender) {
         LOC_LOGd("--< onControlResponseCb err=%u msgId=%u", err, msgId);
         LocAPIGenericRespMsg msg(SERVICE_NAME, msgId, err);
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -593,9 +593,17 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
         break;
     case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
         if (gnssConfig.flags & GNSS_CONFIG_FLAGS_MIN_GPS_WEEK_BIT) {
-            LOC_LOGe("--< onGnssConfigCb, minGpsWeek = %d", gnssConfig.minGpsWeek);
+            LOC_LOGd("--< onGnssConfigCb, minGpsWeek = %d", gnssConfig.minGpsWeek);
             msg = (uint8_t*) new LocConfigGetMinGpsWeekRespMsg(SERVICE_NAME, gnssConfig.minGpsWeek);
             msgLen = sizeof (LocConfigGetMinGpsWeekRespMsg);
+        }
+        break;
+    case E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID:
+        if (gnssConfig.flags & GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT) {
+            LOC_LOGd("--< onGnssConfigCb, minSvElevation = %d", gnssConfig.minSvElevation);
+            msg = (uint8_t*) new LocConfigGetMinSvElevationRespMsg(SERVICE_NAME,
+                                                                   gnssConfig.minSvElevation);
+            msgLen = sizeof (LocConfigGetMinSvElevationRespMsg);
         }
         break;
     default:
@@ -603,7 +611,7 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
     }
 
     if ((nullptr != mIpcSender) && (nullptr != msg)) {
-        int rc = sendMessage(msg, msgLen);
+        bool rc = sendMessage(msg, msgLen);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -632,7 +640,7 @@ void LocHalDaemonClientHandler::onCapabilitiesCallback(LocationCapabilitiesMask 
         if (mask != mCapabilityMask) {
             LOC_LOGd("mask old=0x%x new=0x%x", mCapabilityMask, mask);
             mCapabilityMask = mask;
-            int rc = sendMessage(msg);
+            bool rc = sendMessage(msg);
             // purge this client if failed
             if (!rc) {
                 LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -651,7 +659,7 @@ void LocHalDaemonClientHandler::onTrackingCb(Location location) {
             (mSubscriptionMask & E_LOC_CB_DISTANCE_BASED_TRACKING_BIT)) {
         // broadcast
         LocAPILocationIndMsg msg(SERVICE_NAME, location);
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -685,7 +693,7 @@ void LocHalDaemonClientHandler::onBatchingCb(size_t count, Location* location,
         pmsg->batchNotification.status = BATCHING_STATUS_POSITION_AVAILABE;
         memcpy(&(pmsg->batchNotification.location[0]), location, count * sizeof(Location));
 
-        int rc = sendMessage(msg, msglen);
+        bool rc = sendMessage(msg, msglen);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -707,7 +715,7 @@ void LocHalDaemonClientHandler::onBatchingStatusCb(BatchingStatusInfo batchingSt
         LocAPIBatchNotification batchNotif = {};
         batchNotif.status = BATCHING_STATUS_TRIP_COMPLETED;
         LocAPIBatchingIndMsg msg(SERVICE_NAME, batchNotif);
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -748,7 +756,7 @@ void LocHalDaemonClientHandler::onGeofenceBreachCb(GeofenceBreachNotification gf
         pmsg->gfBreachNotification.type = gfBreachNotif.type;
         memcpy(&(pmsg->gfBreachNotification.id[0]), clientIds, sizeof(uint32_t)*gfBreachNotif.count);
 
-        int rc = sendMessage(msg, msglen);
+        bool rc = sendMessage(msg, msglen);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -767,7 +775,7 @@ void LocHalDaemonClientHandler::onGnssLocationInfoCb(GnssLocationInfoNotificatio
 
     if ((nullptr != mIpcSender) && (mSubscriptionMask &
             (E_LOC_CB_GNSS_LOCATION_INFO_BIT | E_LOC_CB_SIMPLE_LOCATION_INFO_BIT))) {
-        int rc = 0;
+        bool rc = false;
         if (mSubscriptionMask & E_LOC_CB_GNSS_LOCATION_INFO_BIT) {
             LocAPILocationInfoIndMsg msg(SERVICE_NAME, notification);
             rc = sendMessage(msg);
@@ -814,7 +822,7 @@ void LocHalDaemonClientHandler::onEngLocationsInfoCb(
         if (reportCount > 0 ) {
             LocAPIEngineLocationsInfoIndMsg msg(SERVICE_NAME, reportCount,
                                                 engineLocationInfoNotification);
-            int rc = sendMessage((const uint8_t*)&msg, msg.getMsgSize());
+            bool rc = sendMessage((const uint8_t*)&msg, msg.getMsgSize());
             // purge this client if failed
             if (!rc) {
                 LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -839,7 +847,7 @@ void LocHalDaemonClientHandler::onGnssSvCb(GnssSvNotification notification) {
             (mSubscriptionMask & E_LOC_CB_GNSS_SV_BIT)) {
         // broadcast
         LocAPISatelliteVehicleIndMsg msg(SERVICE_NAME, notification);
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -873,7 +881,7 @@ void LocHalDaemonClientHandler::onGnssNmeaCb(GnssNmeaNotification notification) 
         pmsg->gnssNmeaNotification.length = notification.length;
         memcpy(&(pmsg->gnssNmeaNotification.nmea[0]), notification.nmea, notification.length);
 
-        int rc = sendMessage(msg, msglen);
+        bool rc = sendMessage(msg, msglen);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -904,7 +912,7 @@ void LocHalDaemonClientHandler::onGnssDataCb(GnssDataNotification notification) 
 
         LocAPIDataIndMsg msg(SERVICE_NAME, notification);
         LOC_LOGv("Sending data message");
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -921,7 +929,7 @@ void LocHalDaemonClientHandler::onGnssMeasurementsCb(GnssMeasurementsNotificatio
     if ((nullptr != mIpcSender) && (mSubscriptionMask & E_LOC_CB_GNSS_MEAS_BIT)) {
         LocAPIMeasIndMsg msg(SERVICE_NAME, notification);
         LOC_LOGv("Sending meas message");
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -940,7 +948,7 @@ void LocHalDaemonClientHandler::onLocationSystemInfoCb(LocationSystemInfo notifi
 
         LocAPILocationSystemInfoIndMsg msg(SERVICE_NAME, notification);
         LOC_LOGv("Sending location system info message");
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());
@@ -969,7 +977,7 @@ void LocHalDaemonClientHandler::onGnssEnergyConsumedInfoAvailable(
    if ((nullptr != mIpcSender) &&
             (mEngineInfoRequestMask & E_ENGINE_INFO_CB_GNSS_ENERGY_CONSUMED_BIT)) {
 
-        int rc = sendMessage(msg);
+        bool rc = sendMessage(msg);
         mEngineInfoRequestMask &= ~E_ENGINE_INFO_CB_GNSS_ENERGY_CONSUMED_BIT;
 
         // purge this client if failed

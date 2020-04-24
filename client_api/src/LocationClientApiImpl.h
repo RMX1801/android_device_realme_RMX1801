@@ -170,7 +170,7 @@ public:
     virtual void gnssNiResponse(uint32_t id, GnssNiResponse response) override;
 
     // other
-    virtual uint32_t* gnssUpdateConfig(GnssConfig config) override;
+    virtual uint32_t* gnssUpdateConfig(const GnssConfig& config) override;
     virtual uint32_t gnssDeleteAidingData(GnssAidingData& data) override;
     // config API
     virtual uint32_t resetConstellationConfig() override;
