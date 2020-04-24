@@ -811,6 +811,14 @@ typedef union
             *pSetMinGpsWeekReq;
     /*QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_REQ_V02*/
 
+    const qmiLocSetParameterReqMsgT_v02
+            *pSetParameterReq;
+    /*QMI_LOC_SET_PARAMETER_REQ_V02*/
+
+    const qmiLocGetParameterReqMsgT_v02
+            *pGetParameterReq;
+    /*QMI_LOC_GET_PARAMETER_REQ_V02*/
+
 }locClientReqUnionType;
 
 

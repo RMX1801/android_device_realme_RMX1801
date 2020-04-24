@@ -75,6 +75,8 @@ static sem_t sem_pingcbreceived;
 #define CONFIG_MIN_GPS_WEEK "configMinGpsWeek"
 #define GET_MIN_GPS_WEEK    "getMinGpsWeek"
 #define CONFIG_B2S_PARAMS   "configB2sParams"
+#define CONFIG_MIN_SV_ELEVATION "configMinSvElevation"
+#define GET_MIN_SV_ELEVATION    "getMinSvElevation"
 
 // debug utility
 static uint64_t getTimestamp() {
@@ -197,11 +199,16 @@ static void onGetRobustLocationConfigCb(RobustLocationConfig robustLocationConfi
            robustLocationConfig.version.minor);
 }
 
-static void onGetMinGpsWeekCb(uint32_t minGpsWeek) {
+static void onGetMinGpsWeekCb(uint16_t minGpsWeek) {
     printf("<<< onGetMinGpsWeekCb, minGpsWeek %d\n", minGpsWeek);
 }
 
+static void onGetMinSvElevationCb(uint8_t minSvElevation) {
+    printf("<<< onGetMinSvElevationCb, minSvElevationAngleSetting: %d\n", minSvElevation);
+}
+
 static void printHelp() {
+    printf("\n************* options *************\n");
     printf("g: Gnss report session with 1000 ms interval\n");
     printf("u: Update a session with 2000 ms interval\n");
     printf("m: Interleaving fix session with 1000 and 2000 ms interval, change every 3 seconds\n");
@@ -224,6 +231,8 @@ static void printHelp() {
     printf("%s: set min gps week\n", CONFIG_MIN_GPS_WEEK);
     printf("%s: get min gps week\n", GET_MIN_GPS_WEEK);
     printf("%s: config b2s params\n", CONFIG_B2S_PARAMS);
+    printf("%s: set min sv elevation angle\n", CONFIG_MIN_SV_ELEVATION);
+    printf("%s: get min sv elevation angle\n", GET_MIN_SV_ELEVATION);
 }
 
 void setRequiredPermToRunAsLocClient()
@@ -409,6 +418,7 @@ int main(int argc, char *argv[]) {
     intCbs.getRobustLocationConfigCb =
             LocConfigGetRobustLocationConfigCb(onGetRobustLocationConfigCb);
     intCbs.getMinGpsWeekCb = LocConfigGetMinGpsWeekCb(onGetMinGpsWeekCb);
+    intCbs.getMinSvElevationCb = LocConfigGetMinSvElevationCb(onGetMinSvElevationCb);
 
     LocConfigPriorityMap priorityMap;
     location_integration::LocationIntegrationApi* pIntClient =
@@ -493,7 +503,7 @@ int main(int argc, char *argv[]) {
             static char *save = nullptr;
             bool enable = false;
             bool enableForE911 = false;
-            // skip first one of configRobustLocation
+            // skip first argument of configRobustLocation
             char* token = strtok_r(buf, " ", &save);
             token = strtok_r(NULL, " ", &save);
             if (token != NULL) {
@@ -509,10 +519,9 @@ int main(int argc, char *argv[]) {
                            strlen(GET_ROBUST_LOCATION_CONFIG)) == 0) {
             pIntClient->getRobustLocationConfig();
         } else if (strncmp(buf, CONFIG_MIN_GPS_WEEK, strlen(CONFIG_MIN_GPS_WEEK)) == 0) {
-            // get enable and enableForE911
             static char *save = nullptr;
             uint16_t gpsWeekNum = 0;
-            // skip first one of configRobustLocation
+            // skip first argument of configMinGpsWeek
             char* token = strtok_r(buf, " ", &save);
             token = strtok_r(NULL, " ", &save);
             if (token != NULL) {
@@ -526,6 +535,19 @@ int main(int argc, char *argv[]) {
             BodyToSensorMountParams b2sParams = {};
             parseB2sParams(buf, b2sParams);
             pIntClient->configBodyToSensorMountParams(b2sParams);
+        } else if (strncmp(buf, CONFIG_MIN_SV_ELEVATION, strlen(CONFIG_MIN_SV_ELEVATION)) == 0) {
+            static char *save = nullptr;
+            uint8_t minSvElevation = 0;
+            // skip first argument of configMinSvElevation
+            char* token = strtok_r(buf, " ", &save);
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+                minSvElevation = (uint16_t) atoi(token);
+            }
+            printf("min Sv elevation %d\n", minSvElevation);
+            pIntClient->configMinSvElevation(minSvElevation);
+        } else if (strncmp(buf, GET_MIN_SV_ELEVATION, strlen(GET_MIN_SV_ELEVATION)) == 0) {
+            pIntClient->getMinSvElevation();
         } else {
             int command = buf[0];
             switch(command) {

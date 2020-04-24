@@ -1677,24 +1677,6 @@ void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
     mMsgTask->sendMsg(new (nothrow) ResumeGeofencesReq(this, count, ids));
 }
 
-uint32_t* LocationClientApiImpl::gnssUpdateConfig(GnssConfig config) {
-
-    struct UpdateConfigReq : public LocMsg {
-        UpdateConfigReq(LocationClientApiImpl* apiImpl, GnssConfig& config) :
-                mApiImpl(apiImpl), mConfig(config) {}
-        virtual ~UpdateConfigReq() {}
-        void proc() const {
-            LocAPIUpdateConfigReqMsg msg(mApiImpl->mSocketName, const_cast<GnssConfig&>(mConfig));
-            bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(&msg),
-                                                 sizeof(msg));
-        }
-        LocationClientApiImpl* mApiImpl;
-        GnssConfig mConfig;
-    };
-    mMsgTask->sendMsg(new (nothrow) UpdateConfigReq(this, config));
-    return nullptr;
-}
-
 uint32_t LocationClientApiImpl::gnssDeleteAidingData(GnssAidingData& data) {
 
     struct DeleteAidingDataReq : public LocMsg {
@@ -2417,6 +2399,10 @@ void LocationClientApiImpl::gnssNiResponse(uint32_t id, GnssNiResponse response)
 }
 
 void LocationClientApiImpl::updateTrackingOptions(uint32_t id, TrackingOptions& options) {
+}
+
+uint32_t* LocationClientApiImpl::gnssUpdateConfig(const GnssConfig& config) {
+    return nullptr;
 }
 
 uint32_t LocationClientApiImpl::resetConstellationConfig() {

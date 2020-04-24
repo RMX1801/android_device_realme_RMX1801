@@ -376,15 +376,6 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             resumeGeofences(reinterpret_cast<LocAPIResumeGeofencesReqMsg*>(pMsg));
             break;
         }
-        case E_LOCAPI_CONTROL_UPDATE_CONFIG_MSG_ID: {
-            if (sizeof(LocAPIUpdateConfigReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
-            gnssUpdateConfig(reinterpret_cast<
-                    LocAPIUpdateConfigReqMsg*>(pMsg)->gnssConfig);
-            break;
-        }
         case E_LOCAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID: {
             if (sizeof(LocAPIDeleteAidingDataReqMsg) != length) {
                 LOC_LOGe("invalid message");
@@ -453,7 +444,7 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
         case E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG_ID: {
             if (sizeof(LocConfigAidingDataDeletionReqMsg) != length) {
-                LOC_LOGe("invalid message");
+                LOC_LOGe("invalid LocConfigAidingDataDeletionReqMsg");
                 break;
             }
             configAidingDataDeletion(reinterpret_cast<LocConfigAidingDataDeletionReqMsg*>(pMsg));
@@ -462,7 +453,7 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
         case E_INTAPI_CONFIG_LEVER_ARM_MSG_ID: {
             if (sizeof(LocConfigLeverArmReqMsg) != length) {
-                LOC_LOGe("invalid message");
+                LOC_LOGe("invalid LocConfigLeverArmReqMsg");
                 break;
             }
             configLeverArm(reinterpret_cast<LocConfigLeverArmReqMsg*>(pMsg));
@@ -471,7 +462,7 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
         case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID: {
             if (sizeof(LocConfigRobustLocationReqMsg) != length) {
-                LOC_LOGe("invalid message");
+                LOC_LOGe("invalid LocConfigRobustLocationReqMsg");
                 break;
             }
             configRobustLocation(reinterpret_cast<LocConfigRobustLocationReqMsg*>(pMsg));
@@ -480,7 +471,7 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
         case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID: {
             if (sizeof(LocConfigMinGpsWeekReqMsg) != length) {
-                LOC_LOGe("invalid message");
+                LOC_LOGe("invalid LocConfigMinGpsWeekReqMsg");
                 break;
             }
             configMinGpsWeek(reinterpret_cast<LocConfigMinGpsWeekReqMsg*>(pMsg));
@@ -489,16 +480,25 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
         case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID: {
             if (sizeof(LocConfigB2sMountParamsReqMsg) != length) {
-                LOC_LOGe("invalid message");
+                LOC_LOGe("invalid LocConfigB2sMountParamsReqMsg");
                 break;
             }
             configB2sMountParams(reinterpret_cast<LocConfigB2sMountParamsReqMsg*>(pMsg));
             break;
         }
 
+        case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID: {
+            if (sizeof(LocConfigMinSvElevationReqMsg) != length) {
+                LOC_LOGe("invalid LocConfigMinSvElevationReqMsg");
+                break;
+            }
+            configMinSvElevation(reinterpret_cast<LocConfigMinSvElevationReqMsg*>(pMsg));
+            break;
+        }
+
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID: {
             if (sizeof(LocConfigGetRobustLocationConfigReqMsg) != length) {
-                LOC_LOGe("invalid message");
+                LOC_LOGe("invalid LocConfigGetRobustLocationConfigReqMsg");
                 break;
             }
             getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_ROBUST_LOCATION_BIT);
@@ -507,15 +507,23 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
         case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID: {
             if (sizeof(LocConfigGetMinGpsWeekReqMsg) != length) {
-                LOC_LOGe("invalid message");
+                LOC_LOGe("invalid LocConfigGetMinGpsWeekReqMsg");
                 break;
             }
             getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_MIN_GPS_WEEK_BIT);
             break;
         }
 
+        case E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID: {
+            if (sizeof(LocConfigGetMinSvElevationReqMsg) != length) {
+                LOC_LOGe("invalid LocConfigGetMinSvElevationReqMsg");
+                break;
+            }
+            getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT);
+            break;
+        }
         default: {
-            LOC_LOGe("Unknown message");
+            LOC_LOGe("Unknown message with id: ", pMsg->msgId);
             break;
         }
     }
@@ -1065,6 +1073,22 @@ void LocationApiService::configMinGpsWeek(const LocConfigMinGpsWeekReqMsg* pMsg)
     addConfigRequestToMap(sessionId, pMsg);
 }
 
+void LocationApiService::configMinSvElevation(const LocConfigMinSvElevationReqMsg* pMsg){
+
+    if (!pMsg) {
+        return;
+    }
+    std::lock_guard<std::mutex> lock(mMutex);
+    LOC_LOGi(">-- client %s, minSvElevation %u", pMsg->mSocketName, pMsg->mMinSvElevation);
+
+    GnssConfig gnssConfig = {};
+    gnssConfig.flags = GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT;
+    gnssConfig.minSvElevation = pMsg->mMinSvElevation;
+    uint32_t sessionId = gnssUpdateConfig(gnssConfig);
+
+    addConfigRequestToMap(sessionId, pMsg);
+}
+
 void LocationApiService::getGnssConfig(const LocAPIMsgHeader* pReqMsg,
                                        GnssConfigFlagsBits configFlag) {
 
@@ -1144,7 +1168,29 @@ void LocationApiService::onControlResponseCallback(LocationError err, uint32_t s
 void LocationApiService::onControlCollectiveResponseCallback(
     size_t count, LocationError *errs, uint32_t *ids) {
     std::lock_guard<std::mutex> lock(mMutex);
-    LOC_LOGd("--< onControlCollectiveResponseCallback");
+    if (count != 1) {
+        LOC_LOGe("--< onControlCollectiveResponseCallback, count is %d, expecting 1", count);
+        return;
+    }
+
+    uint32_t sessionId = *ids;
+    LocationError err = *errs;
+    LOC_LOGd("--< onControlCollectiveResponseCallback, session id is %d, err is %d",
+             sessionId, err);
+    // as we only update one setting at a time, we only need to process
+    // the first id
+    auto configReqData = mConfigReqs.find(sessionId);
+    if (configReqData != std::end(mConfigReqs)) {
+        LocHalDaemonClientHandler* pClient = getClient(configReqData->second.clientName.c_str());
+        if (pClient) {
+            pClient->onControlResponseCb(err, configReqData->second.configMsgId);
+        }
+        mConfigReqs.erase(configReqData);
+        LOC_LOGd("--< map size %d", mConfigReqs.size());
+    } else {
+        LOC_LOGe("--< client not found for session id %d", sessionId);
+    }
+
 }
 
 void LocationApiService::onGnssConfigCallback(uint32_t sessionId,

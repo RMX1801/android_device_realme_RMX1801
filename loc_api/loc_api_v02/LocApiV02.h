@@ -481,6 +481,10 @@ public:
                                     LocApiResponse *adapterResponse=nullptr);
   virtual void configMinGpsWeek(uint16_t minGpsWeek,
                                 LocApiResponse *adapterResponse=nullptr);
+  virtual LocationError setParameterSync(const GnssConfig & gnssConfig);
+
+  virtual void getParameter(uint32_t sessionId, GnssConfigFlagsMask flags,
+                            LocApiResponse* adapterResponse=nullptr);
   /*
   Returns
   Current value of GPS Lock on success
