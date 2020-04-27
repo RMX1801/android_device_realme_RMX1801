@@ -1,2 +1,2 @@
 allow sensors oppo_ver_proc:dir { search getattr read open };
-allow sensors oppo_ver_proc:file { read open };
+allow sensors oppo_ver_proc:file { read open getattr };
