@@ -587,7 +587,8 @@ locClientEventMaskType LocApiV02 :: adjustMaskIfNoSession(locClientEventMaskType
                                            QMI_LOC_EVENT_MASK_GNSS_NHZ_MEASUREMENT_REPORT_V02 |
                                            QMI_LOC_EVENT_MASK_GNSS_SV_POLYNOMIAL_REPORT_V02 |
                                            QMI_LOC_EVENT_MASK_EPHEMERIS_REPORT_V02 |
-                                           QMI_LOC_EVENT_MASK_GNSS_EVENT_REPORT_V02;
+                                           QMI_LOC_EVENT_MASK_GNSS_EVENT_REPORT_V02 |
+                                           QMI_LOC_EVENT_MASK_NEXT_LS_INFO_REPORT_V02;
         qmiMask = qmiMask & ~clearMask;
     }
     LOC_LOGd("oldQmiMask=%" PRIu64 " qmiMask=%" PRIu64 " mInSession: %d",
