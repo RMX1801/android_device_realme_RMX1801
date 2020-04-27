@@ -63,7 +63,7 @@
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
 /* This file was generated with Tool version 6.14.9
-   It was generated on: Tue Apr 14 2020 (Spin 0)
+   It was generated on: Fri Apr 24 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -89,11 +89,11 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
 /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x7C
+#define LOC_V02_IDL_MINOR_VERS 0x7D
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
-#define LOC_V02_MAX_MESSAGE_ID 0x00D6
+#define LOC_V02_MAX_MESSAGE_ID 0x00D8
 /**
     @}
   */
@@ -1929,6 +1929,22 @@ typedef struct {
   uint8_t systemTickUnc_valid;  /**< Must be set to true if systemTickUnc is being passed */
   float systemTickUnc;
   /**<   Uncertainty for system tick at GPS time of week. */
+
+  /* Optional */
+  /*  System Clock Time Bias */
+  uint8_t systemClkTimeBias_valid;  /**< Must be set to true if systemClkTimeBias is being passed */
+  float systemClkTimeBias;
+  /**<   System clock time bias.
+       - Units: Milliseconds
+  */
+
+  /* Optional */
+  /*  Uncertainty for System Clock Time Bias */
+  uint8_t systemClkTimeBiasUnc_valid;  /**< Must be set to true if systemClkTimeBiasUnc is being passed */
+  float systemClkTimeBiasUnc;
+  /**<   Single-sided maximum time bias uncertainty.
+       - Units: Milliseconds
+  */
 }qmiLocEventPositionReportIndMsgT_v02;  /* Message */
 /**
     @}
@@ -15237,6 +15253,16 @@ typedef uint16_t qmiLocSvPolyStatusMaskValidityT_v02;
 #define QMI_LOC_SV_POLY_GLO_STR4_VALID_V02 ((qmiLocSvPolyStatusMaskValidityT_v02)0x02) /**<  Validity status for QMI_LOC_SV_POLY_GLO_STR4   */
 #define QMI_LOC_SV_POLY_DELETE_VALID_V02 ((qmiLocSvPolyStatusMaskValidityT_v02)0x04) /**<  Validity status for QMI_LOC_SV_POLY_DELETE  */
 #define QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV_VALID_V02 ((qmiLocSvPolyStatusMaskValidityT_v02)0x08) /**<  Validity status for QMI_LOC_SV_POLY_SRC_GAL_FNAV_OR_INAV  */
+typedef uint64_t qmiLocSignalHealthMaskT_v02;
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L1_HEALTHY_V02 ((qmiLocSignalHealthMaskT_v02)0x0001ull) /**<  L1 signal is healthy \n  */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L2_HEALTHY_V02 ((qmiLocSignalHealthMaskT_v02)0x0002ull) /**<  L2 signal is healthy \n */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L5_HEALTHY_V02 ((qmiLocSignalHealthMaskT_v02)0x0004ull) /**<  L5 signal is healthy \n */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L1_UNKNOWN_V02 ((qmiLocSignalHealthMaskT_v02)0x0008ull) /**<  L1 signal health is unknown \n */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L2_UNKNOWN_V02 ((qmiLocSignalHealthMaskT_v02)0x0010ull) /**<  L2 signal health is unknown \n */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L5_UNKNOWN_V02 ((qmiLocSignalHealthMaskT_v02)0x0020ull) /**<  L5 signal health is unknown\n  */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L1_UNHEALTHY_V02 ((qmiLocSignalHealthMaskT_v02)0x0040ull) /**<  L1 signal is unhealthy \n */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L2_UNHEALTHY_V02 ((qmiLocSignalHealthMaskT_v02)0x0080ull) /**<  L2 signal is unhealthy \n */
+#define QMI_LOC_SIGNAL_HEALTH_MASK_L5_UNHEALTHY_V02 ((qmiLocSignalHealthMaskT_v02)0x0100ull) /**<  L5 signal is unhealthy  */
 /** @addtogroup loc_qmi_messages
     @{
   */
@@ -15533,6 +15559,44 @@ typedef struct {
   /**<   Time of group delay - NavIC L5. \n
         - Units: Milliseconds
     */
+
+  /* Optional */
+  /*  Time of Group Delay - BDS B1C (Pilot) */
+  uint8_t bdsTgdB1c_valid;  /**< Must be set to true if bdsTgdB1c is being passed */
+  float bdsTgdB1c;
+  /**<   Time of group delay - BDS B1C. \n
+         - Units: Milliseconds
+    */
+
+  /* Optional */
+  /*  Inter-Signal Correction - BDS B1C */
+  uint8_t bdsIscB1c_valid;  /**< Must be set to true if bdsIscB1c is being passed */
+  float bdsIscB1c;
+  /**<   Inter-signal correction between BDS B1C data and pilot channels. \n
+        - Units: Milliseconds
+    */
+
+  /* Optional */
+  /*  Multiband Health Information */
+  uint8_t multibandHealth_valid;  /**< Must be set to true if multibandHealth is being passed */
+  qmiLocSignalHealthMaskT_v02 multibandHealth;
+  /**<   Multiband health information. GNSS Signals under L1/L2/L5 are specified below.
+
+ L1: GPS L1, QZSS L1, BDS B1, GLO G1, GAL E1
+ L2: BDS B1C, GPS L2C, QZSS L2C
+ L5: GPS L5, QZSS L5, BDS B2A, GAL E5a, NAVIC L5
+
+ - Valid bitmasks: \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L1_HEALTHY (0x0001) --  L1 signal is healthy \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L2_HEALTHY (0x0002) --  L2 signal is healthy \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L5_HEALTHY (0x0004) --  L5 signal is healthy \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L1_UNKNOWN (0x0008) --  L1 signal health is unknown \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L2_UNKNOWN (0x0010) --  L2 signal health is unknown \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L5_UNKNOWN (0x0020) --  L5 signal health is unknown\n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L1_UNHEALTHY (0x0040) --  L1 signal is unhealthy \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L2_UNHEALTHY (0x0080) --  L2 signal is unhealthy \n
+      - QMI_LOC_SIGNAL_HEALTH_MASK_L5_UNHEALTHY (0x0100) --  L5 signal is unhealthy
+ */
 }qmiLocEventGnssSvPolyIndMsgT_v02;  /* Message */
 /**
     @}
@@ -18185,7 +18249,8 @@ typedef enum {
   eQMI_LOC_SUPPORTED_FEATURE_FDCL_2_V02 = 8, /**<  Support the FDCL version 2 feature \n */
   eQMI_LOC_SUPPORTED_FEATURE_LOCATION_PRIVACY_V02 = 9, /**<  Support the location privacy feature \n */
   eQMI_LOC_SUPPORTED_FEATURE_NAVIC_V02 = 10, /**<  Support the NavIC constellation \n */
-  eQMI_LOC_SUPPORTED_FEATURE_ENV_AIDING_V02 = 11, /**<  Support Environment Aiding  */
+  eQMI_LOC_SUPPORTED_FEATURE_ENV_AIDING_V02 = 11, /**<  Support Environment Aiding \n */
+  eQMI_LOC_SUPPORTED_FEATURE_ROBUST_LOCATION_V02 = 12, /**<  Support Robust Location feature  */
   QMILOCSUPPORTEDFEATUREENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
 }qmiLocSupportedFeatureEnumT_v02;
 /**
@@ -22220,6 +22285,116 @@ typedef struct {
     @}
   */
 
+/** @addtogroup loc_qmi_enums
+    @{
+  */
+typedef enum {
+  QMILOCPARAMETERTYPEENUMT_MIN_ENUM_VAL_V02 = -2147483647, /**< To force a 32 bit signed enum.  Do not change or use*/
+  eQMI_LOC_PARAMETER_TYPE_RESERVED_V02 = 0, /**<  DO NOT USE  */
+  eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION_V02 = 1, /**<  Minimum SV Elevation to be used for computing position  */
+  QMILOCPARAMETERTYPEENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
+}qmiLocParameterTypeEnumT_v02;
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Request Message; This message is used by control point to
+                     set a specific parameter to be used by GNSS engine */
+typedef struct {
+
+  /* Mandatory */
+  /*  Parameter Type */
+  qmiLocParameterTypeEnumT_v02 paramType;
+  /**<   Parameter type. Values:
+      - eQMI_LOC_PARAMETER_TYPE_RESERVED (0) --  DO NOT USE
+      - eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION (1) --  Minimum SV Elevation to be used for computing position
+ */
+
+  /* Optional */
+  /*  Minimum SV Elevation */
+  uint8_t minSvElevation_valid;  /**< Must be set to true if minSvElevation is being passed */
+  uint8_t minSvElevation;
+  /**<   Specifies the minimum SV elevation to be used for positioning.
+       GNSS Position Engine will not use SVs with elevation lower than the
+       configured minimum elevation setting to compute position.
+       - Units: Degrees
+       - Range: 0 - 90
+  */
+}qmiLocSetParameterReqMsgT_v02;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Request Message; This message used by control point to query a specific
+                     parameter being used by GNSS engine. */
+typedef struct {
+
+  /* Mandatory */
+  /*  Parameter Type */
+  qmiLocParameterTypeEnumT_v02 paramType;
+  /**<   Parameter type. Values:
+      - eQMI_LOC_PARAMETER_TYPE_RESERVED (0) --  DO NOT USE
+      - eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION (1) --  Minimum SV Elevation to be used for computing position
+ */
+}qmiLocGetParameterReqMsgT_v02;  /* Message */
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Indication Message; This message used by control point to query a specific
+                     parameter being used by GNSS engine. */
+typedef struct {
+
+  /* Mandatory */
+  /*  Status */
+  qmiLocStatusEnumT_v02 status;
+  /**<   Status of the request. Valid values:
+      - eQMI_LOC_SUCCESS (0) --  Request was completed successfully \n
+      - eQMI_LOC_GENERAL_FAILURE (1) --  Request failed because of a general failure \n
+      - eQMI_LOC_UNSUPPORTED (2) --  Request failed because it is not supported \n
+      - eQMI_LOC_INVALID_PARAMETER (3) --  Request failed because it contained invalid parameters \n
+      - eQMI_LOC_ENGINE_BUSY (4) --  Request failed because the engine is busy \n
+      - eQMI_LOC_PHONE_OFFLINE (5) --  Request failed because the phone is offline \n
+      - eQMI_LOC_TIMEOUT (6) --  Request failed because it has timed out \n
+      - eQMI_LOC_CONFIG_NOT_SUPPORTED (7) --  Request failed because an undefined configuration was requested \n
+      - eQMI_LOC_INSUFFICIENT_MEMORY (8) --  Request failed because the engine could not allocate sufficient memory for the request \n
+      - eQMI_LOC_MAX_GEOFENCE_PROGRAMMED (9) --  Request failed because the maximum number of Geofences are already programmed \n
+      - eQMI_LOC_XTRA_VERSION_CHECK_FAILURE (10) --  Location service failed because of an XTRA version-based file format check failure \n
+      - eQMI_LOC_GNSS_DISABLED (11) --  Request failed because the location service is disabled
+ */
+
+  /* Mandatory */
+  /*  Parameter Type */
+  qmiLocParameterTypeEnumT_v02 paramType;
+  /**<   Parameter type. Valid values:
+      - eQMI_LOC_PARAMETER_TYPE_RESERVED (0) --  DO NOT USE
+      - eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION (1) --  Minimum SV Elevation to be used for computing position
+ */
+
+  /* Optional */
+  /*  Minimum SV Elevation */
+  uint8_t minSvElevation_valid;  /**< Must be set to true if minSvElevation is being passed */
+  uint8_t minSvElevation;
+  /**<   Specifies the minimum SV elevation to be used for positioning.
+       GNSS Position Engine will not use SVs with elevation lower than the
+       configured minimum elevation setting to compute position fix.
+       - Units: Degrees
+       - Range: 0 - 90
+  */
+}qmiLocGetParameterIndMsgT_v02;  /* Message */
+/**
+    @}
+  */
+
 /* Conditional compilation tags for message removal */
 //#define REMOVE_QMI_LOC_ADD_CIRCULAR_GEOFENCE_V02
 //#define REMOVE_QMI_LOC_ADD_GEOFENCE_CONTEXT_V02
@@ -22308,6 +22483,7 @@ typedef struct {
 //#define REMOVE_QMI_LOC_GET_NI_GEOFENCE_ID_LIST_V02
 //#define REMOVE_QMI_LOC_GET_NMEA_TYPES_V02
 //#define REMOVE_QMI_LOC_GET_OPERATION_MODE_V02
+//#define REMOVE_QMI_LOC_GET_PARAMETER_V02
 //#define REMOVE_QMI_LOC_GET_POSITION_ENGINE_CONFIG_PARAMETERS_V02
 //#define REMOVE_QMI_LOC_GET_PREDICTED_ORBITS_DATA_SOURCE_V02
 //#define REMOVE_QMI_LOC_GET_PREDICTED_ORBITS_DATA_VALIDITY_V02
@@ -22383,6 +22559,7 @@ typedef struct {
 //#define REMOVE_QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_V02
 //#define REMOVE_QMI_LOC_SET_NMEA_TYPES_V02
 //#define REMOVE_QMI_LOC_SET_OPERATION_MODE_V02
+//#define REMOVE_QMI_LOC_SET_PARAMETER_V02
 //#define REMOVE_QMI_LOC_SET_POSITION_ENGINE_CONFIG_PARAMETERS_V02
 //#define REMOVE_QMI_LOC_SET_PREMIUM_SERVICES_CONFIG_V02
 //#define REMOVE_QMI_LOC_SET_PROTOCOL_CONFIG_PARAMETERS_V02
@@ -22851,6 +23028,12 @@ typedef struct {
 #define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_RESP_V02 0x00D5
 #define QMI_LOC_GET_MIN_GPS_WEEK_NUMBER_IND_V02 0x00D5
 #define QMI_LOC_EVENT_QUERY_XTRA_INFO_REQ_IND_V02 0x00D6
+#define QMI_LOC_SET_PARAMETER_REQ_V02 0x00D7
+#define QMI_LOC_SET_PARAMETER_RESP_V02 0x00D7
+#define QMI_LOC_SET_PARAMETER_IND_V02 0x00D7
+#define QMI_LOC_GET_PARAMETER_REQ_V02 0x00D8
+#define QMI_LOC_GET_PARAMETER_RESP_V02 0x00D8
+#define QMI_LOC_GET_PARAMETER_IND_V02 0x00D8
 /**
     @}
   */
