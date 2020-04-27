@@ -3168,12 +3168,23 @@ void LocApiV02 :: reportPosition (
                 locationExtended.gnssSystemTime.u.gpsSystemTime.validityMask |=
                         GNSS_SYSTEM_TIME_WEEK_MS_VALID;
 
-                locationExtended.gnssSystemTime.u.gpsSystemTime.systemClkTimeBias = 0.0f;
-                locationExtended.gnssSystemTime.u.gpsSystemTime.validityMask |=
-                        GNSS_SYSTEM_CLK_TIME_BIAS_VALID;
+                if (location_report_ptr->systemClkTimeBias_valid) {
+                    locationExtended.gnssSystemTime.u.gpsSystemTime.systemClkTimeBias =
+                            location_report_ptr->systemClkTimeBias;
+                    locationExtended.gnssSystemTime.u.gpsSystemTime.validityMask |=
+                            GNSS_SYSTEM_CLK_TIME_BIAS_VALID;
+                } else {
+                    locationExtended.gnssSystemTime.u.gpsSystemTime.systemClkTimeBias = 0.0f;
+                    locationExtended.gnssSystemTime.u.gpsSystemTime.validityMask |=
+                            GNSS_SYSTEM_CLK_TIME_BIAS_VALID;
+                }
 
-                if (location_report_ptr->timeUnc_valid)
-                {
+                if (location_report_ptr->systemClkTimeBiasUnc_valid) {
+                    locationExtended.gnssSystemTime.u.gpsSystemTime.systemClkTimeUncMs =
+                            location_report_ptr->systemClkTimeBiasUnc;
+                    locationExtended.gnssSystemTime.u.gpsSystemTime.validityMask |=
+                            GNSS_SYSTEM_CLK_TIME_BIAS_UNC_VALID;
+                } else if (location_report_ptr->timeUnc_valid) {
                     locationExtended.gnssSystemTime.u.gpsSystemTime.systemClkTimeUncMs =
                             location_report_ptr->timeUnc;
                     locationExtended.gnssSystemTime.u.gpsSystemTime.validityMask |=
