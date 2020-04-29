@@ -12,3 +12,5 @@ unnhal-acc-hta.so
 liboddi.so
 libnativehelpers.so
 libdiag.so
+libprotobuf-cpp-full.so
+libprotobuf-cpp-lite.so
