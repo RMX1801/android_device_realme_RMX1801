@@ -3801,6 +3801,15 @@ void  LocApiV02 :: reportSvMeasurement (
         svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GALE1E5A_TIME_BIAS;
     }
 
+    if (1 == gnss_raw_measurement_ptr->BdsB1iB2aTimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->BdsB1iB2aTimeBias;
+
+        getInterSystemTimeBias("bdsB1iB2aTimeBias",
+                               svMeasSetHead.bdsB1iB2aTimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_BDSB1IB2A_TIME_BIAS;
+    }
+
     if (1 == gnss_raw_measurement_ptr->gloTime_valid) {
         GnssGloTimeStructType & gloSystemTime = svMeasSetHead.gloSystemTime;
 
