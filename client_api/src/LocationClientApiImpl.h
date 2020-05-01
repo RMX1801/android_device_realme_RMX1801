@@ -129,7 +129,7 @@ public:
 
 class IpcListener;
 
-class LocationClientApiImpl : public ILocationAPI, public ILocationControlAPI {
+class LocationClientApiImpl : public ILocationAPI {
     friend IpcListener;
 public:
     LocationClientApiImpl(CapabilitiesCb capabitiescb);
@@ -169,23 +169,8 @@ public:
     //GNSS
     virtual void gnssNiResponse(uint32_t id, GnssNiResponse response) override;
 
-    // other
-    virtual uint32_t* gnssUpdateConfig(const GnssConfig& config) override;
-    virtual uint32_t gnssDeleteAidingData(GnssAidingData& data) override;
-    // config API
-    virtual uint32_t resetConstellationConfig() override;
-    virtual uint32_t configConstellations(const GnssSvTypeConfig& svTypeConfig,
-                                          const GnssSvIdConfig&   svIdConfig) override;
-    virtual uint32_t configConstrainedTimeUncertainty(
-            bool enable, float tuncThreshold, uint32_t energyBudget) override;
-    virtual uint32_t configPositionAssistedClockEstimator(bool enable) override;
-    virtual uint32_t configLeverArm(const LeverArmConfigInfo& configInfo) override;
-    virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
-    virtual uint32_t configMinGpsWeek(uint16_t minGpsWeek) override;
-    virtual uint32_t configBodyToSensorMountParams(
-            const ::BodyToSensorMountParams& b2sParams) override;
-
     // other interface
+    uint32_t gnssDeleteAidingData(const GnssAidingData& data);
     void updateNetworkAvailability(bool available);
     void updateCallbackFunctions(const ClientCallbacks&,
                                  ReportCbEnumType reportCbType = REPORT_CB_TYPE_NONE);

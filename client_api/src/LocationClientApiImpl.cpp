@@ -1677,10 +1677,9 @@ void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
     mMsgTask->sendMsg(new (nothrow) ResumeGeofencesReq(this, count, ids));
 }
 
-uint32_t LocationClientApiImpl::gnssDeleteAidingData(GnssAidingData& data) {
-
+uint32_t LocationClientApiImpl::gnssDeleteAidingData(const GnssAidingData& data) {
     struct DeleteAidingDataReq : public LocMsg {
-        DeleteAidingDataReq(const LocationClientApiImpl* apiImpl, GnssAidingData& data) :
+        DeleteAidingDataReq(const LocationClientApiImpl* apiImpl, const GnssAidingData& data) :
                 mApiImpl(apiImpl), mAidingData(data) {}
         virtual ~DeleteAidingDataReq() {}
         void proc() const {
@@ -2422,45 +2421,4 @@ void LocationClientApiImpl::gnssNiResponse(uint32_t id, GnssNiResponse response)
 
 void LocationClientApiImpl::updateTrackingOptions(uint32_t id, TrackingOptions& options) {
 }
-
-uint32_t* LocationClientApiImpl::gnssUpdateConfig(const GnssConfig& config) {
-    return nullptr;
-}
-
-uint32_t LocationClientApiImpl::resetConstellationConfig() {
-    return 0;
-}
-
-uint32_t LocationClientApiImpl::configConstellations(
-        const GnssSvTypeConfig& svTypeConfig,
-        const GnssSvIdConfig&   svIdConfig) {
-    return 0;
-}
-
-uint32_t LocationClientApiImpl::configConstrainedTimeUncertainty(
-            bool enable, float tuncThreshold, uint32_t energyBudget) {
-    return 0;
-}
-
-uint32_t LocationClientApiImpl::configPositionAssistedClockEstimator(bool enable) {
-    return 0;
-}
-
-uint32_t LocationClientApiImpl::configLeverArm(const LeverArmConfigInfo& configInfo) {
-    return 0;
-}
-
-uint32_t LocationClientApiImpl::configRobustLocation(bool enable, bool enableForE911) {
-    return 0;
-}
-
-uint32_t LocationClientApiImpl::configMinGpsWeek(uint16_t minGpsWeek) {
-    return 0;
-}
-
-uint32_t LocationClientApiImpl::configBodyToSensorMountParams(
-            const BodyToSensorMountParams& b2sParams) {
-    return 0;
-}
-
 } // namespace location_client
