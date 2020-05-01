@@ -53,6 +53,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.camera.expose.aux=1 \
     persist.vendor.camera.preview.ubwc=0 \
     persist.vendor.qti.telephony.vt_cam_interface=1 \
+    vendor.camera.hal1.packagelist=com.whatsapp,com.instagram.android,com.snapchat.android \
     vidc.enc.dcvs.extra-buff-count=2
 
 # CNE/ DPM
