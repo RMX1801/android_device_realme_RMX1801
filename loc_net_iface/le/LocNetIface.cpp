@@ -142,6 +142,7 @@ void LocNetIface::subscribeWithQcmap() {
     }
     LOC_LOGD("Created QCMAP_Client instance %p", mQcmapClientPtr);
 
+    bool ret;
 #ifdef FEATURE_MOBILEAP_INDICATION
     // We need to Enable/Disable mobile AP only for backhaul connection only if the feature
     // FEATURE_MOBILEAP_INDICATION is available, since RegisterForIndications will give us
@@ -151,7 +152,7 @@ void LocNetIface::subscribeWithQcmap() {
             MOBILE_AP_STATUS_IND|STATION_MODE_STATUS_IND|CRADLE_MODE_STATUS_IND| \
             ETHERNET_MODE_STATUS_IND|BT_TETHERING_STATUS_IND|BT_TETHERING_WAN_IND| \
             WLAN_STATUS_IND|PACKET_STATS_STATUS_IND;
-    bool ret  = false;
+    ret = false;
     //Register with QCMAP for any BACKHAUL/network availability
     ret = mQcmapClientPtr->RegisterForIndications(&qcmapErr, reg_mask);
     LOC_LOGI("RegisterForIndications - qmi_error %d status %d\n", qcmapErr, ret);
@@ -159,12 +160,13 @@ void LocNetIface::subscribeWithQcmap() {
     {
         LOC_LOGE("Backhaul registration failed error value: %d",qcmapErr);
     }
-#else
+#endif
     /* Need to enable MobileAP to get station mode status indications */
-    bool ret = mQcmapClientPtr->EnableMobileAP(&qcmapErr);
+    ret = mQcmapClientPtr->EnableMobileAP(&qcmapErr);
     if (ret == false) {
         LOC_LOGE("Failed to enable mobileap, qcmapErr %d", qcmapErr);
     }
+#ifndef FEATURE_MOBILEAP_INDICATION
     /* Invoke WLAN status registration
      * WWAN is by default registered */
     ret = mQcmapClientPtr->RegisterForWLANStatusIND(&qcmapErr, true);
@@ -1046,16 +1048,6 @@ bool LocNetIface::connectBackhaul() {
         return true;
     }
 
-#ifdef FEATURE_MOBILEAP_INDICATION
-    qmi_err_num = QMI_ERR_NONE_V01;
-     /* Need to enable MobileAP to invoke backhaul functions */
-    bool ret = mQcmapClientPtr->EnableMobileAP(&qmi_err_num);
-    if (false == ret) {
-        LOC_LOGE("Failed to enable mobileap, qcmapErr %d", qmi_err_num);
-        return false;
-    }
-#endif
-
     /* Enable roaming */
     qmi_err_num = QMI_ERR_NONE_V01;
     LOC_LOGd("Calling SetRoaming enable");
@@ -1071,14 +1063,6 @@ bool LocNetIface::connectBackhaul() {
     if (mQcmapClientPtr->ConnectBackHaul(
             wwan_call_type, &qmi_err_num) == false) {
         LOC_LOGe("Connect backhaul failed, err 0x%x", qmi_err_num);
-#ifdef FEATURE_MOBILEAP_INDICATION
-        qmi_err_num = QMI_ERR_NONE_V01;
-        //Disabling mobile AP here if connect backhaul fails
-        bool ret = mQcmapClientPtr->DisableMobileAP(&qmi_err_num);
-        if (false == ret || 0 != qmi_err_num ) {
-            LOC_LOGE("Failed to disable mobileap, qcmapErr %d", qmi_err_num);
-        }
-#endif
         return false;
     }
 
