@@ -370,63 +370,57 @@ void populateClientDiagLocation(clientDiagGnssLocationStructType* diagGnssLocPtr
 
 void populateClientDiagMeasurements(clientDiagGnssMeasurementsStructType* diagGnssMeasPtr,
         const GnssMeasurements& gnssMeasurements) {
-    diagGnssMeasPtr->count = gnssMeasurements.measurements.size();
 
-    diagGnssMeasPtr->clock.flags =
-            (clientDiagGnssMeasurementsClockFlagsMask)gnssMeasurements.clock.flags;
-    diagGnssMeasPtr->clock.leapSecond = gnssMeasurements.clock.leapSecond;
-    diagGnssMeasPtr->clock.timeNs = gnssMeasurements.clock.timeNs;
-    diagGnssMeasPtr->clock.timeUncertaintyNs = gnssMeasurements.clock.timeUncertaintyNs;
-    diagGnssMeasPtr->clock.fullBiasNs = gnssMeasurements.clock.fullBiasNs;
-    diagGnssMeasPtr->clock.biasNs = gnssMeasurements.clock.biasNs;
-    diagGnssMeasPtr->clock.biasUncertaintyNs = gnssMeasurements.clock.biasUncertaintyNs;
-    diagGnssMeasPtr->clock.driftNsps = gnssMeasurements.clock.driftNsps;
-    diagGnssMeasPtr->clock.driftUncertaintyNsps = gnssMeasurements.clock.driftUncertaintyNsps;
-    diagGnssMeasPtr->clock.hwClockDiscontinuityCount =
-            gnssMeasurements.clock.hwClockDiscontinuityCount;
 
-    for (uint32_t idx = 0; idx < diagGnssMeasPtr->count; ++idx) {
+    uint8 adjust = (diagGnssMeasPtr->sequenceNumber - 1) * CLIENT_DIAG_GNSS_MEASUREMENTS_SEQ;
+    uint32_t count = diagGnssMeasPtr->count - adjust;
+    if (count > CLIENT_DIAG_GNSS_MEASUREMENTS_SEQ) {
+        count = CLIENT_DIAG_GNSS_MEASUREMENTS_SEQ;
+    }
+    LOC_LOGv("adjust = %d count = %d", adjust, count);
+    for (uint32_t idx = 0; idx < count; ++idx) {
+        uint32_t gIdx = idx + adjust;
         diagGnssMeasPtr->measurements[idx].flags =
-                (clientDiagGnssMeasurementsDataFlagsMask)gnssMeasurements.measurements[idx].flags;
-        diagGnssMeasPtr->measurements[idx].svId = gnssMeasurements.measurements[idx].svId;
+                (clientDiagGnssMeasurementsDataFlagsMask)gnssMeasurements.measurements[gIdx].flags;
+        diagGnssMeasPtr->measurements[idx].svId = gnssMeasurements.measurements[gIdx].svId;
         diagGnssMeasPtr->measurements[idx].svType =
-                (clientDiagGnssSvType)gnssMeasurements.measurements[idx].svType;
+                (clientDiagGnssSvType)gnssMeasurements.measurements[gIdx].svType;
         diagGnssMeasPtr->measurements[idx].timeOffsetNs =
-                gnssMeasurements.measurements[idx].timeOffsetNs;
+                gnssMeasurements.measurements[gIdx].timeOffsetNs;
         diagGnssMeasPtr->measurements[idx].stateMask =
-                (clientDiagGnssMeasurementsStateMask)gnssMeasurements.measurements[idx].stateMask;
+                (clientDiagGnssMeasurementsStateMask)gnssMeasurements.measurements[gIdx].stateMask;
         diagGnssMeasPtr->measurements[idx].receivedSvTimeNs =
-                gnssMeasurements.measurements[idx].receivedSvTimeNs;
+                gnssMeasurements.measurements[gIdx].receivedSvTimeNs;
         diagGnssMeasPtr->measurements[idx].receivedSvTimeUncertaintyNs =
-                gnssMeasurements.measurements[idx].receivedSvTimeUncertaintyNs;
+                gnssMeasurements.measurements[gIdx].receivedSvTimeUncertaintyNs;
         diagGnssMeasPtr->measurements[idx].carrierToNoiseDbHz =
-                gnssMeasurements.measurements[idx].carrierToNoiseDbHz;
+                gnssMeasurements.measurements[gIdx].carrierToNoiseDbHz;
         diagGnssMeasPtr->measurements[idx].pseudorangeRateMps =
-                gnssMeasurements.measurements[idx].pseudorangeRateMps;
+                gnssMeasurements.measurements[gIdx].pseudorangeRateMps;
         diagGnssMeasPtr->measurements[idx].pseudorangeRateUncertaintyMps =
-                gnssMeasurements.measurements[idx].pseudorangeRateUncertaintyMps;
+                gnssMeasurements.measurements[gIdx].pseudorangeRateUncertaintyMps;
         diagGnssMeasPtr->measurements[idx].adrStateMask =
                 (clientDiagGnssMeasurementsAdrStateMask)
-                        gnssMeasurements.measurements[idx].adrStateMask;
+                        gnssMeasurements.measurements[gIdx].adrStateMask;
         diagGnssMeasPtr->measurements[idx].adrMeters =
-                gnssMeasurements.measurements[idx].adrMeters;
+                gnssMeasurements.measurements[gIdx].adrMeters;
         diagGnssMeasPtr->measurements[idx].adrUncertaintyMeters =
-                gnssMeasurements.measurements[idx].adrUncertaintyMeters;
+                gnssMeasurements.measurements[gIdx].adrUncertaintyMeters;
         diagGnssMeasPtr->measurements[idx].carrierFrequencyHz =
-                gnssMeasurements.measurements[idx].carrierFrequencyHz;
+                gnssMeasurements.measurements[gIdx].carrierFrequencyHz;
         diagGnssMeasPtr->measurements[idx].carrierCycles =
-                gnssMeasurements.measurements[idx].carrierCycles;
+                gnssMeasurements.measurements[gIdx].carrierCycles;
         diagGnssMeasPtr->measurements[idx].carrierPhase =
-                gnssMeasurements.measurements[idx].carrierPhase;
+                gnssMeasurements.measurements[gIdx].carrierPhase;
         diagGnssMeasPtr->measurements[idx].carrierPhaseUncertainty =
-                gnssMeasurements.measurements[idx].carrierPhaseUncertainty;
+                gnssMeasurements.measurements[gIdx].carrierPhaseUncertainty;
         diagGnssMeasPtr->measurements[idx].multipathIndicator =
                 (clientDiagGnssMeasurementsMultipathIndicator)
-                        gnssMeasurements.measurements[idx].multipathIndicator;
+                        gnssMeasurements.measurements[gIdx].multipathIndicator;
         diagGnssMeasPtr->measurements[idx].signalToNoiseRatioDb =
-                gnssMeasurements.measurements[idx].signalToNoiseRatioDb;
+                gnssMeasurements.measurements[gIdx].signalToNoiseRatioDb;
         diagGnssMeasPtr->measurements[idx].agcLevelDb =
-                gnssMeasurements.measurements[idx].agcLevelDb;
+                gnssMeasurements.measurements[gIdx].agcLevelDb;
     }
 }
 
