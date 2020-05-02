@@ -39,6 +39,7 @@
 
 #define CLIENT_DIAG_GNSS_SV_MAX            (176)
 #define CLIENT_DIAG_GNSS_MEASUREMENTS_MAX  (128)
+#define CLIENT_DIAG_GNSS_MEASUREMENTS_SEQ  (100)
 #define LOG_CLIENT_LOCATION_DIAG_MSG_VERSION        (3)
 #define LOG_CLIENT_SV_REPORT_DIAG_MSG_VERSION       (2)
 #define LOG_CLIENT_NMEA_REPORT_DIAG_MSG_VERSION     (1)
@@ -803,6 +804,9 @@ typedef PACKED struct PACKED_POST {
     uint32_t hwClockDiscontinuityCount;
 } clientDiagGnssMeasurementsClock;
 
+/* This structure is too large to be sent in one shot,
+   therefore we segment using maxSequence and sequenceNumber
+*/
 typedef PACKED struct PACKED_POST {
     /** Used by Logging Module
     *  Mandatory field */
@@ -810,9 +814,11 @@ typedef PACKED struct PACKED_POST {
     /** clientDiag Message Version
     *  Mandatory field */
     uint8 version;
+    uint8 maxSequence;
+    uint8 sequenceNumber;
     uint32_t count;        // number of items in GnssMeasurementsData array
     clientDiagGnssMeasurementsClock clock; // clock
-    clientDiagGnssMeasurementsData measurements[CLIENT_DIAG_GNSS_MEASUREMENTS_MAX];
+    clientDiagGnssMeasurementsData measurements[CLIENT_DIAG_GNSS_MEASUREMENTS_SEQ];
 } clientDiagGnssMeasurementsStructType;
 
 typedef PACKED struct PACKED_POST {

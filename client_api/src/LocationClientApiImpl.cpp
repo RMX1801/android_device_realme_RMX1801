@@ -2299,12 +2299,39 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                         LOC_LOGv("memory alloc failed");
                         break;
                     }
-                    populateClientDiagMeasurements(diagGnssMeasPtr, gnssMeasurements);
+                    diagGnssMeasPtr->count = gnssMeasurements.measurements.size();
+                    if (diagGnssMeasPtr->count > CLIENT_DIAG_GNSS_MEASUREMENTS_MAX) {
+                        diagGnssMeasPtr->count = CLIENT_DIAG_GNSS_MEASUREMENTS_MAX;
+                    }
+                    diagGnssMeasPtr->maxSequence =
+                            (uint8)(((diagGnssMeasPtr->count - 0.5) /
+                                    CLIENT_DIAG_GNSS_MEASUREMENTS_SEQ) + 1);
+                    LOC_LOGv("maxSequence = %d, count = %d",
+                             diagGnssMeasPtr->maxSequence, diagGnssMeasPtr->count);
                     diagGnssMeasPtr->version = LOG_CLIENT_MEASUREMENTS_DIAG_MSG_VERSION;
-
-                    mDiagInterface->logCommit(diagGnssMeasPtr, bufferSrc,
-                            LOG_GNSS_CLIENT_API_MEASUREMENTS_REPORT_C,
-                            sizeof(clientDiagGnssMeasurementsStructType));
+                    diagGnssMeasPtr->clock.flags =
+                        (clientDiagGnssMeasurementsClockFlagsMask)gnssMeasurements.clock.flags;
+                    diagGnssMeasPtr->clock.leapSecond = gnssMeasurements.clock.leapSecond;
+                    diagGnssMeasPtr->clock.timeNs = gnssMeasurements.clock.timeNs;
+                    diagGnssMeasPtr->clock.timeUncertaintyNs =
+                            gnssMeasurements.clock.timeUncertaintyNs;
+                    diagGnssMeasPtr->clock.fullBiasNs = gnssMeasurements.clock.fullBiasNs;
+                    diagGnssMeasPtr->clock.biasNs = gnssMeasurements.clock.biasNs;
+                    diagGnssMeasPtr->clock.biasUncertaintyNs =
+                            gnssMeasurements.clock.biasUncertaintyNs;
+                    diagGnssMeasPtr->clock.driftNsps = gnssMeasurements.clock.driftNsps;
+                    diagGnssMeasPtr->clock.driftUncertaintyNsps =
+                            gnssMeasurements.clock.driftUncertaintyNsps;
+                    diagGnssMeasPtr->clock.hwClockDiscontinuityCount =
+                            gnssMeasurements.clock.hwClockDiscontinuityCount;
+                    for (uint8 i = 0; i < diagGnssMeasPtr->maxSequence; i++) {
+                        diagGnssMeasPtr->sequenceNumber = i + 1;
+                        LOC_LOGv("seqNumber = %d", diagGnssMeasPtr->sequenceNumber);
+                        populateClientDiagMeasurements(diagGnssMeasPtr, gnssMeasurements);
+                        mDiagInterface->logCommit(diagGnssMeasPtr, bufferSrc,
+                                LOG_GNSS_CLIENT_API_MEASUREMENTS_REPORT_C,
+                                sizeof(clientDiagGnssMeasurementsStructType));
+                    }
 #endif // FEATURE_EXTERNAL_AP
                 }
                 break;
