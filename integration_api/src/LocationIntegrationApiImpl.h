@@ -107,14 +107,15 @@ public:
     virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
     virtual uint32_t configBodyToSensorMountParams(
             const ::BodyToSensorMountParams& b2sParams) override;
-
-    // rest of ILocationController API that are not used in integration API
-    virtual uint32_t* gnssUpdateConfig(GnssConfig config) override;
+    virtual uint32_t* gnssUpdateConfig(const GnssConfig& config) override;
     virtual uint32_t gnssDeleteAidingData(GnssAidingData& data) override;
     virtual uint32_t configMinGpsWeek(uint16_t minGpsWeek) override;
 
     uint32_t getRobustLocationConfig();
     uint32_t getMinGpsWeek();
+
+    uint32_t configMinSvElevation(uint8_t minSvElevation);
+    uint32_t getMinSvElevation();
 
 private:
     ~LocationIntegrationApiImpl();
@@ -132,6 +133,7 @@ private:
     void processGetRobustLocationConfigRespCb(
             const LocConfigGetRobustLocationConfigRespMsg* pRespMsg);
     void processGetMinGpsWeekRespCb(const LocConfigGetMinGpsWeekRespMsg* pRespMsg);
+    void processGetMinSvElevationRespCb(const LocConfigGetMinSvElevationRespMsg* pRespMsg);
 
     // internal session parameter
     static mutex             mMutex;
