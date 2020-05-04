@@ -52,6 +52,7 @@ public:
         mIsRoaming(false),
         mIsDsiInitDone(false), mDsiHandle(NULL), mIsDsiCallUp(false),
         mIsDsiStartCallPending(false), mIsDsiStopCallPending(false),
+        mIsMobileApEnabled(false),
         mMutex() {}
     LocNetIface() : LocNetIface(LOC_NET_CONN_TYPE_WWAN_INTERNET) {}
 
@@ -105,6 +106,8 @@ private:
     LocNetConnState mLocNetWlanState;
     /* Roaming status */
     bool mIsRoaming;
+    /* Keep track of whether EnableMobileAP is done */
+    bool mIsMobileApEnabled;
 
     /* Private APIs to interact with QCMAP module */
     void subscribeWithQcmap();
