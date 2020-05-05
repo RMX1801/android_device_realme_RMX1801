@@ -37,6 +37,21 @@ PKG_CHECK_MODULES([QMIFW], [qmi-framework])
 AC_SUBST([QMIFW_CFLAGS])
 AC_SUBST([QMIFW_LIBS])
 
+AC_ARG_WITH([external_ap],
+    AC_HELP_STRING([--with-external_ap=@<:@dir@:>@],
+        [Using External Application Processor]),
+    [],
+    with_external_ap=no)
+
+if test "x$with_external_ap" != "xno"; then
+    CPPFLAGS="${CPPFLAGS} -DFEATURE_EXTERNAL_AP"
+else
+    # Checks for libraries.
+    PKG_CHECK_MODULES([CUTILS], [libcutils])
+    AC_SUBST([CUTILS_CFLAGS])
+    AC_SUBST([CUTILS_LIBS])
+fi
+
 AC_ARG_WITH([kernel-qrtr],
        AC_HELP_STRING([--with-kernel-qrtr],
           [enable kernel qrtr, kernel supports qrtr]))
