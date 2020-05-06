@@ -10,6 +10,7 @@ type oppo_ver_proc, proc_type;
 type persist_camera_file, file_type;
 type proc_pci, fs_type, proc_type;
 type proc_touchpanel, fs_type, proc_type;
+type public_adsprpcd_file, file_type;
 type sysfs_fingerprint, sysfs_type, fs_type;
 type sysfs_mmc, sysfs_type, fs_type;
 type sysfs_oembackup, sysfs_type, fs_type;
