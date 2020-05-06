@@ -69,7 +69,8 @@ bool LocationIntegrationApi::configConstellations(
             svTypeConfig.size = sizeof(svTypeConfig);
             svTypeConfig.enabledSvTypesMask =
                     GNSS_SV_TYPES_MASK_GLO_BIT|GNSS_SV_TYPES_MASK_BDS_BIT|
-                    GNSS_SV_TYPES_MASK_QZSS_BIT|GNSS_SV_TYPES_MASK_GAL_BIT;
+                    GNSS_SV_TYPES_MASK_QZSS_BIT|GNSS_SV_TYPES_MASK_GAL_BIT|
+                    GNSS_SV_TYPES_MASK_NAVIC_BIT;
             GnssSvIdConfig svIdConfig = {};
             svIdConfig.size = sizeof(GnssSvIdConfig);
 
@@ -121,6 +122,11 @@ bool LocationIntegrationApi::configConstellations(
                         svMaskPtr = nullptr;
                     }
                     break;
+                case GNSS_CONSTELLATION_TYPE_NAVIC:
+                    svTypeMask = (GnssSvTypesMask) GNSS_SV_TYPES_MASK_NAVIC_BIT;
+                    svMaskPtr = &svIdConfig.navicBlacklistSvMask;
+                    initialSvId = GNSS_SV_CONFIG_NAVIC_INITIAL_SV_ID;
+                break;
                 default:
                     break;
                 }
@@ -151,13 +157,15 @@ bool LocationIntegrationApi::configConstellations(
                      "bds blacklist mask =0x%" PRIx64 ", "
                      "gal blacklist mask =0x%" PRIx64 ",\n"
                      "sbas blacklist mask =0x%" PRIx64 ", ",
+                     "Navic blacklist mask =0x%" PRIx64 ", ",
                      svTypeConfig.enabledSvTypesMask,
                      svTypeConfig.blacklistedSvTypesMask,
                      svIdConfig.gloBlacklistSvMask,
                      svIdConfig.qzssBlacklistSvMask,
                      svIdConfig.bdsBlacklistSvMask,
                      svIdConfig.galBlacklistSvMask,
-                     svIdConfig.sbasBlacklistSvMask);
+                     svIdConfig.sbasBlacklistSvMask,
+                     svIdConfig.navicBlacklistSvMask);
             mApiImpl->configConstellations(svTypeConfig, svIdConfig);
             retVal = true;
         }
