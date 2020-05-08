@@ -481,13 +481,15 @@ void LocationClientApi::getGnssEnergyConsumed(
         GnssEnergyConsumedCb gnssEnergyConsumedCallback,
         ResponseCb responseCallback) {
 
-    if (mApiImpl && gnssEnergyConsumedCallback) {
-        mApiImpl->getGnssEnergyConsumed(gnssEnergyConsumedCallback,
-                                        responseCallback);
-    } else {
+    if (!gnssEnergyConsumedCallback) {
         if (responseCallback) {
             responseCallback(LOCATION_RESPONSE_PARAM_INVALID);
         }
+    } else if (mApiImpl) {
+        mApiImpl->getGnssEnergyConsumed(gnssEnergyConsumedCallback,
+                                        responseCallback);
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
     }
 }
 
@@ -495,13 +497,11 @@ void LocationClientApi::updateLocationSystemInfoListener(
     LocationSystemInfoCb locSystemInfoCallback,
     ResponseCb responseCallback) {
 
-    if (mApiImpl && locSystemInfoCallback) {
+    if (mApiImpl) {
         mApiImpl->updateLocationSystemInfoListener(
             locSystemInfoCallback, responseCallback);
     } else {
-        if (responseCallback) {
-            responseCallback(LOCATION_RESPONSE_PARAM_INVALID);
-        }
+        LOC_LOGe ("NULL mApiImpl");
     }
 }
 
