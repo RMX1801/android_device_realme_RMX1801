@@ -413,7 +413,7 @@ public:
     setTime(LocGpsUtcTime time, int64_t timeReference, int uncertainty);
 
   virtual void
-    injectPosition(double latitude, double longitude, float accuracy);
+    injectPosition(double latitude, double longitude, float accuracy, bool onDemandCpi);
 
   virtual void
     injectPosition(const Location& location, bool onDemandCpi);

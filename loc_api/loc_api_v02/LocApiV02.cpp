@@ -915,7 +915,7 @@ void LocApiV02 ::
 
 /* inject position into the position engine */
 void LocApiV02 ::
-    injectPosition(double latitude, double longitude, float accuracy)
+    injectPosition(double latitude, double longitude, float accuracy, bool onDemandCpi)
 {
     Location location = {};
 
@@ -933,7 +933,7 @@ void LocApiV02 ::
             (time_info_current.tv_nsec)/1e6;
     }
 
-    injectPosition(location, false);
+    injectPosition(location, onDemandCpi);
 }
 
 void LocApiV02::injectPosition(const Location& location, bool onDemandCpi)
