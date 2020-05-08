@@ -1,5 +1,5 @@
 
-/* Copyright (c) 2017, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2017, 2020 The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,11 +26,11 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#define LOG_TAG "LocSvc_LocNetIfaceHolder"
-
 #include <LocNetIfaceAgps.h>
 #include <loc_pla.h>
 #include <log_util.h>
+
+#define LOG_TAG "LocSvc_LocNetIfaceHolder"
 
 /* LocNetIfaceAgps members */
 LocNetIface* LocNetIfaceAgps::sLocNetIfaceAgpsInternet = NULL;
@@ -41,6 +41,8 @@ LocAgpsOpenResultCb LocNetIfaceAgps::sAgpsOpenResultCb = NULL;
 LocAgpsCloseResultCb LocNetIfaceAgps::sAgpsCloseResultCb = NULL;
 void* LocNetIfaceAgps::sUserDataPtr = NULL;
 AgpsCbInfo LocNetIfaceAgps::sAgpsCbInfo = {};
+
+#define LOCNETIFACE_AGPS_CLIENT    "agps-client"
 
 /* Method accessed from HAL */
 AgpsCbInfo& LocNetIfaceAgps_getAgpsCbInfo(
@@ -110,7 +112,7 @@ void LocNetIfaceAgps::agpsStatusCb(AGnssExtStatusIpV4 status){
 
             LOC_LOGV("REQUEST LOC_AGPS_TYPE_WWAN_ANY");
             sAgpsStateInternet = LOC_NET_AGPS_STATE_OPEN_PENDING;
-            if (!sLocNetIfaceAgpsInternet->connectBackhaul()) {
+            if (!sLocNetIfaceAgpsInternet->connectBackhaul(LOCNETIFACE_AGPS_CLIENT)) {
                 LOC_LOGE("Connect Backhaul failed");
                 wwanStatusCallback(
                         sLocNetIfaceAgpsInternet,
@@ -141,7 +143,7 @@ void LocNetIfaceAgps::agpsStatusCb(AGnssExtStatusIpV4 status){
 
             LOC_LOGV("RELEASE LOC_AGPS_TYPE_WWAN_ANY");
             sAgpsStateInternet = LOC_NET_AGPS_STATE_CLOSE_PENDING;
-            if (!sLocNetIfaceAgpsInternet->disconnectBackhaul()) {
+            if (!sLocNetIfaceAgpsInternet->disconnectBackhaul(LOCNETIFACE_AGPS_CLIENT)) {
                 LOC_LOGE("Disconnect backhaul failed !");
                 wwanStatusCallback(
                         sLocNetIfaceAgpsInternet,

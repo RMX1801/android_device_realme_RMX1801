@@ -25,8 +25,6 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#define LOG_TAG "LocSvc_LocNetIfaceLE"
-
 #include "LocNetIface.h"
 #include <QCMAP_Client.h>
 #include "qualcomm_mobile_access_point_msgr_v01.h"
@@ -35,6 +33,8 @@
 #include <loc_cfg.h>
 #include <log_util.h>
 #include <unistd.h>
+
+#define LOG_TAG "LocSvc_LocNetIface"
 
 using namespace izat_manager;
 
@@ -990,7 +990,7 @@ bool LocNetIface::isWwanConnected() {
     return false;
 }
 
-bool LocNetIface::connectBackhaul() {
+bool LocNetIface::connectBackhaul(const string& clientName) {
 
     ENTRY_LOG();
     lock_guard<recursive_mutex> guard(mMutex);
@@ -1004,7 +1004,7 @@ bool LocNetIface::connectBackhaul() {
             registerWwanCallStatusCallback(
                     mWwanCallStatusCb, mWwanCbUserDataPtr);
         }
-        return LocNetIface::sLocNetIfaceInstance->connectBackhaul();
+        return LocNetIface::sLocNetIfaceInstance->connectBackhaul(clientName);
     }
 
     /* QCMAP client instance must have been created.
@@ -1014,30 +1014,58 @@ bool LocNetIface::connectBackhaul() {
         return false;
     }
 
-    /* Check if backhaul is already connected */
+    /* Track each connection attempt by new clients,
+     * by increasing connect request recvd counter before notifying
+     * and returning success. */
+    ClientBackhaulRequest::const_iterator iter = mClientBackhaulReq.find(clientName);
+    if (iter == mClientBackhaulReq.end()) {
+        // not found in set. first time receiving from request from client
+        LOC_LOGd("Connect: Adding client %s to backhaul req list", clientName.c_str());
+        mClientBackhaulReq.insert(clientName);
+    }
+    IF_LOC_LOGD {
+        LOC_LOGd("Connect: List of client requested for backhaul");
+        for (auto clientName : mClientBackhaulReq) {
+            LOC_LOGd("Client: %s", clientName.c_str());
+        }
+    }
+
     qmi_error_type_v01 qmi_err_num = QMI_ERR_NONE_V01;
+#ifdef FEATURE_MOBILEAP_INDICATION
+    if (!mIsMobileApEnabled) {
+        LOC_LOGi("Enabling MobileAP..");
+         /* Need to enable MobileAP to invoke backhaul functions */
+        bool ret = mQcmapClientPtr->EnableMobileAP(&qmi_err_num);
+        if (false == ret) {
+            LOC_LOGe("Failed to enable mobileap, qcmapErr %d", qmi_err_num);
+            // clear client lists
+            mClientBackhaulReq.clear();
+            return false;
+        }
+        mIsMobileApEnabled = true;
+    }
+#endif
+
+    /* Check if backhaul is already connected */
+    qmi_err_num = QMI_ERR_NONE_V01;
     qcmap_msgr_wwan_status_enum_v01 v4_status, v6_status;
     if (mQcmapClientPtr->GetWWANStatus(
             &v4_status, &v6_status, &qmi_err_num) == false) {
-        LOC_LOGE("Failed to get wwan status, err 0x%x", qmi_err_num);
+        LOC_LOGe("Failed to get wwan status, err 0x%x", qmi_err_num);
     }
     if (v4_status == QCMAP_MSGR_WWAN_STATUS_CONNECTING_V01 ||
         v6_status == QCMAP_MSGR_WWAN_STATUS_IPV6_CONNECTING_V01) {
-        LOC_LOGI("Ongoing connection attempt, ignoring connect.");
+        LOC_LOGi("Ongoing connection attempt, ignoring connect.");
         return true;
     }
     if (v4_status == QCMAP_MSGR_WWAN_STATUS_CONNECTED_V01 ||
         v6_status == QCMAP_MSGR_WWAN_STATUS_IPV6_CONNECTED_V01) {
-        LOC_LOGV("Backhaul already connected, ignoring connect.");
+        LOC_LOGi("Backhaul already connected, ignoring connect.");
         if (mWwanCallStatusCb != NULL) {
             mWwanCallStatusCb(
                     mWwanCbUserDataPtr, LOC_NET_WWAN_CALL_EVT_OPEN_SUCCESS,
                     getApnNameFromConfig(), getIpTypeFromConfig());
         }
-        /* Track each connection attempt,
-         * by increasing connect request recvd counter before returning
-         * success. */
-        mConnectReqRecvCount++;
         return true;
     }
 
@@ -1046,29 +1074,16 @@ bool LocNetIface::connectBackhaul() {
         LOC_LOGd("Ignoring connect, connect pending %d, wwan state %d "
                 "req sent %d", mIsConnectBackhaulPending, mLocNetBackHaulState,
                 mIsConnectReqSent);
-        mConnectReqRecvCount++;
         return true;
     }
-
-#ifdef FEATURE_MOBILEAP_INDICATION
-    if (!mIsMobileApEnabled) {
-        LOC_LOGi("Enabling MobileAP..");
-        qmi_err_num = QMI_ERR_NONE_V01;
-         /* Need to enable MobileAP to invoke backhaul functions */
-        bool ret = mQcmapClientPtr->EnableMobileAP(&qmi_err_num);
-        if (false == ret) {
-            LOC_LOGE("Failed to enable mobileap, qcmapErr %d", qmi_err_num);
-            return false;
-        }
-        mIsMobileApEnabled = true;
-    }
-#endif
 
     /* Enable roaming */
     qmi_err_num = QMI_ERR_NONE_V01;
     LOC_LOGi("Calling SetRoaming enable");
     if (false == mQcmapClientPtr->SetRoaming(true, &qmi_err_num)) {
-        LOC_LOGE("Connect backhaul failed, err 0x%x", qmi_err_num);
+        LOC_LOGe("SetRoaming failed, err 0x%x", qmi_err_num);
+        // clear client lists
+        mClientBackhaulReq.clear();
         return false;
     }
 
@@ -1079,6 +1094,8 @@ bool LocNetIface::connectBackhaul() {
     if (mQcmapClientPtr->ConnectBackHaul(
             wwan_call_type, &qmi_err_num) == false) {
         LOC_LOGe("Connect backhaul failed, err 0x%x", qmi_err_num);
+        // clear client lists
+        mClientBackhaulReq.clear();
         // Do not Disable mobile AP if connect backhaul fails, as we
         // should not unnecessarily enable/disable MobileAp. MobileAP
         // will be disabled in Disconnect Backhaul after retries are
@@ -1089,7 +1106,6 @@ bool LocNetIface::connectBackhaul() {
     /* Set the flag to track */
     mIsConnectReqSent = true;
     mIsConnectBackhaulPending = true;
-    mConnectReqRecvCount++;
     return true;
 }
 
@@ -1101,7 +1117,7 @@ qcmap_msgr_wwan_call_type_v01 LocNetIface::getWwanCallType() {
 }
 
 
-bool LocNetIface::disconnectBackhaul() {
+bool LocNetIface::disconnectBackhaul(const string& clientName) {
 
     ENTRY_LOG();
     lock_guard<recursive_mutex> guard(mMutex);
@@ -1110,7 +1126,7 @@ bool LocNetIface::disconnectBackhaul() {
     if (this != LocNetIface::sLocNetIfaceInstance &&
             LocNetIface::sLocNetIfaceInstance != NULL) {
         LOC_LOGi("Invoke from static LocNetIface instance..");
-        return LocNetIface::sLocNetIfaceInstance->disconnectBackhaul();
+        return LocNetIface::sLocNetIfaceInstance->disconnectBackhaul(clientName);
     }
 
     /* QCMAP client instance must have been created.
@@ -1120,20 +1136,40 @@ bool LocNetIface::disconnectBackhaul() {
         return false;
     }
 
-    /* Track connect requests recvd to multiplexing */
-    if (mConnectReqRecvCount <= 0) {
-        LOC_LOGE("Invalid connect req recv count %d", mConnectReqRecvCount);
+    // check how many clients are there.
+    uint32_t numBackHaulClients = mClientBackhaulReq.size();
+    if (numBackHaulClients <= 0) {
+        LOC_LOGE("Invalid number of clients for backhaul %d", numBackHaulClients);
         return false;
     }
-    mConnectReqRecvCount--;
+
+    /* Track connect requests recvd to multiplexing */
+    // Check if client has requested for backhaul connection.
+    LOC_LOGd("Disconnect: Removing client %s from backhaul req list", clientName.c_str());
+    ClientBackhaulRequest::const_iterator iter = mClientBackhaulReq.find(clientName);
+    if (iter != mClientBackhaulReq.end()) {
+        // client found, remove from set.
+        mClientBackhaulReq.erase(iter);
+    }
+
+    // check if any more clients are there.
+    numBackHaulClients = mClientBackhaulReq.size();
+    IF_LOC_LOGD {
+        if (numBackHaulClients > 0) {
+            LOC_LOGd("Disconnect: List of client requested for backhaul");
+            for (auto clientName : mClientBackhaulReq) {
+                LOC_LOGd("Client: %s", clientName.c_str());
+            }
+        }
+    }
 
     /* Check if we've sent the request.
      * If we didn't send the connect request, no need to disconnect.
      * If we still have surplus connect request count, don't disconnect */
-    if (!mIsConnectReqSent || mConnectReqRecvCount > 0) {
-        LOC_LOGi("Conn req sent %d, conn req rcvd cnt %d, "
+    if (!mIsConnectReqSent || numBackHaulClients > 0) {
+        LOC_LOGi("Conn req sent %d, Num backhaul clients %d, "
                 "ignoring disconnect", mIsConnectReqSent,
-                mConnectReqRecvCount);
+                numBackHaulClients);
         if (mWwanCallStatusCb != NULL) {
             mWwanCallStatusCb(
                     mWwanCbUserDataPtr, LOC_NET_WWAN_CALL_EVT_CLOSE_SUCCESS,

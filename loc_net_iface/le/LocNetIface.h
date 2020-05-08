@@ -32,8 +32,12 @@
 #include <dsi_netctrl.h>
 #include <QCMAP_Client.h>
 #include <mutex>
+#include <unordered_set>
 
 using namespace std;
+
+// Storing details of backhaul client requests
+typedef unordered_set<string> ClientBackhaulRequest;
 
 /*--------------------------------------------------------------------
  *  LE platform specific implementation for LocNetIface
@@ -43,8 +47,7 @@ class LocNetIface : public LocNetIfaceBase {
 public:
     /* Constructor */
     LocNetIface(LocNetConnType connType) :
-        LocNetIfaceBase(connType), mQcmapClientPtr(NULL),
-        mConnectReqRecvCount(0), mIsConnectReqSent(false),
+        LocNetIfaceBase(connType), mQcmapClientPtr(NULL), mIsConnectReqSent(false),
         mIsConnectBackhaulPending(false), mIsDisconnectBackhaulPending(false),
         mLocNetBackHaulState(LOC_NET_CONN_STATE_INVALID),
         mLocNetBackHaulType(LOC_NET_CONN_TYPE_INVALID),
@@ -66,9 +69,9 @@ public:
 
     /* Setup WWAN backhaul via QCMAP
      * This sets up IP routes as well for any AP socket */
-    bool connectBackhaul();
+    bool connectBackhaul(const string& clientName);
     /* Disconnects the WWANbackhaul, only if it was setup by us */
-    bool disconnectBackhaul();
+    bool disconnectBackhaul(const string& clientName);
 
     /* APIs to fetch current WWAN status */
     bool isWwanConnected();
@@ -87,8 +90,10 @@ private:
      * This will be set only for static sQcmapInstance. */
     QCMAP_Client* mQcmapClientPtr;
 
+    /* Keep track of backhaul client requests */
+    ClientBackhaulRequest mClientBackhaulReq;
+
     /* Flag to track whether we've setup QCMAP backhaul */
-    int mConnectReqRecvCount;
     bool mIsConnectReqSent;
     bool mIsConnectBackhaulPending;
     bool mIsDisconnectBackhaulPending;
