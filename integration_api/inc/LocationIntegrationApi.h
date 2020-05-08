@@ -132,7 +132,9 @@ enum GnssConstellationType {
     /** GALILEO SV system <br/> */
     GNSS_CONSTELLATION_TYPE_GALILEO  = 4,
     /** SBAS SV system <br/> */
-    GNSS_CONSTELLATION_TYPE_SBAS     = 5
+    GNSS_CONSTELLATION_TYPE_SBAS     = 5,
+    /** NAVIC SV system <br/> */
+    GNSS_CONSTELLATION_TYPE_NAVIC     = 6
 };
 
 /**
@@ -148,6 +150,7 @@ struct GnssSvIdInfo {
      * BDS SV id range: 201 to 237 <br/>
      * GAL SV id range: 301 to 336 <br/>
      * SBAS SV id range: 120 to 158 and 183 to 191 <br/>
+     * NAVIC SV id range: 401 to 414 <br/>
      */
     uint32_t              svId;
 };
