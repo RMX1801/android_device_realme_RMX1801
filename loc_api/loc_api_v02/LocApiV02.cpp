@@ -632,10 +632,8 @@ void LocApiV02 :: startFix(const LocPosMode& fixCriteria, LocApiResponse *adapte
   memset (&set_mode_ind, 0, sizeof(set_mode_ind));
 
   LOC_LOGV("%s:%d]: start \n", __func__, __LINE__);
-  if (false == mIsFirstStartFixReq) {
-    loc_boot_kpi_marker("L - LocApiV02 start Fix session");
-    mIsFirstStartFixReq = true;
-  }
+  loc_boot_kpi_marker("L - LocApiV02 startFix, tbf %d", fixCriteria.min_interval);
+  mIsFirstFinalFixReported = false;
   fixCriteria.logv();
 
   mInSession = true;
@@ -802,6 +800,7 @@ void LocApiV02 :: stopFix(LocApiResponse *adapterResponse)
   qmiLocStopReqMsgT_v02 stop_msg;
 
   LOC_LOGD(" %s:%d]: stop called \n", __func__, __LINE__);
+  loc_boot_kpi_marker("L - LocApiV02 stop Fix session");
 
   memset(&stop_msg, 0, sizeof(stop_msg));
 
