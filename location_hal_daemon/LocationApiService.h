@@ -137,6 +137,9 @@ public:
     // other APIs
     void deleteClientbyName(const std::string name);
 
+    // protobuf conversion util class
+    LocationApiPbMsgConv mPbufMsgConv;
+
     static std::mutex mMutex;
 
     // Utility routine used by maintenance timer

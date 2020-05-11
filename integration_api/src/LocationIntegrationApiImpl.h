@@ -37,6 +37,7 @@
 #include <LocationIntegrationApi.h>
 #include <MsgTask.h>
 #include <LocationApiMsg.h>
+#include <LocationApiPbMsgConv.h>
 
 #ifdef NO_UNORDERED_SET_OR_MAP
     #include <map>
@@ -141,6 +142,9 @@ private:
     void processGetMinSvElevationRespCb(const LocConfigGetMinSvElevationRespMsg* pRespMsg);
     void processGetConstellationSecondaryBandConfigRespCb(
             const LocConfigGetConstellationSecondaryBandConfigRespMsg* pRespMsg);
+
+    // protobuf conversion util class
+    LocationApiPbMsgConv mPbufMsgConv;
 
     // internal session parameter
     static mutex             mMutex;

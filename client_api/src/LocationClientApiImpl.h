@@ -38,6 +38,7 @@
 #include <LocationClientApi.h>
 #include <MsgTask.h>
 #include <LocationApiMsg.h>
+#include <LocationApiPbMsgConv.h>
 #include <LCAReportLoggerUtil.h>
 #ifdef NO_UNORDERED_SET_OR_MAP
     #include <set>
@@ -166,6 +167,9 @@ private:
     ~LocationClientApiImpl();
     void capabilitesCallback(ELocMsgID  msgId, const void* msgData);
     void updateTrackingOptionsSync(LocationClientApiImpl* pImpl, TrackingOptions& option);
+
+    // protobuf conversion util class
+    LocationApiPbMsgConv mPbufMsgConv;
 
     // internal session parameter
     static uint32_t         mClientIdGenerator;
