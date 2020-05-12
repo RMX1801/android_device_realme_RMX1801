@@ -530,7 +530,11 @@ typedef enum {
     /** Position Report is RTK corrected*/
     CLIENT_DIAG_LOCATION_NAV_CORRECTION_RTK_BIT    = (1<<5),
     /** Position Report is PPP corrected*/
-    CLIENT_DIAG_LOCATION_NAV_CORRECTION_PPP_BIT    = (1<<6)
+    CLIENT_DIAG_LOCATION_NAV_CORRECTION_PPP_BIT    = (1<<6),
+    /** Posiiton Report is RTF fixed corrected */
+    CLIENT_DIAG_LOCATION_NAV_CORRECTION_RTK_FIXED_BIT  = (1<<7),
+    /** Position report is computed with only SBAS corrected SVs */
+    CLIENT_DIAG_LOCATION_NAV_CORRECTION_ONLY_SBAS_CORRECTED_SV_USED_BIT = (1<<8)
 } clientDiagGnssLocationNavSolutionBits;
 
 typedef uint32_t clientDiagGnssLocationPosTechMask;
