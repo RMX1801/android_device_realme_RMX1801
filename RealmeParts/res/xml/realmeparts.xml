@@ -15,7 +15,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:settings="http://schemas.android.com/apk/res/com.android.settings">
 
     <PreferenceCategory
         android:title="@string/ambient_display_title">
@@ -50,6 +51,8 @@
 
         <com.realmeparts.settings.vibration.VibratorStrengthPreference
 	    android:key="vib_strength"
-            android:icon="@drawable/ic_vibrate" />
+            android:icon="@drawable/ic_vibrate"
+            android:title="@string/vib_strength_title_head"
+            android:summary="@string/vib_strength_summary_head" />
     </PreferenceCategory>
 </PreferenceScreen>
