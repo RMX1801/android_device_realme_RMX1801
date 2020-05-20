@@ -721,8 +721,15 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     if (::LOCATION_NAV_CORRECTION_RTK_BIT & halLocationInfo.navSolutionMask) {
         flags |= LOCATION_NAV_CORRECTION_RTK_BIT;
     }
+    if (::LOCATION_NAV_CORRECTION_RTK_FIXED_BIT & halLocationInfo.navSolutionMask) {
+        flags |= LOCATION_NAV_CORRECTION_RTK_FIXED_BIT;
+    }
     if (::LOCATION_NAV_CORRECTION_PPP_BIT & halLocationInfo.navSolutionMask) {
         flags |= LOCATION_NAV_CORRECTION_PPP_BIT;
+    }
+    if (::LOCATION_NAV_CORRECTION_ONLY_SBAS_CORRECTED_SV_USED_BIT &
+            halLocationInfo.navSolutionMask) {
+        flags |= LOCATION_NAV_CORRECTION_ONLY_SBAS_CORRECTED_SV_USED_BIT;
     }
     locationInfo.navSolutionMask = (GnssLocationNavSolutionMask)flags;
 

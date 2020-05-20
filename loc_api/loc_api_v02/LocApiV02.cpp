@@ -7158,6 +7158,9 @@ LocNavSolutionMask LocApiV02 :: convertNavSolutionMask(
    if (mask & QMI_LOC_NAV_MASK_CORRECTION_DGNSS_V02)
       locNavMask |= LOC_NAV_MASK_DGNSS_CORRECTION;
 
+   if (mask & QMI_LOC_NAV_MASK_ONLY_SBAS_CORRECTED_SV_USED_V02)
+      locNavMask |= LOC_NAV_MASK_ONLY_SBAS_CORRECTED_SV_USED;
+
    return locNavMask;
 }
 
