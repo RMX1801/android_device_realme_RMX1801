@@ -7029,7 +7029,8 @@ int LocApiV02::setSvMeasurementConstellation(const locClientEventMaskType mask)
                                                 eQMI_SYSTEM_GLO_V02 |
                                                 eQMI_SYSTEM_BDS_V02 |
                                                 eQMI_SYSTEM_GAL_V02 |
-                                                eQMI_SYSTEM_QZSS_V02;
+                                                eQMI_SYSTEM_QZSS_V02 |
+                                                eQMI_SYSTEM_NAVIC_V02;
     LOC_LOGD("%s] set GNSS measurement to report constellation: %" PRIu64 " "
             "report mask = 0x%" PRIx64 "\n",
             __func__, svConstellation, mask);
