@@ -470,6 +470,26 @@
         </interface>
     </hal>
     <hal format="hidl">
+        <name>vendor.oppo.hardware.radio.oppoappradio</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IOppoAppRadio</name>
+            <instance>oppo_app_slot1</instance>
+            <instance>oppo_app_slot2</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.oppo.hardware.radio.opporadio</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>IOppoRadio</name>
+            <instance>oppo_slot1</instance>
+            <instance>oppo_slot2</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
         <name>vendor.qti.data.factory</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -524,6 +544,15 @@
         </interface>
     </hal>
     <hal format="hidl">
+        <name>vendor.qti.hardware.data.latency</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>ILinkLatency</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl">
         <name>vendor.qti.hardware.data.connection</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -534,11 +563,11 @@
         </interface>
     </hal>
     <hal format="hidl">
-        <name>vendor.qti.hardware.data.latency</name>
+        <name>vendor.qti.hardware.fm</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
         <interface>
-            <name>ILinkLatency</name>
+            <name>IFmHci</name>
             <instance>default</instance>
         </interface>
     </hal>
