@@ -62,6 +62,8 @@
         <usecase name="USECASE_AUDIO_PLAYBACK_SILENCE" type="out" id="27" />
         <usecase name="USECASE_AUDIO_HFP_SCO" type="in" id="12" />
         <usecase name="USECASE_AUDIO_HFP_SCO_WB" type="in" id="12" />
+        <usecase name="USECASE_AUDIO_RECORD_COMPRESS2" type="in" id="41"/>
+
     </pcm_ids>
     <config_params>
         <!-- In the below value string, the value indicates default mono -->
