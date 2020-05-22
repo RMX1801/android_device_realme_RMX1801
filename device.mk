@@ -153,6 +153,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.bluetooth.audio@2.0-impl \
     audio.bluetooth.default \
+    libbluetooth_audio_session \
     libbthost_if
 
 # Camera
