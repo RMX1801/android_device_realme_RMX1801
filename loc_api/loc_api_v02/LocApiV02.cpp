@@ -6778,6 +6778,7 @@ LocationError LocApiV02::setParameterSync(const GnssConfig & gnssConfig) {
         req.paramType = eQMI_LOC_PARAMETER_TYPE_MINIMUM_SV_ELEVATION_V02;
         req.minSvElevation_valid = 1;
         req.minSvElevation = gnssConfig.minSvElevation;
+        LOC_LOGd("set min sv elevation to %d", req.minSvElevation);
     }
 
     if (req.paramType != eQMI_LOC_PARAMETER_TYPE_RESERVED_V02) {
@@ -6796,6 +6797,8 @@ LocationError LocApiV02::setParameterSync(const GnssConfig & gnssConfig) {
             } else {
                 err = LOCATION_ERROR_GENERAL_FAILURE;
             }
+        } else {
+            err = LOCATION_ERROR_SUCCESS;
         }
     }
 
