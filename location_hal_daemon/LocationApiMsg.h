@@ -60,6 +60,8 @@ Constants
 using namespace std;
 using namespace loc_util;
 
+static const char SERVICE_NAME[] = "locapiservice";
+
 class SockNode {
     const int32_t mId1;
     const int32_t mId2;
@@ -341,6 +343,45 @@ struct LocAPIMsgHeader
             memset(mSocketName, 0, MAX_SOCKET_PATHNAME_LENGTH);
             strlcpy(mSocketName, name, MAX_SOCKET_PATHNAME_LENGTH);
         }
+
+    inline bool isValidMsg(uint32_t msgSize) {
+        bool msgValid = true;
+        if (msgSize < sizeof(LocAPIMsgHeader)) {
+            LOC_LOGe("payload size %d smaller than minimum payload size %d",
+                     msgSize, sizeof(LocAPIMsgHeader));
+             msgValid = false;
+        } else if (msgVersion != LOCATION_REMOTE_API_MSG_VERSION) {
+            LOC_LOGe("msg id %d, msg version %d not matching with expected version %d",
+                     msgId, msgVersion, LOCATION_REMOTE_API_MSG_VERSION);
+             msgValid = false;
+        }
+        return msgValid;
+    }
+
+    bool isValidClientMsg(uint32_t msgSize) {
+        bool msgValid = isValidMsg(msgSize);
+        if ((true== msgValid) &&
+                ((strncmp(mSocketName, SOCKET_LOC_CLIENT_DIR,
+                          sizeof(SOCKET_LOC_CLIENT_DIR)-1) != 0) &&
+                 (strncmp(mSocketName, EAP_LOC_CLIENT_DIR,
+                          sizeof(EAP_LOC_CLIENT_DIR)-1) != 0))) {
+            LOC_LOGe("msg not from expected client");
+            msgValid = false;
+        }
+
+        return msgValid;
+    }
+
+    bool isValidServerMsg(uint32_t msgSize) {
+        bool msgValid = isValidMsg(msgSize);
+        if ((true== msgValid) &&
+                (strncmp(mSocketName, SERVICE_NAME, sizeof(SERVICE_NAME)) != 0)) {
+            LOC_LOGe("msg not from expected server %s", SERVICE_NAME);
+            msgValid = false;
+        }
+
+        return msgValid;
+    }
 };
 
 /******************************************************************************
