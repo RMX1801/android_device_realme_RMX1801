@@ -73,4 +73,8 @@ patchelf --remove-needed android.hidl.base@1.0.so \
 sed -i 's/<library name="android.hidl.manager-V1.0-java"/<library name="android.hidl.manager@1.0-java"/g' \
         "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/etc/permissions/qti_libpermissions.xml"
 
+sed -i 's/xml version="2.0"/xml version="1.0"/g' \
+        "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml" \
+        "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml"
+
 "${MY_DIR}/setup-makefiles.sh"
