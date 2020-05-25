@@ -96,3 +96,10 @@ on boot
     chmod 0666 /sys/devices/virtual/graphics/fb0/fingerprint_notify
     chmod 0666 /sys/devices/virtual/graphics/fb0/dynamic_fps_switch
     chmod 0666 /sys/devices/virtual/graphics/fb0/panel_serial_number
+
+# Add for oppoalgo_daemon
+service oppoalgo /vendor/bin/oppoalgo_daemon
+    class main
+    user media
+    ioprio rt 4
+    group camera input drmrpc sdcard_rw system
