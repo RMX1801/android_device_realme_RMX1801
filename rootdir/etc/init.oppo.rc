@@ -72,3 +72,27 @@ on boot
 
     # Enable oppo's touchpanel direction
     write /proc/touchpanel/oppo_tp_direction 1
+
+    # Add for MM display feature
+    chown system system /sys/devices/virtual/graphics/fb0/cabc
+    chown system system /sys/devices/virtual/graphics/fb0/lcdoff
+    chown system system /sys/devices/virtual/graphics/fb0/hbm
+    chown system system /sys/devices/virtual/graphics/fb0/acl
+    chown system system /sys/devices/virtual/graphics/fb0/closebl
+    chown system system /sys/devices/virtual/graphics/fb0/ffl_set
+    chown system system /sys/devices/virtual/graphics/fb0/lbr
+    chown system system /sys/devices/virtual/graphics/fb0/seed
+    chown system system /sys/devices/virtual/graphics/fb0/debug
+    chown system system /sys/devices/virtual/graphics/fb0/lcm_id_info
+    chown system system /sys/devices/virtual/graphics/fb0/fingerprint_notify
+    chown system system /sys/devices/virtual/graphics/fb0/dynamic_fps_switch
+    chown system system /sys/devices/virtual/graphics/fb0/panel_serial_number
+
+    chmod 0666 /sys/devices/virtual/graphics/fb0/cabc
+    chmod 0666 /sys/devices/virtual/graphics/fb0/hbm
+    chmod 0666 /sys/devices/virtual/graphics/fb0/ffl_set
+    chmod 0666 /sys/devices/virtual/graphics/fb0/debug
+    chmod 0666 /sys/devices/virtual/graphics/fb0/lcm_id_info
+    chmod 0666 /sys/devices/virtual/graphics/fb0/fingerprint_notify
+    chmod 0666 /sys/devices/virtual/graphics/fb0/dynamic_fps_switch
+    chmod 0666 /sys/devices/virtual/graphics/fb0/panel_serial_number

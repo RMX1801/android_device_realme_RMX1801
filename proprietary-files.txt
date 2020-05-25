@@ -3066,6 +3066,14 @@ vendor/lib64/vendor.qti.hardware.vpp@1.1.so
 # NFC
 vendor/etc/libnfc-nci.conf
 
+# Oppo MM Display
+vendor/bin/hw/vendor.oppo.hardware.mmdisplayfeature@1.0-service
+vendor/etc/init/vendor.oppo.hardware.mmdisplayfeature@1.0-service.rc
+vendor/lib/hw/vendor.oppo.hardware.mmdisplayfeature@1.0-impl.so
+vendor/lib/vendor.oppo.hardware.mmdisplayfeature@1.0.so
+vendor/lib64/hw/vendor.oppo.hardware.mmdisplayfeature@1.0-impl.so
+vendor/lib64/vendor.oppo.hardware.mmdisplayfeature@1.0.so
+
 # Perf
 vendor/bin/energy-awareness
 vendor/bin/msm_irqbalance
