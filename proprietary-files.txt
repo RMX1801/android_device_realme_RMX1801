@@ -3290,6 +3290,10 @@ vendor/lib64/libssc_default_listener.so
 vendor/lib64/sensors.ssc.so
 vendor/lib64/sensor_calibrate.so
 
+# Sensor-configs
+vendor/etc/sensors/sensor_def_18321.conf
+vendor/etc/sensors/sensor_def_qcomdev.conf
+
 # Touchpanel Firmware
 vendor/firmware/tp/18321/FW_HX_NF83112A_DSJM.img
 vendor/firmware/tp/18321/FW_HX_NF83112A_DSJM_FAE.img
