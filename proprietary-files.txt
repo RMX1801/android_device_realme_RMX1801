@@ -3174,19 +3174,21 @@ vendor/lib64/libGPTEE_vendor.so
 vendor/lib64/libQTEEConnector_vendor.so
 vendor/lib64/vendor.qti.hardware.qteeconnector@1.0.so
 
-# Radio (IMS) - from lavender - V11.0.9.0.PFGINXM
-lib64/libdiag_system.so|81a47cb3a8c4a040cc0144ae15684b4dfe4e0dd6
-lib64/libimscamera_jni.so|133fec4e7be337eb255eb226c4ff96ae53b94be7
-lib64/libimsmedia_jni.so|6b741c6ca5fc407d16fcfeb5a695fd485daad5b4
-lib64/libmmrtpdecoder.so|5b6c1e8d63bab729862f8e4afff374e2e365a51a
-lib64/libmmrtpencoder.so|da67c10a9fb3579c2a5b8ab705fc0335ec62bef0
-lib64/librcc.so|96c467ec6b7ea03b77cda3b88fb36a56c196aaa8
-lib64/lib-imsvideocodec.so|88733c234a56cb05c3a5f9edd6840b6db8a1963b
-lib64/lib-imsvt.so|8dafceb20cb519944b669278e61b532eed0d9060
-lib64/lib-imsvtextutils.so|4f5e33e1fce70dafdc9ed0de95440ccd262342d7
-lib64/lib-imsvtutils.so|3c1913878aac6c5d5a9b279acecf5997d3737d5e
-lib64/vendor.qti.imsrtpservice@1.0.so|559a2dbf409d86746ed4303f2e0089256bb91a07
--priv-app/ims/ims.apk|3de4664c12bc274cc733ffe9fa59d256a09d67bf
+# Radio (IMS) - from jasmine_sprout - V10.0.18.0.PDIMIXM
+-priv-app/ims/ims.apk|0c7e831a8e2b4e7c5cc553b51c92b742e63ad1a3
+
+# Radio (IMS)
+lib64/libdiag_system.so
+lib64/libimscamera_jni.so
+lib64/libimsmedia_jni.so
+lib64/libmmrtpdecoder.so
+lib64/libmmrtpencoder.so
+lib64/librcc.so
+lib64/lib-imsvideocodec.so
+lib64/lib-imsvt.so
+lib64/lib-imsvtextutils.so
+lib64/lib-imsvtutils.so
+lib64/vendor.qti.imsrtpservice@1.0.so
 vendor/bin/imsdatadaemon
 vendor/bin/imsqmidaemon
 vendor/bin/imsrcsd
@@ -3218,14 +3220,16 @@ vendor/lib64/vendor.qti.ims.rcsconfig@1.0.so
 vendor/lib64/vendor.qti.imsrtpservice@1.0-service-Impl.so
 vendor/lib64/vendor.qti.imsrtpservice@1.0.so
 
-# Radio - from lavender - V11.0.9.0.PFGINXM
--app/QtiTelephonyService/QtiTelephonyService.apk|13ac4f5ea563473afe0c0ec9999f3e352f6d2990
-etc/permissions/qcrilhook.xml|9fc58a3d54d20ac1d53bab14608815121aefbce5
-etc/permissions/telephonyservice.xml|b297c8a27443570377d78586b00198839ce326bb
-framework/qcrilhook.jar|09d148be77e961c4b0efc2960ff91db831ff7c91
-framework/qti-telephony-common.jar|bf1c27b02a117649d5526df23a0a0acfe48927a2
-framework/QtiTelephonyServicelibrary.jar|108c0da8899c71e8f579d9ea815b14a8ab74c048
--priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk|d1d3adfe6eff32a3013e146317324029181e3c4a
+# Radio - from jasmine_sprout - V10.0.18.0.PDIMIXM
+framework/qti-telephony-common.jar|fd7990368e66d4dc5aaeebe41c35ab1e5a6333b4
+
+# Radio
+-app/QtiTelephonyService/QtiTelephonyService.apk
+etc/permissions/qcrilhook.xml
+etc/permissions/telephonyservice.xml
+framework/qcrilhook.jar
+framework/QtiTelephonyServicelibrary.jar
+-priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
 vendor/bin/ATFWD-daemon
 vendor/bin/hw/qcrild
 vendor/bin/netmgrd
