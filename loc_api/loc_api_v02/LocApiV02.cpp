@@ -3540,8 +3540,10 @@ void  LocApiV02 :: reportSv (
 
                 if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_SNR_V02) {
                     gnssSv_ref.cN0Dbhz = sv_info_ptr->snr;
+                    gnssSv_ref.basebandCarrierToNoiseDbHz = 0.0;
                     if ((1 == gnss_report_ptr->expandedSvList_valid) &&
-                        (1 == gnss_report_ptr->rfLoss_valid)) {
+                        (1 == gnss_report_ptr->rfLoss_valid) &&
+                        (gnssSv_ref.cN0Dbhz > gnss_report_ptr->rfLoss[i])) {
                         gnssSv_ref.basebandCarrierToNoiseDbHz = gnssSv_ref.cN0Dbhz -
                                 gnss_report_ptr->rfLoss[i];
                     }
@@ -6361,8 +6363,11 @@ bool LocApiV02 :: convertGnssMeasurements(
     }
 
     // basebandCarrierToNoiseDbHz
-    measurementData.basebandCarrierToNoiseDbHz = measurementData.carrierToNoiseDbHz -
-            gnss_measurement_info.gloRfLoss / 10.0;
+    measurementData.basebandCarrierToNoiseDbHz = 0.0;
+    if (measurementData.carrierToNoiseDbHz > gnss_measurement_info.gloRfLoss / 10.0) {
+        measurementData.basebandCarrierToNoiseDbHz = measurementData.carrierToNoiseDbHz -
+                gnss_measurement_info.gloRfLoss / 10.0;
+    }
 
     // intersignal bias
     if (gnss_measurement_report_ptr.gnssSignalType_valid &&
