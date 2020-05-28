@@ -68,6 +68,7 @@ bool LocationClientApi::startPositionSession(
         LocationCb locationCallback,
         ResponseCb responseCallback) {
 
+    loc_boot_kpi_marker("L - LCA standard startFix, tbf %d", intervalInMs);
     //Input parameter check
     if (!locationCallback) {
         LOC_LOGe ("NULL locationCallback");
@@ -113,6 +114,7 @@ bool LocationClientApi::startPositionSession(
         const GnssReportCbs& gnssReportCallbacks,
         ResponseCb responseCallback) {
 
+    loc_boot_kpi_marker("L - LCA Extended startFix, tbf %d", intervalInMs);
     //Input parameter check
     if (!gnssReportCallbacks.gnssLocationCallback) {
         LOC_LOGe ("gnssLocation Callbacks can't be NULL");
@@ -167,6 +169,7 @@ bool LocationClientApi::startPositionSession(
         const EngineReportCbs& engReportCallbacks,
         ResponseCb responseCallback) {
 
+    loc_boot_kpi_marker("L - LCA Fused startFix, tbf %d", intervalInMs);
     //Input parameter check
     if (!engReportCallbacks.engLocationsCallback) {
         LOC_LOGe ("engLocations Callbacks can't be NULL");
