@@ -244,7 +244,13 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
     // parse received message
     LocAPIMsgHeader* pMsg = (LocAPIMsgHeader*)data;
-    LOC_LOGi(">-- onReceive len=%u remote=%s msgId=%u",
+
+    // throw away msg that does not come from location hal daemon client, e.g. LCA/LIA
+    if (false == pMsg->isValidClientMsg(length)) {
+        return;
+    }
+
+    LOC_LOGi(">-- onReceive len=%u remote client=%s msgId=%u\n",
             length, pMsg->mSocketName, pMsg->msgId);
 
     switch (pMsg->msgId) {
