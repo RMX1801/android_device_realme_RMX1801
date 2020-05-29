@@ -37,22 +37,6 @@
 #include <dlfcn.h>
 #include <loc_misc_utils.h>
 
-#ifndef LOG_GNSS_CLIENT_API_LOCATION_REPORT_C
-#define LOG_GNSS_CLIENT_API_LOCATION_REPORT_C (0x1C8F)
-#endif
-#ifndef LOG_GNSS_CLIENT_API_SV_REPORT_C
-#define LOG_GNSS_CLIENT_API_SV_REPORT_C (0x1C90)
-#endif
-#ifndef LOG_GNSS_CLIENT_API_NMEA_REPORT_C
-#define LOG_GNSS_CLIENT_API_NMEA_REPORT_C (0x1CB2)
-#endif
-#ifndef LOG_GNSS_CLIENT_API_MEASUREMENTS_REPORT_C
-#define LOG_GNSS_CLIENT_API_MEASUREMENTS_REPORT_C (0x1CB7)
-#endif
-#ifndef LOG_GNSS_CLIENT_API_SV_POLY_REPORT_C
-#define LOG_GNSS_CLIENT_API_SV_POLY_REPORT_C (0x1CC7)
-#endif
-
 static uint32_t gDebug = 0;
 
 static const loc_param_s_type gConfigTable[] =
@@ -1011,10 +995,8 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         mGnssEnergyConsumedResponseCb(nullptr),
         mLocationSysInfoCb(nullptr),
         mLocationSysInfoResponseCb(nullptr),
-        mPingTestCb(nullptr)
-#ifndef FEATURE_EXTERNAL_AP
-        ,mDiagIface(nullptr)
-#endif
+        mPingTestCb(nullptr),
+        mLogger()
 {
     // read configuration file
     UTIL_READ_CONF(LOC_PATH_GPS_CONF, gConfigTable);
@@ -1882,30 +1864,6 @@ void LocationClientApiImpl::pingTest(PingTestCb pingTestCallback) {
     return;
 }
 
-void LocationClientApiImpl::diagLogGnssLocation(const GnssLocation &gnssLocation) {
-#ifndef FEATURE_EXTERNAL_AP
-    if (!mDiagIface) {
-        return;
-    }
-
-    diagBuffSrc bufferSrc = BUFFER_INVALID;
-    clientDiagGnssLocationStructType* diagGnssLocPtr = nullptr;
-    diagGnssLocPtr = (clientDiagGnssLocationStructType*)
-            mDiagIface->logAlloc(LOG_GNSS_CLIENT_API_LOCATION_REPORT_C,
-                                 sizeof(clientDiagGnssLocationStructType), &bufferSrc);
-    if (diagGnssLocPtr == NULL) {
-        LOC_LOGv("diag memory alloc failed");
-        return;
-    }
-    populateClientDiagLocation(diagGnssLocPtr, gnssLocation);
-    diagGnssLocPtr->version = LOG_CLIENT_LOCATION_DIAG_MSG_VERSION;
-
-    mDiagIface->logCommit(diagGnssLocPtr, bufferSrc,
-                          LOG_GNSS_CLIENT_API_LOCATION_REPORT_C,
-                          sizeof(clientDiagGnssLocationStructType));
-#endif // FEATURE_EXTERNAL_AP
-}
-
 /******************************************************************************
 LocationClientApiImpl -ILocIpcListener
 ******************************************************************************/
@@ -1925,16 +1883,9 @@ void IpcListener::onListenerReady() {
 void IpcListener::onReceive(const char* data, uint32_t length,
                             const LocIpcRecver* recver) {
     struct OnReceiveHandler : public LocMsg {
-#ifndef FEATURE_EXTERNAL_AP
-        OnReceiveHandler(LocationClientApiImpl& apiImpl, IpcListener& listener,
-                         const char* data, uint32_t length, LocDiagIface* mDiagIface) :
-                mApiImpl(apiImpl), mListener(listener), mMsgData(data, length),
-                mDiagInterface(mDiagIface) {}
-#else
         OnReceiveHandler(LocationClientApiImpl& apiImpl, IpcListener& listener,
                          const char* data, uint32_t length) :
                 mApiImpl(apiImpl), mListener(listener), mMsgData(data, length) {}
-#endif
 
         virtual ~OnReceiveHandler() {}
         void proc() const {
@@ -2123,7 +2074,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     if (mApiImpl.mGnssLocationCb) {
                         mApiImpl.mGnssLocationCb(gnssLocation);
                     }
-                    mApiImpl.diagLogGnssLocation(gnssLocation);
+                    mApiImpl.mLogger.log(gnssLocation);
                 }
                 break;
             }
@@ -2146,7 +2097,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                         GnssLocation gnssLocation =
                             parseLocationInfo(pEngLocationsInfoIndMsg->engineLocationsInfo[i]);
                         engLocationsVector.push_back(gnssLocation);
-                        mApiImpl.diagLogGnssLocation(gnssLocation);
+                        mApiImpl.mLogger.log(gnssLocation);
                     }
 
                     if (mApiImpl.mEngLocationsCb) {
@@ -2175,26 +2126,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     if (mApiImpl.mGnssSvCb) {
                         mApiImpl.mGnssSvCb(gnssSvsVector);
                     }
-#ifndef FEATURE_EXTERNAL_AP
-                    if (!mDiagInterface) {
-                        break;
-                    }
-                    diagBuffSrc bufferSrc = BUFFER_INVALID;
-                    clientDiagGnssSvStructType* diagGnssSvPtr = nullptr;
-                    diagGnssSvPtr = (clientDiagGnssSvStructType*)mDiagInterface->logAlloc(
-                            LOG_GNSS_CLIENT_API_SV_REPORT_C,
-                            sizeof(clientDiagGnssSvStructType), &bufferSrc);
-                    if (diagGnssSvPtr == NULL) {
-                        LOC_LOGv("memory alloc failed");
-                        break;
-                    }
-                    populateClientDiagGnssSv(diagGnssSvPtr, gnssSvsVector);
-                    diagGnssSvPtr->version = LOG_CLIENT_SV_REPORT_DIAG_MSG_VERSION;
-
-                    mDiagInterface->logCommit(diagGnssSvPtr, bufferSrc,
-                            LOG_GNSS_CLIENT_API_SV_REPORT_C,
-                            sizeof(clientDiagGnssSvStructType));
-#endif // FEATURE_EXTERNAL_AP
+                    mApiImpl.mLogger.log(gnssSvsVector);
                 }
                 break;
             }
@@ -2216,29 +2148,9 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                         each += '\n';
                         mApiImpl.mGnssNmeaCb(timestamp, each);
                     }
-
-#ifndef FEATURE_EXTERNAL_AP
-                    if (!mDiagInterface) {
-                        break;
-                    }
-                    size_t diagBufferSize = sizeof(clientDiagGnssNmeaStructType) +
-                            pNmeaIndMsg->gnssNmeaNotification.length - 1;
-                    diagBuffSrc bufferSrc = BUFFER_INVALID;
-                    clientDiagGnssNmeaStructType* diagGnssNmeaPtr = nullptr;
-                    diagGnssNmeaPtr = (clientDiagGnssNmeaStructType*)
-                        mDiagInterface->logAlloc(LOG_GNSS_CLIENT_API_NMEA_REPORT_C,
-                                diagBufferSize, &bufferSrc);
-                    if (diagGnssNmeaPtr == NULL) {
-                        LOC_LOGv("memory alloc failed");
-                        break;
-                    }
-                    populateClientDiagNmea(diagGnssNmeaPtr, pNmeaIndMsg->gnssNmeaNotification);
-                    diagGnssNmeaPtr->version = LOG_CLIENT_NMEA_REPORT_DIAG_MSG_VERSION;
-
-                    mDiagInterface->logCommit(diagGnssNmeaPtr, bufferSrc,
-                            LOG_GNSS_CLIENT_API_NMEA_REPORT_C,
-                            sizeof(clientDiagGnssNmeaStructType));
-#endif // FEATURE_EXTERNAL_AP
+                    mApiImpl.mLogger.log(timestamp,
+                            pNmeaIndMsg->gnssNmeaNotification.length,
+                            pNmeaIndMsg->gnssNmeaNotification.nmea);
                 }
                 break;
             }
@@ -2277,55 +2189,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     if (mApiImpl.mGnssMeasurementsCb) {
                         mApiImpl.mGnssMeasurementsCb(gnssMeasurements);
                     }
-#ifndef FEATURE_EXTERNAL_AP
-                    if (!mDiagInterface) {
-                        break;
-                    }
-                    diagBuffSrc bufferSrc = BUFFER_INVALID;
-                    clientDiagGnssMeasurementsStructType* diagGnssMeasPtr = nullptr;
-                    diagGnssMeasPtr =
-                            (clientDiagGnssMeasurementsStructType*)mDiagInterface->logAlloc(
-                                    LOG_GNSS_CLIENT_API_MEASUREMENTS_REPORT_C,
-                                    sizeof(clientDiagGnssMeasurementsStructType),
-                                    &bufferSrc);
-                    if (NULL == diagGnssMeasPtr) {
-                        LOC_LOGv("memory alloc failed");
-                        break;
-                    }
-                    diagGnssMeasPtr->count = gnssMeasurements.measurements.size();
-                    if (diagGnssMeasPtr->count > CLIENT_DIAG_GNSS_MEASUREMENTS_MAX) {
-                        diagGnssMeasPtr->count = CLIENT_DIAG_GNSS_MEASUREMENTS_MAX;
-                    }
-                    diagGnssMeasPtr->maxSequence =
-                            (uint8)(((diagGnssMeasPtr->count - 0.5) /
-                                    CLIENT_DIAG_GNSS_MEASUREMENTS_SEQ) + 1);
-                    LOC_LOGv("maxSequence = %d, count = %d",
-                             diagGnssMeasPtr->maxSequence, diagGnssMeasPtr->count);
-                    diagGnssMeasPtr->version = LOG_CLIENT_MEASUREMENTS_DIAG_MSG_VERSION;
-                    diagGnssMeasPtr->clock.flags =
-                        (clientDiagGnssMeasurementsClockFlagsMask)gnssMeasurements.clock.flags;
-                    diagGnssMeasPtr->clock.leapSecond = gnssMeasurements.clock.leapSecond;
-                    diagGnssMeasPtr->clock.timeNs = gnssMeasurements.clock.timeNs;
-                    diagGnssMeasPtr->clock.timeUncertaintyNs =
-                            gnssMeasurements.clock.timeUncertaintyNs;
-                    diagGnssMeasPtr->clock.fullBiasNs = gnssMeasurements.clock.fullBiasNs;
-                    diagGnssMeasPtr->clock.biasNs = gnssMeasurements.clock.biasNs;
-                    diagGnssMeasPtr->clock.biasUncertaintyNs =
-                            gnssMeasurements.clock.biasUncertaintyNs;
-                    diagGnssMeasPtr->clock.driftNsps = gnssMeasurements.clock.driftNsps;
-                    diagGnssMeasPtr->clock.driftUncertaintyNsps =
-                            gnssMeasurements.clock.driftUncertaintyNsps;
-                    diagGnssMeasPtr->clock.hwClockDiscontinuityCount =
-                            gnssMeasurements.clock.hwClockDiscontinuityCount;
-                    for (uint8 i = 0; i < diagGnssMeasPtr->maxSequence; i++) {
-                        diagGnssMeasPtr->sequenceNumber = i + 1;
-                        LOC_LOGv("seqNumber = %d", diagGnssMeasPtr->sequenceNumber);
-                        populateClientDiagMeasurements(diagGnssMeasPtr, gnssMeasurements);
-                        mDiagInterface->logCommit(diagGnssMeasPtr, bufferSrc,
-                                LOG_GNSS_CLIENT_API_MEASUREMENTS_REPORT_C,
-                                sizeof(clientDiagGnssMeasurementsStructType));
-                    }
-#endif // FEATURE_EXTERNAL_AP
+                    mApiImpl.mLogger.log(gnssMeasurements);
                 }
                 break;
             }
@@ -2402,26 +2266,8 @@ void IpcListener::onReceive(const char* data, uint32_t length,
         LocationClientApiImpl& mApiImpl;
         IpcListener& mListener;
         const string mMsgData;
-#ifndef FEATURE_EXTERNAL_AP
-        LocDiagIface* mDiagInterface;
-#endif //FEATURE_EXTERNAL_AP
     };
-#ifndef FEATURE_EXTERNAL_AP
-    if (mApiImpl.mDiagIface == nullptr) {
-        void* libHandle = nullptr;
-        getLocDiagIface_t* getter = (getLocDiagIface_t*)dlGetSymFromLib(libHandle,
-                "liblocdiagiface.so.1.0.0", "getLocDiagIface");
-        if (getter != nullptr) {
-            mApiImpl.mDiagIface = (*getter)();
-        } else {
-            LOC_LOGe("<<< failed to load LocDiagIface library\n");
-        }
-    }
-    mMsgTask.sendMsg(new (nothrow) OnReceiveHandler(mApiImpl, *this, data, length,
-                mApiImpl.mDiagIface));
-#else
     mMsgTask.sendMsg(new (nothrow) OnReceiveHandler(mApiImpl, *this, data, length));
-#endif // FEATURE_EXTERNAL_AP
 }
 
 /******************************************************************************
