@@ -491,6 +491,7 @@ void LocHalDaemonClientHandler::onCollectiveResponseCallback(
     }
     memset(msg, 0, msglen);
     LocAPICollectiveRespMsg *pmsg = reinterpret_cast<LocAPICollectiveRespMsg*>(msg);
+    pmsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
     strlcpy(pmsg->mSocketName, SERVICE_NAME, MAX_SOCKET_PATHNAME_LENGTH);
     pmsg->collectiveRes.size = msglen;
     pmsg->collectiveRes.count = count;
@@ -680,6 +681,7 @@ void LocHalDaemonClientHandler::onBatchingCb(size_t count, Location* location,
         LocAPIBatchingIndMsg *pmsg = reinterpret_cast<LocAPIBatchingIndMsg*>(msg);
         strlcpy(pmsg->mSocketName, SERVICE_NAME, MAX_SOCKET_PATHNAME_LENGTH);
         pmsg->msgId = E_LOCAPI_BATCHING_MSG_ID;
+        pmsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
         pmsg->batchNotification.size = msglen;
         pmsg->batchNotification.count = count;
         pmsg->batchNotification.status = BATCHING_STATUS_POSITION_AVAILABE;
@@ -741,6 +743,7 @@ void LocHalDaemonClientHandler::onGeofenceBreachCb(GeofenceBreachNotification gf
         LocAPIGeofenceBreachIndMsg *pmsg = reinterpret_cast<LocAPIGeofenceBreachIndMsg*>(msg);
         strlcpy(pmsg->mSocketName, SERVICE_NAME, MAX_SOCKET_PATHNAME_LENGTH);
         pmsg->msgId = E_LOCAPI_GEOFENCE_BREACH_MSG_ID;
+        pmsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
         pmsg->gfBreachNotification.size = msglen;
         pmsg->gfBreachNotification.count = gfBreachNotif.count;
         pmsg->gfBreachNotification.timestamp = gfBreachNotif.timestamp;
@@ -868,6 +871,7 @@ void LocHalDaemonClientHandler::onGnssNmeaCb(GnssNmeaNotification notification) 
         LocAPINmeaIndMsg *pmsg = reinterpret_cast<LocAPINmeaIndMsg*>(msg);
         strlcpy(pmsg->mSocketName, SERVICE_NAME, MAX_SOCKET_PATHNAME_LENGTH);
         pmsg->msgId = E_LOCAPI_NMEA_MSG_ID;
+        pmsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
         pmsg->gnssNmeaNotification.size = msglen;
         pmsg->gnssNmeaNotification.timestamp = notification.timestamp;
         pmsg->gnssNmeaNotification.length = notification.length;
