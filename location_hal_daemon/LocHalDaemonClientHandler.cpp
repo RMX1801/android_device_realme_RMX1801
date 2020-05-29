@@ -381,7 +381,7 @@ void LocHalDaemonClientHandler::cleanup() {
                 sizeof(EAP_LOC_CLIENT_DIR)-1) == 0 ) {
         LOC_LOGv("removed file %s", mName.c_str());
         if (0 != remove(mName.c_str())) {
-            LOC_LOGe("<-- failed to remove file %s", mName.c_str());
+            LOC_LOGe("<-- failed to remove file %s error %s", mName.c_str(), strerror(errno));
         }
     }
 

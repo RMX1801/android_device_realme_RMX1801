@@ -149,12 +149,22 @@ private:
     // send ipc message to this client for general use
     template <typename MESSAGE>
     bool sendMessage(const MESSAGE& msg) {
-        return sendMessage(reinterpret_cast<const uint8_t*>(&msg), sizeof(msg));
+        bool retVal= sendMessage(reinterpret_cast<const uint8_t*>(&msg), sizeof(msg));
+        if (retVal == false) {
+            LOC_LOGe("failed: client %s, msg id: %d, err %s",
+                     mName.c_str(), ((LocAPIMsgHeader) msg).msgId, strerror(errno));
+        }
+        return retVal;
     }
 
     // send ipc message to this client for serialized payload
     bool sendMessage(const uint8_t* pmsg, size_t msglen) {
-        return LocIpc::send(*mIpcSender, pmsg, msglen);
+        bool retVal= LocIpc::send(*mIpcSender, pmsg, msglen);
+        if (retVal == false) {
+            LOC_LOGe("failed: client %s, msg id: %d, err %s",
+                     mName.c_str(), ((LocAPIMsgHeader*) pmsg)->msgId, strerror(errno));
+        }
+        return retVal;
     }
 
     uint32_t getSupportedTbf (uint32_t tbfMsec);

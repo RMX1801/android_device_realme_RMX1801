@@ -127,8 +127,11 @@ public:
             return LocIpc::getLocIpcLocalSender(sock);
         case SockNode::EAP:
             if (createFsNode) {
-                if (nullptr == fopen(sock, "w")) {
-                    LOC_LOGe("<-- failed to open file %s", sock);
+                FILE * pFile = fopen(sock, "w");
+                if (nullptr == pFile) {
+                    LOC_LOGe("<-- failed to open file %s error: %s", sock, strerror(errno));
+                } else {
+                    fclose (pFile);
                 }
             }
             return LocIpc::getLocIpcQrtrSender(getId1(), getId2());
