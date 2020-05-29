@@ -8,7 +8,6 @@ PRODUCT_PROPERTY_OVERRIDES +=  \
 PRODUCT_PROPERTY_OVERRIDES +=  \
     af.fast_track_multiplier=1 \
     audio.adm.buffering.ms=4 \
-    audio.deep_buffer.media=true \
     audio.offload.min.duration.secs=30 \
     persist.vendor.audio.fluence.speaker=true \
     persist.vendor.audio.fluence.voicecall=true \
