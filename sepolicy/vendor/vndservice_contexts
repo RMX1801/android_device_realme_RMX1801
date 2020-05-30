@@ -1,1 +1,2 @@
+android.OPPO.IOppoAlgoDaemon                                                 u:object_r:oppoalgo_service:s0
 vendor.oppo.hardware.biometrics.fingerprint::IBiometricsFingerprint          u:object_r:fingerprintvnd_service:s0

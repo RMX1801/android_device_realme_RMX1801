@@ -27,6 +27,12 @@
 /dev/block/platform/soc/c0c4000.sdhci/by-name/oppodycnvbk                                               u:object_r:modem_efs_partition_device:s0
 /dev/block/platform/soc/c0c4000.sdhci/by-name/oppostanvbk                                               u:object_r:modem_efs_partition_device:s0
 
+# Oppoalgo
+/vendor/bin/oppoalgo_daemon                                                            u:object_r:oppoalgo_daemon_exec:s0
+
+# Oppo MM Display
+/vendor/bin/hw/vendor\.oppo\.hardware\.mmdisplayfeature@1\.0-service                   u:object_r:hal_omdisplay_oppo_exec:s0
+
 # Opporeserve
 /dev/block/platform/soc/c0c4000.sdhci/by-name/opporeserve1                                             u:object_r:oppo_block_device:s0
 /dev/block/platform/soc/c0c4000.sdhci/by-name/opporeserve2                                             u:object_r:oppo_block_device:s0
