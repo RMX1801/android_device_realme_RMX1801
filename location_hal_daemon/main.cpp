@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
     UTIL_READ_CONF(LOC_PATH_GPS_CONF, configTable);
 
     LOC_LOGi("location hal daemon - ver %s", HAL_DAEMON_VERSION);
+    loc_boot_kpi_marker("L - Location Probe Start");
 
     waitForDir(SOCKET_DIR_LOCATION);
     waitForDir(SOCKET_LOC_CLIENT_DIR);
