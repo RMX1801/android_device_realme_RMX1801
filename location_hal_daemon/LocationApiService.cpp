@@ -192,7 +192,7 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
         pClient->updateSubscription(
                 E_LOC_CB_GNSS_LOCATION_INFO_BIT | E_LOC_CB_GNSS_SV_BIT);
 
-        LocationOptions locationOption;
+        LocationOptions locationOption = {};
         locationOption.size = sizeof(locationOption);
         locationOption.minInterval = configParamRead.gnssSessionTbfMs;
         locationOption.minDistance = 0;
