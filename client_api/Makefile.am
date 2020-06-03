@@ -13,11 +13,13 @@ requiredlibs = \
 
 h_sources = \
     src/LocationClientApiImpl.h \
+    src/LCAReportLoggerUtil.h \
     inc/LocationClientApi.h
 
 c_sources = \
     src/LocationClientApiImpl.cpp \
-    src/LocationClientApi.cpp
+    src/LocationClientApi.cpp \
+    src/LCAReportLoggerUtil.cpp
 
 liblocation_client_api_la_SOURCES = \
     $(c_sources) $(h_sources)
@@ -40,13 +42,6 @@ endif
 if USE_EXTERNAL_AP
 AM_CFLAGS += $(LOCSOCKET_CFLAGS)
 requiredlibs += $(LOCSOCKET_LIBS)
-else
-AM_CFLAGS += $(DIAGIFACE_CFLAGS)
-AM_CFLAGS += $(DIAG_CFLAGS)
-requiredlibs += $(DIAGIFACE_LIBS)
-requiredlibs += $(DIAG_LIBS)
-h_sources += src/LocationClientApiLog.h
-c_sources += src/LocationClientApiUtils.cpp
 endif
 
 liblocation_client_api_la_LIBADD = $(requiredlibs) -lstdc++ -ldl

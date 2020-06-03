@@ -33,9 +33,15 @@ PKG_CHECK_MODULES([GPSUTILS], [gps-utils])
 AC_SUBST([GPSUTILS_CFLAGS])
 AC_SUBST([GPSUTILS_LIBS])
 
-PKG_CHECK_MODULES([QMIFW], [qmi-framework])
-AC_SUBST([QMIFW_CFLAGS])
-AC_SUBST([QMIFW_LIBS])
+AC_ARG_WITH([qsocket],
+       AC_HELP_STRING([--with-qsocket], [kernel supports qsocket]))
+
+AM_CONDITIONAL(USE_QSOCKET, test "x${with_qsocket}" = "xyes")
+AM_COND_IF(USE_QSOCKET, [
+    PKG_CHECK_MODULES([QMIFW], [qmi-framework])
+    AC_SUBST([QMIFW_CFLAGS])
+    AC_SUBST([QMIFW_LIBS])
+])
 
 AC_ARG_WITH([external_ap],
     AC_HELP_STRING([--with-external_ap=@<:@dir@:>@],
@@ -51,19 +57,6 @@ else
     AC_SUBST([CUTILS_CFLAGS])
     AC_SUBST([CUTILS_LIBS])
 fi
-
-AC_ARG_WITH([kernel-qrtr],
-       AC_HELP_STRING([--with-kernel-qrtr],
-          [enable kernel qrtr, kernel supports qrtr]))
-AC_ARG_ENABLE([kernel-qrtr],
-         [  --enable-kernel-qrtr kernel qrtr is enabled],
-         [case "${enableval}" in
-             yes) kernelqrtr=true ;;
-             no)  kernelqrtr=false ;;
-             *) AC_MSG_ERROR([bad value ${enableval} for --enable-kernel-qrtr]) ;;
-         esac],[kernelqrtr=false])
-
-AM_CONDITIONAL(USE_QSOCKET, test "x${kernelqrtr}" = "xfalse")
 
 AC_ARG_WITH([glib],
       AC_HELP_STRING([--with-glib],

@@ -381,7 +381,7 @@ void LocHalDaemonClientHandler::cleanup() {
                 sizeof(EAP_LOC_CLIENT_DIR)-1) == 0 ) {
         LOC_LOGv("removed file %s", mName.c_str());
         if (0 != remove(mName.c_str())) {
-            LOC_LOGe("<-- failed to remove file %s", mName.c_str());
+            LOC_LOGe("<-- failed to remove file %s error %s", mName.c_str(), strerror(errno));
         }
     }
 
@@ -681,7 +681,7 @@ void LocHalDaemonClientHandler::onBatchingCb(size_t count, Location* location,
 
         // serialize locations in batch into ipc message payload
         size_t msglen = sizeof(LocAPIBatchingIndMsg) + sizeof(Location) * (count - 1);
-        uint8_t *msg = new(std::nothrow) uint8_t[msglen];
+        uint8_t *msg = new (std::nothrow) uint8_t[msglen];
         if (nullptr == msg) {
             return;
         }
@@ -871,7 +871,7 @@ void LocHalDaemonClientHandler::onGnssNmeaCb(GnssNmeaNotification notification) 
 
         // serialize nmea string into ipc message payload
         size_t msglen = sizeof(LocAPINmeaIndMsg) + notification.length;
-        uint8_t *msg = new(std::nothrow) uint8_t[msglen];
+        uint8_t *msg = new (std::nothrow) uint8_t[msglen];
         if (nullptr == msg) {
             return;
         }

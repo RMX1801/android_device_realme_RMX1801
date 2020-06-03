@@ -161,7 +161,13 @@ enum GnssLocationNavSolutionMask {
     LOCATION_NAV_CORRECTION_RTK_BIT    = (1<<5),
     /** PPP correction was used to calculate
      *  GnssLocation. <br/>   */
-    LOCATION_NAV_CORRECTION_PPP_BIT    = (1<<6)
+    LOCATION_NAV_CORRECTION_PPP_BIT    = (1<<6),
+    /** RTK fixed correction was used to to calculate
+        GnssLocation. <br/> */
+    LOCATION_NAV_CORRECTION_RTK_FIXED_BIT  = (1<<7),
+    /** Only SBAS corrected SVs was used to calculate
+        GnssLocation. <br/> */
+    LOCATION_NAV_CORRECTION_ONLY_SBAS_CORRECTED_SV_USED_BIT = (1<<8)
 };
 
 /**
