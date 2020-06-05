@@ -115,7 +115,8 @@ const float CarrierFrequencies[] = {
     GLONASS_G1_CARRIER_FREQUENCY,       // GLONASS_G1
     QZSS_L1CA_CARRIER_FREQUENCY,        // QZSS_L1CA
     BEIDOU_B1_I_CARRIER_FREQUENCY,      // BEIDOU_B1
-    GALILEO_E1_C_CARRIER_FREQUENCY };   // GALILEO_E1
+    GALILEO_E1_C_CARRIER_FREQUENCY,     // GALILEO_E1
+    NAVIC_L5_CARRIER_FREQUENCY };       // NAVIC_L5
 
 /* Gaussian 2D scaling table - scale from x% to 68% confidence */
 struct conf_scaler_to_68_pair {
