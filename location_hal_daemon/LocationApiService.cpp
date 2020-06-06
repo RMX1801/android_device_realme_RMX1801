@@ -180,8 +180,7 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
             GnssAidingData aidingData = {};
             aidingData.deleteAll = true;
             aidingData.posEngineMask = configParamRead.posEngineMask;
-
-            gnssDeleteAidingData(aidingData);
+            mLocationControlApi->gnssDeleteAidingData(aidingData);
         }
 
         LOC_LOGd("--> Starting a default client...");
@@ -375,15 +374,6 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
                 break;
             }
             resumeGeofences(reinterpret_cast<LocAPIResumeGeofencesReqMsg*>(pMsg));
-            break;
-        }
-        case E_LOCAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID: {
-            if (sizeof(LocAPIDeleteAidingDataReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
-            gnssDeleteAidingData(reinterpret_cast
-                    <LocAPIDeleteAidingDataReqMsg*>(pMsg)->gnssAidingData);
             break;
         }
         case E_LOCAPI_CONTROL_UPDATE_NETWORK_AVAILABILITY_MSG_ID: {
