@@ -30,6 +30,24 @@
 
     </PreferenceCategory>
 
+
+    <PreferenceCategory
+        android:key="display"
+        android:title="@string/display_category">
+
+        <Preference
+            android:key="device_kcal"
+            android:persistent="false"
+            android:icon="@drawable/ic_kcal"
+            android:title="@string/device_kcal_title"
+            android:summary="@string/device_kcal_summary" >
+            <intent
+                android:action="android.intent.action.MAIN"
+                android:targetClass="com.realmeparts.settings.kcal.KCalSettingsActivity"
+                android:targetPackage="com.realmeparts.settings.kcal"/>
+        </Preference>
+    </PreferenceCategory>
+
     <PreferenceCategory
         android:title="@string/touchscreen_gesture_category">
 
@@ -54,5 +72,43 @@
             android:icon="@drawable/ic_vibrate"
             android:title="@string/vib_strength_title_head"
             android:summary="@string/vib_strength_summary_head" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/fastcharge_control">
+
+        <com.realmeparts.settings.preference.SecureSettingSwitchPreference
+            android:key="fastcharge"
+            android:defaultValue="0"
+            android:icon="@drawable/ic_usb_fastcharge"
+            android:title="@string/fastcharge_title"
+            android:summary="@string/fastcharge_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/otg_title">
+
+        <com.realmeparts.settings.preference.SecureSettingSwitchPreference
+            android:key="otg"
+            android:defaultValue="0"
+            android:icon="@drawable/ic_otg_tile"
+            android:title="@string/otg_mode_title"
+            android:summary="@string/otg_mode_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="game_mode"
+        android:title="@string/game_category_title">
+
+        <com.realmeparts.settings.preference.SecureSettingSwitchPreference
+            android:key="game"
+            android:icon="@drawable/ic_game_mode"
+            android:summary="@string/game_mode_summary"
+            android:title="@string/game_mode_title" />
+
+        <Preference
+            android:icon="@drawable/ic_info_outline"
+            android:summary="@string/game_mode_warning" 
+            android:persistent="false" />
     </PreferenceCategory>
 </PreferenceScreen>

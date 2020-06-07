@@ -29,10 +29,24 @@ import androidx.preference.SwitchPreference;
 import androidx.preference.TwoStatePreference;
 
 import com.realmeparts.settings.doze.DozeSettingsActivity;
+import com.realmeparts.settings.kcal.KCalSettingsActivity;
 import com.realmeparts.settings.vibration.VibratorStrengthPreference;
 
 public class RealmeParts extends PreferenceFragment implements
         Preference.OnPreferenceChangeListener {
+
+    public static final String PREF_USB_FAST_CHARGE_SWITCH = "fastcharge";
+    public static final String USB_FAST_CHARGE_PATH = "/sys/kernel/fast_charge/force_fast_charge";
+
+    public static final String PREF_OTG_SWITCH = "otg";
+    public static final String USB_OTG_SWITCH_PATH = "/sys/class/power_supply/usb/otg_switch";
+
+    public static final String PREF_GAME_SWITCH = "game";
+    public static final String GAME_SWITCH_PATH = "/proc/touchpanel/game_switch_enable";
+
+    private static TwoStatePreference mUSBFastChgModeSwitch;
+    private static TwoStatePreference mOTGModeSwitch;
+    private static TwoStatePreference mGameModeSwitch;
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -47,13 +61,37 @@ public class RealmeParts extends PreferenceFragment implements
             }
         });
 
+        Preference mKCal = findPreference("device_kcal");
+        mKCal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), KCalSettingsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+
         VibratorStrengthPreference mVibratorStrength = findPreference("vib_strength");
         mVibratorStrength.setEnabled(VibratorStrengthPreference.isSupported());
+
+        mUSBFastChgModeSwitch = (TwoStatePreference) findPreference(PREF_USB_FAST_CHARGE_SWITCH);
+        mUSBFastChgModeSwitch.setEnabled(USBFastChgModeSwitch.isSupported());
+        mUSBFastChgModeSwitch.setChecked(USBFastChgModeSwitch.isCurrentlyEnabled(this.getContext()));
+        mUSBFastChgModeSwitch.setOnPreferenceChangeListener(new USBFastChgModeSwitch(getContext()));
+
+        mOTGModeSwitch = (TwoStatePreference) findPreference(PREF_OTG_SWITCH);
+        mOTGModeSwitch.setEnabled(OTGModeSwitch.isSupported());
+        mOTGModeSwitch.setChecked(OTGModeSwitch.isCurrentlyEnabled(this.getContext()));
+        mOTGModeSwitch.setOnPreferenceChangeListener(new OTGModeSwitch(getContext()));
+
+        mGameModeSwitch = (TwoStatePreference) findPreference(PREF_GAME_SWITCH);
+        mGameModeSwitch.setEnabled(GameModeSwitch.isSupported());
+        mGameModeSwitch.setChecked(GameModeSwitch.isCurrentlyEnabled(this.getContext()));
+        mGameModeSwitch.setOnPreferenceChangeListener(new GameModeSwitch(getContext()));
     }
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        final String key = preference.getKey();
-        return true;
+        return false;
     }
 }

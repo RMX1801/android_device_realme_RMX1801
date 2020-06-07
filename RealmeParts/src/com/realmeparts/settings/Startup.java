@@ -34,7 +34,15 @@ public class Startup extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent bootintent) {
+        boolean enabled = false;
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         TouchscreenGestureSettings.MainSettingsFragment.restoreTouchscreenGestureStates(context);
+        enabled = sharedPrefs.getBoolean(RealmeParts.PREF_USB_FAST_CHARGE_SWITCH, false);
+        restore(USBFastChgModeSwitch.getFile(), enabled);
+        enabled = sharedPrefs.getBoolean(RealmeParts.PREF_OTG_SWITCH, false);
+        restore(OTGModeSwitch.getFile(), enabled);
+        enabled = sharedPrefs.getBoolean(RealmeParts.PREF_GAME_SWITCH, false);
+        restore(GameModeSwitch.getFile(), enabled);
     }
 
     private boolean hasRestoredTunable(Context context) {
@@ -45,5 +53,21 @@ public class Startup extends BroadcastReceiver {
     private void setRestoredTunable(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         preferences.edit().putBoolean(ONE_TIME_TUNABLE_RESTORE, true).apply();
+    }
+
+    private void restore(String file, boolean enabled) {
+        if (file == null) {
+            return;
+        }
+        if (enabled) {
+            FileUtils.setValue(file, "1");
+        }
+    }
+
+    private void restore(String file, String value) {
+        if (file == null) {
+            return;
+        }
+        FileUtils.setValue(file, value);
     }
 }

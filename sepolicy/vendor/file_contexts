@@ -60,6 +60,11 @@
 # Power supply
 /sys/devices(/platform)?/soc/[a-z0-9]+.qcom,spmi/spmi-[0-9]/spmi[0-9]-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,qpnp-smb2/power_supply/ac(/.*)?  u:object_r:sysfs_battery_supply:s0
 
+# RealmeParts
+/sys/bus/platform/drivers/kcal_ctrl/kcal_ctrl.[0-2](/.*)?        u:object_r:kcal_sysfs:s0
+/sys/devices/platform/kcal_ctrl.[0-2](/.*)?                      u:object_r:kcal_sysfs:s0
+/sys/kernel/fast_charge/force_fast_charge                        u:object_r:sysfs_usb_fastcharge:s0
+
 # RTC
 /sys/devices(/platform)?/soc/[a-z0-9]+.qcom,spmi/spmi-[0-9]/spmi[0-9]-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,pm660_rtc/rtc/rtc0(/.*)?  u:object_r:sysfs_rtc:s0
 

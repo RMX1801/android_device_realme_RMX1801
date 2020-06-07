@@ -29,6 +29,7 @@ import /vendor/etc/init/hw/init.oppo.rc
 import /vendor/etc/init/hw/init.qcom.usb.rc
 import /vendor/etc/init/hw/init.msm.usb.configfs.rc
 import /vendor/etc/init/hw/init.target.rc
+import /vendor/etc/init/init.realmeparts.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -63,12 +64,6 @@ on post-fs
     chmod 0755 /sys/kernel/debug/tracing
 
     write /sys/class/graphics/fb0/idle_time 100
-
-    # Vibrator
-    chown system system /sys/class/timed_output/vibrator/vtg_default
-    chown system system /sys/class/timed_output/vibrator/vtg_level
-    chown system system /sys/class/timed_output/vibrator/vtg_max
-    chown system system /sys/class/timed_output/vibrator/vtg_min
 
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
@@ -162,7 +157,6 @@ on boot
 
     #Remove SUID bit for iproute2 ip tool
     chmod 0755 /system/bin/ip
-
 
     chmod 0444 /sys/devices/platform/msm_hsusb/gadget/usb_state
 

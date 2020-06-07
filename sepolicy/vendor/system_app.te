@@ -10,5 +10,13 @@ dontaudit system_app {
 }:service_manager find;
 
 # RealmeParts
+allow system_app kcal_sysfs:file rw_file_perms;
+allow system_app kcal_sysfs:dir search;
+allow system_app proc_touchpanel:file rw_file_perms;
+allow system_app proc_touchpanel:dir search;
+allow system_app sysfs_usb_fastcharge:file rw_file_perms;
+allow system_app sysfs_usb_supply:dir search;
+allow system_app sysfs_usb_supply:file rw_file_perms;
+allow system_app sysfs_usb_supply:dir search;
 allow system_app sysfs_vibrator:dir search;
 allow system_app sysfs_vibrator:file rw_file_perms;

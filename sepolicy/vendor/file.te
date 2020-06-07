@@ -15,3 +15,7 @@ type sysfs_mmc, sysfs_type, fs_type;
 type sysfs_oembackup, sysfs_type, fs_type;
 type sysfs_white_led, sysfs_type, fs_type;
 type sysfs_wlan, sysfs_type, fs_type;
+
+# RealmeParts
+type kcal_sysfs, sysfs_type, fs_type;
+type sysfs_usb_fastcharge, sysfs_type, fs_type;
