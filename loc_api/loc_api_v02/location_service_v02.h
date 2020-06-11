@@ -8666,7 +8666,7 @@ typedef struct {
  To use other AGNSS protocols such as RRLP over LTE and NR, this configuration must be
  turned off. In addition the appropriate NV items to enable RRLP must be set.
 
- Please refer to Qualcomm documents 90-ND184-1, 80-YA518-1 and 80-VU905-1 for more details.
+ Please refer to QTI documents 90-ND184-1, 80-YA518-1 and 80-VU905-1 for more details.
 
  Valid bitmasks: \n
       - QMI_LOC_LPP_CONFIG_ENABLE_USER_PLANE (0x00000001) --  Enable user plane configuration for LTE Positioning Profile (LPP) \n
