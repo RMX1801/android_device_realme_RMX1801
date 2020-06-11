@@ -64,10 +64,82 @@ uint32_t GeofenceImpl::nextId() {
 /******************************************************************************
 Utilities
 ******************************************************************************/
+static GnssMeasurementsDataFlagsMask parseMeasurementsDataMask(
+    ::GnssMeasurementsDataFlagsMask in) {
+    uint32_t out = 0;
+    LOC_LOGd("Hal GnssMeasurementsDataFlagsMask =0x%x ", in);
+
+    if (::GNSS_MEASUREMENTS_DATA_SV_ID_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_SV_ID_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_SV_TYPE_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_SV_TYPE_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_STATE_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_STATE_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_UNCERTAINTY_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_UNCERTAINTY_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_CARRIER_TO_NOISE_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_CARRIER_TO_NOISE_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_UNCERTAINTY_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_UNCERTAINTY_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_ADR_STATE_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_ADR_STATE_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_ADR_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_ADR_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_ADR_UNCERTAINTY_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_ADR_UNCERTAINTY_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_CARRIER_CYCLES_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_CARRIER_CYCLES_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_UNCERTAINTY_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_UNCERTAINTY_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_MULTIPATH_INDICATOR_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_MULTIPATH_INDICATOR_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_SIGNAL_TO_NOISE_RATIO_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_SIGNAL_TO_NOISE_RATIO_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
+    }
+    if (::GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT & in) {
+        out |= GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT;
+    }
+    LOC_LOGd("LCA GnssMeasurementsDataFlagsMask =0x%x ", out);
+    return static_cast<GnssMeasurementsDataFlagsMask>(out);
+}
+
 static LocationCapabilitiesMask parseCapabilitiesMask(::LocationCapabilitiesMask mask) {
     uint64_t capsMask = 0;
 
-    LOC_LOGd ("LocationCapabilitiesMask =0x%x ", mask);
+    LOC_LOGd("LocationCapabilitiesMask =0x%x ", mask);
 
     if (::LOCATION_CAPABILITIES_TIME_BASED_TRACKING_BIT & mask) {
         capsMask |= LOCATION_CAPS_TIME_BASED_TRACKING_BIT;
@@ -800,6 +872,7 @@ static GnssSv parseGnssSv(const ::GnssSv &halGnssSv) {
     gnssSv.cN0Dbhz = halGnssSv.cN0Dbhz;
     gnssSv.elevation = halGnssSv.elevation;
     gnssSv.azimuth = halGnssSv.azimuth;
+    gnssSv.basebandCarrierToNoiseDbHz = halGnssSv.basebandCarrierToNoiseDbHz;
 
     uint32_t gnssSvOptionsMask = 0;
     if (::GNSS_SV_OPTIONS_HAS_EPHEMER_BIT & halGnssSv.gnssSvOptionsMask) {
@@ -850,8 +923,8 @@ static GnssMeasurements parseGnssMeasurements(const ::GnssMeasurementsNotificati
     for (int meas = 0; meas < halGnssMeasurements.count; meas++) {
         GnssMeasurementsData measurement;
 
-        measurement.flags = (GnssMeasurementsDataFlagsMask)
-                halGnssMeasurements.measurements[meas].flags;
+        measurement.flags =
+                parseMeasurementsDataMask(halGnssMeasurements.measurements[meas].flags);
         measurement.svId = halGnssMeasurements.measurements[meas].svId;
         measurement.svType =
                 (location_client::GnssSvType)halGnssMeasurements.measurements[meas].svType;
@@ -883,6 +956,15 @@ static GnssMeasurements parseGnssMeasurements(const ::GnssMeasurementsNotificati
         measurement.signalToNoiseRatioDb =
                 halGnssMeasurements.measurements[meas].signalToNoiseRatioDb;
         measurement.agcLevelDb = halGnssMeasurements.measurements[meas].agcLevelDb;
+        measurement.basebandCarrierToNoiseDbHz =
+                halGnssMeasurements.measurements[meas].basebandCarrierToNoiseDbHz;
+        measurement.gnssSignalType =
+                parseGnssSignalType(halGnssMeasurements.measurements[meas].gnssSignalType);
+        measurement.interSignalBiasNs =
+                halGnssMeasurements.measurements[meas].fullInterSignalBiasNs;
+        measurement.interSignalBiasUncertaintyNs =
+                halGnssMeasurements.measurements[meas].fullInterSignalBiasUncertaintyNs;
+        measurement.cycleSlipCount = halGnssMeasurements.measurements[meas].cycleSlipCount;
 
         gnssMeasurements.measurements.push_back(measurement);
     }

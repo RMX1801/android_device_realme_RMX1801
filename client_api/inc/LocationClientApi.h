@@ -1078,6 +1078,9 @@ struct GnssSv {
      *  This field is valid if gnssSvOptionsMask has
      *  GNSS_SV_OPTIONS_HAS_GNSS_SIGNAL_TYPE_BIT. <br/> */
     GnssSignalTypeMask gnssSignalTypeMask;
+    /** Baseband signal strength Db Hz. <br/>
+     *  This field is always available in sv report. <br/> */
+    double basebandCarrierToNoiseDbHz;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
     string toString();
@@ -1233,6 +1236,15 @@ enum GnssMeasurementsDataFlagsMask{
     /** GnssMeasurementsData has valid
      *  GnssMeasurementsData::agcLevelDb.  <br/>   */
     GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT       = (1<<17),
+    /** GnssMeasurementsData has valid
+     *  GnssMeasurementsData::interSignalBiasNs.  <br/>   */
+    GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT                     = (1<<18),
+    /** GnssMeasurementsData has valid
+     *  GnssMeasurementsData::interSignalBiasUncertaintyNs.  <br/>   */
+    GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT         = (1<<19),
+    /** GnssMeasurementsData has valid
+     *  GnssMeasurementsData::cycleslipCount.  <br/>   */
+    GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT             = (1<<20),
 };
 
 /** Specify GNSS measurement state in
@@ -1394,6 +1406,18 @@ struct GnssMeasurementsData {
     double signalToNoiseRatioDb;
     /** Automatic gain control level, in unit of dB <br/> */
     double agcLevelDb;
+    /** Baseband signal strength, in uint of dB Hz.
+     *  Should always be available in measurement report. <br/> */
+    double basebandCarrierToNoiseDbHz;
+    /** GNSS signal type mask of the SV.
+     *  Should always be available in measurement report. <br/> */
+    GnssSignalTypeMask gnssSignalType;
+    /** GNSS Intersystem Time Bias. <br/> */
+    double interSignalBiasNs;
+    /** GNSS Intersystem Time Bias uncertanity. <br/> */
+    double interSignalBiasUncertaintyNs;
+    /** Increments when a cycle slip is detected. <br/> */
+    uint8_t cycleSlipCount;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
     string toString();
