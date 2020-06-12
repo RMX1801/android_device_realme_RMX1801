@@ -1,0 +1,2 @@
+allow hal_wifi_hostapd_default sysfs_wlan:dir search;
+allow hal_wifi_hostapd_default wifi_vendor_data_file:dir search;
