@@ -35,6 +35,7 @@
 #include <MsgTask.h>
 #include <loc_cfg.h>
 #include <LocIpc.h>
+#include <LocTimer.h>
 #ifdef POWERMANAGER_ENABLED
 #include <PowerEvtHandler.h>
 #endif
@@ -74,6 +75,33 @@ typedef struct {
     ELocMsgID   configMsgId;
 } ConfigReqClientData;
 
+// periodic timer to perform maintenance work, e.g.: resource cleanup
+// for location hal daemon
+typedef std::unordered_map<std::string, shared_ptr<LocIpcSender>> ClientNameIpcSenderMap;
+class MaintTimer : public LocTimer {
+public:
+    MaintTimer(LocationApiService* locationApiService) :
+            mLocationApiService(locationApiService),
+            mMsgTask(new MsgTask("LocHalDaemonMaintenanceMsgTask", false)) {
+        if (!mMsgTask) {
+            LOC_LOGe("failed to create msg task");
+        }
+    };
+
+    ~MaintTimer() {
+        if (mMsgTask) {
+            mMsgTask->destroy();
+        }
+    }
+
+public:
+    void timeOutCallback() override;
+
+private:
+    LocationApiService* mLocationApiService;
+    MsgTask*            mMsgTask;
+};
+
 class LocationApiService
 {
 public:
@@ -111,6 +139,9 @@ public:
     void deleteClientbyName(const std::string name);
 
     static std::mutex mMutex;
+
+    // Utility routine used by maintenance timer
+    void performMaintenance();
 
 private:
     // APIs can be invoked to process client's IPC messgage
@@ -225,6 +256,9 @@ private:
     const uint32_t mAutoStartGnss;
 
     PowerStateType  mPowerState;
+
+    // maintenance timer
+    MaintTimer mMaintTimer;
 };
 
 #endif //LOCATIONAPISERVICE_H
