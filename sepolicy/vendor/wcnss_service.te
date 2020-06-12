@@ -1,0 +1,1 @@
+allow wcnss_service sysfs_wlan:dir search;
