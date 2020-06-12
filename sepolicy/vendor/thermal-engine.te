@@ -1,2 +1,6 @@
 allow thermal-engine sysfs_oembackup:dir search;
 allow thermal-engine sysfs_oembackup:file { r_file_perms getattr };
+
+allow thermal-engine sysfs:dir r_dir_perms;
+allow thermal-engine sysfs_devfreq:dir r_dir_perms;
+allow thermal-engine sysfs_devfreq:file rw_file_perms;
