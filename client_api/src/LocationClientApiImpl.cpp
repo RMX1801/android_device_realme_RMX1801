@@ -28,6 +28,8 @@
 
 #define LOG_TAG "LocSvc_LocationClientApi"
 
+#include <sys/types.h>
+#include <unistd.h>
 #include <loc_cfg.h>
 #include <LocationClientApiImpl.h>
 #include <log_util.h>
@@ -956,9 +958,11 @@ ILocIpcListener override
 class IpcListener : public ILocIpcListener {
     MsgTask& mMsgTask;
     LocationClientApiImpl& mApiImpl;
+    const SockNode::Type mSockTpye;
 public:
-    inline IpcListener(LocationClientApiImpl& apiImpl, MsgTask& msgTask) :
-            mMsgTask(msgTask), mApiImpl(apiImpl) {}
+    inline IpcListener(LocationClientApiImpl& apiImpl, MsgTask& msgTask,
+                       const SockNode::Type sockType) :
+            mMsgTask(msgTask), mApiImpl(apiImpl), mSockTpye(sockType) {}
     virtual void onListenerReady() override;
     virtual void onReceive(const char* data, uint32_t length,
                            const LocIpcRecver* recver) override;
@@ -1034,7 +1038,8 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
                      pid * 100 + mClientId);
     strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
     unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(
-            make_shared<IpcListener>(*this, *mMsgTask), sock.getId1(), sock.getId2());
+            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Eap),
+            sock.getId1(), sock.getId2());
 
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcQrtrSender(LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
@@ -1057,7 +1062,7 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
     SockNodeLocal sock(LOCATION_CLIENT_API, pid, mClientId);
     strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
     unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcLocalRecver(
-            make_shared<IpcListener>(*this, *mMsgTask), mSocketName);
+            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Local), mSocketName);
 
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcLocalSender(SOCKET_TO_LOCATION_HAL_DAEMON);
@@ -1877,6 +1882,11 @@ void IpcListener::onListenerReady() {
         }
         LocationClientApiImpl& mApiImpl;
     };
+    if (SockNode::Local == mSockTpye) {
+        if (0 != chown(mApiImpl.mSocketName, getuid(), GID_LOCCLIENT)) {
+            LOC_LOGe("chown to group locclient failed %s", strerror(errno));
+        }
+    }
     mMsgTask.sendMsg(new (nothrow) ClientRegisterReq(mApiImpl));
 }
 
