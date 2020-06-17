@@ -68,7 +68,7 @@ class SockNode {
     const string mNodePathnamePrefix;
 
 public:
-    enum Type { LOCAL, EAP, OTHER };
+    enum Type { Local, Eap, Other };
     SockNode(int32_t id1, int32_t mId2, const string&& prefix) :
             mId1(id1), mId2(mId2), mNodePathnamePrefix(prefix) {
     }
@@ -110,12 +110,12 @@ public:
             .append(1, '.').append(to_string(mId2));
     }
     inline Type getNodeType() const {
-        Type type = OTHER;
+        Type type = Other;
         if (mNodePathnamePrefix.compare(0, sizeof(SOCKET_LOC_CLIENT_DIR)-1,
                                         SOCKET_LOC_CLIENT_DIR) == 0) {
-            type = LOCAL;
+            type = Local;
         } else if (mNodePathnamePrefix.compare(0, sizeof(sEAP)-1, sEAP) == 0) {
-            type = EAP;
+            type = Eap;
         }
         return type;
     }
@@ -123,9 +123,9 @@ public:
         const string socket = getNodePathname();
         const char* sock = socket.c_str();
         switch (getNodeType()) {
-        case SockNode::LOCAL:
+        case SockNode::Local:
             return LocIpc::getLocIpcLocalSender(sock);
-        case SockNode::EAP:
+        case SockNode::Eap:
             if (createFsNode) {
                 FILE * pFile = fopen(sock, "w");
                 if (nullptr == pFile) {
