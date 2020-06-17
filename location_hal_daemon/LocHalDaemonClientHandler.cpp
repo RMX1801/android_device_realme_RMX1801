@@ -37,6 +37,8 @@ shared_ptr<LocIpcSender> LocHalDaemonClientHandler::createSender(const string so
     return sockNode.createSender(true);
 }
 
+static GeofenceBreachTypeMask parseClientGeofenceBreachType(GeofenceBreachType type);
+
 /******************************************************************************
 LocHalDaemonClientHandler - updateSubscriptionMask
 ******************************************************************************/
@@ -731,7 +733,7 @@ void LocHalDaemonClientHandler::onGeofenceBreachCb(GeofenceBreachNotification gf
     std::lock_guard<std::mutex> lock(LocationApiService::mMutex);
 
     if ((nullptr != mIpcSender) &&
-            (mSubscriptionMask & E_LOCAPI_GEOFENCE_BREACH_MSG_ID)) {
+            (mSubscriptionMask & E_LOC_CB_GEOFENCE_BREACH_BIT)) {
 
         uint32_t* clientIds = getClientIds(gfBreachNotif.count, gfBreachNotif.ids);
         if (nullptr == clientIds) {
@@ -756,7 +758,7 @@ void LocHalDaemonClientHandler::onGeofenceBreachCb(GeofenceBreachNotification gf
         pmsg->gfBreachNotification.count = gfBreachNotif.count;
         pmsg->gfBreachNotification.timestamp = gfBreachNotif.timestamp;
         pmsg->gfBreachNotification.location = gfBreachNotif.location;
-        pmsg->gfBreachNotification.type = gfBreachNotif.type;
+        pmsg->gfBreachNotification.type = parseClientGeofenceBreachType(gfBreachNotif.type);
         memcpy(&(pmsg->gfBreachNotification.id[0]), clientIds, sizeof(uint32_t)*gfBreachNotif.count);
 
         bool rc = sendMessage(msg, msglen);
@@ -1032,4 +1034,25 @@ uint32_t LocHalDaemonClientHandler::getSupportedTbf(uint32_t tbfMsec) {
     }
 
     return supportedTbfMsec;
+}
+
+static GeofenceBreachTypeMask parseClientGeofenceBreachType(GeofenceBreachType type) {
+    GeofenceBreachTypeMask mask = 0;
+    switch (type) {
+        case GEOFENCE_BREACH_ENTER:
+            mask |= GEOFENCE_BREACH_ENTER_BIT;
+            break;
+        case GEOFENCE_BREACH_EXIT:
+            mask |= GEOFENCE_BREACH_EXIT_BIT;
+            break;
+        case GEOFENCE_BREACH_DWELL_IN:
+            mask |= GEOFENCE_BREACH_DWELL_IN_BIT;
+            break;
+        case GEOFENCE_BREACH_DWELL_OUT:
+            mask |= GEOFENCE_BREACH_DWELL_OUT_BIT;
+            break;
+        default:
+            mask = 0;
+    }
+    return mask;
 }
