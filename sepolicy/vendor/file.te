@@ -15,6 +15,7 @@ type sysfs_mmc, sysfs_type, fs_type;
 type sysfs_oembackup, sysfs_type, fs_type;
 type sysfs_white_led, sysfs_type, fs_type;
 type sysfs_wlan, sysfs_type, fs_type;
+type thermal_data_file, file_type, data_file_type;
 
 # RealmeParts
 type kcal_sysfs, sysfs_type, fs_type;
