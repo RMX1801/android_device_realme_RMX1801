@@ -1978,6 +1978,23 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     if (mApiImpl.mLocationCb) {
                         mApiImpl.mLocationCb(location);
                     }
+                    // copy location info over to gnsslocaiton so we can use existing routine
+                    // to log the packet
+                    GnssLocation gnssLocation = {};
+                    gnssLocation.flags              = location.flags;
+                    gnssLocation.timestamp          = location.timestamp;
+                    gnssLocation.latitude           = location.latitude;
+                    gnssLocation.longitude          = location.longitude;
+                    gnssLocation.altitude           = location.altitude;
+                    gnssLocation.speed              = location.speed;
+                    gnssLocation.bearing            = location.bearing;
+                    gnssLocation.horizontalAccuracy = location.horizontalAccuracy;
+                    gnssLocation.verticalAccuracy   = location.verticalAccuracy;
+                    gnssLocation.speedAccuracy      = location.speedAccuracy;
+                    gnssLocation.bearingAccuracy    = location.bearingAccuracy;
+                    gnssLocation.techMask           = location.techMask;
+
+                    mApiImpl.mLogger.log(gnssLocation);
                 }
                 break;
             }

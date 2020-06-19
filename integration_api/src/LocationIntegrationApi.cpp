@@ -277,7 +277,7 @@ bool LocationIntegrationApi::configLeverArm(const LeverArmParamsMap& configInfo)
 bool LocationIntegrationApi::configRobustLocation(bool enable, bool enableForE911) {
 
     if (mApiImpl) {
-        LOC_LOGd("enable %f, enableForE911 %d", enable, enableForE911);
+        LOC_LOGd("enable %d, enableForE911 %d", enable, enableForE911);
         mApiImpl->configRobustLocation(enable, enableForE911);
         return true;
     } else {
