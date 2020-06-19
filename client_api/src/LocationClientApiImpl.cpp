@@ -1666,25 +1666,6 @@ void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
     mMsgTask->sendMsg(new (nothrow) ResumeGeofencesReq(this, count, ids));
 }
 
-uint32_t LocationClientApiImpl::gnssDeleteAidingData(const GnssAidingData& data) {
-    struct DeleteAidingDataReq : public LocMsg {
-        DeleteAidingDataReq(const LocationClientApiImpl* apiImpl, const GnssAidingData& data) :
-                mApiImpl(apiImpl), mAidingData(data) {}
-        virtual ~DeleteAidingDataReq() {}
-        void proc() const {
-            LocAPIDeleteAidingDataReqMsg msg(mApiImpl->mSocketName,
-                                             const_cast<GnssAidingData&>(mAidingData));
-            bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(&msg),
-                                                 sizeof(msg));
-            LOC_LOGd(">>> DeleteAidingDataReq rc=%d", rc);
-        }
-        const LocationClientApiImpl* mApiImpl;
-        GnssAidingData mAidingData;
-    };
-    mMsgTask->sendMsg(new (nothrow) DeleteAidingDataReq(this, data));
-    return 0;
-}
-
 void LocationClientApiImpl::updateNetworkAvailability(bool available) {
 
     struct UpdateNetworkAvailabilityReq : public LocMsg {

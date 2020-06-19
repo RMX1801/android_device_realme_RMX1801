@@ -137,7 +137,6 @@ public:
     virtual void gnssNiResponse(uint32_t id, GnssNiResponse response) override;
 
     // other interface
-    uint32_t gnssDeleteAidingData(const GnssAidingData& data);
     void updateNetworkAvailability(bool available);
     void updateCallbackFunctions(const ClientCallbacks&,
                                  ReportCbEnumType reportCbType = REPORT_CB_TYPE_NONE);

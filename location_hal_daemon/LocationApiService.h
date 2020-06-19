@@ -147,10 +147,6 @@ private:
         return *sessioIds;
     }
 
-    inline void gnssDeleteAidingData(GnssAidingData& data) {
-        mLocationControlApi->gnssDeleteAidingData(data);
-    }
-
     // Location control API callback
     void onControlResponseCallback(LocationError err, uint32_t id);
     void onControlCollectiveResponseCallback(size_t count, LocationError *errs, uint32_t *ids);
