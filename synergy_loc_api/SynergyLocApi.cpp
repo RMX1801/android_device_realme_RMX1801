@@ -927,7 +927,8 @@ enum loc_api_adapter_err defaultSllSetNMEATypesSync(uint32_t typesMask, void *co
     Default Implantation of set LPP Configuration command;
     to indicate the command is not supported.
 */
-enum loc_api_adapter_err defaultSllSetLPPConfigSync(GnssConfigLppProfile profile, void *context) {
+enum loc_api_adapter_err defaultSllSetLPPConfigSync(GnssConfigLppProfileMask profileMask,
+        void *context) {
     SLL_DEFAULT_IMPL();
 }
 
@@ -1008,7 +1009,7 @@ enum loc_api_adapter_err defaultSllConvertSuplVersion(const uint32_t suplVersion
     to indicate the command is not supported.
 */
 enum loc_api_adapter_err defaultSllConvertLppProfile(const uint32_t lppProfile,
-        GnssConfigLppProfile *gnssLppProfile, void *context) {
+        GnssConfigLppProfileMask *gnssLppProfileMask, void *context) {
     SLL_DEFAULT_IMPL();
 }
 
@@ -1936,7 +1937,7 @@ enum loc_api_adapter_err SynergyLocApi::setNMEATypesSync(uint32_t typesMask) {
 /**
    set the configuration for LTE positioning profile (LPP).
 
-   @param GnssConfigLppProfile[Input]    Configur LPP Profile.
+   @param GnssConfigLppProfileMask[Input]    Configur LPP Profile.
 
    @return
         LocationError
@@ -1945,7 +1946,7 @@ enum loc_api_adapter_err SynergyLocApi::setNMEATypesSync(uint32_t typesMask) {
        None.
 */
 LocationError
-SynergyLocApi::setLPPConfigSync(GnssConfigLppProfile profile) {
+SynergyLocApi::setLPPConfigSync(GnssConfigLppProfileMask profileMask) {
 
     LocationError err = LOCATION_ERROR_GENERAL_FAILURE;
 
@@ -1953,7 +1954,7 @@ SynergyLocApi::setLPPConfigSync(GnssConfigLppProfile profile) {
 
     if ((nullptr != sllReqIf) && (nullptr != sllReqIf->sllSetLPPConfigSync)) {
 
-        rtv = sllReqIf->sllSetLPPConfigSync(profile, ((void *)this));
+        rtv = sllReqIf->sllSetLPPConfigSync(profileMask, ((void *)this));
         if (LOC_API_ADAPTER_ERR_SUCCESS == rtv) {
             err = LOCATION_ERROR_SUCCESS;
         }
@@ -2472,34 +2473,6 @@ SynergyLocApi::convertSuplVersion(const uint32_t suplVersion) {
     }
 
     return configSuplVersion;
-}
-
-
-/**
-    Convert LPP Profile vesrion in GNSS LPP profile format
-
-    @param lppProfile[Input]     LPP Profile Version
-
-
-    @return
-        GnssConfigLppProfile.
-
-    @dependencies
-        None.
-*/
-GnssConfigLppProfile
-SynergyLocApi::convertLppProfile(const uint32_t lppProfile) {
-    GnssConfigLppProfile configLppProfile = GNSS_CONFIG_LPP_PROFILE_RRLP_ON_LTE;
-    enum loc_api_adapter_err rtv = LOC_API_ADAPTER_ERR_SUCCESS;
-
-    if ((nullptr != sllReqIf) && (nullptr != sllReqIf->sllConvertLppProfile)) {
-        rtv = sllReqIf->sllConvertLppProfile(lppProfile, &configLppProfile, (void *)this);
-        if (LOC_API_ADAPTER_ERR_SUCCESS != rtv) {
-            configLppProfile = GNSS_CONFIG_LPP_PROFILE_RRLP_ON_LTE;
-        }
-    }
-
-    return configLppProfile;
 }
 
 

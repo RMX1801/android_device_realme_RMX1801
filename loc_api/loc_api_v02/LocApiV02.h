@@ -447,7 +447,7 @@ public:
 
   virtual enum loc_api_adapter_err setNMEATypesSync(uint32_t typesMask);
 
-  virtual LocationError setLPPConfigSync(GnssConfigLppProfile profile);
+  virtual LocationError setLPPConfigSync(GnssConfigLppProfileMask profileMask);
 
 
   virtual enum loc_api_adapter_err
@@ -502,7 +502,6 @@ public:
   virtual LocPosTechMask convertPosTechMask(qmiLocPosTechMaskT_v02 mask);
   virtual LocNavSolutionMask convertNavSolutionMask(qmiLocNavSolutionMaskT_v02 mask);
   virtual GnssConfigSuplVersion convertSuplVersion(const uint32_t suplVersion);
-  virtual GnssConfigLppProfile convertLppProfile(const uint32_t lppProfile);
   virtual GnssConfigLppeControlPlaneMask convertLppeCp(const uint32_t lppeControlPlaneMask);
   virtual GnssConfigLppeUserPlaneMask convertLppeUp(const uint32_t lppeUserPlaneMask);
   virtual LocationError setEmergencyExtensionWindowSync(const uint32_t emergencyExtensionSeconds);
