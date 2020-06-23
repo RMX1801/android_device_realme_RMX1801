@@ -5112,14 +5112,10 @@ void LocApiV02::setGnssBiases() {
         measData = &mGnssMeasurements->gnssMeasNotification.measurements[i];
         switch (measData->gnssSignalType) {
         case GNSS_SIGNAL_GPS_L1CA:
-            if (mTimeBiases.flags & BIAS_GPSL1_VALID) {
-                measData->fullInterSignalBiasNs = mTimeBiases.gpsL1;
-                measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
-            }
-            if (mTimeBiases.flags & BIAS_GPSL1_UNC_VALID) {
-                measData->fullInterSignalBiasUncertaintyNs = mTimeBiases.gpsL1Unc;
-                measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
-            }
+            measData->fullInterSignalBiasNs = 0.0;
+            measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
+            measData->fullInterSignalBiasUncertaintyNs = 0.0;
+            measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
             break;
 
         case GNSS_SIGNAL_GPS_L5:
@@ -5167,7 +5163,7 @@ void LocApiV02::setGnssBiases() {
             }
             if (tempFlagUnc == (mTimeBiases.flags & tempFlagUnc)) {
                 measData->fullInterSignalBiasUncertaintyNs =
-                        mTimeBiases.gpsL1Unc - mTimeBiases.galE1Unc + mTimeBiases.galE1_galE5aUnc;
+                        mTimeBiases.gpsL1Unc + mTimeBiases.galE1Unc + mTimeBiases.galE1_galE5aUnc;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
             }
             break;
@@ -5207,7 +5203,7 @@ void LocApiV02::setGnssBiases() {
             }
             if (tempFlagUnc == (mTimeBiases.flags & tempFlagUnc)) {
                 measData->fullInterSignalBiasUncertaintyNs =
-                        mTimeBiases.gpsL1Unc - mTimeBiases.bdsB1Unc + mTimeBiases.bdsB1_bdsB1cUnc;
+                        mTimeBiases.gpsL1Unc + mTimeBiases.bdsB1Unc + mTimeBiases.bdsB1_bdsB1cUnc;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
             }
             break;
@@ -5234,7 +5230,7 @@ void LocApiV02::setGnssBiases() {
             }
             if (tempFlagUnc == (mTimeBiases.flags & tempFlagUnc)) {
                 measData->fullInterSignalBiasUncertaintyNs =
-                        mTimeBiases.gpsL1Unc - mTimeBiases.bdsB1Unc + mTimeBiases.bdsB1_bdsB2aUnc;
+                        mTimeBiases.gpsL1Unc + mTimeBiases.bdsB1Unc + mTimeBiases.bdsB1_bdsB2aUnc;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
             }
             break;
@@ -6355,7 +6351,8 @@ bool LocApiV02 :: convertGnssMeasurements(
 
     // intersignal bias
     if (gnss_measurement_report_ptr.gnssSignalType_valid &&
-        gnss_measurement_report_ptr.systemTime_valid) {
+        (gnss_measurement_report_ptr.systemTime_valid ||
+         gnss_measurement_report_ptr.gloTime_valid)) {
         measurementData.gnssSignalType =
                 convertQmiGnssSignalType(gnss_measurement_report_ptr.gnssSignalType);
     }
