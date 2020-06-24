@@ -127,7 +127,8 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
 
     mLocationControlId(0),
     mAutoStartGnss(configParamRead.autoStartGnss),
-    mPowerState (POWER_STATE_UNKNOWN),
+    mPowerState(POWER_STATE_UNKNOWN),
+    mPositionMode((GnssSuplMode)configParamRead.positionMode),
     mMaintTimer(this)
 #ifdef POWERMANAGER_ENABLED
     ,mPowerEventObserver(nullptr)
@@ -138,6 +139,7 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
     LOC_LOGd("GnssSessionTbfMs=%u", configParamRead.gnssSessionTbfMs);
     LOC_LOGd("DeleteAllBeforeAutoStart=%u", configParamRead.deleteAllBeforeAutoStart);
     LOC_LOGd("DeleteAllOnEnginesMask=%u", configParamRead.posEngineMask);
+    LOC_LOGd("PositionMode=%u", configParamRead.positionMode);
 
     // create Location control API
     mControlCallabcks.size = sizeof(mControlCallabcks);
@@ -200,6 +202,7 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
         locationOption.size = sizeof(locationOption);
         locationOption.minInterval = configParamRead.gnssSessionTbfMs;
         locationOption.minDistance = 0;
+        locationOption.mode = mPositionMode;
 
         pClient->startTracking(locationOption);
         pClient->mTracking = true;
@@ -595,7 +598,11 @@ void LocationApiService::startTracking(LocAPIStartTrackingReqMsg *pMsg) {
         return;
     }
 
-    if (!pClient->startTracking(pMsg->locOptions)) {
+    LocationOptions locationOption = pMsg->locOptions;
+    // set the mode according to the master position mode
+    locationOption.mode = mPositionMode;
+
+    if (!pClient->startTracking(locationOption)) {
         LOC_LOGe("Failed to start session");
         return;
     }
@@ -674,7 +681,10 @@ void LocationApiService::updateTrackingOptions(LocAPIUpdateTrackingOptionsReqMsg
 
     LocHalDaemonClientHandler* pClient = getClient(pMsg->mSocketName);
     if (pClient) {
-        pClient->updateTrackingOptions(pMsg->locOptions);
+        LocationOptions locationOption = pMsg->locOptions;
+        // set the mode according to the master position mode
+        locationOption.mode = mPositionMode;
+        pClient->updateTrackingOptions(locationOption);
         pClient->mPendingMessages.push(E_LOCAPI_UPDATE_TRACKING_OPTIONS_MSG_ID);
     }
 
