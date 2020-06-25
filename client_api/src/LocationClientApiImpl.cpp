@@ -1571,6 +1571,7 @@ uint32_t* LocationClientApiImpl::addGeofences(size_t count, GeofenceOption* opti
                 LocAPIAddGeofencesReqMsg *pMsg = reinterpret_cast<LocAPIAddGeofencesReqMsg*>(msg);
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
                 pMsg->msgId = E_LOCAPI_ADD_GEOFENCES_MSG_ID;
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->geofences.count = mGfCount;
                 for (int i=0; i<mGfCount; ++i) {
                     (*(pMsg->geofences.gfPayload + i)).gfClientId = mClientIds[i];
@@ -2128,7 +2129,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
             case E_LOCAPI_GEOFENCE_BREACH_MSG_ID:
             {
                 LOC_LOGd("<<< message = geofence breach");
-                if (mApiImpl.mCallbacksMask & E_LOCAPI_GEOFENCE_BREACH_MSG_ID) {
+                if (mApiImpl.mCallbacksMask & E_LOC_CB_GEOFENCE_BREACH_BIT) {
                     const LocAPIGeofenceBreachIndMsg* pGfBreachIndMsg =
                         (LocAPIGeofenceBreachIndMsg*)(pMsg);
                     std::vector<Geofence> geofences;
