@@ -17,6 +17,7 @@ allow hal_camera_default oppo_reserve_media_camera:dir { search write add_name }
 allow hal_camera_default oppo_reserve_media_camera:file { create read write open getattr };
 allow hal_camera_default persist_camera_file:dir { search write add_name };
 allow hal_camera_default persist_camera_file:file { create read write open getattr setattr };
+allow hal_camera_default public_adsprpcd_file:file r_file_perms;
 allow hal_camera_default sdcardfs:dir search;
 allow hal_camera_default storage_file:dir search;
 allow hal_camera_default storage_file:lnk_file r_file_perms;
