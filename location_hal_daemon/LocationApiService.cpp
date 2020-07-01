@@ -45,6 +45,8 @@
 using namespace std;
 
 #define MAX_GEOFENCE_COUNT (200)
+#define MAINT_TIMER_INTERVAL_MSEC (60000)
+#define AUTO_START_CLIENT_NAME "default"
 
 typedef void* (getLocationInterface)();
 typedef void  (createOSFramework)();
@@ -125,7 +127,8 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
 
     mLocationControlId(0),
     mAutoStartGnss(configParamRead.autoStartGnss),
-    mPowerState (POWER_STATE_UNKNOWN)
+    mPowerState (POWER_STATE_UNKNOWN),
+    mMaintTimer(this)
 #ifdef POWERMANAGER_ENABLED
     ,mPowerEventObserver(nullptr)
 #endif
@@ -173,6 +176,8 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
     // Create OSFramework and IzatManager instance
     createOSFrameworkInstance();
 
+    mMaintTimer.start(MAINT_TIMER_INTERVAL_MSEC, false);
+
     // create a default client if enabled by config
     if (mAutoStartGnss) {
         if ((configParamRead.deleteAllBeforeAutoStart) &&
@@ -185,8 +190,8 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
 
         LOC_LOGd("--> Starting a default client...");
         LocHalDaemonClientHandler* pClient =
-                new LocHalDaemonClientHandler(this, "default", LOCATION_CLIENT_API);
-        mClients.emplace("default", pClient);
+                new LocHalDaemonClientHandler(this, AUTO_START_CLIENT_NAME, LOCATION_CLIENT_API);
+        mClients.emplace(AUTO_START_CLIENT_NAME, pClient);
 
         pClient->updateSubscription(
                 E_LOC_CB_GNSS_LOCATION_INFO_BIT | E_LOC_CB_GNSS_SV_BIT);
@@ -514,7 +519,7 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             break;
         }
         default: {
-            LOC_LOGe("Unknown message with id: ", pMsg->msgId);
+            LOC_LOGe("Unknown message with id: %d ", pMsg->msgId);
             break;
         }
     }
@@ -554,6 +559,8 @@ void LocationApiService::deleteClient(LocAPIClientDeregisterReqMsg *pMsg) {
 }
 
 void LocationApiService::deleteClientbyName(const std::string clientname) {
+    LOC_LOGi(">-- deleteClient client=%s", clientname.c_str());
+
     // We shall not hold the lock, as lock already held by the caller
     //
     // remove the client from the config request map
@@ -575,8 +582,6 @@ void LocationApiService::deleteClientbyName(const std::string clientname) {
     }
     mClients.erase(clientname);
     pClient->cleanup();
-
-    LOC_LOGi(">-- deleteClient client=%s", clientname.c_str());
 }
 /******************************************************************************
 LocationApiService - implementation - tracking
@@ -1287,5 +1292,57 @@ void LocationApiService::destroyOSFrameworkInstance() {
         (*getter)();
     } else {
         LOC_LOGe("dlGetSymFromLib failed for liblocationservice_glue.so");
+    }
+}
+
+void LocationApiService::performMaintenance() {
+    ClientNameIpcSenderMap   clientsToCheck;
+
+    // Hold the lock when we access global variable of mClients
+    // copy out the client name and shared_ptr of ipc sender for the clients.
+    // We do not use mClients directly or making a copy of mClients, as the
+    // client handler object can become invalid when the client gets
+    // deleted by the thread of LocationApiService.
+    {
+        std::lock_guard<std::mutex> lock(mMutex);
+        for (auto client : mClients) {
+            if (client.first.compare(AUTO_START_CLIENT_NAME) != 0) {
+                clientsToCheck.emplace(client.first, client.second->getIpcSender());
+            }
+        }
+    }
+
+    for (auto client : clientsToCheck) {
+        LocAPIPingTestReqMsg msg(SERVICE_NAME);
+        bool messageSent = LocIpc::send(*client.second, reinterpret_cast<const uint8_t*>(&msg),
+                                            sizeof(msg));
+        LOC_LOGd("send ping message returned %d for client %s", messageSent, client.first.c_str());
+        if (messageSent == false) {
+            LOC_LOGe("--< ping failed for client %s", client.first.c_str());
+            deleteClientbyName(client.first);
+        }
+    }
+
+    // after maintenace, start next timer
+    mMaintTimer.start(MAINT_TIMER_INTERVAL_MSEC, false);
+}
+
+
+// Maintenance timer to clean up resources when client exists without sending
+// out de-registration message
+void MaintTimer::timeOutCallback() {
+    LOC_LOGd("maint timer fired");
+
+    struct PerformMaintenanceReq : public LocMsg {
+        PerformMaintenanceReq(LocationApiService* locationApiService) :
+                mLocationApiService(locationApiService){}
+        virtual ~PerformMaintenanceReq() {}
+        void proc() const {
+            mLocationApiService->performMaintenance();
+        }
+        LocationApiService* mLocationApiService;
+    };
+    if (mMsgTask) {
+        mMsgTask->sendMsg(new (nothrow) PerformMaintenanceReq(mLocationApiService));
     }
 }

@@ -116,6 +116,9 @@ public:
     void eraseGeofenceIds(size_t count, uint32_t* clientIds);
     uint32_t* getSessionIds(size_t count, uint32_t* clientIds);
     uint32_t* getClientIds(size_t count, uint32_t* sessionIds);
+
+    inline shared_ptr<LocIpcSender> getIpcSender () {return mIpcSender;};
+
     void pingTest();
 
     bool mTracking;

@@ -895,7 +895,7 @@ struct LocConfigGetMinSvElevationRespMsg: LocAPIMsgHeader
 /******************************************************************************
 IPC message structure - ping
 ******************************************************************************/
-#define LOCATION_REMOTE_API_PINGTEST_SIZE (1024)
+#define LOCATION_REMOTE_API_PINGTEST_SIZE (4)
 
 struct LocAPIPingTestReqMsg: LocAPIMsgHeader
 {
