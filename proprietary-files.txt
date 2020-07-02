@@ -146,7 +146,6 @@ vendor/lib/libflash_pmic.so
 vendor/lib/libjpegdhw.so
 vendor/lib/libjpegdmahw.so
 vendor/lib/libjpegehw.so
-vendor/lib/libmegface.so
 vendor/lib/libmm-qcamera.so
 vendor/lib/libmmcamera_interface.so
 vendor/lib/libmmcamera_sonyimx135_eeprom.so
