@@ -600,7 +600,7 @@ struct GnssLocationSvUsedInPosition {
     uint64_t navicSvUsedIdsMask;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify the SV measurements that are used to calculate
@@ -617,7 +617,7 @@ struct GnssMeasUsageInfo {
     GnssSignalTypeMask gnssSignalType;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify device body frame parameters. <br/>   */
@@ -676,7 +676,7 @@ struct GnssLocationPositionDynamics {
     float           yawRateUnc;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify none-Glonass GNSS system time info. */
@@ -719,7 +719,7 @@ struct GnssSystemTimeStructType {
     uint32_t numClockResets;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify Glonass system time info. <br/>   */
@@ -756,7 +756,7 @@ struct GnssGloTimeStructType {
     uint32_t numClockResets;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Union to hold GNSS system time from different
@@ -776,7 +776,7 @@ union SystemTimeStructUnion {
     GnssSystemTimeStructType navicSystemTime;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /**  GNSS system time in GnssLocation. <br/>
@@ -790,7 +790,7 @@ struct GnssSystemTime {
     SystemTimeStructUnion u;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify the set of engines whose position reports are
@@ -880,7 +880,7 @@ struct Location {
     LocationTechnologyMask techMask;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify latitude, longitude and altitude info of location.
@@ -1035,7 +1035,7 @@ struct GnssLocation : public Location {
     }
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** GNSS SV report that comes when clients registers for
@@ -1080,7 +1080,7 @@ struct GnssSv {
     GnssSignalTypeMask gnssSignalTypeMask;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify the GNSS signal type and RF band for jammer info and
@@ -1172,7 +1172,7 @@ struct GnssData {
     double        agc[GNSS_MAX_NUMBER_OF_SIGNAL_TYPES];
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify valid fields in
@@ -1396,7 +1396,7 @@ struct GnssMeasurementsData {
     double agcLevelDb;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify GNSS measurements clock. <br/>
@@ -1432,7 +1432,7 @@ struct GnssMeasurementsClock {
     uint32_t hwClockDiscontinuityCount;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify GNSS measurements clock and data. <br/>   */
@@ -1443,7 +1443,7 @@ struct GnssMeasurements {
     std::vector<GnssMeasurementsData> measurements;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify the valid fields in LeapSecondSystemInfo. <br/> */
@@ -1480,7 +1480,7 @@ struct LeapSecondChangeInfo {
     uint8_t leapSecondsAfterChange;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify leap second system info, including current leap
@@ -1515,7 +1515,7 @@ struct LeapSecondSystemInfo {
     LeapSecondChangeInfo  leapSecondChangeInfo;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 /** Specify the set of valid fields in
@@ -1542,7 +1542,7 @@ struct LocationSystemInfo {
     LeapSecondSystemInfo   leapSecondSysInfo;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
-    string toString();
+    string toString() const;
 };
 
 enum BatchingStatus {
