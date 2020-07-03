@@ -320,8 +320,6 @@ LocApiV02 :: open(LOC_API_ADAPTER_EVENT_MASK_T mask)
   locClientStatusEnumType status = eLOC_CLIENT_SUCCESS;
 
   LOC_API_ADAPTER_EVENT_MASK_T newMask = mask & ~mExcludedMask;
-  locClientEventMaskType qmiMask = 0;
-  bool gnssMeasurementSupported = false;
 
   LOC_LOGd("%p Enter mMask: 0x%" PRIx64 "  mQmiMask: 0x%" PRIx64 " mExcludedMask: 0x%" PRIx64 "",
            clientHandle, mMask, mQmiMask, mExcludedMask);
@@ -349,6 +347,7 @@ LocApiV02 :: open(LOC_API_ADAPTER_EVENT_MASK_T mask)
       rtv = LOC_API_ADAPTER_ERR_FAILURE;
     } else {
         uint64_t supportedMsgList = 0;
+        bool gnssMeasurementSupported = false;
         const uint32_t msgArray[NUMBER_OF_MSG_TO_BE_CHECKED] =
         {
             // For - LOC_API_ADAPTER_MESSAGE_LOCATION_BATCHING
@@ -364,11 +363,6 @@ LocApiV02 :: open(LOC_API_ADAPTER_EVENT_MASK_T mask)
         if (isMaster()) {
             registerMasterClient();
             gnssMeasurementSupported = cacheGnssMeasurementSupport();
-            if (gnssMeasurementSupported) {
-                /* Indicate that QMI LOC message for GNSS measurement was sent */
-                mQmiMask |= QMI_LOC_EVENT_MASK_GNSS_MEASUREMENT_REPORT_V02;
-            }
-
             LocContext::injectFeatureConfig(mContext);
         }
 
@@ -494,43 +488,7 @@ LocApiV02 :: open(LOC_API_ADAPTER_EVENT_MASK_T mask)
   }
 
   if ((eLOC_CLIENT_SUCCESS == status) && (LOC_CLIENT_INVALID_HANDLE_VALUE != clientHandle)) {
-
-    qmiMask = convertMask(newMask);
-
-    LOC_LOGd("clientHandle = %p mMask: 0x%" PRIx64 " Adapter mask: 0x%" PRIx64 " "
-             "newMask: 0x%" PRIx64 " mQmiMask: 0x%" PRIx64 " qmiMask: 0x%" PRIx64 "",
-             clientHandle, mMask, mask, newMask, mQmiMask, qmiMask);
-
-    if ((mQmiMask ^ qmiMask) & qmiMask & QMI_LOC_EVENT_MASK_WIFI_REQ_V02) {
-        wifiStatusInformSync();
-    }
-
-    if (newMask != mMask) {
-      locClientEventMaskType maskDiff = qmiMask ^ mQmiMask;
-      // it is important to cap the mask here, because not all LocApi's
-      // can enable the same bits, e.g. foreground and background.
-      registerEventMask(newMask);
-      if (isMaster()) {
-        /* Set the SV Measurement Constellation when Measurement Report or Polynomial report is set */
-        /* Check if either measurement report or sv polynomial report bit is different in the new
-           mask compared to the old mask. If yes then turn that report on or off as requested */
-        /* Later change: we need to set the SV Measurement Constellation whenever measurements
-           are supported, and that is because other clients (e.g. CHRE need to have measurements
-           enabled and those clients cannot set the SV Measurement Constellation since they are
-           not master */
-        locClientEventMaskType measOrSvPoly = QMI_LOC_EVENT_MASK_GNSS_SV_POLYNOMIAL_REPORT_V02;
-        LOC_LOGd("clientHandle = %p isMaster(): %d measOrSvPoly: 0x%" PRIx64 \
-                 " maskDiff: 0x%" PRIx64 "",
-                 clientHandle, isMaster(), measOrSvPoly, maskDiff);
-        if (((maskDiff & measOrSvPoly) != 0)) {
-          if (gnssMeasurementSupported) {
-            setSvMeasurementConstellation(qmiMask | QMI_LOC_EVENT_MASK_GNSS_MEASUREMENT_REPORT_V02);
-          } else {
-            setSvMeasurementConstellation(qmiMask & ~QMI_LOC_EVENT_MASK_GNSS_MEASUREMENT_REPORT_V02);
-          }
-        }
-      }
-    }
+    registerEventMask(newMask);
   }
 
   LOC_LOGd("clientHandle = %p Exit mMask: 0x%" PRIx64 " mQmiMask: 0x%" PRIx64 "",
@@ -541,14 +499,40 @@ LocApiV02 :: open(LOC_API_ADAPTER_EVENT_MASK_T mask)
 
 void LocApiV02 :: registerEventMask(LOC_API_ADAPTER_EVENT_MASK_T adapterMask)
 {
-    locClientEventMaskType qmiMask = adjustMaskIfNoSessionOrEngineOff(convertMask(adapterMask));
-    if ((qmiMask != mQmiMask) &&
-            (locClientRegisterEventMask(clientHandle, qmiMask, isMaster()))) {
-        mQmiMask = qmiMask;
+  locClientEventMaskType qmiMask = adjustMaskIfNoSessionOrEngineOff(convertMask(adapterMask));
+
+  LOC_LOGd("clientHandle = %p; mMask: 0x%" PRIx64 "; newMask: 0x%" PRIx64 "; mQmiMask: 0x%" PRIx64
+           "; qmiMask: 0x%" PRIx64 "", clientHandle, mMask, adapterMask, mQmiMask, qmiMask);
+
+  if ((qmiMask != mQmiMask) &&
+      (locClientRegisterEventMask(clientHandle, qmiMask, isMaster()))) {
+    locClientEventMaskType maskDiff = qmiMask ^ mQmiMask;
+    if (maskDiff & qmiMask & QMI_LOC_EVENT_MASK_WIFI_REQ_V02) {
+      wifiStatusInformSync();
     }
-    LOC_LOGd("registerEventMask:  mMask: %" PRIu64 " mQmiMask=%" PRIu64 " qmiMask=%" PRIu64,
-                adapterMask, mQmiMask, qmiMask);
-    mMask = adapterMask;
+
+    if (isMaster()) {
+      /* Set the SV Measurement Constellation when Measurement Report or Polynomial report is set */
+      /* Check if either measurement report or sv polynomial report bit is different in the new
+         mask compared to the old mask. If yes then turn that report on or off as requested */
+      /* Later change: we need to set the SV Measurement Constellation whenever measurements
+         are supported, and that is because other clients (e.g. CHRE need to have measurements
+         enabled and those clients cannot set the SV Measurement Constellation since they are
+         not master */
+      locClientEventMaskType measOrSvPoly = QMI_LOC_EVENT_MASK_GNSS_SV_POLYNOMIAL_REPORT_V02;
+      LOC_LOGd("clientHandle: %p isMaster: %d measOrSvPoly: 0x%" PRIx64 " maskDiff: 0x%" PRIx64 "",
+               clientHandle, isMaster(), measOrSvPoly, maskDiff);
+      if (((maskDiff & measOrSvPoly) != 0)) {
+        if (mContext->gnssConstellationConfig()) {
+          setSvMeasurementConstellation(qmiMask | QMI_LOC_EVENT_MASK_GNSS_MEASUREMENT_REPORT_V02);
+        } else {
+          setSvMeasurementConstellation(qmiMask & ~QMI_LOC_EVENT_MASK_GNSS_MEASUREMENT_REPORT_V02);
+        }
+      }
+    }
+    mQmiMask = qmiMask;
+  }
+  mMask = adapterMask;
 }
 
 bool LocApiV02::sendRequestForAidingData(locClientEventMaskType qmiMask) {
@@ -624,7 +608,7 @@ locClientEventMaskType LocApiV02 :: adjustMaskIfNoSessionOrEngineOff(locClientEv
         locClientEventMaskType clearMask = QMI_LOC_EVENT_MASK_NMEA_V02;
         qmiMask = qmiMask & ~clearMask;
     }
-    LOC_LOGd("oldQmiMask=%" PRIu64 " qmiMask=%" PRIu64 " mInSession: %d mEngineOn: %d",
+    LOC_LOGd("oldQmiMask=%" PRIx64 " qmiMask=%" PRIx64 " mInSession: %d mEngineOn: %d",
             oldQmiMask, qmiMask, mInSession, mEngineOn);
     return qmiMask;
 }
@@ -7054,9 +7038,8 @@ int LocApiV02::setSvMeasurementConstellation(const locClientEventMaskType mask)
                                                 eQMI_SYSTEM_GAL_V02 |
                                                 eQMI_SYSTEM_QZSS_V02 |
                                                 eQMI_SYSTEM_NAVIC_V02;
-    LOC_LOGD("%s] set GNSS measurement to report constellation: %" PRIu64 " "
-            "report mask = 0x%" PRIx64 "\n",
-            __func__, svConstellation, mask);
+    LOC_LOGd("set GNSS measurement to report constellation: %" PRIx64 " "
+            "report mask = 0x%" PRIx64 "\n", svConstellation, mask);
 
     memset(&setGNSSConstRepConfigReq, 0, sizeof(setGNSSConstRepConfigReq));
 
@@ -7577,15 +7560,13 @@ bool LocApiV02 :: cacheGnssMeasurementSupport()
     /*for GNSS Measurement service, use
       QMI_LOC_SET_GNSS_CONSTELL_REPORT_CONFIG_V02
       to check if modem support this feature or not*/
-    LOC_LOGD("%s:%d]: set GNSS measurement.\n", __func__, __LINE__);
 
     if (LOC_API_ADAPTER_ERR_SUCCESS ==
         setSvMeasurementConstellation(QMI_LOC_EVENT_MASK_GNSS_MEASUREMENT_REPORT_V02)) {
         gnssMeasurementSupported = true;
     }
 
-    LOC_LOGV("%s:%d]: gnssMeasurementSupported is %d\n", __func__, __LINE__,
-            gnssMeasurementSupported);
+    LOC_LOGd("gnssMeasurementSupported is %d\n", gnssMeasurementSupported);
 
     return gnssMeasurementSupported;
 }
