@@ -1488,6 +1488,7 @@ uint32_t* LocationClientApiImpl::addGeofences(size_t count, GeofenceOption* opti
                 memset(msg, 0, msglen);
                 LocAPIAddGeofencesReqMsg *pMsg = reinterpret_cast<LocAPIAddGeofencesReqMsg*>(msg);
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_ADD_GEOFENCES_MSG_ID;
                 pMsg->geofences.count = mGfCount;
                 for (int i=0; i<mGfCount; ++i) {
@@ -1535,6 +1536,7 @@ void LocationClientApiImpl::removeGeofences(size_t count, uint32_t* ids) {
                 LocAPIRemoveGeofencesReqMsg* pMsg = (LocAPIRemoveGeofencesReqMsg*)msg;
                 pMsg->gfClientIds.count = mGfCount;
                 memcpy(pMsg->gfClientIds.gfIds, mGfIds, sizeof(uint32_t) * mGfCount);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_REMOVE_GEOFENCES_MSG_ID;
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
                 bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(msg),
@@ -1575,6 +1577,7 @@ void LocationClientApiImpl::modifyGeofences(
                 LocAPIModifyGeofencesReqMsg *pMsg =
                         reinterpret_cast<LocAPIModifyGeofencesReqMsg*>(msg);
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_MODIFY_GEOFENCES_MSG_ID;
                 pMsg->geofences.count = mGfCount;
                 for (int i=0; i<mGfCount; ++i) {
@@ -1618,6 +1621,7 @@ void LocationClientApiImpl::pauseGeofences(size_t count, uint32_t* ids) {
                 LocAPIPauseGeofencesReqMsg* pMsg = (LocAPIPauseGeofencesReqMsg*)msg;
                 pMsg->gfClientIds.count = mGfCount;
                 memcpy(&(pMsg->gfClientIds.gfIds[0]), mGfIds, sizeof(uint32_t) * mGfCount);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_PAUSE_GEOFENCES_MSG_ID;
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
                 bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(msg),
@@ -1655,6 +1659,7 @@ void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
                 LocAPIResumeGeofencesReqMsg* pMsg = (LocAPIResumeGeofencesReqMsg*)msg;
                 pMsg->gfClientIds.count = mGfCount;
                 memcpy(pMsg->gfClientIds.gfIds, mGfIds, sizeof(uint32_t) * mGfCount);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_RESUME_GEOFENCES_MSG_ID;
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
                 bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(msg),
