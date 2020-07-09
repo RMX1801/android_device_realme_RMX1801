@@ -1,7 +1,0 @@
-on boot
-    chown system system /sys/bus/platform/devices/soc:fpc_fpc1020*/irq
-    chown system system /sys/bus/platform/devices/soc:fpc_fpc1020*/irq_enable
-    chown system system /sys/bus/platform/devices/soc:fpc_fpc1020*/wakelock_enable
-
-on post-fs-data
-    mkdir /data/images 0700 system system
