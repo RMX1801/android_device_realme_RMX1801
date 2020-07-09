@@ -256,7 +256,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     fstab.qcom \
     init.msm.usb.configfs.rc \
-    init.oppo.fingerprint.rc \
     init.oppo.rc \
     init.qcom.early_boot.sh \
     init.qcom.post_boot.sh \
