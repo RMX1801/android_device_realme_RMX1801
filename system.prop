@@ -1,31 +1,99 @@
+# AD
+ro.vendor.display.ad=1
+ro.vendor.display.ad.sdr_calib_data=/vendor/etc/OPPO_OLED_AD_calib.cfg
+ro.vendor.display.sensortype=2
+
+# Audio
+audio.offload.min.duration.secs=30
+ro.af.client_heap_size_kbyte=7168
+
 # Bluetooth
 bt.max.hfpclient.connections=1
 persist.bt.a2dp.aac_disable=true
 ro.bluetooth.emb_wp_mode=false
 ro.bluetooth.wipower=false
+vendor.bluetooth.soc=cherokee
 
 # Camera
 persist.camera.aifb=1
 persist.camera.filter.version=1
 persist.dualcam.lpm.enable=1
+persist.vendor.camera.preview.ubwc=0
 ro.camera.dualcam.type=2
 ro.camera.hfr.enable=1
 ro.camera.sensor.aux2m=1
 ro.camera.temperature.limit=450
 
+# Data modules
+persist.data.df.dev_name=rmnet_usb0
+persist.vendor.data.mode=concurrent
+ro.vendor.use_data_netmgrd=true
+
 # Display
+debug.sf.hw=1
+debug.sf.latch_unsignaled=1
+persist.demo.hdmirotationlock=false
 persist.sys.sf.color_saturation=1.0
+sdm.debug.disable_skip_validate=1
+vendor.display.disable_skip_validate=1
+vendor.display.enable_default_color_mode=1
+vendor.gralloc.enable_fb_ubwc=1
+vendor.vidc.enc.disable_bframes=1
+vendor.vidc.enc.disable.pq=false
+vendor.vidc.dec.enable.downscalar=0
+vidc.enc.target_support_bframe=1
+
+# IMS
+persist.radio.VT_CAM_INTERFACE=1
+persist.vendor.qti.telephony.vt_cam_interface=1
+
+# Media
+audio.offload.video=true
+media.aac_51_output_enabled=true
+media.stagefright.enable-aac=true
+media.stagefright.enable-http=true
+media.stagefright.enable-player=true
+media.stagefright.enable-qcp=true
+media.stagefright.enable-scan=true
+mm.enable.smoothstreaming=true
+mmp.enable.3g2=true
+persist.mm.enable.prefetch=true
+vendor.mm.enable.qcom_parser=13631487
 
 # Memory optimizations
 ro.vendor.qti.sys.fw.bservice_enable=true
+
+# Netflix custom property
+ro.netflix.bsp_rev=Q660-13149-1
+
+# QC framework value-adds
+ro.vendor.qti.va_odm.support=1
 
 # RIL
 DEVICE_PROVISIONED=1
 gsm.lte.ca.support=0
 persist.radio.custom_exp_ecc=1
 ril.subscription.types=NV,RUIM
+rild.libpath=/system/vendor/lib64/libril-qc-hal-qmi.so
+ro.telephony.default_network=22,22
 persist.sys.fflag.override.settings_network_and_internet_v2=true
+telephony.lteOnCdmaDevice=1
+
+# Sensors
+ro.vendor.sensors.dev_ori=true
+ro.vendor.sensors.mot_detect=true
+ro.vendor.sensors.pmd=true
+ro.vendor.sensors.sta_detect=true
 
 # SSR
 persist.vendor.ssr.enable_ramdumps=0
 persist.vendor.ssr.restart_level=ALL_ENABLE
+
+# Surfaceflinger
+debug.sf.enable_hwc_vds=1
+ro.surface_flinger.force_hwc_copy_for_virtual_displays=true
+ro.surface_flinger.max_frame_buffer_acquired_buffers=2
+ro.surface_flinger.max_virtual_display_dimension=4096
+ro.surface_flinger.protected_contents=true
+ro.surface_flinger.vsync_event_phase_offset_ns=2000000
+ro.surface_flinger.vsync_sf_event_phase_offset_ns=6000000
