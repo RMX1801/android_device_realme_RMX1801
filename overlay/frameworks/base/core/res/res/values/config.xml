@@ -93,7 +93,7 @@
          to maximize power savings but not all devices support it.
          Refer to power.h for details.
     -->
-    <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
+    <bool name="config_powerDecoupleInteractiveModeFromDisplay">false</bool>
 
     <!-- Flag specifying whether or not IMS will use the ImsResolver dynamically -->
      <bool name="config_dynamic_bind_ims">true</bool>
@@ -302,10 +302,10 @@
          appended after the path string to interpret coordinates in dp instead of px units.
          Note that a physical cutout should be configured in pixels for the best results.
     -->
-     <string name="config_mainBuiltInDisplayCutout">M -162,0 L -162,80 L 162,80 L 162,0 Z</string>
+     <string name="config_mainBuiltInDisplayCutout">M -70,0 L -70,76 L 70,76 L 70,0 Z</string>
 
     <!-- Height of the status bar -->
-    <dimen name="status_bar_height_portrait">31.1dp</dimen>
+    <dimen name="status_bar_height_portrait">34.2dp</dimen>
 
     <!-- Height of the status bar in landscape -->
     <dimen name="status_bar_height_landscape">28.0dp</dimen>
