@@ -4,6 +4,7 @@ ro.vendor.display.ad.sdr_calib_data=/vendor/etc/OPPO_OLED_AD_calib.cfg
 ro.vendor.display.sensortype=2
 
 # Audio
+audio.deep_buffer.media=true
 audio.offload.min.duration.secs=30
 ro.af.client_heap_size_kbyte=7168
 
