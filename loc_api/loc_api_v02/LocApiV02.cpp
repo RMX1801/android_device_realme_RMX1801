@@ -5805,7 +5805,8 @@ bool LocApiV02 :: convertGnssMeasurements(
     svMeas.gnssSvId = gnss_measurement_info.gnssSvId;
     svMeas.gloFrequency = gnss_measurement_info.gloFrequency;
     if (gnss_measurement_report_ptr.gnssSignalType_valid) {
-        svMeas.gnssSignalTypeMask = gnss_measurement_report_ptr.gnssSignalType;
+        svMeas.gnssSignalTypeMask =
+                convertQmiGnssSignalType(gnss_measurement_report_ptr.gnssSignalType);
     } else {
         svMeas.gnssSignalTypeMask =
                 getDefaultGnssSignalTypeMask(gnss_measurement_report_ptr.system);
