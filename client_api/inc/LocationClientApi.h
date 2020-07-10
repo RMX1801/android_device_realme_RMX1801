@@ -34,6 +34,30 @@
 #include <functional>
 #include <memory>
 
+// DEPRECATION - BACKWARD COMPATIBILITY SECTION
+#define GnssLocationPosTechMask LocationTechnologyMask
+#define LOCATION_POS_TECH_DEFAULT_BIT \
+         0
+#define LOCATION_POS_TECH_SATELLITE_BIT \
+         LOCATION_TECHNOLOGY_GNSS_BIT
+#define LOCATION_POS_TECH_CELLID_BIT \
+         LOCATION_TECHNOLOGY_CELL_BIT
+#define LOCATION_POS_TECH_WIFI_BIT \
+         LOCATION_TECHNOLOGY_WIFI_BIT
+#define LOCATION_POS_TECH_SENSORS_BIT \
+         LOCATION_TECHNOLOGY_SENSORS_BIT
+#define LOCATION_POS_TECH_REFERENCE_LOCATION_BIT \
+         LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT
+#define LOCATION_POS_TECH_INJECTED_COARSE_POSITION_BIT \
+        LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT
+#define LOCATION_POS_TECH_AFLT_BIT \
+         LOCATION_TECHNOLOGY_AFLT_BIT
+#define LOCATION_POS_TECH_HYBRID_BIT \
+         LOCATION_TECHNOLOGY_HYBRID_BIT
+#define LOCATION_POS_TECH_PPE_BIT \
+         LOCATION_TECHNOLOGY_PPE_BIT
+// DEPRECATION - BACKWARD COMPATIBILITY SECTION
+
 using std::string;
 
 namespace location_client
@@ -126,16 +150,30 @@ enum LocationFlagsMask {
 enum LocationTechnologyMask {
     /** GNSS-based technology was used to calculate
      *  Location. <br/>   */
-    LOCATION_TECHNOLOGY_GNSS_BIT     = (1<<0),
+    LOCATION_TECHNOLOGY_GNSS_BIT                     = (1<<0),
     /** Cell-based technology was used to calculate
      *  Location. <br/>   */
-    LOCATION_TECHNOLOGY_CELL_BIT     = (1<<1),
+    LOCATION_TECHNOLOGY_CELL_BIT                     = (1<<1),
     /** WiFi-based technology was used to calculate
      *  Location. <br/>   */
-    LOCATION_TECHNOLOGY_WIFI_BIT     = (1<<2),
+    LOCATION_TECHNOLOGY_WIFI_BIT                     = (1<<2),
     /** Sensor-based technology was used to calculate
      *  Location. <br/>   */
-    LOCATION_TECHNOLOGY_SENSORS_BIT  = (1<<3)
+    LOCATION_TECHNOLOGY_SENSORS_BIT                  = (1<<3),
+    /**  Reference location was used to calculate Location.
+     *   <br/> */
+    LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT       = (1<<4),
+    /** Coarse position injected into the location engine
+     *  was used to calculate Location.  <br/>   */
+    LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT = (1<<5),
+    /** AFLT was used to calculate Location. <br/>   */
+    LOCATION_TECHNOLOGY_AFLT_BIT                     = (1<<6),
+    /** GNSS and network-provided measurements were
+     *  used to calculate Location. <br/>   */
+    LOCATION_TECHNOLOGY_HYBRID_BIT                   = (1<<7),
+    /** Precise position engine was used to calculate
+     *  Location. <br/>   */
+    LOCATION_TECHNOLOGY_PPE_BIT                      = (1<<8)
 };
 
 /** Specify the set of navigation solutions that contribute
@@ -168,42 +206,6 @@ enum GnssLocationNavSolutionMask {
     /** Only SBAS corrected SVs was used to calculate
         GnssLocation. <br/> */
     LOCATION_NAV_CORRECTION_ONLY_SBAS_CORRECTED_SV_USED_BIT = (1<<8)
-};
-
-/**
- *  Specify the set of technologies that contribute to
- *  GnssLocation. <br/>
- */
-enum GnssLocationPosTechMask {
-    /** Technology used to generate GnssLocation
-     *  is unknown. <br/>   */
-    LOCATION_POS_TECH_DEFAULT_BIT                  = 0,
-    /** Satellites-based technology was used to generate
-     *  GnssLocation. <br/>   */
-    LOCATION_POS_TECH_SATELLITE_BIT                = (1<<0),
-    /** Cell towers were used to generate
-     *  GnssLocation. <br/>   */
-    LOCATION_POS_TECH_CELLID_BIT                   = (1<<1),
-    /** Wi-Fi access points were used to generate
-     *  GnssLocation. <br/>   */
-    LOCATION_POS_TECH_WIFI_BIT                     = (1<<2),
-    /** Sensors were used to generate
-     *  GnssLocation. <br/>   */
-    LOCATION_POS_TECH_SENSORS_BIT                  = (1<<3),
-    /**  Reference location was used to generate GnssLocation.
-     *   <br/> */
-    LOCATION_POS_TECH_REFERENCE_LOCATION_BIT       = (1<<4),
-    /** Coarse position injected into the location engine was used to
-     *  generate GnssLocation.  <br/>   */
-    LOCATION_POS_TECH_INJECTED_COARSE_POSITION_BIT = (1<<5),
-    /** AFLT was used to generate GnssLocation. <br/>   */
-    LOCATION_POS_TECH_AFLT_BIT                     = (1<<6),
-    /** GNSS and network-provided measurements were used to generate
-     *  GnssLocation. <br/>   */
-    LOCATION_POS_TECH_HYBRID_BIT                   = (1<<7),
-    /** Precise position engine was used to generate
-     *  GnssLocation. <br/>   */
-    LOCATION_POS_TECH_PPE_BIT                      = (1<<8)
 };
 
 /** Specify the valid fields in
@@ -969,7 +971,7 @@ struct GnssLocation : public Location {
      *  report. <br/>   */
     GnssLocationNavSolutionMask  navSolutionMask;
     /** Position technology used in computing this fix. */
-    GnssLocationPosTechMask      posTechMask;
+    LocationTechnologyMask       posTechMask;
     /** Body frame dynamics info. <br/>   */
     GnssLocationPositionDynamics bodyFrameData;
     /** GNSS system time when this position is calculated. <br/>  */
@@ -1022,7 +1024,7 @@ struct GnssLocation : public Location {
             eastVelocityStdDeviation(0.0f), upVelocityStdDeviation(0.0f),
             numSvUsedInPosition(0), svUsedInPosition({}),
             navSolutionMask((GnssLocationNavSolutionMask)0),
-            posTechMask((GnssLocationPosTechMask)0),
+            posTechMask((LocationTechnologyMask)0),
             bodyFrameData({}),
             gnssSystemTime({}), measUsageInfo(), leapSeconds(0),
             timeUncMs(0.0f), calibrationConfidencePercent(0),
