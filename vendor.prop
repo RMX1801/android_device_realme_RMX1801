@@ -108,6 +108,7 @@ ro.frp.pst=/dev/block/bootdevice/by-name/frp
 ro.com.google.clientidbase.ms=android-oppo-rev1
 
 # Graphics
+debug.cpurend.vsync=false
 debug.sf.disable_backpressure=1
 ro.opengles.version=196610
 
