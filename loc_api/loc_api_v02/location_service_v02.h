@@ -1,30 +1,30 @@
 /* Copyright (c) 2011-2020, The Linux Foundation. All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are
-* met:
-*     * Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*     * Redistributions in binary form must reproduce the above
-*       copyright notice, this list of conditions and the following
-*       disclaimer in the documentation and/or other materials provided
-*       with the distribution.
-*     * Neither the name of The Linux Foundation, nor the names of its
-*       contributors may be used to endorse or promote products derived
-*       from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
-* ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
-* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-* BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-* OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
-* IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ *       copyright notice, this list of conditions and the following
+ *       disclaimer in the documentation and/or other materials provided
+ *       with the distribution.
+ *     * Neither the name of The Linux Foundation, nor the names of its
+ *       contributors may be used to endorse or promote products derived
+ *       from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+ * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 #ifndef LOC_SERVICE_02_H
 #define LOC_SERVICE_02_H
 /**
@@ -57,13 +57,13 @@
   by the decode routine and should be checked so that the correct number of
   elements in the array will be accessed.
 
-*/
+ *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 /*====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*
  *THIS IS AN AUTO GENERATED FILE. DO NOT ALTER IN ANY WAY
  *====*====*====*====*====*====*====*====*====*====*====*====*====*====*====*/
 
-/* This file was generated with Tool version 6.14.9
-   It was generated on: Thu Jul  2 2020 (Spin 0)
+/* This file was generated with Tool version 6.14.7
+   It was generated on: Fri Aug  7 2020 (Spin 0)
    From IDL File: location_service_v02.idl */
 
 /** @defgroup loc_qmi_consts Constant values defined in the IDL */
@@ -89,11 +89,11 @@ extern "C" {
 /** Major Version Number of the IDL used to generate this file */
 #define LOC_V02_IDL_MAJOR_VERS 0x02
 /** Revision Number of the IDL used to generate this file */
-#define LOC_V02_IDL_MINOR_VERS 0x81
+#define LOC_V02_IDL_MINOR_VERS 0x84
 /** Major Version Number of the qmi_idl_compiler used to generate this file */
 #define LOC_V02_IDL_TOOL_VERS 0x06
 /** Maximum Defined Message ID */
-#define LOC_V02_MAX_MESSAGE_ID 0x00E1
+#define LOC_V02_MAX_MESSAGE_ID 0x00E2
 /**
     @}
   */
@@ -644,6 +644,8 @@ typedef uint64_t qmiLocEventRegMaskT_v02;
 #define QMI_LOC_EVENT_MASK_QUERY_XTRA_INFO_V02 ((qmiLocEventRegMaskT_v02)0x200000000000ull) /**<  The control point must enable this mask to receive the
        event indication to trigger XTRA config query from the control point  */
 #define QMI_LOC_EVENT_MASK_SAP_INS_PARAMETERS_REPORT_V02 ((qmiLocEventRegMaskT_v02)0x400000000000ull) /**<  The control point must enable this mask to receive QMI_LOC_EVENT_SAP_INS_PARAMETERS indication.  */
+#define QMI_LOC_EVENT_MASK_LATENCY_INFORMATION_REPORT_V02 ((qmiLocEventRegMaskT_v02)0x800000000000ull) /**<  The control point must enable this mask to receive
+       QMI_LOC_LATENCY_INFORMATION indication.        */
 /** @addtogroup loc_qmi_enums
     @{
   */
@@ -790,6 +792,8 @@ typedef struct {
       - QMI_LOC_EVENT_MASK_QUERY_XTRA_INFO (0x200000000000) --  The control point must enable this mask to receive the
        event indication to trigger XTRA config query from the control point
       - QMI_LOC_EVENT_MASK_SAP_INS_PARAMETERS_REPORT (0x400000000000) --  The control point must enable this mask to receive QMI_LOC_EVENT_SAP_INS_PARAMETERS indication.
+      - QMI_LOC_EVENT_MASK_LATENCY_INFORMATION_REPORT (0x800000000000) --  The control point must enable this mask to receive
+       QMI_LOC_LATENCY_INFORMATION indication.
 
  Multiple events can be registered by ORing the individual masks and
  sending them in this TLV. All unused bits in this mask must be set to 0.
@@ -969,6 +973,20 @@ typedef struct {
     @}
   */
 
+/** @addtogroup loc_qmi_enums
+    @{
+  */
+typedef enum {
+  QMILOCSPECIALREQENUMT_MIN_ENUM_VAL_V02 = -2147483647, /**< To force a 32 bit signed enum.  Do not change or use*/
+  eQMI_LOC_SPECIAL_REQUEST_SHORT_CODE_V02 = 1, /**<  The QMI_LOC client requests for location fix with  Special
+       Service type set with Short Code, should be allowed even when GPS and Privacy NV's
+       do not allow fix requests for this client.\n  */
+  QMILOCSPECIALREQENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
+}qmiLocSpecialReqEnumT_v02;
+/**
+    @}
+  */
+
 /** @addtogroup loc_qmi_messages
     @{
   */
@@ -1109,6 +1127,23 @@ typedef struct {
        In such cases, the GNSS receiver is configured with powerMode with highest
        power consumption among the requesting clients.
   */
+
+  /* Optional */
+  /*  GNSS Special Request Type */
+  uint8_t specialReqType_valid;  /**< Must be set to true if specialReqType is being passed */
+  qmiLocSpecialReqEnumT_v02 specialReqType;
+  /**<   The QMI_LOC client requests for location fix with Special
+ Service request types set, should be honoured even if GPS and Privacy NV's
+ do not allow fix requests for this client.\n
+
+ If not Set, the field is ignored and the client request is processed
+ as per GPS Lock and Privacy Settings.
+
+ Valid values: \n
+      - eQMI_LOC_SPECIAL_REQUEST_SHORT_CODE (1) --  The QMI_LOC client requests for location fix with  Special
+       Service type set with Short Code, should be allowed even when GPS and Privacy NV's
+       do not allow fix requests for this client.\n
+ */
 }qmiLocStartReqMsgT_v02;  /* Message */
 /**
     @}
@@ -1954,7 +1989,9 @@ typedef struct {
   /*  Uncertainty for System Tick at GPS Time */
   uint8_t systemTickUnc_valid;  /**< Must be set to true if systemTickUnc is being passed */
   float systemTickUnc;
-  /**<   Uncertainty for system tick at GPS time of week. */
+  /**<   Uncertainty for system tick at GPS time of week.
+       - Units: milliseconds
+  */
 
   /* Optional */
   /*  System Clock Time Bias */
@@ -7508,6 +7545,8 @@ typedef struct {
       - QMI_LOC_EVENT_MASK_QUERY_XTRA_INFO (0x200000000000) --  The control point must enable this mask to receive the
        event indication to trigger XTRA config query from the control point
       - QMI_LOC_EVENT_MASK_SAP_INS_PARAMETERS_REPORT (0x400000000000) --  The control point must enable this mask to receive QMI_LOC_EVENT_SAP_INS_PARAMETERS indication.
+      - QMI_LOC_EVENT_MASK_LATENCY_INFORMATION_REPORT (0x800000000000) --  The control point must enable this mask to receive
+       QMI_LOC_LATENCY_INFORMATION indication.
  */
 }qmiLocGetRegisteredEventsIndMsgT_v02;  /* Message */
 /**
@@ -11352,6 +11391,23 @@ typedef struct {
   uint32_t transactionId;
   /**<   Identifies the transaction. The transaction ID
        is returned in the Get Best Available Position indication. */
+
+  /* Optional */
+  /*  GNSS Special Request Type */
+  uint8_t specialReqType_valid;  /**< Must be set to true if specialReqType is being passed */
+  qmiLocSpecialReqEnumT_v02 specialReqType;
+  /**<   The QMI_LOC client requests for Best Available location with Special
+ Service request types set, should be honoured even if GPS and Privacy NV's
+ do not allow fix requests for this client.\n
+
+ If not Set, the field is ignored and the client request is processed
+ as per GPS Lock and Privacy Settings.
+
+ Valid values: \n
+      - eQMI_LOC_SPECIAL_REQUEST_SHORT_CODE (1) --  The QMI_LOC client requests for location fix with  Special
+       Service type set with Short Code, should be allowed even when GPS and Privacy NV's
+       do not allow fix requests for this client.\n
+ */
 }qmiLocGetBestAvailablePositionReqMsgT_v02;  /* Message */
 /**
     @}
@@ -15260,7 +15316,9 @@ typedef struct {
   /*  Uncertainty for Receiver Tick at Frame Count */
   uint8_t refCountTicksUnc_valid;  /**< Must be set to true if refCountTicksUnc is being passed */
   float refCountTicksUnc;
-  /**<   Uncertainty for Receiver frame counter value in ticks. */
+  /**<   Uncertainty for Receiver frame counter value
+       - Units: milliseconds
+  */
 
   /* Optional */
   /*  Sub-Sequence Number */
@@ -23272,6 +23330,113 @@ typedef struct {
     @}
   */
 
+/** @addtogroup loc_qmi_enums
+    @{
+  */
+typedef enum {
+  QMILOCLATENCYINFOTYPEENUMT_MIN_ENUM_VAL_V02 = -2147483647, /**< To force a 32 bit signed enum.  Do not change or use*/
+  eQMI_LOC_LATENCY_INFO_TYPE_INVALID_V02 = 0, /**<  Invalid Latency Info Type  */
+  eQMI_LOC_LATENCY_INFO_TYPE_MEASUREMENT_V02 = 1, /**<  Latency Info Type Measurement  */
+  QMILOCLATENCYINFOTYPEENUMT_MAX_ENUM_VAL_V02 = 2147483647 /**< To force a 32 bit signed enum.  Do not change or use*/
+}qmiLocLatencyInfoTypeEnumT_v02;
+/**
+    @}
+  */
+
+/** @addtogroup loc_qmi_messages
+    @{
+  */
+/** Indication Message; Sends the latency information to the control point. */
+typedef struct {
+
+  /* Mandatory */
+  /*  Latency Info Type */
+  qmiLocLatencyInfoTypeEnumT_v02 latencyInfo;
+  /**<   Latency Info Type. Values:
+      - eQMI_LOC_LATENCY_INFO_TYPE_INVALID (0) --  Invalid Latency Info Type
+      - eQMI_LOC_LATENCY_INFO_TYPE_MEASUREMENT (1) --  Latency Info Type Measurement
+ */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 1 */
+  uint8_t sysTickAtChkPt1_valid;  /**< Must be set to true if sysTickAtChkPt1 is being passed */
+  uint64_t sysTickAtChkPt1;
+  /**<   Latency Measurement at Checkpoint 1  \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 2 */
+  uint8_t sysTickAtChkPt2_valid;  /**< Must be set to true if sysTickAtChkPt2 is being passed */
+  uint64_t sysTickAtChkPt2;
+  /**<   Latency Measurement at Checkpoint 2  \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 3 */
+  uint8_t sysTickAtChkPt3_valid;  /**< Must be set to true if sysTickAtChkPt3 is being passed */
+  uint64_t sysTickAtChkPt3;
+  /**<   Latency Measurement at Checkpoint 3  \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 4 */
+  uint8_t sysTickAtChkPt4_valid;  /**< Must be set to true if sysTickAtChkPt4 is being passed */
+  uint64_t sysTickAtChkPt4;
+  /**<   Latency Measurement at Checkpoint 4 \n
+      - Units: ticks  */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 5 */
+  uint8_t sysTickAtChkPt5_valid;  /**< Must be set to true if sysTickAtChkPt5 is being passed */
+  uint64_t sysTickAtChkPt5;
+  /**<   Latency Measurement at Checkpoint 5  \n
+      - Units: ticks  */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 6 */
+  uint8_t sysTickAtChkPt6_valid;  /**< Must be set to true if sysTickAtChkPt6 is being passed */
+  uint64_t sysTickAtChkPt6;
+  /**<   Latency Measurement at Checkpoint 6 \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 7 */
+  uint8_t sysTickAtChkPt7_valid;  /**< Must be set to true if sysTickAtChkPt7 is being passed */
+  uint64_t sysTickAtChkPt7;
+  /**<   Latency Measurement at Checkpoint 7 \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 8 */
+  uint8_t sysTickAtChkPt8_valid;  /**< Must be set to true if sysTickAtChkPt8 is being passed */
+  uint64_t sysTickAtChkPt8;
+  /**<   Latency Measurement at Checkpoint 8 \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 9 */
+  uint8_t sysTickAtChkPt9_valid;  /**< Must be set to true if sysTickAtChkPt9 is being passed */
+  uint64_t sysTickAtChkPt9;
+  /**<   Latency Measurement at Checkpoint 9 \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Latency Measurement at Checkpoint 10 */
+  uint8_t sysTickAtChkPt10_valid;  /**< Must be set to true if sysTickAtChkPt10 is being passed */
+  uint64_t sysTickAtChkPt10;
+  /**<   Latency Measurement at Checkpoint 10  \n
+      - Units: ticks */
+
+  /* Optional */
+  /*  Measurement Report Frame Count */
+  uint8_t fCountOfMeasBlk_valid;  /**< Must be set to true if fCountOfMeasBlk is being passed */
+  uint32_t fCountOfMeasBlk;
+  /**<   Time information to tie measblk and latency IPC */
+}qmiLocLatencyInformationIndMsgT_v02;  /* Message */
+/**
+    @}
+  */
+
 /* Conditional compilation tags for message removal */
 //#define REMOVE_QMI_LOC_ADD_CIRCULAR_GEOFENCE_V02
 //#define REMOVE_QMI_LOC_ADD_GEOFENCE_CONTEXT_V02
@@ -23413,6 +23578,7 @@ typedef struct {
 //#define REMOVE_QMI_LOC_INJECT_WIFI_POSITION_V02
 //#define REMOVE_QMI_LOC_INJECT_XTRA_DATA_V02
 //#define REMOVE_QMI_LOC_INJECT_XTRA_PCID_V02
+//#define REMOVE_QMI_LOC_LATENCY_INFORMATION_V02
 //#define REMOVE_QMI_LOC_LOCATION_REQUEST_NOTIFICATION_V02
 //#define REMOVE_QMI_LOC_NOTIFY_WIFI_ATTACHMENT_STATUS_V02
 //#define REMOVE_QMI_LOC_NOTIFY_WIFI_ENABLED_STATUS_V02
@@ -23943,6 +24109,7 @@ typedef struct {
 #define QMI_LOC_GET_MULTIBAND_CONFIG_REQ_V02 0x00E1
 #define QMI_LOC_GET_MULTIBAND_CONFIG_RESP_V02 0x00E1
 #define QMI_LOC_GET_MULTIBAND_CONFIG_IND_V02 0x00E1
+#define QMI_LOC_LATENCY_INFORMATION_IND_V02 0x00E2
 /**
     @}
   */
@@ -23970,3 +24137,4 @@ qmi_idl_service_object_type loc_get_service_object_internal_v02
 }
 #endif
 #endif
+

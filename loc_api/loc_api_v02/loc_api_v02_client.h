@@ -1139,6 +1139,9 @@ typedef union
    /** Sent asynchronously by MGP to registred clients for the Power metrics
     QMI_LOC_GET_BAND_MEASUREMENT_METRICS_IND_V02 0x00CE*/
 
+   const qmiLocLatencyInformationIndMsgT_v02 *pLocLatencyInfoIndMsg;
+   /** Sent by the engine to inform of latency info
+    QMI_LOC_LATENCY_INFORMATION_IND_V02 */
 }locClientEventIndUnionType;
 
 

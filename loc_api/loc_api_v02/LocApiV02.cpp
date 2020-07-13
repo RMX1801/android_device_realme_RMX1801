@@ -143,6 +143,7 @@ static void globalEventCb(locClientHandleType clientHandle,
     case QMI_LOC_EVENT_BDS_EPHEMERIS_REPORT_IND_V02:
     case QMI_LOC_EVENT_GALILEO_EPHEMERIS_REPORT_IND_V02:
     case QMI_LOC_EVENT_QZSS_EPHEMERIS_REPORT_IND_V02:
+    case QMI_LOC_LATENCY_INFORMATION_IND_V02:
         MODEM_LOG_CALLFLOW_DEBUG(%s, loc_get_v02_event_name(eventId));
         break;
     default:
@@ -262,7 +263,10 @@ LocApiV02 :: LocApiV02(LOC_API_ADAPTER_EVENT_MASK_T exMask,
     mMasterRegisterNotSupported(false),
     mSvMeasurementSet(nullptr),
     mIsFirstFinalFixReported(false),
-    mIsFirstStartFixReq(false)
+    mIsFirstStartFixReq(false),
+    mHlosQtimer1(0),
+    mHlosQtimer2(0),
+    mRefFCount(0)
 {
   // initialize loc_sync_req interface
   loc_sync_req_init();
@@ -588,7 +592,8 @@ locClientEventMaskType LocApiV02 :: adjustMaskIfNoSession(locClientEventMaskType
                                            QMI_LOC_EVENT_MASK_GNSS_SV_POLYNOMIAL_REPORT_V02 |
                                            QMI_LOC_EVENT_MASK_EPHEMERIS_REPORT_V02 |
                                            QMI_LOC_EVENT_MASK_GNSS_EVENT_REPORT_V02 |
-                                           QMI_LOC_EVENT_MASK_NEXT_LS_INFO_REPORT_V02;
+                                           QMI_LOC_EVENT_MASK_NEXT_LS_INFO_REPORT_V02 |
+                                           QMI_LOC_EVENT_MASK_LATENCY_INFORMATION_REPORT_V02;
         qmiMask = qmiMask & ~clearMask;
     }
     LOC_LOGd("oldQmiMask=%" PRIu64 " qmiMask=%" PRIu64 " mInSession: %d",
@@ -2524,6 +2529,10 @@ locClientEventMaskType LocApiV02 :: convertMask(
       eventMask |= QMI_LOC_EVENT_MASK_GNSS_NHZ_MEASUREMENT_REPORT_V02;
   }
 
+  if (mask & LOC_API_ADAPTER_BIT_LATENCY_INFORMATION) {
+      eventMask |= QMI_LOC_EVENT_MASK_LATENCY_INFORMATION_REPORT_V02;
+  }
+
   return eventMask;
 }
 
@@ -2609,6 +2618,10 @@ void LocApiV02 :: reportPosition (
     UlpLocation location;
     LocPosTechMask tech_Mask = LOC_POS_TECH_MASK_DEFAULT;
     LOC_LOGD("Reporting position from V2 Adapter\n");
+
+    mHlosQtimer2 = getQTimerTickCount();
+    LOC_LOGv("mHlosQtimer2=%" PRIi64 " ", mHlosQtimer2);
+
     memset(&location, 0, sizeof (UlpLocation));
     location.size = sizeof(location);
     location.unpropagatedPosition = unpropagatedPosition;
@@ -3682,7 +3695,9 @@ void  LocApiV02 :: reportSvMeasurement (
             resetSvMeasurementReport();
             newMeasProcessed = false;
         }
-
+        mHlosQtimer1 = getQTimerTickCount();
+        mRefFCount = gnss_raw_measurement_ptr->systemTimeExt.refFCount;
+        LOC_LOGv("mHlosQtimer1=%" PRIi64 " mRefFCount=%d", mHlosQtimer1, mRefFCount);
         prevRefFCount = gnss_raw_measurement_ptr->systemTimeExt.refFCount;
         if (gnss_raw_measurement_ptr->nHzMeasurement_valid &&
                     gnss_raw_measurement_ptr->nHzMeasurement) {
@@ -6098,6 +6113,11 @@ void LocApiV02 :: eventCb(locClientHandleType /*clientHandle*/,
     case QMI_LOC_SYSTEM_INFO_IND_V02:
       reportSystemInfo(eventPayload.pLocSystemInfoEvent);
       break;
+
+    case QMI_LOC_LATENCY_INFORMATION_IND_V02:
+      reportLatencyInfo(eventPayload.pLocLatencyInfoIndMsg);
+      break;
+
   }
 }
 
@@ -6621,6 +6641,81 @@ void LocApiV02 :: updatePowerState(PowerStateType powerState){
 
     LOC_LOGd("Exit. err: %u", err);
     }));
+}
+
+void LocApiV02::reportLatencyInfo(const qmiLocLatencyInformationIndMsgT_v02* pLocLatencyInfo)
+{
+    GnssLatencyInfo gnssLatencyInfo = {};
+
+    if (nullptr == pLocLatencyInfo) {
+        LOC_LOGe("pLocLatencyInfo is nullptr");
+        return;
+    }
+
+    if (eQMI_LOC_LATENCY_INFO_TYPE_MEASUREMENT_V02 != pLocLatencyInfo->latencyInfo) {
+        LOC_LOGe("Invalid Latency Info Type");
+        return;
+    }
+
+    /* check refCount */
+    if (pLocLatencyInfo->fCountOfMeasBlk != mRefFCount) {
+        LOC_LOGw("FCount mismatch: Latency Fcount=%d Meas. FCount=%d",
+                 pLocLatencyInfo->fCountOfMeasBlk,
+                 mRefFCount);
+        return;
+    }
+
+    if (pLocLatencyInfo->sysTickAtChkPt1_valid) {
+        gnssLatencyInfo.meQtimer1 = pLocLatencyInfo->sysTickAtChkPt1;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt2_valid) {
+        gnssLatencyInfo.meQtimer2 = pLocLatencyInfo->sysTickAtChkPt2;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt3_valid) {
+        gnssLatencyInfo.meQtimer3 = pLocLatencyInfo->sysTickAtChkPt3;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt4_valid) {
+        gnssLatencyInfo.peQtimer1 = pLocLatencyInfo->sysTickAtChkPt4;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt5_valid) {
+        gnssLatencyInfo.peQtimer2 = pLocLatencyInfo->sysTickAtChkPt5;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt6_valid) {
+        gnssLatencyInfo.peQtimer3 = pLocLatencyInfo->sysTickAtChkPt6;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt7_valid) {
+        gnssLatencyInfo.smQtimer1 = pLocLatencyInfo->sysTickAtChkPt7;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt8_valid) {
+        gnssLatencyInfo.smQtimer2 = pLocLatencyInfo->sysTickAtChkPt8;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt9_valid) {
+        gnssLatencyInfo.smQtimer3 = pLocLatencyInfo->sysTickAtChkPt9;
+    }
+    if (pLocLatencyInfo->sysTickAtChkPt10_valid) {
+        gnssLatencyInfo.locMwQtimer = pLocLatencyInfo->sysTickAtChkPt10;
+    }
+    gnssLatencyInfo.hlosQtimer1 = mHlosQtimer1;
+    gnssLatencyInfo.hlosQtimer2 = mHlosQtimer2;
+    LOC_LOGv("meQtimer1=%" PRIi64 " "
+             "meQtimer2=%" PRIi64 " "
+             "meQtimer3=%" PRIi64 " "
+             "peQtimer1=%" PRIi64 " "
+             "peQtimer2=%" PRIi64 " "
+             "peQtimer3=%" PRIi64 " "
+             "smQtimer1=%" PRIi64 " "
+             "smQtimer2=%" PRIi64 " "
+             "smQtimer3=%" PRIi64 " "
+             "locMwQtimer=%" PRIi64 " "
+             "hlosQtimer1=%" PRIi64 " "
+             "hlosQtimer2=%" PRIi64 " ",
+             gnssLatencyInfo.meQtimer1, gnssLatencyInfo.meQtimer2,
+             gnssLatencyInfo.meQtimer3, gnssLatencyInfo.peQtimer1, gnssLatencyInfo.peQtimer2,
+             gnssLatencyInfo.peQtimer3, gnssLatencyInfo.smQtimer1, gnssLatencyInfo.smQtimer2,
+             gnssLatencyInfo.smQtimer3, gnssLatencyInfo.locMwQtimer,
+             gnssLatencyInfo.hlosQtimer1, gnssLatencyInfo.hlosQtimer2);
+
+    LocApiBase::reportLatencyInfo(gnssLatencyInfo);
 }
 
 void LocApiV02::configRobustLocation

@@ -82,6 +82,8 @@ private:
   GnssSvMeasurementSet*  mSvMeasurementSet;
   bool mIsFirstFinalFixReported;
   bool mIsFirstStartFixReq;
+  uint64_t mHlosQtimer1, mHlosQtimer2;
+  uint32_t mRefFCount;
 
   /* Convert event mask from loc eng to loc_api_v02 format */
   static locClientEventMaskType convertMask(LOC_API_ADAPTER_EVENT_MASK_T mask);
@@ -245,6 +247,8 @@ private:
 
   /* Inform ODCPI availability to Modem */
   void wifiStatusInformSync();
+
+  void reportLatencyInfo(const qmiLocLatencyInformationIndMsgT_v02* pLocLatencyInfo);
 
 protected:
   virtual enum loc_api_adapter_err
