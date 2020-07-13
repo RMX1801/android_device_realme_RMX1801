@@ -421,6 +421,16 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             break;
         }
 
+        case E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID: {
+            if (sizeof(LocConfigConstellationSecondaryBandReqMsg) != length) {
+                LOC_LOGe("invalid LocConfigConstellationSecondaryBandReqMsg");
+                break;
+            }
+            configConstellationSecondaryBand(reinterpret_cast
+                    <LocConfigConstellationSecondaryBandReqMsg*>(pMsg));
+            break;
+        }
+
         case E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG_ID: {
             if (sizeof(LocConfigAidingDataDeletionReqMsg) != length) {
                 LOC_LOGe("invalid LocConfigAidingDataDeletionReqMsg");
@@ -501,6 +511,17 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT);
             break;
         }
+
+        case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID: {
+            if (sizeof(LocConfigGetConstellationSecondaryBandConfigReqMsg) != length) {
+                LOC_LOGe("invalid LocConfigGetConstellationSecondaryBandConfigReqMsg");
+                break;
+            }
+            getConstellationSecondaryBandConfig(
+                    (const LocConfigGetConstellationSecondaryBandConfigReqMsg*) pMsg);
+            break;
+        }
+
         default: {
             LOC_LOGe("Unknown message with id: %d ", pMsg->msgId);
             break;
@@ -686,7 +707,6 @@ void LocationApiService::updateNetworkAvailability(bool availability) {
 
 void LocationApiService::getGnssEnergyConsumed(const char* clientSocketName) {
 
-    std::lock_guard<std::mutex> lock(mMutex);
     LOC_LOGi(">-- getGnssEnergyConsumed by=%s", clientSocketName);
 
     GnssInterface* gnssInterface = getGnssInterface();
@@ -695,6 +715,7 @@ void LocationApiService::getGnssEnergyConsumed(const char* clientSocketName) {
         return;
     }
 
+    std::lock_guard<std::mutex> lock(mMutex);
     bool requestAlreadyPending = false;
     for (auto each : mClients) {
         if ((each.second != nullptr) &&
@@ -722,6 +743,26 @@ void LocationApiService::getGnssEnergyConsumed(const char* clientSocketName) {
             gnssInterface->getGnssEnergyConsumed(reportEnergyCb);
         }
     }
+}
+
+void LocationApiService::getConstellationSecondaryBandConfig(
+        const LocConfigGetConstellationSecondaryBandConfigReqMsg* pReqMsg) {
+
+    LOC_LOGi(">--getConstellationConfig");
+    GnssInterface* gnssInterface = getGnssInterface();
+    if (!gnssInterface) {
+        LOC_LOGe(">-- null GnssInterface");
+        return;
+    }
+
+    std::lock_guard<std::mutex> lock(mMutex);
+    // retrieve the constellation enablement/disablement config
+    // blacklisted SV info and secondary band config
+    uint32_t sessionId = gnssInterface-> gnssGetSecondaryBandConfig();
+
+    // if sessionId is 0, e.g.: error callback will be delivered
+    // by addConfigRequestToMap
+    addConfigRequestToMap(sessionId, pReqMsg);
 }
 
 /******************************************************************************
@@ -973,19 +1014,33 @@ void LocationApiService::configConstellations(const LocConfigSvConstellationReqM
     }
     std::lock_guard<std::mutex> lock(mMutex);
 
-    uint32_t sessionId = 0;
-    if (pMsg->mResetToDefault) {
-        sessionId = mLocationControlApi->resetConstellationConfig();
-    } else {
-        sessionId = mLocationControlApi->configConstellations(
-            pMsg->mSvTypeConfig, pMsg->mSvIdConfig);
-    }
+    uint32_t sessionId = mLocationControlApi->configConstellations(
+            pMsg->mConstellationEnablementConfig, pMsg->mBlacklistSvConfig);
 
-    LOC_LOGi(">-- reset: %d, enable constellations: 0x%" PRIx64 ", "
+    LOC_LOGe(">-- reset sv type config: %d, enable constellations: 0x%" PRIx64 ", "
              "blacklisted consteallations: 0x%" PRIx64 ", ",
-             pMsg->mResetToDefault,
-             pMsg->mSvTypeConfig.enabledSvTypesMask,
-             pMsg->mSvTypeConfig.blacklistedSvTypesMask);
+             (pMsg->mConstellationEnablementConfig.size == 0),
+             pMsg->mConstellationEnablementConfig.enabledSvTypesMask,
+             pMsg->mConstellationEnablementConfig.blacklistedSvTypesMask);
+    addConfigRequestToMap(sessionId, pMsg);
+}
+
+void LocationApiService::configConstellationSecondaryBand(
+        const LocConfigConstellationSecondaryBandReqMsg* pMsg) {
+
+    if (!pMsg) {
+        return;
+    }
+    std::lock_guard<std::mutex> lock(mMutex);
+
+    uint32_t sessionId = mLocationControlApi->configConstellationSecondaryBand(
+            pMsg->mSecondaryBandConfig);
+
+    LOC_LOGe(">-- secondary band size %d, enabled constellation: 0x%" PRIx64 ", "
+             "secondary band disabed constellation: 0x%" PRIx64 "",
+             pMsg->mSecondaryBandConfig.size,
+             pMsg->mSecondaryBandConfig.enabledSvTypesMask,
+             pMsg->mSecondaryBandConfig.blacklistedSvTypesMask);
     addConfigRequestToMap(sessionId, pMsg);
 }
 

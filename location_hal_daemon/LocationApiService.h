@@ -192,6 +192,8 @@ private:
             const LocConfigPositionAssistedClockEstimatorReqMsg* pMsg);
     void configConstellations(
             const LocConfigSvConstellationReqMsg* pMsg);
+    void configConstellationSecondaryBand(
+            const LocConfigConstellationSecondaryBandReqMsg* pMsg);
     void configAidingDataDeletion(
             LocConfigAidingDataDeletionReqMsg* pMsg);
     void configLeverArm(const LocConfigLeverArmReqMsg* pMsg);
@@ -203,6 +205,8 @@ private:
     // Location configuration API get/read requests
     void getGnssConfig(const LocAPIMsgHeader* pReqMsg,
                        GnssConfigFlagsBits configFlag);
+    void getConstellationSecondaryBandConfig(
+            const LocConfigGetConstellationSecondaryBandConfigReqMsg* pReqMsg);
 
     // Location configuration API util routines
     void addConfigRequestToMap(uint32_t sessionId,
