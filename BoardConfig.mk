@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-BOARD_VENDOR := realme
-
 DEVICE_PATH := device/realme/RMX1801
 
 # Arch
