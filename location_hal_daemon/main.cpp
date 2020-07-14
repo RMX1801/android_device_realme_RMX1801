@@ -96,7 +96,8 @@ int main(int argc, char *argv[])
 #ifdef INIT_SYSTEM_SYSV
     // set supplementary groups for sysvinit
     // For systemd, common supplementary groups are set via service files
-    char groupNames[LOC_MAX_PARAM_NAME] = "gps diag powermgr locclient inet vnw";
+    char groupNames[LOC_MAX_PARAM_NAME] = "gps radio diag powermgr locclient inet vnw";
+
     gid_t groupIds[LOC_PROCESS_MAX_NUM_GROUPS] = {};
     char *splitGrpString[LOC_PROCESS_MAX_NUM_GROUPS];
     int numGrps = loc_util_split_string(groupNames, splitGrpString,
