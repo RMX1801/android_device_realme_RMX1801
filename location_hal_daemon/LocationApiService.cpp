@@ -457,12 +457,12 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             break;
         }
 
-        case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID: {
-            if (sizeof(LocConfigB2sMountParamsReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigB2sMountParamsReqMsg");
+        case E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID: {
+            if (sizeof(LocConfigDrEngineParamsReqMsg) != length) {
+                LOC_LOGe("invalid LocConfigDrEngineParamsReqMsg");
                 break;
             }
-            configB2sMountParams(reinterpret_cast<LocConfigB2sMountParamsReqMsg*>(pMsg));
+            configDeadReckoningEngineParams(reinterpret_cast<LocConfigDrEngineParamsReqMsg*>(pMsg));
             break;
         }
 
@@ -1095,19 +1095,13 @@ void LocationApiService::getGnssConfig(const LocAPIMsgHeader* pReqMsg,
     addConfigRequestToMap(sessionId, pReqMsg);
 }
 
-void LocationApiService::configB2sMountParams(const LocConfigB2sMountParamsReqMsg* pMsg){
+void LocationApiService::configDeadReckoningEngineParams(const LocConfigDrEngineParamsReqMsg* pMsg){
     if (!pMsg) {
         return;
     }
     std::lock_guard<std::mutex> lock(mMutex);
-    LOC_LOGi(">-- client %s, b2s params roll offset: %f, pitch offset: %f, "
-             "yaw offset: %f, offset unc: %f",
-             pMsg->mSocketName, pMsg->mB2sParams.rollOffset,
-             pMsg->mB2sParams.pitchOffset, pMsg->mB2sParams.yawOffset,
-             pMsg->mB2sParams.offsetUnc);
-
-    uint32_t sessionId = mLocationControlApi->configBodyToSensorMountParams(
-            pMsg->mB2sParams);
+    uint32_t sessionId = mLocationControlApi->configDeadReckoningEngineParams(
+            pMsg->mDreConfig);
     addConfigRequestToMap(sessionId, pMsg);
 }
 

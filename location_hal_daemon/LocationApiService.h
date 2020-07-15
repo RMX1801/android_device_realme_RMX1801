@@ -197,7 +197,7 @@ private:
     void configLeverArm(const LocConfigLeverArmReqMsg* pMsg);
     void configRobustLocation(const LocConfigRobustLocationReqMsg* pMsg);
     void configMinGpsWeek(const LocConfigMinGpsWeekReqMsg* pMsg);
-    void configB2sMountParams(const LocConfigB2sMountParamsReqMsg* pMsg);
+    void configDeadReckoningEngineParams(const LocConfigDrEngineParamsReqMsg* pMsg);
     void configMinSvElevation(const LocConfigMinSvElevationReqMsg* pMsg);
 
     // Location configuration API get/read requests

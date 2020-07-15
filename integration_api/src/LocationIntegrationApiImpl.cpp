@@ -65,8 +65,8 @@ static LocConfigTypeEnum getLocConfigTypeFromMsgId(ELocMsgID  msgId) {
     case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
         configType = CONFIG_MIN_GPS_WEEK;
         break;
-    case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID:
-        configType = CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS;
+    case E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID:
+        configType = CONFIG_DEAD_RECKONING_ENGINE;
         break;
     case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
         configType = CONFIG_MIN_SV_ELEVATION;
@@ -143,7 +143,7 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         mSVConfigInfo{},
         mLeverArmConfigInfo{},
         mRobustLocationConfigInfo{},
-        mB2sConfigInfo{} {
+        mDreConfigInfo{} {
     if (integrationClientAllowed() == false) {
         return;
     }
@@ -291,7 +291,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
             case E_INTAPI_CONFIG_LEVER_ARM_MSG_ID:
             case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID:
             case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
-            case E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID:
+            case E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID:
             case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
             case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
@@ -631,28 +631,28 @@ uint32_t LocationIntegrationApiImpl::getMinGpsWeek() {
     return 0;
 }
 
-uint32_t LocationIntegrationApiImpl::configBodyToSensorMountParams(
-        const ::BodyToSensorMountParams& b2sParams) {
-    struct ConfigB2sMountParamsReq : public LocMsg {
-        ConfigB2sMountParamsReq(LocationIntegrationApiImpl* apiImpl,
-                                ::BodyToSensorMountParams b2sParams) :
+uint32_t LocationIntegrationApiImpl::configDeadReckoningEngineParams(
+        const ::DeadReckoningEngineConfig& dreConfig) {
+    struct ConfigDrEngineParamsReq : public LocMsg {
+        ConfigDrEngineParamsReq(LocationIntegrationApiImpl* apiImpl,
+                                ::DeadReckoningEngineConfig dreConfig) :
                 mApiImpl(apiImpl),
-                mB2sParams(b2sParams){}
-        virtual ~ConfigB2sMountParamsReq() {}
+                mDreConfig(dreConfig){}
+        virtual ~ConfigDrEngineParamsReq() {}
         void proc() const {
-            mApiImpl->mB2sConfigInfo.isValid = true;
-            mApiImpl->mB2sConfigInfo.b2sParams = mB2sParams;
-            LocConfigB2sMountParamsReqMsg msg(mApiImpl->mSocketName,
-                                              mApiImpl->mB2sConfigInfo.b2sParams);
-            mApiImpl->sendConfigMsgToHalDaemon(CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS,
+            mApiImpl->mDreConfigInfo.isValid = true;
+            mApiImpl->mDreConfigInfo.dreConfig = mDreConfig;
+            LocConfigDrEngineParamsReqMsg msg(mApiImpl->mSocketName,
+                                              mApiImpl->mDreConfigInfo.dreConfig);
+            mApiImpl->sendConfigMsgToHalDaemon(CONFIG_DEAD_RECKONING_ENGINE,
                                                reinterpret_cast<uint8_t*>(&msg),
                                                sizeof(msg));
         }
         LocationIntegrationApiImpl* mApiImpl;
-        ::BodyToSensorMountParams mB2sParams;
+        ::DeadReckoningEngineConfig mDreConfig;
     };
 
-    mMsgTask->sendMsg(new (nothrow) ConfigB2sMountParamsReq(this, b2sParams));
+    mMsgTask->sendMsg(new (nothrow) ConfigDrEngineParamsReq(this, dreConfig));
 
     return 0;
 }
@@ -714,7 +714,7 @@ void LocationIntegrationApiImpl::sendConfigMsgToHalDaemon(
         if (true == rc) {
             messageSentToHal = true;
         } else {
-            LOC_LOGe(">>> sendConfigMsgToHalDaemon, msg type=%d, rc=%d", configType, rc);
+            LOC_LOGe(">>> sendConfigMsgToHalDaemon failed for msg type=%d", configType);
         }
     }
 
@@ -798,9 +798,9 @@ void LocationIntegrationApiImpl::processHalReadyMsg() {
     // Do not reconfigure min gps week, as min gps week setting
     // can be overwritten by modem over  time
 
-    if (mB2sConfigInfo.isValid) {
-        LocConfigB2sMountParamsReqMsg msg(mSocketName, mB2sConfigInfo.b2sParams);
-        sendConfigMsgToHalDaemon(CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS,
+    if (mDreConfigInfo.isValid) {
+        LocConfigDrEngineParamsReqMsg msg(mSocketName, mDreConfigInfo.dreConfig);
+        sendConfigMsgToHalDaemon(CONFIG_DEAD_RECKONING_ENGINE,
                                  reinterpret_cast<uint8_t*>(&msg),
                                  sizeof(msg));
     }

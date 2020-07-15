@@ -222,9 +222,15 @@ bool LocationIntegrationApi::deleteAidingData(AidingDataDeletionMask aidingDataM
         LOC_LOGd("aiding data mask 0x%x", aidingDataMask);
         GnssAidingData aidingData = {};
         aidingData.deleteAll = false;
-        aidingData.sv.svTypeMask = GNSS_AIDING_DATA_SV_TYPE_MASK_ALL;
-        aidingData.sv.svMask = GNSS_AIDING_DATA_SV_EPHEMERIS_BIT;
-        aidingData.posEngineMask = POSITION_ENGINE_MASK_ALL;
+        if (aidingDataMask & AIDING_DATA_DELETION_EPHEMERIS) {
+            aidingData.sv.svTypeMask = GNSS_AIDING_DATA_SV_TYPE_MASK_ALL;
+            aidingData.sv.svMask |= GNSS_AIDING_DATA_SV_EPHEMERIS_BIT;
+            aidingData.posEngineMask = POSITION_ENGINE_MASK_ALL;
+        }
+        if (aidingDataMask & AIDING_DATA_DELETION_DR_SENSOR_CALIBRATION) {
+            aidingData.dreAidingDataMask |= DR_ENGINE_AIDING_DATA_CALIBRATION_BIT;
+            aidingData.posEngineMask |= DEAD_RECKONING_ENGINE;
+        }
         mApiImpl->gnssDeleteAidingData(aidingData);
         return true;
     } else {
@@ -318,16 +324,92 @@ bool LocationIntegrationApi::getMinGpsWeek() {
 
 bool LocationIntegrationApi::configBodyToSensorMountParams(
         const BodyToSensorMountParams& b2sParams) {
+    return false;
+}
+
+bool LocationIntegrationApi::configDeadReckoningEngineParams(
+        const DeadReckoningEngineConfig& dreConfig) {
+
     if (mApiImpl) {
-        LOC_LOGd("roll offset %f, pitch offset %f, yaw offset %f, offset unc %f",
-                 b2sParams.rollOffset, b2sParams.pitchOffset, b2sParams.yawOffset,
-                 b2sParams.offsetUnc);
-        ::BodyToSensorMountParams halB2sParams = {};
-        halB2sParams.rollOffset  = b2sParams.rollOffset;
-        halB2sParams.pitchOffset = b2sParams.pitchOffset;
-        halB2sParams.yawOffset   = b2sParams.yawOffset;
-        halB2sParams.offsetUnc   = b2sParams.offsetUnc;
-        mApiImpl->configBodyToSensorMountParams(halB2sParams);
+        LOC_LOGd("mask 0x%x, roll offset %f, pitch offset %f, yaw offset %f, offset unc %f",
+                 dreConfig.validMask,
+                 dreConfig.bodyToSensorMountParams.rollOffset,
+                 dreConfig.bodyToSensorMountParams.pitchOffset,
+                 dreConfig.bodyToSensorMountParams.yawOffset,
+                 dreConfig.bodyToSensorMountParams.offsetUnc,
+                 dreConfig.vehicleSpeedScaleFactor,
+                 dreConfig.vehicleSpeedScaleFactorUnc,
+                 dreConfig.gyroScaleFactor, dreConfig.gyroScaleFactorUnc);
+        ::DeadReckoningEngineConfig halConfig = {};
+        if (dreConfig.validMask & BODY_TO_SENSOR_MOUNT_PARAMS_VALID) {
+            if (dreConfig.bodyToSensorMountParams.rollOffset < -180.0 ||
+                    dreConfig.bodyToSensorMountParams.rollOffset > 180.0 ||
+                    dreConfig.bodyToSensorMountParams.pitchOffset < -180.0 ||
+                    dreConfig.bodyToSensorMountParams.pitchOffset > 180.0 ||
+                    dreConfig.bodyToSensorMountParams.yawOffset < -180.0 ||
+                    dreConfig.bodyToSensorMountParams.yawOffset > 180.0 ||
+                    dreConfig.bodyToSensorMountParams.offsetUnc < -180.0 ||
+                    dreConfig.bodyToSensorMountParams.offsetUnc > 180.0 ) {
+                LOC_LOGe("invalid b2s parameter, range is [-180.0, 180.0]");
+                return false;
+            }
+
+            halConfig.validMask |= ::BODY_TO_SENSOR_MOUNT_PARAMS_VALID;
+            halConfig.bodyToSensorMountParams.rollOffset  =
+                    dreConfig.bodyToSensorMountParams.rollOffset;
+            halConfig.bodyToSensorMountParams.pitchOffset =
+                    dreConfig.bodyToSensorMountParams.pitchOffset;
+            halConfig.bodyToSensorMountParams.yawOffset   =
+                    dreConfig.bodyToSensorMountParams.yawOffset;
+            halConfig.bodyToSensorMountParams.offsetUnc   =
+                    dreConfig.bodyToSensorMountParams.offsetUnc;
+        }
+        if (dreConfig.validMask & VEHICLE_SPEED_SCALE_FACTOR_VALID) {
+            if (dreConfig.vehicleSpeedScaleFactor < 0.9 ||
+                    dreConfig.vehicleSpeedScaleFactor > 1.1) {
+                LOC_LOGe("invalid vehicle speed scale factor, range is [0.9, 1,1]");
+                return false;
+            }
+            halConfig.validMask |= ::VEHICLE_SPEED_SCALE_FACTOR_VALID;
+            halConfig.vehicleSpeedScaleFactor = dreConfig.vehicleSpeedScaleFactor;
+        }
+        if (dreConfig.validMask & VEHICLE_SPEED_SCALE_FACTOR_UNC_VALID) {
+            if (dreConfig.vehicleSpeedScaleFactorUnc < 0.0 ||
+                    dreConfig.vehicleSpeedScaleFactorUnc > 0.1) {
+                LOC_LOGe("invalid vehicle speed scale factor uncertainty, range is [0.0, 0.1]");
+                return false;
+            }
+            halConfig.validMask |= ::VEHICLE_SPEED_SCALE_FACTOR_UNC_VALID;
+            halConfig.vehicleSpeedScaleFactorUnc = dreConfig.vehicleSpeedScaleFactorUnc;
+        }
+        if (dreConfig.validMask & GYRO_SCALE_FACTOR_VALID) {
+            if (dreConfig.gyroScaleFactor < 0.9 ||
+                    dreConfig.gyroScaleFactor > 1.1) {
+                LOC_LOGe("invalid gyro scale factor, range is [0.9, 1,1]");
+                return false;
+            }
+            halConfig.validMask |= ::GYRO_SCALE_FACTOR_VALID;
+            halConfig.gyroScaleFactor = dreConfig.gyroScaleFactor;
+        }
+        if (dreConfig.validMask & GYRO_SCALE_FACTOR_UNC_VALID) {
+            if (dreConfig.gyroScaleFactorUnc < 0.0 ||
+                    dreConfig.gyroScaleFactorUnc > 0.1) {
+                LOC_LOGe("invalid gyro scale factor uncertainty, range is [0.0, 0.1]");
+                return false;
+            }
+            halConfig.validMask |= ::GYRO_SCALE_FACTOR_UNC_VALID;
+            halConfig.gyroScaleFactorUnc = dreConfig.gyroScaleFactorUnc;
+        }
+        LOC_LOGd("mask 0x%" PRIx64 ", roll offset %f, pitch offset %f, "
+                  "yaw offset %f, offset unc %f", halConfig.validMask,
+                 halConfig.bodyToSensorMountParams.rollOffset,
+                 halConfig.bodyToSensorMountParams.pitchOffset,
+                 halConfig.bodyToSensorMountParams.yawOffset,
+                 halConfig.bodyToSensorMountParams.offsetUnc,
+                 halConfig.vehicleSpeedScaleFactor,
+                 halConfig.vehicleSpeedScaleFactorUnc,
+                 halConfig.gyroScaleFactor, halConfig.gyroScaleFactorUnc);
+        mApiImpl->configDeadReckoningEngineParams(halConfig);
         return true;
     } else {
         LOC_LOGe ("NULL mApiImpl");

@@ -68,13 +68,13 @@ static uint32_t numGnssMeasurementsCb = 0;
 #define CONFIG_SV          "configSV"
 #define MULTI_CONFIG_SV    "multiConfigSV"
 #define DELETE_ALL         "deleteAll"
-#define DELETE_EPH         "deleteEph"
+#define DELETE_AIDING_DATA "deleteAidingData"
 #define CONFIG_LEVER_ARM   "configLeverArm"
 #define CONFIG_ROBUST_LOCATION  "configRobustLocation"
 #define GET_ROBUST_LOCATION_CONFIG "getRobustLocationConfig"
 #define CONFIG_MIN_GPS_WEEK "configMinGpsWeek"
 #define GET_MIN_GPS_WEEK    "getMinGpsWeek"
-#define CONFIG_B2S_PARAMS   "configB2sParams"
+#define CONFIG_DR_ENGINE    "configDrEngine"
 #define CONFIG_MIN_SV_ELEVATION "configMinSvElevation"
 #define GET_MIN_SV_ELEVATION    "getMinSvElevation"
 
@@ -204,13 +204,13 @@ static void printHelp() {
     printf("%s: configure sv \n", CONFIG_SV);
     printf("%s: mulitple config SV \n", MULTI_CONFIG_SV);
     printf("%s: delete all aiding data\n", DELETE_ALL);
-    printf("%s: delete ephemeris data\n", DELETE_EPH);
+    printf("%s: delete ephemeris/calibration data\n", DELETE_AIDING_DATA);
     printf("%s: config lever arm\n", CONFIG_LEVER_ARM);
     printf("%s: config robust location\n", CONFIG_ROBUST_LOCATION);
     printf("%s: get robust location config\n", GET_ROBUST_LOCATION_CONFIG);
     printf("%s: set min gps week\n", CONFIG_MIN_GPS_WEEK);
     printf("%s: get min gps week\n", GET_MIN_GPS_WEEK);
-    printf("%s: config b2s params\n", CONFIG_B2S_PARAMS);
+    printf("%s: config DR engine\n", CONFIG_DR_ENGINE);
     printf("%s: set min sv elevation angle\n", CONFIG_MIN_SV_ELEVATION);
     printf("%s: get min sv elevation angle\n", GET_MIN_SV_ELEVATION);
 }
@@ -325,38 +325,85 @@ void parseLeverArm (char* buf, LeverArmParamsMap &leverArmMap) {
     }
 }
 
-void parseB2sParams (char* buf, BodyToSensorMountParams& b2sParams) {
+void parseDreConfig (char* buf, DeadReckoningEngineConfig& dreConfig) {
     static char *save = nullptr;
-    char* token = strtok_r(buf, " ", &save); // skip first one of "configB2sParams"
+    char* token = strtok_r(buf, " ", &save); // skip first one of "configDrEngine"
+    printf("Usage: configDrEngine b2s roll pitch yaw unc speed scaleFactor scaleFactorUnc "
+           "gyro scaleFactor ScaleFactorUnc\n");
+
+    uint32_t validMask = 0;
     do {
         token = strtok_r(NULL, " ", &save);
         if (token == NULL) {
-            printf("missing roll offset\n");
+            printf("missing key word b2s, speed, or gyro\n");
             break;
         }
-        b2sParams.rollOffset = atof(token);
+        if (strncmp(token, "b2s", strlen("b2s"))==0) {
+            token = strtok_r(NULL, " ", &save); // skip the token of "b2s"
+            if (token == NULL) {
+                printf("missing roll offset\n");
+                break;
+            }
+            dreConfig.bodyToSensorMountParams.rollOffset = atof(token);
 
-        token = strtok_r(NULL, " ", &save);
-        if (token == NULL) {
-            printf("missing pitch offset\n");
-            break;
-        }
-        b2sParams.pitchOffset = atof(token);
+            token = strtok_r(NULL, " ", &save);
+            if (token == NULL) {
+                printf("missing pitch offset\n");
+                break;
+            }
+            dreConfig.bodyToSensorMountParams.pitchOffset = atof(token);
 
-        token = strtok_r(NULL, " ", &save);
-        if (token == NULL) {
-            printf("missing yaw offset\n");
-            break;
-        }
-        b2sParams.yawOffset = atof(token);
+            token = strtok_r(NULL, " ", &save);
+            if (token == NULL) {
+                printf("missing yaw offset\n");
+                break;
+            }
+            dreConfig.bodyToSensorMountParams.yawOffset = atof(token);
 
-        token = strtok_r(NULL, " ", &save);
-        if (token == NULL) {
-            printf("missing offset uncertainty\n");
-            break;
+            token = strtok_r(NULL, " ", &save);
+            if (token == NULL) {
+                printf("missing offset uncertainty\n");
+                break;
+            }
+            dreConfig.bodyToSensorMountParams.offsetUnc = atof(token);
+
+            validMask |= BODY_TO_SENSOR_MOUNT_PARAMS_VALID;
+        } else if (strncmp(token, "speed", strlen("speed"))==0) {
+            token = strtok_r(NULL, " ", &save);
+            if (token == NULL) {
+                printf("missing speed scale factor\n");
+                break;
+            }
+            dreConfig.vehicleSpeedScaleFactor = atof(token);
+            validMask |= VEHICLE_SPEED_SCALE_FACTOR_VALID;
+
+            token = strtok_r(NULL, " ", &save);
+            if (token == NULL) {
+                printf("missing speed scale factor uncertainty\n");
+                break;
+            }
+            dreConfig.vehicleSpeedScaleFactorUnc = atof(token);
+            validMask |= VEHICLE_SPEED_SCALE_FACTOR_UNC_VALID;
+        } else if (strncmp(token, "gyro", strlen("gyro"))==0) {
+            token = strtok_r(NULL, " ", &save);
+            if (token == NULL) {
+                printf("missing gyro scale factor\n");
+                break;
+            }
+            dreConfig.gyroScaleFactor = atof(token);
+            validMask |= GYRO_SCALE_FACTOR_VALID;
+
+            token = strtok_r(NULL, " ", &save);
+            if (token == NULL) {
+                printf("missing gyro scale factor uncertainty\n");
+                break;
+            }
+            dreConfig.gyroScaleFactorUnc = atof(token);
+            validMask |= GYRO_SCALE_FACTOR_UNC_VALID;
         }
-        b2sParams.offsetUnc = atof(token);
-    } while (0);
+    } while (1);
+
+    dreConfig.validMask = (DeadReckoningEngineConfigValidMask)validMask;
 }
 
 
@@ -495,8 +542,16 @@ int main(int argc, char *argv[]) {
             pIntClient->configPositionAssistedClockEstimator(true);
         } else if (strncmp(buf, DELETE_ALL, strlen(DELETE_ALL)) == 0) {
             pIntClient->deleteAllAidingData();
-        } else if (strncmp(buf, DELETE_EPH, strlen(DELETE_EPH)) == 0) {
-            pIntClient->deleteAidingData(AIDING_DATA_DELETION_EPHEMERIS);
+        } else if (strncmp(buf, DELETE_AIDING_DATA, strlen(DELETE_AIDING_DATA)) == 0) {
+            uint32_t aidingDataMask = 0;
+            printf("deleteAidingData 1 (eph) 2 (qdr calibration data) 3 (eph+calibraiton dat)\n");
+            static char *save = nullptr;
+            char* token = strtok_r(buf, " ", &save); // skip first one
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+                aidingDataMask = atoi(token);
+            }
+            pIntClient->deleteAidingData((AidingDataDeletionMask) aidingDataMask);
         } else if (strncmp(buf, RESET_SV_CONFIG, strlen(RESET_SV_CONFIG)) == 0) {
             pIntClient->configConstellations(nullptr);
         } else if (strncmp(buf, CONFIG_SV, strlen(CONFIG_SV)) == 0) {
@@ -558,10 +613,13 @@ int main(int argc, char *argv[]) {
             pIntClient->configMinGpsWeek(gpsWeekNum);
         } else if (strncmp(buf, GET_MIN_GPS_WEEK, strlen(GET_MIN_GPS_WEEK)) == 0) {
             pIntClient->getMinGpsWeek();
-        } else if (strncmp(buf, CONFIG_B2S_PARAMS, strlen(CONFIG_B2S_PARAMS)) == 0) {
-            BodyToSensorMountParams b2sParams = {};
-            parseB2sParams(buf, b2sParams);
-            pIntClient->configBodyToSensorMountParams(b2sParams);
+        } else if (strncmp(buf, CONFIG_DR_ENGINE, strlen(CONFIG_DR_ENGINE)) == 0) {
+            DeadReckoningEngineConfig dreConfig = {};
+            parseDreConfig(buf, dreConfig);
+            printf("mask 0x%x, roll %f, speed %f, yaw %f\n", dreConfig.validMask,
+                   dreConfig.bodyToSensorMountParams.rollOffset, dreConfig.vehicleSpeedScaleFactor,
+                   dreConfig.gyroScaleFactor);
+            pIntClient->configDeadReckoningEngineParams(dreConfig);
         } else if (strncmp(buf, CONFIG_MIN_SV_ELEVATION, strlen(CONFIG_MIN_SV_ELEVATION)) == 0) {
             static char *save = nullptr;
             uint8_t minSvElevation = 0;

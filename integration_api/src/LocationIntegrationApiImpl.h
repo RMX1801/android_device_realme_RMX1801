@@ -79,8 +79,8 @@ typedef struct {
 
 typedef struct {
     bool isValid;
-    ::BodyToSensorMountParams b2sParams;
-} BodyToSensorMountConfigInfo;
+    ::DeadReckoningEngineConfig dreConfig;
+} DeadReckoningEngineConfigInfo;
 
 class IpcListener;
 
@@ -105,8 +105,8 @@ public:
     virtual uint32_t configPositionAssistedClockEstimator(bool enable) override;
     virtual uint32_t configLeverArm(const LeverArmConfigInfo& configInfo) override;
     virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
-    virtual uint32_t configBodyToSensorMountParams(
-            const ::BodyToSensorMountParams& b2sParams) override;
+    virtual uint32_t configDeadReckoningEngineParams(
+            const ::DeadReckoningEngineConfig& dreConfig) override;
     virtual uint32_t* gnssUpdateConfig(const GnssConfig& config) override;
     virtual uint32_t gnssDeleteAidingData(GnssAidingData& data) override;
     virtual uint32_t configMinGpsWeek(uint16_t minGpsWeek) override;
@@ -152,7 +152,7 @@ private:
     SVConfigInfo             mSVConfigInfo;
     LeverArmConfigInfo       mLeverArmConfigInfo;
     RobustLocationConfigInfo mRobustLocationConfigInfo;
-    BodyToSensorMountConfigInfo mB2sConfigInfo;
+    DeadReckoningEngineConfigInfo mDreConfigInfo;
 
     LocConfigReqCntMap       mConfigReqCntMap;
     LocIntegrationCbs        mIntegrationCbs;

@@ -66,6 +66,9 @@ enum LocConfigTypeEnum{
     /** Config vehicle Body-to-Sensor mount angles for dead
      *  reckoning position engine. <br/> */
     CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS = 8,
+    /** Config various parameters for dead reckoning position
+     *  engine. <br/> */
+    CONFIG_DEAD_RECKONING_ENGINE = 8,
     /** Config minimum SV elevation angle setting used by the GNSS
      *  standard position engine (SPE).
      *  <br/> */
@@ -161,6 +164,9 @@ struct GnssSvIdInfo {
 enum AidingDataDeletionMask {
     /** Mask to delete ephemeris aiding data <br/> */
     AIDING_DATA_DELETION_EPHEMERIS  = (1 << 0),
+    /** Mask to delete calibration data from dead reckoning position
+     *  engine.<br/> */
+    AIDING_DATA_DELETION_DR_SENSOR_CALIBRATION  = (1 << 1),
 };
 
 /**
@@ -193,31 +199,109 @@ struct LeverArmParams {
 };
 
 /**
- * Specify vehicle body-to-Sensor mount parameters to be used
- * by dead reckoning positioning engine. <br/> */
+ * Specify vehicle body-to-Sensor mount parameters for use by
+ * dead reckoning positioning engine. <br/> */
 struct BodyToSensorMountParams {
     /** The misalignment of the sensor board along the
      *  horizontal plane of the vehicle chassis measured looking
      *  from the vehicle to forward direction. <br/>
-     *  In unit of degrees. <br/>   */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float rollOffset;
     /** The misalignment along the horizontal plane of the vehicle
      *  chassis measured looking from the vehicle to the right
      *  side. Positive pitch indicates vehicle is inclined such
      *  that forward wheels are at higher elevation than rear
      *  wheels. <br/>
-     *  In unit of degrees. <br/>  */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float yawOffset;
     /** The angle between the vehicle forward direction and the
      *  sensor axis as seen from the top of the vehicle, and
      *  measured in counterclockwise direction. <br/>
-     *  In unit of degrees. <br/> */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float pitchOffset;
     /** Single uncertainty number that may be the largest of the
      *  uncertainties for roll offset, pitch offset and yaw
      *  offset. <br/>
-     *  In unit of degrees. <br/> */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float offsetUnc;
+};
+
+/** Specify the valid mask for the configuration paramters of
+ *  dead reckoning position engine <br/> */
+enum DeadReckoningEngineConfigValidMask {
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::bodyToSensorMountParams. */
+    BODY_TO_SENSOR_MOUNT_PARAMS_VALID    = (1<<0),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::vehicleSpeedScaleFactor. */
+    VEHICLE_SPEED_SCALE_FACTOR_VALID     = (1<<1),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::vehicleSpeedScaleFactorUnc. */
+    VEHICLE_SPEED_SCALE_FACTOR_UNC_VALID = (1<<2),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::gyroScaleFactor. */
+    GYRO_SCALE_FACTOR_VALID              = (1<<3),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::gyroScaleFactorUnc. */
+    GYRO_SCALE_FACTOR_UNC_VALID          = (1<<4),
+};
+
+/** Specify the valid mask for the dead reckoning position
+ *  engine <br/> */
+struct DeadReckoningEngineConfig{
+    /** Specify the valid fields in the config. */
+    DeadReckoningEngineConfigValidMask validMask;
+    /** Body to sensor mount parameters for use by dead reckoning
+     *  positioning engine */
+    BodyToSensorMountParams bodyToSensorMountParams;
+
+    /** Vehicle Speed Scale Factor configuration input for the dead
+      * reckoning positioning engine. The multiplicative scale
+      * factor is applied to received Vehicle Speed value (in m/s)
+      * to obtain the true Vehicle Speed.
+      *
+      * Range is [0.9 to 1.1].
+      *
+      * Note: The scale factor is specific to a given vehicle
+      * make & model. */
+    float vehicleSpeedScaleFactor;
+    /** Vehicle Speed Scale Factor Uncertainty (68% confidence)
+      * configuration input for the dead reckoning positioning
+      * engine.
+      *
+      * Range is [0.0 to 0.1].
+      *
+      * Note: The scale factor unc is specific to a given vehicle
+      * make & model. */
+    float vehicleSpeedScaleFactorUnc;
+
+    /** Gyroscope Scale Factor configuration input for the dead
+      * reckoning positioning engine. The multiplicative scale
+      * factor is applied to received gyroscope value to obtain the
+      * true value.
+      *
+      * Range is [0.9 to 1.1].
+      *
+      * Note: The scale factor is specific to the Gyroscope sensor
+      * and typically derived from either sensor data-sheet or
+      * from actual calibration. */
+    float gyroScaleFactor;
+
+    /** Gyroscope Scale Factor uncertainty (68% confidence)
+      * configuration input for the dead reckoning positioning
+      * engine.
+      *
+      * Range is [0.0 to 0.1].
+      * engine.
+      *
+      * Note: The scale factor unc is specific to the make & model
+      * of Gyroscope sensor and typically derived from either
+      * sensor data-sheet or from actual calibration. */
+    float gyroScaleFactorUnc;
 };
 
 /**
@@ -762,6 +846,30 @@ public:
                 be invoked. <br/>
     */
     bool configBodyToSensorMountParams(const BodyToSensorMountParams& b2sParams);
+
+    /** @brief
+        Configure various parameters for dead reckoning position engine. <br/>
+
+        Client should wait for the command to finish, e.g.:
+        via LocConfigCb() received before issuing a second
+        configDeadReckoningEngineParams() command. Behavior is not
+        defined if client issues a second request of
+        configDeadReckoningEngineParams() without waiting for the
+        finish of the previous configDeadReckoningEngineParams()
+        request. <br/>
+
+        @param
+        config: dead reckoning engine configuration. <br/>
+
+        @return true, if the request is accepted for further
+                processing. When returning true, LocConfigCb() will be
+                invoked to deliver asynchronous processing status. <br/>
+
+        @return false, if the request is not accepted for further
+                processing. When returning false, LocConfigCb() will not
+                be invoked. <br/>
+    */
+    bool configDeadReckoningEngineParams(const DeadReckoningEngineConfig& config);
 
     /** @brief
         Configure the minimum SV elevation angle setting used by the

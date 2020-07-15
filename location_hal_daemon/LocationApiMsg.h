@@ -228,7 +228,7 @@ enum ELocMsgID {
     E_INTAPI_CONFIG_LEVER_ARM_MSG_ID  = 204,
     E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID  = 205,
     E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID  = 206,
-    E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID = 207,
+    E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID = 207,
     E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID = 208,
 
     // integration API config retrieval request/response
@@ -823,13 +823,13 @@ struct LocConfigMinGpsWeekReqMsg: LocAPIMsgHeader
         mMinGpsWeek(minGpsWeek) { }
 };
 
-struct LocConfigB2sMountParamsReqMsg: LocAPIMsgHeader
+struct LocConfigDrEngineParamsReqMsg: LocAPIMsgHeader
 {
-    BodyToSensorMountParams mB2sParams;
-    inline LocConfigB2sMountParamsReqMsg(const char* name,
-                                         const BodyToSensorMountParams& b2sParams) :
-        LocAPIMsgHeader(name, E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID),
-        mB2sParams(b2sParams) { }
+    DeadReckoningEngineConfig mDreConfig;
+    inline LocConfigDrEngineParamsReqMsg(const char* name,
+                                         const DeadReckoningEngineConfig& dreConfig) :
+        LocAPIMsgHeader(name, E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID),
+        mDreConfig(dreConfig) { }
 };
 
 struct LocConfigMinSvElevationReqMsg: LocAPIMsgHeader
