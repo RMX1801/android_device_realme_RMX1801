@@ -2050,11 +2050,9 @@ public:
                               ResponseCb responseCallback);
 
     /** @brief Stop the ongoing positioning session and
-     *  de-register the callbacks of previous
-     *  startPositionSession. <br/>
-     *  If ResponseCb is registerd with previous
-     *  startPositionSession(), it will be invoked to deliver the
-     *  processing status. <br/> */
+     *  de-register the callbacks of previous startPositionSession.
+     *  No callback will be issued regarding the procesing status.
+     *  <br/> */
     void stopPositionSession();
 
     /** @example example1:testTrackingApi

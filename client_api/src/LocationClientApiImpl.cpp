@@ -924,6 +924,7 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         mLastAddedClientIds({}),
         mCapabilitiesCb(capabitiescb),
         mResponseCb(nullptr),
+        mPositionSessionResponseCbPending(false),
         mLocationCb(nullptr),
         mGnssLocationCb(nullptr),
         mEngLocationsCb(nullptr),
@@ -1098,6 +1099,8 @@ void LocationClientApiImpl::updateCallbacks(LocationCallbacks& callbacks) {
                 mApiImpl(apiImpl), mCallBacks(callbacks) {}
         virtual ~UpdateCallbacksReq() {}
         void proc() const {
+            // set up the flag to indicate that responseCb is pending
+            mApiImpl->mPositionSessionResponseCbPending = true;
 
             //convert callbacks to callBacksMask
             LocationCallbacksMask callBacksMask = 0;
@@ -1208,9 +1211,7 @@ uint32_t LocationClientApiImpl::startTracking(TrackingOptions& option) {
                         mApiImpl, const_cast<TrackingOptions&>(mOption));
             } else {
                 LOC_LOGd(">>> StartTrackingReq - no change in option");
-                if (mApiImpl->mResponseCb) {
-                    mApiImpl->mResponseCb(LOCATION_RESPONSE_SUCCESS);
-                }
+                mApiImpl->invokePositionSessionResponseCb(LOCATION_RESPONSE_SUCCESS);
             }
         }
         LocationClientApiImpl* mApiImpl;
@@ -1793,6 +1794,15 @@ void LocationClientApiImpl::pingTest(PingTestCb pingTestCallback) {
     return;
 }
 
+void LocationClientApiImpl::invokePositionSessionResponseCb(LocationResponse responseCode) {
+    if (mPositionSessionResponseCbPending) {
+        if (nullptr != mResponseCb) {
+            mResponseCb(responseCode);
+        }
+        mPositionSessionResponseCbPending = false;
+    }
+}
+
 /******************************************************************************
 LocationClientApiImpl -ILocIpcListener
 ******************************************************************************/
@@ -1878,10 +1888,10 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     LOC_LOGw("payload size does not match for message with id: %d",
                              pMsg->msgId);
                 }
-                const LocAPIGenericRespMsg* pRespMsg = (LocAPIGenericRespMsg*)(pMsg);
-                LocationResponse response = parseLocationError(pRespMsg->err);
-                if (mApiImpl.mResponseCb) {
-                    mApiImpl.mResponseCb(response);
+                if (pMsg->msgId != E_LOCAPI_STOP_TRACKING_MSG_ID) {
+                    const LocAPIGenericRespMsg* pRespMsg = (LocAPIGenericRespMsg*)(pMsg);
+                    LocationResponse response = parseLocationError(pRespMsg->err);
+                    mApiImpl.invokePositionSessionResponseCb(response);
                 }
                 break;
             }

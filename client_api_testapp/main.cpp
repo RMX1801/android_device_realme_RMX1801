@@ -51,6 +51,7 @@
 using namespace location_client;
 using namespace location_integration;
 
+static bool     outputEnabled = true;
 // debug events counter
 static uint32_t numLocationCb = 0;
 static uint32_t numGnssLocationCb = 0;
@@ -60,6 +61,8 @@ static uint32_t numGnssNmeaCb = 0;
 static uint32_t numDataCb         = 0;
 static uint32_t numGnssMeasurementsCb = 0;
 
+#define DISABLE_REPORT_OUTPUT "disableReportOutput"
+#define ENABLE_REPORT_OUTPUT  "enableReportOutput"
 #define DISABLE_TUNC       "disableTunc"
 #define ENABLE_TUNC        "enableTunc"
 #define DISABLE_PACE       "disablePACE"
@@ -102,6 +105,9 @@ static void onResponseCb(location_client::LocationResponse response) {
 
 static void onLocationCb(const location_client::Location& location) {
     numLocationCb++;
+    if (!outputEnabled) {
+        return;
+    }
     printf("<<< onLocationCb cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
            numLocationCb,
            location.timestamp,
@@ -113,6 +119,9 @@ static void onLocationCb(const location_client::Location& location) {
 
 static void onGnssLocationCb(const location_client::GnssLocation& location) {
     numGnssLocationCb++;
+    if (!outputEnabled) {
+        return;
+    }
     printf("<<< onGnssLocationCb_new cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
             numGnssLocationCb,
             location.timestamp,
@@ -124,9 +133,12 @@ static void onGnssLocationCb(const location_client::GnssLocation& location) {
 
 static void onEngLocationsCb(const std::vector<location_client::GnssLocation>& locations) {
     numEngLocationCb++;
+    if (!outputEnabled) {
+        return;
+    }
     for (auto gnssLocation : locations) {
        printf("<<< onEngLocationsCb: cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n"
-              "info mask=0x%x, nav solution maks = 0x%x, eng type %d, eng mask 0x%x",
+              "info mask=0x%" PRIx64 ", nav solution maks = 0x%x, eng type %d, eng mask 0x%x",
               numEngLocationCb,
               gnssLocation.timestamp,
               gnssLocation.flags,
@@ -142,6 +154,9 @@ static void onEngLocationsCb(const std::vector<location_client::GnssLocation>& l
 
 static void onGnssSvCb(const std::vector<location_client::GnssSv>& gnssSvs) {
     numGnssSvCb++;
+    if (!outputEnabled) {
+        return;
+    }
     std::stringstream ss;
     ss << "<<< onGnssSvCb c=" << numGnssSvCb << " s=" << gnssSvs.size();
     for (auto sv : gnssSvs) {
@@ -152,17 +167,26 @@ static void onGnssSvCb(const std::vector<location_client::GnssSv>& gnssSvs) {
 
 static void onGnssNmeaCb(uint64_t timestamp, const std::string& nmea) {
     numGnssNmeaCb++;
+    if (!outputEnabled) {
+        return;
+    }
     printf("<<< onGnssNmeaCb cnt=%u time=%" PRIu64" nmea=%s",
             numGnssNmeaCb, timestamp, nmea.c_str());
 }
 
 static void onGnssDataCb(const location_client::GnssData& gnssData) {
     numDataCb++;
+    if (!outputEnabled) {
+        return;
+    }
     printf("<<< gnssDataCb cnt=%u, %s ", numDataCb, gnssData.toString().c_str());
 }
 
 static void onGnssMeasurementsCb(const location_client::GnssMeasurements& gnssMeasurements) {
     numGnssMeasurementsCb++;
+    if (!outputEnabled) {
+        return;
+    }
     printf("<<< onGnssMeasurementsCb cnt=%u, num of meas %d\n", numGnssMeasurementsCb,
            gnssMeasurements.measurements.size());
 }
@@ -204,6 +228,8 @@ static void printHelp() {
     printf("p: Ping test\n");
     printf("q: Quit\n");
     printf("r: delete client\n");
+    printf("%s supress output from various reports: disable output\n", DISABLE_REPORT_OUTPUT);
+    printf("%s enable output from various reports: disable output\n", ENABLE_REPORT_OUTPUT);
     printf("%s tuncThreshold energyBudget: enable tunc\n", ENABLE_TUNC);
     printf("%s: disable tunc\n", DISABLE_TUNC);
     printf("%s: enable PACE\n", ENABLE_PACE);
@@ -572,7 +598,11 @@ int main(int argc, char *argv[]) {
             sleep(1); // wait for capability callback if you don't like sleep
         }
 
-        if (strncmp(buf, DISABLE_TUNC, strlen(DISABLE_TUNC)) == 0) {
+        if (strncmp(buf, ENABLE_REPORT_OUTPUT, strlen(ENABLE_REPORT_OUTPUT)) == 0) {
+            outputEnabled = true;
+        } else if (strncmp(buf, DISABLE_REPORT_OUTPUT, strlen(DISABLE_REPORT_OUTPUT)) == 0) {
+            outputEnabled = false;
+        } else if (strncmp(buf, DISABLE_TUNC, strlen(DISABLE_TUNC)) == 0) {
             pIntClient->configConstrainedTimeUncertainty(false);
         } else if (strncmp(buf, ENABLE_TUNC, strlen(ENABLE_TUNC)) == 0) {
             // get tuncThreshold and energyBudget from the command line

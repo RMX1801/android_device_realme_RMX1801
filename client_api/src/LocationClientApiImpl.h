@@ -159,6 +159,7 @@ public:
     }
 
     void pingTest(PingTestCb pingTestCallback);
+    void invokePositionSessionResponseCb(LocationResponse responseCode);
 
 private:
     ~LocationClientApiImpl();
@@ -183,6 +184,7 @@ private:
     LocationOptions            mLocationOptions;
     BatchingOptions            mBatchingOptions;
     LocationCapabilitiesMask   mCapsMask;
+    bool                       mPositionSessionResponseCbPending;
 
     // callbacks
     CapabilitiesCb          mCapabilitiesCb;
