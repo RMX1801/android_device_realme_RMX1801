@@ -34,7 +34,7 @@
 
 shared_ptr<LocIpcSender> LocHalDaemonClientHandler::createSender(const string socket) {
     SockNode sockNode(SockNode::create(socket));
-    return sockNode.createSender(true);
+    return sockNode.createSender();
 }
 
 static GeofenceBreachTypeMask parseClientGeofenceBreachType(GeofenceBreachType type);
@@ -375,17 +375,6 @@ void LocHalDaemonClientHandler::cleanup() {
     // set the ptr to null to prevent further sending out message to the
     // remote client that is no longer reachable
     mIpcSender = nullptr;
-
-    // check whether this is client from external AP,
-    // mName for client on external ap is fully-qualified path name ending with
-    // "serviceid.instanceid"
-    if (strncmp(mName.c_str(), EAP_LOC_CLIENT_DIR,
-                sizeof(EAP_LOC_CLIENT_DIR)-1) == 0 ) {
-        LOC_LOGv("removed file %s", mName.c_str());
-        if (0 != remove(mName.c_str())) {
-            LOC_LOGe("<-- failed to remove file %s error %s", mName.c_str(), strerror(errno));
-        }
-    }
 
     if (mLocationApi) {
         mLocationApi->destroy([this]() {onLocationApiDestroyCompleteCb();});
