@@ -3295,9 +3295,10 @@ void LocApiV02 :: reportPosition (
             location.gpsLocation.elapsedRealTime = location_report_ptr->systemTick;
 
             /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
-               is the uncertainty of the Qtimer in the modem */
+               is the uncertainty of the Qtimer in the modem
+               Note that location_report_ptr->systemTickUnc is in msec */
             location.gpsLocation.elapsedRealTimeUnc =
-                    qTimerTicksToNanos((double)location_report_ptr->systemTickUnc);
+                    location_report_ptr->systemTickUnc * 1000000;
         }
 
         LOC_LOGv("report position mask: 0x%" PRIx64 ", dgnss info: 0x%x %d %d %d %d,",
@@ -5118,9 +5119,10 @@ void LocApiV02::reportGnssMeasurementData(
                     gnss_measurement_report_ptr.refCountTicks;
 
             /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
-            is the uncertainty of the Qtimer in the modem */
+            is the uncertainty of the Qtimer in the modem
+            Note that gnss_measurement_report_ptr.refCountTicksUncis in msec */
              mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTimeUnc =
-                    qTimerTicksToNanos((double)gnss_measurement_report_ptr.refCountTicksUnc);
+                    gnss_measurement_report_ptr.refCountTicksUnc * 1000000;
         }
         reportSvMeasurementInternal();
         resetSvMeasurementReport();
