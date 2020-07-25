@@ -1,2 +1,4 @@
 allow hal_audio_default oppo_ver_proc:dir search;
 allow hal_audio_default oppo_ver_proc:file { read open getattr };
+
+get_prop(hal_audio_default, bluetooth_prop)

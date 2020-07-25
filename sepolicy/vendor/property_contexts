@@ -9,10 +9,11 @@ persist.vendor.camera.HAL3.enabled               u:object_r:camera_prop:s0
 vendor.oppo.camera.                              u:object_r:camera_prop:s0
 vendor.oppo.camera.fovc.enable                   u:object_r:camera_prop:s0
 vendor.oppo.camera.hal3.enable                   u:object_r:camera_prop:s0
+vendor.oppo.open.camera.name                     u:object_r:camera_prop:s0
 
 # Fingerprint
 oppo.fpc.sw.version                              u:object_r:oppo_fp_prop:s0
-persist.vendor.fingerprint.optical.support       u:object_r:oppo_fp_prop:s0
+persist.vendor.fingerprint.                      u:object_r:oppo_fp_prop:s0
 
 # NLP
 oppo.nlp.proxy                                   u:object_r:oppo_loc_prop:s0
