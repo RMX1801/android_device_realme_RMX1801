@@ -1111,11 +1111,13 @@ void LocationClientApiImpl::destroy() {
             }
 
 #ifdef FEATURE_EXTERNAL_AP
-            // get clientId
-            lock_guard<mutex> lock(mMutex);
-            mApiImpl->mClientIdGenerator &= ~(1UL << mApiImpl->mClientId);
-            LOC_LOGd("client id generarator 0x%x, id %d",
-                     mApiImpl->mClientIdGenerator, mApiImpl->mClientId);
+            {
+                // get clientId
+                lock_guard<mutex> lock(mMutex);
+                mApiImpl->mClientIdGenerator &= ~(1UL << mApiImpl->mClientId);
+                LOC_LOGd("client id generarator 0x%x, id %d",
+                         mApiImpl->mClientIdGenerator, mApiImpl->mClientId);
+            }
 #endif //FEATURE_EXTERNAL_AP
             delete mApiImpl;
         }
