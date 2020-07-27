@@ -349,6 +349,7 @@ void LocationClientApi::addGeofences(std::vector<Geofence>& geofences,
             std::shared_ptr<GeofenceImpl> gfImpl(new GeofenceImpl(&geofences[i]));
             gfImpl->bindGeofence(&geofences[i]);
             mApiImpl->mLastAddedClientIds.push_back(gfImpl->getClientId());
+            LOC_LOGd("Geofence LastAddedClientId: %d", gfImpl->getClientId());
             mApiImpl->addGeofenceMap(mApiImpl->mLastAddedClientIds[i], geofences[i]);
         }
 
@@ -371,6 +372,7 @@ void LocationClientApi::removeGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("removeGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");
@@ -401,6 +403,7 @@ void LocationClientApi::modifyGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("modifyGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");
@@ -428,6 +431,7 @@ void LocationClientApi::pauseGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("pauseGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");
@@ -453,6 +457,7 @@ void LocationClientApi::resumeGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("resumeGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");

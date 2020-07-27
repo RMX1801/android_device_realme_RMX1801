@@ -345,42 +345,22 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             break;
         }
         case E_LOCAPI_ADD_GEOFENCES_MSG_ID: {
-            if (sizeof(LocAPIAddGeofencesReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
             addGeofences(reinterpret_cast<LocAPIAddGeofencesReqMsg*>(pMsg));
             break;
         }
         case E_LOCAPI_REMOVE_GEOFENCES_MSG_ID: {
-            if (sizeof(LocAPIRemoveGeofencesReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
             removeGeofences(reinterpret_cast<LocAPIRemoveGeofencesReqMsg*>(pMsg));
             break;
         }
         case E_LOCAPI_MODIFY_GEOFENCES_MSG_ID: {
-            if (sizeof(LocAPIModifyGeofencesReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
             modifyGeofences(reinterpret_cast<LocAPIModifyGeofencesReqMsg*>(pMsg));
             break;
         }
         case E_LOCAPI_PAUSE_GEOFENCES_MSG_ID: {
-            if (sizeof(LocAPIPauseGeofencesReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
             pauseGeofences(reinterpret_cast<LocAPIPauseGeofencesReqMsg*>(pMsg));
             break;
         }
         case E_LOCAPI_RESUME_GEOFENCES_MSG_ID: {
-            if (sizeof(LocAPIResumeGeofencesReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
             resumeGeofences(reinterpret_cast<LocAPIResumeGeofencesReqMsg*>(pMsg));
             break;
         }
