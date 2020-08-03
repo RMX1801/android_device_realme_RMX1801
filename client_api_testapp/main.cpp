@@ -51,15 +51,15 @@
 using namespace location_client;
 using namespace location_integration;
 
-
-#define NUM_LOOP_PINGTEST (1000)
-
 // debug events counter
 static uint32_t numLocationCb = 0;
 static uint32_t numGnssLocationCb = 0;
+static uint32_t numEngLocationCb = 0;
 static uint32_t numGnssSvCb = 0;
 static uint32_t numGnssNmeaCb = 0;
-static sem_t sem_pingcbreceived;
+static uint32_t numDataCb         = 0;
+static uint32_t numGnssMeasurementsCb = 0;
+
 #define DISABLE_TUNC       "disableTunc"
 #define ENABLE_TUNC        "enableTunc"
 #define DISABLE_PACE       "disablePACE"
@@ -111,13 +111,31 @@ static void onLocationCb(const location_client::Location& location) {
 
 static void onGnssLocationCb(const location_client::GnssLocation& location) {
     numGnssLocationCb++;
-    printf("<<< onGnssLocationCb cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
+    printf("<<< onGnssLocationCb_new cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
             numGnssLocationCb,
             location.timestamp,
             location.flags,
             location.latitude,
             location.longitude,
             location.altitude);
+}
+
+static void onEngLocationsCb(const std::vector<location_client::GnssLocation>& locations) {
+    numEngLocationCb++;
+    for (auto gnssLocation : locations) {
+       printf("<<< onEngLocationsCb: cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n"
+              "info mask=0x%x, nav solution maks = 0x%x, eng type %d, eng mask 0x%x",
+              numEngLocationCb,
+              gnssLocation.timestamp,
+              gnssLocation.flags,
+              gnssLocation.latitude,
+              gnssLocation.longitude,
+              gnssLocation.altitude,
+              gnssLocation.gnssInfoFlags,
+              gnssLocation.navSolutionMask,
+              gnssLocation.locOutputEngType,
+              gnssLocation.locOutputEngMask);
+    }
 }
 
 static void onGnssSvCb(const std::vector<location_client::GnssSv>& gnssSvs) {
@@ -136,54 +154,15 @@ static void onGnssNmeaCb(uint64_t timestamp, const std::string& nmea) {
             numGnssNmeaCb, timestamp, nmea.c_str());
 }
 
-static void onCapabilitiesCb2(location_client::LocationCapabilitiesMask mask) {
-    printf("<<< onCapabilitiesCb2 mask=0x%x\n", mask);
+static void onGnssDataCb(const location_client::GnssData& gnssData) {
+    numDataCb++;
+    printf("<<< gnssDataCb cnt=%u, %s ", numDataCb, gnssData.toString().c_str());
 }
 
-static void onResponseCb2(location_client::LocationResponse response) {
-    printf("<<< onResponseCb2 err=%u\n", response);
-}
-
-static void onLocationCb2(const location_client::Location& location) {
-    numLocationCb++;
-    printf("<<< onLocationCb2 cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
-            numLocationCb,
-            location.timestamp,
-            location.flags,
-            location.latitude,
-            location.longitude,
-            location.altitude);
-}
-
-static void onGnssLocationCb2(const location_client::GnssLocation& location) {
-    numGnssLocationCb++;
-    printf("<<< onGnssLocationCb2 cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
-            numGnssLocationCb,
-            location.timestamp,
-            location.flags,
-            location.latitude,
-            location.longitude,
-            location.altitude);
-}
-
-static void onGnssSvCb2(const std::vector<location_client::GnssSv>& gnssSvs) {
-    numGnssSvCb++;
-    std::stringstream ss;
-    ss << "<<< onGnssSvCb2 c=" << numGnssSvCb << " s=" << gnssSvs.size();
-    for (auto sv : gnssSvs) {
-        ss << " " << sv.type << ":" << sv.svId << "/" << (uint32_t)sv.cN0Dbhz;
-    }
-    printf("%s\n", ss.str().c_str());
-}
-
-static void onGnssNmeaCb2(uint64_t timestamp, const std::string& nmea) {
-    numGnssNmeaCb++;
-    printf("<<< onGnssNmeaCb2 cnt=%u time=%" PRIu64" nmea=%s",
-            numGnssNmeaCb, timestamp, nmea.c_str());
-}
-
-static void onPingTestCb(uint32_t response) {
-    sem_post(&sem_pingcbreceived);
+static void onGnssMeasurementsCb(const location_client::GnssMeasurements& gnssMeasurements) {
+    numGnssMeasurementsCb++;
+    printf("<<< onGnssMeasurementsCb cnt=%u, num of meas %d\n", numGnssMeasurementsCb,
+           gnssMeasurements.measurements.size());
 }
 
 static void onConfigResponseCb(location_integration::LocConfigTypeEnum    requestType,
@@ -209,7 +188,8 @@ static void onGetMinSvElevationCb(uint8_t minSvElevation) {
 
 static void printHelp() {
     printf("\n************* options *************\n");
-    printf("g: Gnss report session with 1000 ms interval\n");
+    printf("e: Concurrent engine report session with 100 ms interval\n");
+    printf("g: Gnss report session with 100 ms interval\n");
     printf("u: Update a session with 2000 ms interval\n");
     printf("m: Interleaving fix session with 1000 and 2000 ms interval, change every 3 seconds\n");
     printf("s: Stop a session \n");
@@ -274,14 +254,6 @@ void setRequiredPermToRunAsLocClient()
             } else {
                 printf("Total of %d groups set for test app", numGrpIds);
             }
-        }
-        if(-1 == setgid(GID_LOCCLIENT)) {
-            printf("%s:%d]: Error: setgid GID_LOCCLIENT failed. %s\n",
-                     __func__, __LINE__, strerror(errno));
-        }
-        if(-1 == setuid(UID_LOCCLIENT)) {
-            printf("%s:%d]: Error: setuid UID_LOCCLIENT failed. %s\n",
-                     __func__, __LINE__, strerror(errno));
         }
     } else {
         printf("Test app started as user: %d", getuid());
@@ -391,12 +363,65 @@ void parseB2sParams (char* buf, BodyToSensorMountParams& b2sParams) {
 /******************************************************************************
 Main function
 ******************************************************************************/
+
+static void checkForAutoStart(int argc, char *argv[]) {
+    // check for auto-start option
+    if (argc >= 2) {
+        if (strncmp (argv[1], "auto", strlen("auto")) == 0) {
+            printf("usage: location_clientapi_test_app auto");
+
+            LocationClientApi* pClient = new LocationClientApi(onCapabilitiesCb);
+            if (nullptr == pClient) {
+                printf("can not create Location client API");
+                exit(1);
+            }
+
+            bool cleanup = false;
+            if (argc >= 3) {
+                if (strncmp (argv[2], "clean", strlen("clean")) == 0) {
+                    cleanup = true;
+                }
+            }
+            // wait for capability to come
+            sleep(1);
+
+            EngineReportCbs reportcbs;
+            reportcbs.engLocationsCallback = EngineLocationsCb(onEngLocationsCb);
+            reportcbs.gnssSvCallback = GnssSvCb(onGnssSvCb);
+            reportcbs.gnssNmeaCallback = GnssNmeaCb(onGnssNmeaCb);
+            LocReqEngineTypeMask reqEngMask = (LocReqEngineTypeMask)
+                    (LOC_REQ_ENGINE_FUSED_BIT|LOC_REQ_ENGINE_SPE_BIT|
+                    LOC_REQ_ENGINE_PPE_BIT);
+            pClient->startPositionSession(100, reqEngMask, reportcbs, onResponseCb);
+            // wait for fix report to come
+            sleep(2);
+            while (numEngLocationCb < 10) {
+                sleep(3);
+                printf("recevied %d report\n", numEngLocationCb);
+            }
+            printf("recevied %d report\n", numEngLocationCb);
+            if (pClient && cleanup) {
+                printf("calling stopPosition and delete client \n");
+                pClient->stopPositionSession();
+                delete pClient;
+                sleep(1);
+            }
+            exit(0);
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     setRequiredPermToRunAsLocClient();
+    checkForAutoStart(argc, argv);
 
     // create Location client API
     LocationClientApi* pClient = new LocationClientApi(onCapabilitiesCb);
+    if (!pClient) {
+        printf("failed to create client, return");
+        return -1;;
+    }
 
     // callbacks
     GnssReportCbs reportcbs;
@@ -404,12 +429,13 @@ int main(int argc, char *argv[]) {
     reportcbs.gnssSvCallback = GnssSvCb(onGnssSvCb);
     reportcbs.gnssNmeaCallback = GnssNmeaCb(onGnssNmeaCb);
 
-    LocationClientApi* pClient2 = new LocationClientApi(onCapabilitiesCb2);
     // callbacks
-    GnssReportCbs reportcbs2;
-    reportcbs2.gnssLocationCallback = GnssLocationCb(onGnssLocationCb2);
-    reportcbs2.gnssSvCallback = GnssSvCb(onGnssSvCb2);
-    reportcbs2.gnssNmeaCallback = GnssNmeaCb(onGnssNmeaCb2);
+    EngineReportCbs enginecbs;
+    enginecbs.engLocationsCallback = EngineLocationsCb(onEngLocationsCb);
+    enginecbs.gnssSvCallback = GnssSvCb(onGnssSvCb);
+    enginecbs.gnssNmeaCallback = GnssNmeaCb(onGnssNmeaCb);
+    enginecbs.gnssMeasurementsCallback = GnssMeasurementsCb(onGnssMeasurementsCb);
+    enginecbs.gnssDataCallback = GnssDataCb(onGnssDataCb);
 
     // create location integratin API
     LocIntegrationCbs intCbs;
@@ -519,9 +545,10 @@ int main(int argc, char *argv[]) {
                            strlen(GET_ROBUST_LOCATION_CONFIG)) == 0) {
             pIntClient->getRobustLocationConfig();
         } else if (strncmp(buf, CONFIG_MIN_GPS_WEEK, strlen(CONFIG_MIN_GPS_WEEK)) == 0) {
+            // get enable and enableForE911
             static char *save = nullptr;
             uint16_t gpsWeekNum = 0;
-            // skip first argument of configMinGpsWeek
+            // skip first one of configRobustLocation
             char* token = strtok_r(buf, " ", &save);
             token = strtok_r(NULL, " ", &save);
             if (token != NULL) {
@@ -551,12 +578,23 @@ int main(int argc, char *argv[]) {
         } else {
             int command = buf[0];
             switch(command) {
+            case 'e':
+                if (!pClient) {
+                    pClient = new LocationClientApi(onCapabilitiesCb);
+                }
+                if (pClient) {
+                    LocReqEngineTypeMask reqEngMask = (LocReqEngineTypeMask)
+                        (LOC_REQ_ENGINE_FUSED_BIT|LOC_REQ_ENGINE_SPE_BIT|
+                         LOC_REQ_ENGINE_PPE_BIT);
+                    pClient->startPositionSession(100, reqEngMask, enginecbs, onResponseCb);
+                }
+                break;
             case 'g':
                 if (!pClient) {
                     pClient = new LocationClientApi(onCapabilitiesCb);
                 }
                 if (pClient) {
-                    pClient->startPositionSession(1000, reportcbs, onResponseCb);
+                    pClient->startPositionSession(100, reportcbs, onResponseCb);
                 }
                 break;
             case 'u':
@@ -596,10 +634,6 @@ int main(int argc, char *argv[]) {
                     delete pClient;
                     pClient = nullptr;
                 }
-                if (nullptr != pClient2) {
-                    delete pClient2;
-                    pClient2 = nullptr;
-                }
                 if (nullptr != pIntClient) {
                     delete pIntClient;
                     pIntClient = nullptr;
@@ -625,5 +659,5 @@ EXIT:
     }
 
     printf("Done\n");
-    exit(0);
+    return 0;
 }

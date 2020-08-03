@@ -61,6 +61,7 @@ typedef struct {
     uint32_t gnssSessionTbfMs;
     uint32_t deleteAllBeforeAutoStart;
     uint32_t posEngineMask;
+    uint32_t positionMode;
 } configParamToRead;
 
 
@@ -178,10 +179,6 @@ private:
         return *sessioIds;
     }
 
-    inline void gnssDeleteAidingData(GnssAidingData& data) {
-        mLocationControlApi->gnssDeleteAidingData(data);
-    }
-
     // Location control API callback
     void onControlResponseCallback(LocationError err, uint32_t id);
     void onControlCollectiveResponseCallback(size_t count, LocationError *errs, uint32_t *ids);
@@ -258,6 +255,7 @@ private:
 
     // Configration
     const uint32_t mAutoStartGnss;
+    GnssSuplMode   mPositionMode;
 
     PowerStateType  mPowerState;
 

@@ -178,7 +178,7 @@ enum ELocMsgID {
 
     // control
     E_LOCAPI_CONTROL_UPDATE_CONFIG_MSG_ID = 9, // this message id has been deprecated
-    E_LOCAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID = 10,
+    E_LOCAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID = 10, // this message id has been deprecated
     E_LOCAPI_CONTROL_UPDATE_NETWORK_AVAILABILITY_MSG_ID = 11,
 
     // Position reports
@@ -584,16 +584,6 @@ struct LocAPIResumeGeofencesReqMsg: LocAPIMsgHeader
 /******************************************************************************
 IPC message structure - control
 ******************************************************************************/
-// defintion for message with msg id of E_LOCAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID
-struct LocAPIDeleteAidingDataReqMsg: LocAPIMsgHeader
-{
-    GnssAidingData gnssAidingData;
-
-    inline LocAPIDeleteAidingDataReqMsg(const char* name, GnssAidingData& data) :
-        LocAPIMsgHeader(name, E_LOCAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID),
-        gnssAidingData(data) { }
-};
-
 struct LocAPIUpdateNetworkAvailabilityReqMsg: LocAPIMsgHeader
 {
     bool mAvailability;

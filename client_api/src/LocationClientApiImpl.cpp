@@ -1754,25 +1754,6 @@ void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
     mMsgTask->sendMsg(new (nothrow) ResumeGeofencesReq(this, count, ids));
 }
 
-uint32_t LocationClientApiImpl::gnssDeleteAidingData(const GnssAidingData& data) {
-    struct DeleteAidingDataReq : public LocMsg {
-        DeleteAidingDataReq(const LocationClientApiImpl* apiImpl, const GnssAidingData& data) :
-                mApiImpl(apiImpl), mAidingData(data) {}
-        virtual ~DeleteAidingDataReq() {}
-        void proc() const {
-            LocAPIDeleteAidingDataReqMsg msg(mApiImpl->mSocketName,
-                                             const_cast<GnssAidingData&>(mAidingData));
-            bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(&msg),
-                                                 sizeof(msg));
-            LOC_LOGd(">>> DeleteAidingDataReq rc=%d", rc);
-        }
-        const LocationClientApiImpl* mApiImpl;
-        GnssAidingData mAidingData;
-    };
-    mMsgTask->sendMsg(new (nothrow) DeleteAidingDataReq(this, data));
-    return 0;
-}
-
 void LocationClientApiImpl::updateNetworkAvailability(bool available) {
 
     struct UpdateNetworkAvailabilityReq : public LocMsg {
@@ -2090,6 +2071,23 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     if (mApiImpl.mLocationCb) {
                         mApiImpl.mLocationCb(location);
                     }
+                    // copy location info over to gnsslocaiton so we can use existing routine
+                    // to log the packet
+                    GnssLocation gnssLocation = {};
+                    gnssLocation.flags              = location.flags;
+                    gnssLocation.timestamp          = location.timestamp;
+                    gnssLocation.latitude           = location.latitude;
+                    gnssLocation.longitude          = location.longitude;
+                    gnssLocation.altitude           = location.altitude;
+                    gnssLocation.speed              = location.speed;
+                    gnssLocation.bearing            = location.bearing;
+                    gnssLocation.horizontalAccuracy = location.horizontalAccuracy;
+                    gnssLocation.verticalAccuracy   = location.verticalAccuracy;
+                    gnssLocation.speedAccuracy      = location.speedAccuracy;
+                    gnssLocation.bearingAccuracy    = location.bearingAccuracy;
+                    gnssLocation.techMask           = location.techMask;
+
+                    mApiImpl.mLogger.log(gnssLocation);
                 }
                 break;
             }

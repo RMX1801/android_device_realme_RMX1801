@@ -2664,6 +2664,17 @@ void LocApiV02 :: reportPosition (
         LOC_LOGV("%s:%d jammerIndicator is present len=%d",
                  __func__, __LINE__,
                  location_report_ptr->jammerIndicatorList_len);
+        /* msInWeek is used to indicate if jammer indicator is present in this message.
+           The appropriate action will be taken in GnssAdapter
+           There are three cases as follows:
+           1. jammer is not present (old modem image that doesn't support this) then
+              msInWeek is set above, has a value >=0 and it is used in GnssAdapter to
+              validate when parsing jammer value from NMEA debug message
+           2. jammer is present and at least one satellite has a valid value, then
+              msInWeek is -1
+           3. jammer is present, but the values for all satellites are invalid
+              (GNSS_INVALID_JAMMER_IND) then msInWeek is -2 */
+        msInWeek = -2;
         for (uint32_t i = 1; i < location_report_ptr->jammerIndicatorList_len; i++) {
             dataNotify.gnssDataMask[i-1] = 0;
             dataNotify.agc[i-1] = 0.0;
