@@ -91,6 +91,27 @@ static LocationCapabilitiesMask parseCapabilitiesMask(::LocationCapabilitiesMask
     return static_cast<LocationCapabilitiesMask>(capsMask);
 }
 
+static uint16_t parseYearOfHw(::LocationCapabilitiesMask mask) {
+    uint16_t yearOfHw = 2015;
+    if (::LOCATION_CAPABILITIES_GNSS_MEASUREMENTS_BIT & mask) {
+        yearOfHw++; // 2016
+        if (::LOCATION_CAPABILITIES_DEBUG_NMEA_BIT & mask) {
+            yearOfHw++; // 2017
+            if (::LOCATION_CAPABILITIES_CONSTELLATION_ENABLEMENT_BIT & mask ||
+                ::LOCATION_CAPABILITIES_AGPM_BIT & mask) {
+                yearOfHw++; // 2018
+                if (::LOCATION_CAPABILITIES_PRIVACY_BIT & mask) {
+                    yearOfHw++; // 2019
+                    if (::LOCATION_CAPABILITIES_MEASUREMENTS_CORRECTION_BIT & mask) {
+                        yearOfHw++; // 2020
+                    }
+                }
+            }
+        }
+    }
+    return yearOfHw;
+}
+
 static void parseLocation(const ::Location &halLocation, Location& location) {
     uint32_t flags = 0;
 
@@ -957,6 +978,7 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         mHalRegistered(false),
         mCallbacksMask(0),
         mCapsMask((LocationCapabilitiesMask)0),
+        mYearOfHw(0),
         mLastAddedClientIds({}),
         mCapabilitiesCb(capabitiescb),
         mResponseCb(nullptr),
@@ -1795,6 +1817,8 @@ void LocationClientApiImpl::capabilitesCallback(ELocMsgID msgId, const void* msg
     if (mCapabilitiesCb) {
         mCapabilitiesCb(mCapsMask);
     }
+
+    mYearOfHw = parseYearOfHw(pCapabilitiesIndMsg->capabilitiesMask);
 
     // send updatecallback request
     if (0 != mCallbacksMask) {
