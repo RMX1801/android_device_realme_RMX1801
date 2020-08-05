@@ -502,6 +502,15 @@ void LocationClientApi::updateLocationSystemInfoListener(
     }
 }
 
+uint16_t LocationClientApi::getYearOfHw() {
+    if (mApiImpl) {
+        return mApiImpl->getYearOfHw();
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
+        return 0;
+    }
+}
+
 // ============ below Section implements toString() methods of data structs ==============
 static string maskToVals(uint64_t mask, int64_t baseNum) {
     string out;

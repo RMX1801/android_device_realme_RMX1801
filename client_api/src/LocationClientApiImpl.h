@@ -159,6 +159,7 @@ public:
     }
 
     void pingTest(PingTestCb pingTestCallback);
+    inline uint16_t getYearOfHw() {return mYearOfHw;}
 
 private:
     ~LocationClientApiImpl();
@@ -183,6 +184,8 @@ private:
     LocationOptions            mLocationOptions;
     BatchingOptions            mBatchingOptions;
     LocationCapabilitiesMask   mCapsMask;
+    //Year of HW information, 0 is invalid
+    uint16_t                   mYearOfHw;
 
     // callbacks
     CapabilitiesCb          mCapabilitiesCb;
