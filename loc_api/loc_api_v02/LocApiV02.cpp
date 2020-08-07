@@ -3534,20 +3534,27 @@ void  LocApiV02 :: reportSv (
                     gnss_report_ptr->gnssSignalTypeList[SvNotify.count]);
 
                 GnssSv &gnssSv_ref = SvNotify.gnssSvs[SvNotify.count];
+                bool bSvIdIsValid = false;
 
                 gnssSv_ref.size = sizeof(GnssSv);
                 gnssSv_ref.svId = sv_info_ptr->gnssSvId;
                 switch (sv_info_ptr->system) {
                 case eQMI_LOC_SV_SYSTEM_GPS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GPS;
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
+                                                         GPS_SV_PRN_MIN, GPS_SV_PRN_MAX);
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_GALILEO_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GALILEO;
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
+                                                         GAL_SV_PRN_MIN, GAL_SV_PRN_MAX);
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_SBAS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_SBAS;
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
+                                                         SBAS_SV_PRN_MIN, SBAS_SV_PRN_MAX);
                     break;
 
                 // Glonass in SV report comes in range of [1, 32],
@@ -3555,24 +3562,36 @@ void  LocApiV02 :: reportSv (
                 case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GLONASS;
                     gnssSv_ref.svId = sv_info_ptr->gnssSvId + GLO_SV_PRN_MIN - 1;
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
+                                                         GLO_SV_PRN_MIN, GLO_SV_PRN_MAX);
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_BDS_V02:
                 case eQMI_LOC_SV_SYSTEM_COMPASS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_BEIDOU;
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
+                                                         BDS_SV_PRN_MIN, BDS_SV_PRN_MAX);
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_QZSS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_QZSS;
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
+                                                         QZSS_SV_PRN_MIN, QZSS_SV_PRN_MAX);
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_NAVIC_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_NAVIC;
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
+                                                         NAVIC_SV_PRN_MIN, NAVIC_SV_PRN_MAX);
                     break;
 
                 default:
                     gnssSv_ref.type = GNSS_SV_TYPE_UNKNOWN;
                     break;
+                }
+                if (!bSvIdIsValid) {
+                    memset(&gnssSv_ref, 0, sizeof(gnssSv_ref));
+                    continue;
                 }
 
                 if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_ELEVATION_V02) {
