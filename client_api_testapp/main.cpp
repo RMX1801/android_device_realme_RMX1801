@@ -66,6 +66,8 @@ static uint32_t numGnssMeasurementsCb = 0;
 #define ENABLE_PACE        "enablePACE"
 #define RESET_SV_CONFIG    "resetSVConfig"
 #define CONFIG_SV          "configSV"
+#define CONFIG_SECONDARY_BAND     "configSecondaryBand"
+#define GET_SECONDARY_BAND_CONFIG "getSecondaryBandConfig"
 #define MULTI_CONFIG_SV    "multiConfigSV"
 #define DELETE_ALL         "deleteAll"
 #define DELETE_AIDING_DATA "deleteAidingData"
@@ -101,12 +103,12 @@ static void onResponseCb(location_client::LocationResponse response) {
 static void onLocationCb(const location_client::Location& location) {
     numLocationCb++;
     printf("<<< onLocationCb cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
-            numLocationCb,
-            location.timestamp,
-            location.flags,
-            location.latitude,
-            location.longitude,
-            location.altitude);
+           numLocationCb,
+           location.timestamp,
+           location.flags,
+           location.latitude,
+           location.longitude,
+           location.altitude);
 }
 
 static void onGnssLocationCb(const location_client::GnssLocation& location) {
@@ -186,6 +188,12 @@ static void onGetMinSvElevationCb(uint8_t minSvElevation) {
     printf("<<< onGetMinSvElevationCb, minSvElevationAngleSetting: %d\n", minSvElevation);
 }
 
+static void onGetSecondaryBandConfigCb(const ConstellationSet& secondaryBandDisablementSet) {
+    for (GnssConstellationType disabledSecondaryBand : secondaryBandDisablementSet) {
+        printf("<<< disabled secondary band for constellation %d\n", disabledSecondaryBand);
+    }
+}
+
 static void printHelp() {
     printf("\n************* options *************\n");
     printf("e: Concurrent engine report session with 100 ms interval\n");
@@ -202,6 +210,8 @@ static void printHelp() {
     printf("%s: disable PACE\n", DISABLE_PACE);
     printf("%s: reset sv config to default\n", RESET_SV_CONFIG);
     printf("%s: configure sv \n", CONFIG_SV);
+    printf("%s: configure secondary band\n", CONFIG_SECONDARY_BAND);
+    printf("%s: get secondary band configure \n", GET_SECONDARY_BAND_CONFIG);
     printf("%s: mulitple config SV \n", MULTI_CONFIG_SV);
     printf("%s: delete all aiding data\n", DELETE_ALL);
     printf("%s: delete ephemeris/calibration data\n", DELETE_AIDING_DATA);
@@ -262,11 +272,19 @@ void setRequiredPermToRunAsLocClient()
 #endif// USE_GLIB
 }
 
-void parseSVConfig (char* buf, LocConfigBlacklistedSvIdList &svList) {
+void parseSVConfig(char* buf, bool & resetConstellation,
+                   LocConfigBlacklistedSvIdList &svList) {
     static char *save = nullptr;
     char* token = strtok_r(buf, " ", &save); // skip first one of "configSV"
     token = strtok_r(NULL, " ", &save);
     if (token == nullptr) {
+        printf("empty sv blacklist\n");
+        return;
+    }
+
+    if (strncmp(token, "reset", strlen("reset")) == 0) {
+        resetConstellation = true;
+        printf("reset sv constellation\n");
         return;
     }
 
@@ -280,6 +298,40 @@ void parseSVConfig (char* buf, LocConfigBlacklistedSvIdList &svList) {
         svIdInfo.svId = atoi(token);
         svList.push_back(svIdInfo);
         token = strtok_r(NULL, " ", &save);
+    }
+
+    printf("parse sv config:\n");
+    for (GnssSvIdInfo it : svList) {
+        printf("\t\tblacklisted SV: %d, sv id %d\n", (int) it.constellation, it.svId);
+    }
+}
+
+void parseSecondaryBandConfig(char* buf, bool &nullSecondaryBandConfig,
+                              ConstellationSet& secondaryBandDisablementSet) {
+    static char *save = nullptr;
+    char* token = strtok_r(buf, " ", &save); // skip first one of "configSeconaryBand"
+    token = strtok_r(NULL, " ", &save);
+
+    if (token == nullptr) {
+        printf("empty secondary band disablement set\n");
+        return;
+    }
+
+    if (strncmp(token, "null", strlen("null")) == 0) {
+        nullSecondaryBandConfig = true;
+        printf("null secondary band disablement set\n");
+        return;
+    }
+
+    while (token != nullptr) {
+        GnssConstellationType secondaryBandDisabled = (GnssConstellationType) atoi(token);
+        secondaryBandDisablementSet.emplace(secondaryBandDisabled);
+        token = strtok_r(NULL, " ", &save);
+    }
+
+    printf("\t\tnull SecondaryBandConfig %d\n", nullSecondaryBandConfig);
+    for (GnssConstellationType disabledSecondaryBand : secondaryBandDisablementSet) {
+        printf("\t\tdisabled secondary constellation %d\n", disabledSecondaryBand);
     }
 }
 
@@ -416,6 +468,7 @@ static void checkForAutoStart(int argc, char *argv[]) {
     if (argc >= 2) {
         if (strncmp (argv[1], "auto", strlen("auto")) == 0) {
             printf("usage: location_clientapi_test_app auto");
+            uint32_t pid = (uint32_t)getpid();
 
             LocationClientApi* pClient = new LocationClientApi(onCapabilitiesCb);
             if (nullptr == pClient) {
@@ -444,9 +497,9 @@ static void checkForAutoStart(int argc, char *argv[]) {
             sleep(2);
             while (numEngLocationCb < 10) {
                 sleep(3);
-                printf("recevied %d report\n", numEngLocationCb);
+                printf("pid %u, recevied %d report\n", pid, numEngLocationCb);
             }
-            printf("recevied %d report\n", numEngLocationCb);
+            printf("pid %u, recevied %d report\n", pid, numEngLocationCb);
             if (pClient && cleanup) {
                 printf("calling stopPosition and delete client \n");
                 pClient->stopPositionSession();
@@ -492,6 +545,8 @@ int main(int argc, char *argv[]) {
             LocConfigGetRobustLocationConfigCb(onGetRobustLocationConfigCb);
     intCbs.getMinGpsWeekCb = LocConfigGetMinGpsWeekCb(onGetMinGpsWeekCb);
     intCbs.getMinSvElevationCb = LocConfigGetMinSvElevationCb(onGetMinSvElevationCb);
+    intCbs.getConstellationSecondaryBandConfigCb =
+            LocConfigGetConstellationSecondaryBandConfigCb(onGetSecondaryBandConfigCb);
 
     LocConfigPriorityMap priorityMap;
     location_integration::LocationIntegrationApi* pIntClient =
@@ -502,7 +557,7 @@ int main(int argc, char *argv[]) {
 
     // main loop
     while (1) {
-        char buf[100];
+        char buf[300];
         memset (buf, 0, sizeof(buf));
         fgets(buf, sizeof(buf), stdin);
 
@@ -555,9 +610,27 @@ int main(int argc, char *argv[]) {
         } else if (strncmp(buf, RESET_SV_CONFIG, strlen(RESET_SV_CONFIG)) == 0) {
             pIntClient->configConstellations(nullptr);
         } else if (strncmp(buf, CONFIG_SV, strlen(CONFIG_SV)) == 0) {
+            bool resetConstellation = false;
             LocConfigBlacklistedSvIdList svList;
-            parseSVConfig(buf, svList);
-            pIntClient->configConstellations(&svList);
+            LocConfigBlacklistedSvIdList* svListPtr = &svList;
+            parseSVConfig(buf, resetConstellation, svList);
+            if (resetConstellation) {
+                svListPtr = nullptr;
+            }
+            pIntClient->configConstellations(svListPtr);
+        } else if (strncmp(buf, CONFIG_SECONDARY_BAND, strlen(CONFIG_SECONDARY_BAND)) == 0) {
+            bool nullSecondaryConfig = false;
+            ConstellationSet secondaryBandDisablementSet;
+            ConstellationSet* secondaryBandDisablementSetPtr = &secondaryBandDisablementSet;
+            parseSecondaryBandConfig(buf, nullSecondaryConfig, secondaryBandDisablementSet);
+            if (nullSecondaryConfig) {
+                secondaryBandDisablementSetPtr = nullptr;
+                printf("setting secondary band config to null\n");
+            }
+            pIntClient->configConstellationSecondaryBand(secondaryBandDisablementSetPtr);
+        } else if (strncmp(buf, GET_SECONDARY_BAND_CONFIG,
+                           strlen(GET_SECONDARY_BAND_CONFIG)) == 0) {
+            pIntClient->getConstellationSecondaryBandConfig();
         } else if (strncmp(buf, MULTI_CONFIG_SV, strlen(MULTI_CONFIG_SV)) == 0) {
             // reset
             pIntClient->configConstellations(nullptr);
@@ -600,10 +673,9 @@ int main(int argc, char *argv[]) {
                            strlen(GET_ROBUST_LOCATION_CONFIG)) == 0) {
             pIntClient->getRobustLocationConfig();
         } else if (strncmp(buf, CONFIG_MIN_GPS_WEEK, strlen(CONFIG_MIN_GPS_WEEK)) == 0) {
-            // get enable and enableForE911
             static char *save = nullptr;
             uint16_t gpsWeekNum = 0;
-            // skip first one of configRobustLocation
+            // skip first argument of configMinGpsWeek
             char* token = strtok_r(buf, " ", &save);
             token = strtok_r(NULL, " ", &save);
             if (token != NULL) {
