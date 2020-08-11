@@ -5118,7 +5118,7 @@ void LocApiV02::setGnssBiases() {
         case GNSS_SIGNAL_GPS_L5:
         case GNSS_SIGNAL_QZSS_L5:
             if (mTimeBiases.flags & BIAS_GPSL1_GPSL5_VALID) {
-                measData->fullInterSignalBiasNs = mTimeBiases.gpsL1_gpsL5;
+                measData->fullInterSignalBiasNs = -mTimeBiases.gpsL1_gpsL5;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (mTimeBiases.flags & BIAS_GPSL1_GPSL5_UNC_VALID) {
@@ -5129,7 +5129,7 @@ void LocApiV02::setGnssBiases() {
 
         case GNSS_SIGNAL_GLONASS_G1:
             if (mTimeBiases.flags & BIAS_GPSL1_GLOG1_VALID) {
-                measData->fullInterSignalBiasNs = mTimeBiases.gpsL1_gloG1;
+                measData->fullInterSignalBiasNs = -mTimeBiases.gpsL1_gloG1;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (mTimeBiases.flags & BIAS_GPSL1_GLOG1_UNC_VALID) {
@@ -5140,7 +5140,7 @@ void LocApiV02::setGnssBiases() {
 
         case GNSS_SIGNAL_GALILEO_E1:
             if (mTimeBiases.flags & BIAS_GPSL1_GALE1_VALID) {
-                measData->fullInterSignalBiasNs = mTimeBiases.gpsL1_galE1;
+                measData->fullInterSignalBiasNs = -mTimeBiases.gpsL1_galE1;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (mTimeBiases.flags & BIAS_GPSL1_GALE1_UNC_VALID) {
@@ -5155,7 +5155,7 @@ void LocApiV02::setGnssBiases() {
                     BIAS_GPSL1_UNC_VALID | BIAS_GALE1_UNC_VALID | BIAS_GALE1_GALE5A_UNC_VALID;
             if (tempFlag == (mTimeBiases.flags & tempFlag)) {
                 measData->fullInterSignalBiasNs =
-                        mTimeBiases.gpsL1 - mTimeBiases.galE1 + mTimeBiases.galE1_galE5a;
+                        -mTimeBiases.gpsL1 + mTimeBiases.galE1 - mTimeBiases.galE1_galE5a;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (tempFlagUnc == (mTimeBiases.flags & tempFlagUnc)) {
@@ -5167,7 +5167,7 @@ void LocApiV02::setGnssBiases() {
 
         case GNSS_SIGNAL_BEIDOU_B1I:
             if (mTimeBiases.flags & BIAS_GPSL1_BDSB1_VALID) {
-                measData->fullInterSignalBiasNs = mTimeBiases.gpsL1_bdsB1;
+                measData->fullInterSignalBiasNs = -mTimeBiases.gpsL1_bdsB1;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (mTimeBiases.flags & BIAS_GPSL1_BDSB1_UNC_VALID) {
@@ -5195,7 +5195,7 @@ void LocApiV02::setGnssBiases() {
                     BIAS_GPSL1_UNC_VALID | BIAS_BDSB1_UNC_VALID | BIAS_BDSB1_BDSB1C_UNC_VALID;
             if (tempFlag == (mTimeBiases.flags & tempFlag)) {
                 measData->fullInterSignalBiasNs =
-                        mTimeBiases.gpsL1 - mTimeBiases.bdsB1 + mTimeBiases.bdsB1_bdsB1c;
+                        -mTimeBiases.gpsL1 + mTimeBiases.bdsB1 - mTimeBiases.bdsB1_bdsB1c;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (tempFlagUnc == (mTimeBiases.flags & tempFlagUnc)) {
@@ -5207,7 +5207,7 @@ void LocApiV02::setGnssBiases() {
 
         case GNSS_SIGNAL_NAVIC_L5:
             if (mTimeBiases.flags & BIAS_GPSL1_NAVIC_VALID) {
-                measData->fullInterSignalBiasNs = mTimeBiases.gpsL1_navic;
+                measData->fullInterSignalBiasNs = -mTimeBiases.gpsL1_navic;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (mTimeBiases.flags & BIAS_GPSL1_NAVIC_UNC_VALID) {
@@ -5222,7 +5222,7 @@ void LocApiV02::setGnssBiases() {
                     BIAS_GPSL1_UNC_VALID | BIAS_BDSB1_UNC_VALID | BIAS_BDSB1_BDSB2A_UNC_VALID;
             if (tempFlag == (mTimeBiases.flags & tempFlag)) {
                 measData->fullInterSignalBiasNs =
-                        mTimeBiases.gpsL1 - mTimeBiases.bdsB1 + mTimeBiases.bdsB1_bdsB2a;
+                        -mTimeBiases.gpsL1 + mTimeBiases.bdsB1 - mTimeBiases.bdsB1_bdsB2a;
                 measData->flags |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
             }
             if (tempFlagUnc == (mTimeBiases.flags & tempFlagUnc)) {
