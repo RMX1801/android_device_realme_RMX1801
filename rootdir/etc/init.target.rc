@@ -214,5 +214,3 @@ service vendor.hvdcp_opti /vendor/bin/hvdcp_opti
      user root
      group system wakelock
 
-on property:sys.boot_completed=1
-    setprop sys.io.scheduler "bfq"
