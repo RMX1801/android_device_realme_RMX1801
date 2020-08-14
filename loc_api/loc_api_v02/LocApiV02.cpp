@@ -133,9 +133,36 @@ const struct conf_scaler_to_68_pair confScalers[CONF_SCALER_ARRAY_MAX] = {
 
 /*fixed timestamp uncertainty 10 milli second */
 static int ap_timestamp_uncertainty = 0;
+
+typedef enum {
+    RF_LOSS_GPS_CONF        = 0,
+    RF_LOSS_GPS_L5_CONF     = 1,
+    RF_LOSS_GLO_LEFT_CONF   = 2,
+    RF_LOSS_GLO_CENTER_CONF = 3,
+    RF_LOSS_GLO_RIGHT_CONF  = 4,
+    RF_LOSS_BDS_CONF        = 5,
+    RF_LOSS_BDS_B2A_CONF    = 6,
+    RF_LOSS_GAL_CONF        = 7,
+    RF_LOSS_GAL_E5_CONF     = 8,
+    RF_LOSS_NAVIC_CONF      = 9,
+    RF_LOSS_MAX_CONF        = 10
+} rfLossConf;
+
+static uint32_t rfLossNV[RF_LOSS_MAX_CONF] = { 0 };
+
 static loc_param_s_type gps_conf_param_table[] =
 {
-        {"AP_TIMESTAMP_UNCERTAINTY",&ap_timestamp_uncertainty,NULL,'n'}
+    { "AP_TIMESTAMP_UNCERTAINTY",   &ap_timestamp_uncertainty,          NULL, 'n' },
+    { "RF_LOSS_GPS",                &rfLossNV[RF_LOSS_GPS_CONF],        NULL, 'n' },
+    { "RF_LOSS_GPS_L5",             &rfLossNV[RF_LOSS_GPS_L5_CONF],     NULL, 'n' },
+    { "RF_LOSS_GLO_LEFT",           &rfLossNV[RF_LOSS_GLO_LEFT_CONF],   NULL, 'n' },
+    { "RF_LOSS_GLO_CENTER",         &rfLossNV[RF_LOSS_GLO_CENTER_CONF], NULL, 'n' },
+    { "RF_LOSS_GLO_RIGHT",          &rfLossNV[RF_LOSS_GLO_RIGHT_CONF],  NULL, 'n' },
+    { "RF_LOSS_BDS",                &rfLossNV[RF_LOSS_BDS_CONF],        NULL, 'n' },
+    { "RF_LOSS_BDS_B2A",            &rfLossNV[RF_LOSS_BDS_B2A_CONF],    NULL, 'n' },
+    { "RF_LOSS_GAL",                &rfLossNV[RF_LOSS_GAL_CONF],        NULL, 'n' },
+    { "RF_LOSS_GAL_E5",             &rfLossNV[RF_LOSS_GAL_E5_CONF],     NULL, 'n' },
+    { "RF_LOSS_NAVIC",              &rfLossNV[RF_LOSS_NAVIC_CONF],      NULL, 'n' },
 };
 
 /* static event callbacks that call the LocApiV02 callbacks*/
@@ -289,7 +316,7 @@ LocApiV02 :: LocApiV02(LOC_API_ADAPTER_EVENT_MASK_T exMask,
   loc_sync_req_init();
   mADRdata.clear();
 
-  UTIL_READ_CONF(LOC_PATH_GPS_CONF,gps_conf_param_table);
+  UTIL_READ_CONF(LOC_PATH_GPS_CONF, gps_conf_param_table);
 }
 
 /* Destructor for LocApiV02 */
@@ -3477,6 +3504,18 @@ void  LocApiV02 :: reportSv (
     if (1 == gnss_report_ptr->svList_valid ||
         1 == gnss_report_ptr->expandedSvList_valid) {
         SvNotify.count = 0;
+        if (0 == gnss_report_ptr->expandedSvList_valid ||
+            0 == gnss_report_ptr->rfLoss_valid) {
+            /*  For modems that don's send rfLoss in the QMI LOC message
+                we need to read this info from gps.conf, this is done
+                in the constructor */
+            for (int i = RF_LOSS_GPS_CONF; i < RF_LOSS_MAX_CONF; i++) {
+                if (0 == rfLossNV[i]) {
+                    LOC_LOGw("At least one RF_LOSS is 0 in gps.conf, please configure it");
+                    break;
+                }
+            }
+        }
         for(i = 0; i < num_svs_max; i++) {
             if (1 == gnss_report_ptr->expandedSvList_valid) {
                 sv_info_ptr = &(gnss_report_ptr->expandedSvList[i].svInfo);
@@ -3536,17 +3575,6 @@ void  LocApiV02 :: reportSv (
                     break;
                 }
 
-                if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_SNR_V02) {
-                    gnssSv_ref.cN0Dbhz = sv_info_ptr->snr;
-                    gnssSv_ref.basebandCarrierToNoiseDbHz = 0.0;
-                    if ((1 == gnss_report_ptr->expandedSvList_valid) &&
-                        (1 == gnss_report_ptr->rfLoss_valid) &&
-                        (gnssSv_ref.cN0Dbhz > gnss_report_ptr->rfLoss[i])) {
-                        gnssSv_ref.basebandCarrierToNoiseDbHz = gnssSv_ref.cN0Dbhz -
-                                gnss_report_ptr->rfLoss[i];
-                    }
-                }
-
                 if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_ELEVATION_V02) {
                     gnssSv_ref.elevation = sv_info_ptr->elevation;
                 }
@@ -3597,6 +3625,66 @@ void  LocApiV02 :: reportSv (
                             getDefaultGnssSignalTypeMask(sv_info_ptr->system);
                     mask |= GNSS_SV_OPTIONS_HAS_CARRIER_FREQUENCY_BIT;
                     gnssSv_ref.carrierFrequencyHz = CarrierFrequencies[gnssSv_ref.type];
+                }
+
+                if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_SNR_V02) {
+                    gnssSv_ref.cN0Dbhz = sv_info_ptr->snr;
+                    if ((1 == gnss_report_ptr->expandedSvList_valid) &&
+                        (1 == gnss_report_ptr->rfLoss_valid)) {
+                        gnssSv_ref.basebandCarrierToNoiseDbHz = gnssSv_ref.cN0Dbhz -
+                                gnss_report_ptr->rfLoss[i];
+                    } else {
+                        double rfLoss = 0;
+
+                        switch (gnssSv_ref.gnssSignalTypeMask) {
+                        case GNSS_SIGNAL_GPS_L1CA:
+                        case GNSS_SIGNAL_GPS_L1C:
+                        case GNSS_SIGNAL_QZSS_L1CA:
+                            rfLoss = rfLossNV[RF_LOSS_GPS_CONF]/10.0;
+                            break;
+                        case GNSS_SIGNAL_GPS_L5:
+                        case GNSS_SIGNAL_QZSS_L5:
+                            rfLoss = rfLossNV[RF_LOSS_GPS_L5_CONF]/10.0;
+                            break;
+                        case GNSS_SIGNAL_BEIDOU_B1I:
+                            rfLoss = rfLossNV[RF_LOSS_BDS_CONF]/10.0;
+                            break;
+                        case GNSS_SIGNAL_BEIDOU_B2AI:
+                            rfLoss = rfLossNV[RF_LOSS_BDS_B2A_CONF]/10.0;
+                            break;
+                        case GNSS_SIGNAL_GLONASS_G1:
+                        case GNSS_SIGNAL_GLONASS_G2:
+                            {
+                                /* compute rfLoss based on rfLossNV[RF_LOSS_GLO_LEFT_CONF],
+                                   rfLossNV[RF_LOSS_GLO_CENTER_CONF],
+                                   rfLossNV[RF_LOSS_GLO_RIGHT_CONF] and gloFrequency */
+                                LocApiProxyBase* locApiProxyObj = getLocApiProxy();
+                                if (nullptr != locApiProxyObj &&
+                                    ((gloFrequency >= 1 && gloFrequency <= 14))) {
+                                    rfLoss = locApiProxyObj->getGloRfLoss(
+                                                    rfLossNV[RF_LOSS_GLO_LEFT_CONF],
+                                                    rfLossNV[RF_LOSS_GLO_CENTER_CONF],
+                                                    rfLossNV[RF_LOSS_GLO_RIGHT_CONF],
+                                                    gloFrequency);
+                                }
+                            }
+                            break;
+                        case GNSS_SIGNAL_GALILEO_E1:
+                            rfLoss = rfLossNV[RF_LOSS_GAL_CONF]/10.0;
+                            break;
+                        case GNSS_SIGNAL_GALILEO_E5A:
+                        case GNSS_SIGNAL_GALILEO_E5B:
+                            rfLoss = rfLossNV[RF_LOSS_GAL_E5_CONF]/10.0;
+                            break;
+                        case GNSS_SIGNAL_NAVIC_L5:
+                            rfLoss = rfLossNV[RF_LOSS_NAVIC_CONF]/10.0;
+                            break;
+                        default:
+                            break;
+                        }
+                        LOC_LOGv("rfLoss=%f gloFrequency=%d", rfLoss, gloFrequency);
+                        gnssSv_ref.basebandCarrierToNoiseDbHz = gnssSv_ref.cN0Dbhz - rfLoss;
+                    }
                 }
 
                 gnssSv_ref.gnssSvOptionsMask = mask;
