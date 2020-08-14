@@ -186,12 +186,12 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         mSvConfigInfo{},
         mLeverArmConfigInfo{},
         mRobustLocationConfigInfo{},
-        mDreConfigInfo{} {
+        mDreConfigInfo{},
+        mMsgTask("IntegrationApiImpl") {
     if (integrationClientAllowed() == false) {
         return;
     }
 
-    mMsgTask = new MsgTask("IntegrationApiImpl", false);
     // get pid to generate sokect name
     uint32_t pid = (uint32_t)getpid();
 
@@ -209,7 +209,7 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
                  LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
         return;
     }
-    shared_ptr<IpcListener> listener(make_shared<IpcListener>(*this, *mMsgTask, SockNode::Eap));
+    shared_ptr<IpcListener> listener(make_shared<IpcListener>(*this, mMsgTask, SockNode::Eap));
     unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(listener,
             sock.getId1(), sock.getId2(), make_shared<IpcQrtrWatcher>(listener, mIpcSender));
 #else
@@ -224,7 +224,7 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         return;
     }
     unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcLocalRecver(
-            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Local), mSocketName);
+            make_shared<IpcListener>(*this, mMsgTask, SockNode::Local), mSocketName);
 #endif //  FEATURE_EXTERNAL_AP
 
     LOC_LOGd("listen on socket: %s", mSocketName);
@@ -249,10 +249,6 @@ void LocationIntegrationApiImpl::destroy() {
                 mApiImpl->mIpcSender = nullptr;
             }
 
-            if (mApiImpl->mMsgTask) {
-                mApiImpl->mMsgTask->destroy();
-            }
-
             // delete the integration client, so another integration client can be set
             {
                 lock_guard<mutex> lock(mMutex);
@@ -263,7 +259,7 @@ void LocationIntegrationApiImpl::destroy() {
         LocationIntegrationApiImpl* mApiImpl;
     };
 
-    mMsgTask->sendMsg(new (nothrow) DestroyReq(this));
+    mMsgTask.sendMsg(new (nothrow) DestroyReq(this));
 }
 
 bool LocationIntegrationApiImpl::integrationClientAllowed() {
@@ -438,7 +434,7 @@ uint32_t LocationIntegrationApiImpl::configConstellations(
         GnssSvTypeConfig mConstellationEnablementConfig;
         GnssSvIdConfig mBlacklistSvConfig;
     };
-    mMsgTask->sendMsg(new (nothrow) ConfigConstellationsReq(
+    mMsgTask.sendMsg(new (nothrow) ConfigConstellationsReq(
             this, constellationEnablementConfig, blacklistSvConfig));
     return 0;
 }
@@ -467,7 +463,7 @@ uint32_t LocationIntegrationApiImpl::configConstellationSecondaryBand(
         LocationIntegrationApiImpl* mApiImpl;
         GnssSvTypeConfig mSecondaryBandConfig;
     };
-    mMsgTask->sendMsg(new (nothrow) ConfigConstellationSecondaryBandReq(this, secondaryBandConfig));
+    mMsgTask.sendMsg(new (nothrow) ConfigConstellationSecondaryBandReq(this, secondaryBandConfig));
     return 0;
 }
 
@@ -491,7 +487,7 @@ uint32_t LocationIntegrationApiImpl::getConstellationSecondaryBandConfig() {
         // return 1 to signal error
         return 1;
     }
-    mMsgTask->sendMsg(new (nothrow) GetConstellationSecondaryBandConfigReq(this));
+    mMsgTask.sendMsg(new (nothrow) GetConstellationSecondaryBandConfigReq(this));
 
     return 0;
 }
@@ -526,7 +522,7 @@ uint32_t LocationIntegrationApiImpl::configConstrainedTimeUncertainty(
         float mTuncThreshold;
         uint32_t mEnergyBudget;
     };
-    mMsgTask->sendMsg(new (nothrow)ConfigConstrainedTuncReq(
+    mMsgTask.sendMsg(new (nothrow)ConfigConstrainedTuncReq(
             this, enable, tuncThreshold, energyBudget));
 
     return 0;
@@ -553,7 +549,7 @@ uint32_t LocationIntegrationApiImpl::configPositionAssistedClockEstimator(bool e
         LocationIntegrationApiImpl* mApiImpl;
         bool mEnable;
     };
-    mMsgTask->sendMsg(new (nothrow)
+    mMsgTask.sendMsg(new (nothrow)
             ConfigPositionAssistedClockEstimatorReq(this, enable));
 
     return 0;
@@ -577,7 +573,7 @@ uint32_t LocationIntegrationApiImpl::gnssDeleteAidingData(
         LocationIntegrationApiImpl* mApiImpl;
         GnssAidingData mAidingData;
     };
-    mMsgTask->sendMsg(new (nothrow) DeleteAidingDataReq(this, aidingData));
+    mMsgTask.sendMsg(new (nothrow) DeleteAidingDataReq(this, aidingData));
 
     return 0;
 }
@@ -603,7 +599,7 @@ uint32_t LocationIntegrationApiImpl::configLeverArm(
     };
 
     if (configInfo.leverArmValidMask) {
-        mMsgTask->sendMsg(new (nothrow) ConfigLeverArmReq(this, configInfo));
+        mMsgTask.sendMsg(new (nothrow) ConfigLeverArmReq(this, configInfo));
     }
 
     return 0;
@@ -633,7 +629,7 @@ uint32_t LocationIntegrationApiImpl::configRobustLocation(
         bool mEnableForE911;
     };
 
-    mMsgTask->sendMsg(new (nothrow)
+    mMsgTask.sendMsg(new (nothrow)
                       ConfigRobustLocationReq(this, enable, enableForE911));
 
     return 0;
@@ -659,7 +655,7 @@ uint32_t LocationIntegrationApiImpl::getRobustLocationConfig() {
         // return 1 to signal error
         return 1;
     }
-    mMsgTask->sendMsg(new (nothrow) GetRobustLocationConfigReq(this));
+    mMsgTask.sendMsg(new (nothrow) GetRobustLocationConfigReq(this));
 
     return 0;
 }
@@ -681,7 +677,7 @@ uint32_t LocationIntegrationApiImpl::configMinGpsWeek(uint16_t minGpsWeek) {
         uint16_t mMinGpsWeek;
     };
 
-    mMsgTask->sendMsg(new (nothrow) ConfigMinGpsWeekReq(this, minGpsWeek));
+    mMsgTask.sendMsg(new (nothrow) ConfigMinGpsWeekReq(this, minGpsWeek));
     return 0;
 }
 
@@ -705,7 +701,7 @@ uint32_t LocationIntegrationApiImpl::getMinGpsWeek() {
         // return 1 to signal error
         return 1;
     }
-    mMsgTask->sendMsg(new (nothrow) GetMinGpsWeekReq(this));
+    mMsgTask.sendMsg(new (nothrow) GetMinGpsWeekReq(this));
 
     return 0;
 }
@@ -731,7 +727,7 @@ uint32_t LocationIntegrationApiImpl::configDeadReckoningEngineParams(
         ::DeadReckoningEngineConfig mDreConfig;
     };
 
-    mMsgTask->sendMsg(new (nothrow) ConfigDrEngineParamsReq(this, dreConfig));
+    mMsgTask.sendMsg(new (nothrow) ConfigDrEngineParamsReq(this, dreConfig));
 
     return 0;
 }
@@ -753,7 +749,7 @@ uint32_t LocationIntegrationApiImpl::configMinSvElevation(uint8_t minSvElevation
         uint8_t mMinSvElevation;
     };
 
-    mMsgTask->sendMsg(new (nothrow) ConfigMinSvElevationReq(this, minSvElevation));
+    mMsgTask.sendMsg(new (nothrow) ConfigMinSvElevationReq(this, minSvElevation));
     return 0;
 }
 
@@ -777,7 +773,7 @@ uint32_t LocationIntegrationApiImpl::getMinSvElevation() {
         // return 1 to signal error
         return 1;
     }
-    mMsgTask->sendMsg(new (nothrow) GetMinSvElevationReq(this));
+    mMsgTask.sendMsg(new (nothrow) GetMinSvElevationReq(this));
 
     return 0;
 }
