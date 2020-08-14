@@ -2357,6 +2357,15 @@ public:
     void updateLocationSystemInfoListener(LocationSystemInfoCb locSystemInfoCallback,
                                           ResponseCb responseCallback);
 
+
+    /** @brief
+        Get the year of Hardware information.<br/>
+        This information is available after CapabilitiesCb is invoked.<br/>
+        @return The year of Hardware.<br/>
+                0, if the year of Hardware information is not available.
+    */
+    uint16_t getYearOfHw();
+
 private:
     /** Internal implementation for LocationClientApi */
     LocationClientApiImpl* mApiImpl;
