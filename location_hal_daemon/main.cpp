@@ -88,7 +88,6 @@ int main(int argc, char *argv[])
 
     waitForDir(SOCKET_DIR_LOCATION);
     waitForDir(SOCKET_LOC_CLIENT_DIR);
-    waitForDir(EAP_LOC_CLIENT_DIR);
     waitForDir(SOCKET_DIR_EHUB);
 
     LOC_LOGd("starting loc_hal_daemon");

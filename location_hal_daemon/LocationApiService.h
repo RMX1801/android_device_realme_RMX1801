@@ -54,8 +54,6 @@
 #undef LOG_TAG
 #define LOG_TAG "LocSvc_HalDaemon"
 
-#define SERVICE_NAME "locapiservice"
-
 typedef struct {
     uint32_t autoStartGnss;
     uint32_t gnssSessionTbfMs;

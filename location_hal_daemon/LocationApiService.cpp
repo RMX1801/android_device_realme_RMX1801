@@ -62,27 +62,24 @@ std::mutex LocationApiService::mMutex;
 LocHaldIpcListener
 ******************************************************************************/
 class LocHaldIpcListener : public ILocIpcListener {
+protected:
     LocationApiService& mService;
-    const char* mLocalSocketName;
-    const string mClientSockPath;
-    const string mClientSockPathnamePrefix;
 public:
-    inline LocHaldIpcListener(LocationApiService& service, const char* clientSockPath,
-            const char* clientSockNamePrefix, const char* localSockName = nullptr) :
-            mService(service), mLocalSocketName(localSockName),
-            mClientSockPath(clientSockPath),
-            mClientSockPathnamePrefix(string(mClientSockPath).append(clientSockNamePrefix)) {
-    }
+    inline LocHaldIpcListener(LocationApiService& service) : mService(service) {}
     // override from LocIpc
     inline void onReceive(const char* data, uint32_t length,
                           const LocIpcRecver* recver) override {
         mService.processClientMsg(data, length);
     }
+};
+class LocHaldLocalIpcListener : public LocHaldIpcListener {
+    const string mClientSockPath = SOCKET_LOC_CLIENT_DIR;
+    const string mClientSockPathnamePrefix = SOCKET_LOC_CLIENT_DIR LOC_CLIENT_NAME_PREFIX;
+public:
+    inline LocHaldLocalIpcListener(LocationApiService& service) : LocHaldIpcListener(service) {}
     inline void onListenerReady() override {
-        if (nullptr != mLocalSocketName) {
-            if (0 != chown(mLocalSocketName, UID_GPS, GID_LOCCLIENT)) {
-                LOC_LOGe("chown to group locclient failed %s", strerror(errno));
-            }
+        if (0 != chown(SOCKET_TO_LOCATION_HAL_DAEMON, UID_GPS, GID_LOCCLIENT)) {
+            LOC_LOGe("chown to group locclient failed %s", strerror(errno));
         }
 
         // traverse client sockets directory - then broadcast READY message
@@ -212,15 +209,12 @@ LocationApiService::LocationApiService(const configParamToRead & configParamRead
 
     // start receiver - never return
     LOC_LOGd("Ready, start Ipc Receivers");
-    auto recver = LocIpc::getLocIpcLocalRecver(
-            make_shared<LocHaldIpcListener>(*this, SOCKET_LOC_CLIENT_DIR, LOC_CLIENT_NAME_PREFIX,
-                                            SOCKET_TO_LOCATION_HAL_DAEMON),
+    auto recver = LocIpc::getLocIpcLocalRecver(make_shared<LocHaldLocalIpcListener>(*this),
             SOCKET_TO_LOCATION_HAL_DAEMON);
     // blocking: set to false
     mIpc.startNonBlockingListening(recver);
 
-    mBlockingRecver = LocIpc::getLocIpcQrtrRecver(
-            make_shared<LocHaldIpcListener>(*this, EAP_LOC_CLIENT_DIR, LOC_CLIENT_NAME_PREFIX),
+    mBlockingRecver = LocIpc::getLocIpcQrtrRecver(make_shared<LocHaldIpcListener>(*this),
             LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
             LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
     mIpc.startBlockingListening(*mBlockingRecver);

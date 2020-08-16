@@ -127,6 +127,49 @@ public:
 };
 
 /******************************************************************************
+LocIpcQrtrWatcher override
+******************************************************************************/
+class IpcQrtrWatcher : public LocIpcQrtrWatcher {
+    const weak_ptr<IpcListener> mIpcListener;
+    const weak_ptr<LocIpcSender> mIpcSender;
+    LocIpcQrtrWatcher::ServiceStatus mKnownStatus;
+public:
+    inline IpcQrtrWatcher(shared_ptr<IpcListener>& listener, shared_ptr<LocIpcSender>& sender) :
+            LocIpcQrtrWatcher({LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID}),
+            mIpcListener(listener), mIpcSender(sender),
+            mKnownStatus(LocIpcQrtrWatcher::ServiceStatus::DOWN) {
+    }
+    inline virtual void onServiceStatusChange(int sericeId, int instanceId,
+            LocIpcQrtrWatcher::ServiceStatus status, const LocIpcSender& refSender) {
+        if (LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID == sericeId &&
+            LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID == instanceId) {
+            if (mKnownStatus != status) {
+                mKnownStatus = status;
+                auto sender = mIpcSender.lock();
+                switch (status) {
+                case LocIpcQrtrWatcher::ServiceStatus::UP:
+                {
+                    LOC_LOGv("case LocIpcQrtrWatcher::ServiceStatus::UP");
+                    auto listener = mIpcListener.lock();
+                    if (nullptr != sender) {
+                        sender->copyDestAddrFrom(refSender);
+                    }
+                    if (nullptr != listener) {
+                        const LocAPIHalReadyIndMsg msg(SERVICE_NAME);
+                        listener->onReceive((const char*)&msg, sizeof(msg), nullptr);
+                    }
+                    break;
+                }
+                case LocIpcQrtrWatcher::ServiceStatus::DOWN:
+                default:
+                    break;
+                }
+            }
+        }
+    }
+};
+
+/******************************************************************************
 LocationIntegrationApiImpl
 ******************************************************************************/
 mutex LocationIntegrationApiImpl::mMutex;
@@ -156,9 +199,6 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
     SockNodeEap sock(LOCATION_CLIENT_API_QSOCKET_CLIENT_SERVICE_ID,
                      pid * 100);
     strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
-    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(
-            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Eap),
-            sock.getId1(), sock.getId2());
 
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcQrtrSender(LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
@@ -169,12 +209,12 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
                  LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
         return;
     }
+    shared_ptr<IpcListener> listener(make_shared<IpcListener>(*this, *mMsgTask, SockNode::Eap));
+    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(listener,
+            sock.getId1(), sock.getId2(), make_shared<IpcQrtrWatcher>(listener, mIpcSender));
 #else
     SockNodeLocal sock(LOCATION_INTEGRATION_API, pid, 0);
-
     strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
-    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcLocalRecver(
-            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Local), mSocketName);
 
     LOC_LOGd("create sender socket: %s", mSocketName);
     // establish an ipc sender to the hal daemon
@@ -183,6 +223,8 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         LOC_LOGe("create sender socket failed %s", SOCKET_TO_LOCATION_HAL_DAEMON);
         return;
     }
+    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcLocalRecver(
+            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Local), mSocketName);
 #endif //  FEATURE_EXTERNAL_AP
 
     LOC_LOGd("listen on socket: %s", mSocketName);
@@ -742,15 +784,6 @@ void LocationIntegrationApiImpl::processHalReadyMsg() {
     // we flush out all pending requests and notify each client
     // that the request has failed.
     flushConfigReqs();
-
-    // when hal daemon crashes and then restarted,
-    // we need to find the new node/port when remote socket api is used,
-    //
-    // this code can not be moved to inside of onListenerReady as
-    // onListenerReady can be invoked from other places
-    if (mIpcSender != nullptr) {
-        mIpcSender->informRecverRestarted();
-    }
 
     // register with hal daemon
     sendClientRegMsgToHalDaemon();
