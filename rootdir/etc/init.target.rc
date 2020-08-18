@@ -95,6 +95,10 @@ on late-fs
 on init
     write /sys/module/qpnp_rtc/parameters/poweron_alarm 1
 
+    # Report max frequency to unity tasks.
+    write /proc/sys/kernel/sched_lib_name "UnityMain,libunity.so"
+    write /proc/sys/kernel/sched_lib_mask_force 255
+
 on post-fs-data
     mkdir /data/vendor/hbtp 0750 system system
 
