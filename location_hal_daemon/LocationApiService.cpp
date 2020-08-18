@@ -565,18 +565,6 @@ void LocationApiService::deleteClient(LocAPIClientDeregisterReqMsg *pMsg) {
 void LocationApiService::deleteClientbyName(const std::string clientname) {
     LOC_LOGi(">-- deleteClient client=%s", clientname.c_str());
 
-    // We shall not hold the lock, as lock already held by the caller
-    //
-    // remove the client from the config request map
-    for (auto it = mConfigReqs.begin(); it != mConfigReqs.end();) {
-        if (strncmp(it->second.clientName.c_str(), clientname.c_str(),
-                   strlen (clientname.c_str())) == 0) {
-            it = mConfigReqs.erase(it);
-        } else {
-            ++it;
-        }
-    }
-
     // delete this client from property db
     LocHalDaemonClientHandler* pClient = getClient(clientname);
 
