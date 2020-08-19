@@ -133,7 +133,7 @@ int LocAPICapabilitiesIndMsg::serializeToProtobuf(string& protoStr) {
 
     // >>>> PBLocAPICapabilitiesIndMsg conversion
     // Bitwise OR of PBLocationCapabilitiesMask
-    // uint32 capabilitiesMask = 1;
+    // uint64 capabilitiesMask = 1;
     pbLocApiCapabInd.set_capabilitiesmask(
             pLocApiPbMsgConv->getPBMaskForLocationCapabilitiesMask(capabilitiesMask));
 
@@ -2332,7 +2332,7 @@ LocAPICapabilitiesIndMsg::LocAPICapabilitiesIndMsg(const char* name,
         return;
     }
     // >>>> PBLocAPICapabilitiesIndMsg conversion
-    // uint32 capabilitiesMask = 1;
+    // uint64 capabilitiesMask = 1;
     capabilitiesMask = pLocApiPbMsgConv->getLocationCapabilitiesMaskFromPB(
             pbLocApiCapInd.capabilitiesmask());
 }

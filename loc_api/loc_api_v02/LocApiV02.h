@@ -35,6 +35,7 @@
 #include <loc_api_v02_client.h>
 #include <vector>
 #include <functional>
+#include <unordered_map>
 
 #define LOC_SEND_SYNC_REQ(NAME, ID, REQ)  \
     int rv = true; \
@@ -188,6 +189,8 @@ private:
   void populateCommonEphemeris(const qmiLocEphGnssDataStructT_v02 &, GnssEphCommon &);
   void populateGpsTimeOfReport(const qmiLocGnssTimeStructT_v02 &, GnssSystemTimeStructType &);
 
+  void populateFeatureStatusReport(const qmiLocFeaturesStatusMaskT_v02 &featureStatusReport,
+        std::unordered_map<LocationQwesFeatureType, bool> &featureMap);
   void reportLocEvent(const qmiLocEventReportIndMsgT_v02 *event_report_ptr);
   /* convert system info to location api format and dispatch to
      the registered adapter */

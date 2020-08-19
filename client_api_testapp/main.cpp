@@ -99,7 +99,9 @@ static uint64_t getTimestamp() {
 Callback functions
 ******************************************************************************/
 static void onCapabilitiesCb(location_client::LocationCapabilitiesMask mask) {
-    printf("<<< onCapabilitiesCb mask=0x%x\n", mask);
+    printf("<<< onCapabilitiesCb mask=0x%" PRIx64 "\n", mask);
+    printf("<<< onCapabilitiesCb mask string=%s",
+            LocationClientApi::capabilitiesToString(mask).c_str());
 }
 
 static void onResponseCb(location_client::LocationResponse response) {

@@ -4486,9 +4486,11 @@ void LocApiV02::reportLocEvent(const qmiLocEventReportIndMsgT_v02 *event_report_
 {
     GnssAidingData aidingData;
     memset(&aidingData, 0, sizeof(aidingData));
-    LOC_LOGd("Loc event report: %" PRIu64 " KlobucharIonoMode_valid:%d: leapSec_valid:%d: tauC_valid:%d",
+    LOC_LOGe("Loc event report: %" PRIu64 " KlobucharIonoMode_valid:%d: leapSec_valid:%d: "
+             "tauC_valid:%d featureStatusReport_valid: %d featureStatusReport: %" PRIu64 "",
             event_report_ptr->eventReport, event_report_ptr->klobucharIonoModel_valid,
-            event_report_ptr->leapSec_valid, event_report_ptr->tauC_valid);
+            event_report_ptr->leapSec_valid, event_report_ptr->tauC_valid,
+            event_report_ptr->featureStatusReport_valid, event_report_ptr->featureStatusReport);
 
     if (event_report_ptr->eventReport & QMI_LOC_DELETE_GPS_EPHEMERIS_ALL_V02) {
         aidingData.sv.svMask |= GNSS_AIDING_DATA_SV_EPHEMERIS_BIT;
@@ -4638,6 +4640,60 @@ void LocApiV02::reportLocEvent(const qmiLocEventReportIndMsgT_v02 *event_report_
         populateGpsTimeOfReport(event_report_ptr->gpsSystemTime, additionalSystemInfo.systemTime);
         LocApiBase::reportGnssAdditionalSystemInfo(additionalSystemInfo);
     }
+    if (event_report_ptr->featureStatusReport_valid) {
+        std::unordered_map<LocationQwesFeatureType, bool> featureMap;
+        populateFeatureStatusReport(event_report_ptr->featureStatusReport, featureMap);
+        LocApiBase::reportQwesCapabilities(featureMap);
+    }
+}
+
+void LocApiV02::populateFeatureStatusReport
+(
+        const qmiLocFeaturesStatusMaskT_v02 &featureStatusReport,
+        std::unordered_map<LocationQwesFeatureType, bool> &featureMap
+)
+{
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_CARRIER_PHASE_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_CARRIER_PHASE] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_CARRIER_PHASE] = false;
+    }
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_SV_POLYNOMIALS_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_SV_POLYNOMIAL] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_SV_POLYNOMIAL] = false;
+    }
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_SV_EPHEMERIS_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_SV_EPH] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_SV_EPH] = false;
+    }
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_SINGLE_FREQUENCY_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_GNSS_SINGLE_FREQUENCY] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_GNSS_SINGLE_FREQUENCY] = false;
+    }
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_MULTI_FREQUENCY_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_GNSS_MULTI_FREQUENCY] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_GNSS_MULTI_FREQUENCY] = false;
+    }
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_TIME_FREQUENCY_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_TIME_FREQUENCY] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_TIME_FREQUENCY] = false;
+    }
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_TIME_UNCERTAINTY_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_TIME_UNCERTAINTY] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_TIME_UNCERTAINTY] = false;
+    }
+    if (featureStatusReport & QMI_LOC_FEATURE_STATUS_CLOCK_ESTIMATE_V02) {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_CLOCK_ESTIMATE] = true;
+    } else {
+        featureMap[LOCATION_QWES_FEATURE_TYPE_CLOCK_ESTIMATE] = false;
+    }
+
 }
 
 void LocApiV02::reportSvEphemeris (
