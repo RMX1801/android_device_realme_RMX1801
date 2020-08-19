@@ -139,30 +139,23 @@ public:
             mIpcListener(listener), mIpcSender(sender),
             mKnownStatus(LocIpcQrtrWatcher::ServiceStatus::DOWN) {
     }
-    inline virtual void onServiceStatusChange(int sericeId, int instanceId,
+    inline virtual void onServiceStatusChange(int serviceId, int instanceId,
             LocIpcQrtrWatcher::ServiceStatus status, const LocIpcSender& refSender) {
-        if (LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID == sericeId &&
+        if (LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID == serviceId &&
             LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID == instanceId) {
             if (mKnownStatus != status) {
                 mKnownStatus = status;
-                auto sender = mIpcSender.lock();
-                switch (status) {
-                case LocIpcQrtrWatcher::ServiceStatus::UP:
-                {
+                if (LocIpcQrtrWatcher::ServiceStatus::UP == status) {
                     LOC_LOGv("case LocIpcQrtrWatcher::ServiceStatus::UP");
-                    auto listener = mIpcListener.lock();
+                    auto sender = mIpcSender.lock();
                     if (nullptr != sender) {
                         sender->copyDestAddrFrom(refSender);
                     }
+                    auto listener = mIpcListener.lock();
                     if (nullptr != listener) {
                         const LocAPIHalReadyIndMsg msg(SERVICE_NAME);
                         listener->onReceive((const char*)&msg, sizeof(msg), nullptr);
                     }
-                    break;
-                }
-                case LocIpcQrtrWatcher::ServiceStatus::DOWN:
-                default:
-                    break;
                 }
             }
         }
