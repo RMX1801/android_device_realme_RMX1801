@@ -451,6 +451,7 @@ PRODUCT_PACKAGES += \
     libwpa_client \
     wpa_supplicant \
     wpa_supplicant.conf \
+    TetheringConfigOverlay \
     WifiOverlay
 
 PRODUCT_COPY_FILES += \
