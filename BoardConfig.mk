@@ -182,7 +182,7 @@ BOARD_ROOT_EXTRA_SYMLINKS := \
     /vendor/firmware_mnt:/firmware
 
 # Security patch level
-VENDOR_SECURITY_PATCH := 2020-06-05
+VENDOR_SECURITY_PATCH := 2020-08-05
 
 # Telephony
 TARGET_PROVIDES_QTI_TELEPHONY_JAR := true
