@@ -215,6 +215,7 @@ vendor/lib/libactuator_pseudo.so
 vendor/lib/libactuator_rohm_bu64243gwz.so
 
 # Camera-arcsoft
+vendor/lib/libarc_sensor_adapter.so
 vendor/lib/libarcsoft_aiscenedetection.so
 vendor/lib/libarcsoft_beautyshot.so
 vendor/lib/libarcsoft_blink_detection.so
@@ -235,6 +236,9 @@ vendor/lib/libarcsoft_low_light_hdr.so
 vendor/lib/libarcsoft_picbest.so
 vendor/lib/libarcsoft_relighting_pro_image.so
 vendor/lib/libarcsoft_smart_denoise.so
+vendor/lib/libarcsoft_videostabilizer.so
+vendor/lib/libarcvs.dep.so
+vendor/lib/libarcvs.so
 
 # Camera calibration files
 etc/camera/cp/CPCalibrationData.bin
