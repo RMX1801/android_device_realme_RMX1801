@@ -46,7 +46,7 @@ Constants
 // Maximum fully qualified path(including the file name)
 // for the location remote API service and client socket name
 #define MAX_SOCKET_PATHNAME_LENGTH (128)
-
+#define SERVICE_NAME "locapiservice"
 #define LOCATION_CLIENT_SESSION_ID_INVALID (0)
 
 #define LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID    (5001)
@@ -59,8 +59,6 @@ Constants
 
 using namespace std;
 using namespace loc_util;
-
-static const char SERVICE_NAME[] = "locapiservice";
 
 class SockNode {
     const int32_t mId1;
@@ -119,21 +117,13 @@ public:
         }
         return type;
     }
-    inline shared_ptr<LocIpcSender> createSender(bool createFsNode = false) {
+    inline shared_ptr<LocIpcSender> createSender() {
         const string socket = getNodePathname();
         const char* sock = socket.c_str();
         switch (getNodeType()) {
         case SockNode::Local:
             return LocIpc::getLocIpcLocalSender(sock);
         case SockNode::Eap:
-            if (createFsNode) {
-                FILE * pFile = fopen(sock, "w");
-                if (nullptr == pFile) {
-                    LOC_LOGe("<-- failed to open file %s error: %s", sock, strerror(errno));
-                } else {
-                    fclose (pFile);
-                }
-            }
             return LocIpc::getLocIpcQrtrSender(getId1(), getId2());
         default:
             return nullptr;

@@ -34,7 +34,7 @@
 
 shared_ptr<LocIpcSender> LocHalDaemonClientHandler::createSender(const string socket) {
     SockNode sockNode(SockNode::create(socket));
-    return sockNode.createSender(true);
+    return sockNode.createSender();
 }
 
 /******************************************************************************
@@ -375,7 +375,7 @@ void LocHalDaemonClientHandler::cleanup() {
     mIpcSender = nullptr;
 
     if (0 != remove(mName.c_str())) {
-        LOC_LOGe("<-- failed to remove file %s error %s", mName.c_str(), strerror(errno));
+        LOC_LOGw("<-- failed to remove file %s error %s", mName.c_str(), strerror(errno));
     }
 
     if (mLocationApi) {
