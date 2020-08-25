@@ -156,8 +156,12 @@ private:
     bool sendMessage(const MESSAGE& msg) {
         bool retVal= sendMessage(reinterpret_cast<const uint8_t*>(&msg), sizeof(msg));
         if (retVal == false) {
-            LOC_LOGe("failed: client %s, msg id: %d, err %s",
-                     mName.c_str(), ((LocAPIMsgHeader) msg).msgId, strerror(errno));
+            struct timespec ts;
+            clock_gettime(CLOCK_BOOTTIME, &ts);
+            LOC_LOGe("failed: client %s, msg id: %d, msg size %d, err %s, "
+                     "boot timestamp %" PRIu64" msec",
+                     mName.c_str(), ((LocAPIMsgHeader) msg).msgId, sizeof(msg),
+                     strerror(errno), (ts.tv_sec * 1000ULL + ts.tv_nsec/1000000));
         }
         return retVal;
     }
@@ -166,8 +170,12 @@ private:
     bool sendMessage(const uint8_t* pmsg, size_t msglen) {
         bool retVal= LocIpc::send(*mIpcSender, pmsg, msglen);
         if (retVal == false) {
-            LOC_LOGe("failed: client %s, msg id: %d, err %s",
-                     mName.c_str(), ((LocAPIMsgHeader*) pmsg)->msgId, strerror(errno));
+            struct timespec ts;
+            clock_gettime(CLOCK_BOOTTIME, &ts);
+            LOC_LOGe("failed: client %s, msg id: %d, msg size %d, err %s, "
+                     "boot timestamp %" PRIu64" msec",
+                     mName.c_str(), ((LocAPIMsgHeader*) pmsg)->msgId, msglen,
+                     strerror(errno), (ts.tv_sec * 1000ULL + ts.tv_nsec/1000000));
         }
         return retVal;
     }

@@ -376,6 +376,10 @@ void LocHalDaemonClientHandler::cleanup() {
     // remote client that is no longer reachable
     mIpcSender = nullptr;
 
+    if (0 != remove(mName.c_str())) {
+        LOC_LOGw("<-- failed to remove file %s error %s", mName.c_str(), strerror(errno));
+    }
+
     if (mLocationApi) {
         mLocationApi->destroy([this]() {onLocationApiDestroyCompleteCb();});
         mLocationApi = nullptr;
@@ -587,7 +591,7 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
         if (gnssConfig.flags & GNSS_CONFIG_FLAGS_MIN_GPS_WEEK_BIT) {
             LOC_LOGd("--< onGnssConfigCb, minGpsWeek = %d", gnssConfig.minGpsWeek);
             msg = (uint8_t*) new LocConfigGetMinGpsWeekRespMsg(SERVICE_NAME, gnssConfig.minGpsWeek);
-            msgLen = sizeof (LocConfigGetMinGpsWeekRespMsg);
+            msgLen = sizeof(LocConfigGetMinGpsWeekRespMsg);
         }
         break;
     case E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID:
@@ -595,9 +599,19 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
             LOC_LOGd("--< onGnssConfigCb, minSvElevation = %d", gnssConfig.minSvElevation);
             msg = (uint8_t*) new LocConfigGetMinSvElevationRespMsg(SERVICE_NAME,
                                                                    gnssConfig.minSvElevation);
-            msgLen = sizeof (LocConfigGetMinSvElevationRespMsg);
+            msgLen = sizeof(LocConfigGetMinSvElevationRespMsg);
         }
         break;
+
+    case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID:
+        LOC_LOGd("--< onGnssConfigCb, valid flags 0x%x", gnssConfig.flags);
+        {
+            msg = (uint8_t*) new LocConfigGetConstellationSecondaryBandConfigRespMsg(
+                   SERVICE_NAME, gnssConfig.secondaryBandConfig);
+            msgLen = sizeof(LocConfigGetConstellationSecondaryBandConfigRespMsg);
+        }
+        break;
+
     default:
         break;
     }

@@ -362,104 +362,107 @@ enum GnssSvType {
 enum GnssLocationInfoFlagMask {
     /** GnssLocation has valid
      *  GnssLocation::altitudeMeanSeaLevel. <br/>   */
-    GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT      = (1<<0),
+    GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT      = (1ULL<<0),
     /** GnssLocation has valid
      *  GnssLocation::pdop,
      *  GnssLocation::hdop and
      *  GnssLocation::vdop. <br/>   */
-    GNSS_LOCATION_INFO_DOP_BIT                          = (1<<1),
+    GNSS_LOCATION_INFO_DOP_BIT                          = (1ULL<<1),
     /** GnssLocation has valid
      *  GnssLocation::magneticDeviation. <br/>   */
-    GNSS_LOCATION_INFO_MAGNETIC_DEVIATION_BIT           = (1<<2),
+    GNSS_LOCATION_INFO_MAGNETIC_DEVIATION_BIT           = (1ULL<<2),
     /** GnssLocation has valid
      *  GnssLocation::horReliability. <br/>   */
-    GNSS_LOCATION_INFO_HOR_RELIABILITY_BIT              = (1<<3),
+    GNSS_LOCATION_INFO_HOR_RELIABILITY_BIT              = (1ULL<<3),
     /** GnssLocation has valid
      *  GnssLocation::verReliability.  <br/>   */
-    GNSS_LOCATION_INFO_VER_RELIABILITY_BIT              = (1<<4),
+    GNSS_LOCATION_INFO_VER_RELIABILITY_BIT              = (1ULL<<4),
     /** GnssLocation has valid
      *  GnssLocation::horUncEllipseSemiMajor. <br/>   */
-    GNSS_LOCATION_INFO_HOR_ACCURACY_ELIP_SEMI_MAJOR_BIT = (1<<5),
+    GNSS_LOCATION_INFO_HOR_ACCURACY_ELIP_SEMI_MAJOR_BIT = (1ULL<<5),
     /** GnssLocation has valid
      *  GnssLocation::horUncEllipseSemiMinor. <br/>   */
-    GNSS_LOCATION_INFO_HOR_ACCURACY_ELIP_SEMI_MINOR_BIT = (1<<6),
+    GNSS_LOCATION_INFO_HOR_ACCURACY_ELIP_SEMI_MINOR_BIT = (1ULL<<6),
     /** GnssLocation has valid
      *  GnssLocation::horUncEllipseOrientAzimuth. <br/>   */
-    GNSS_LOCATION_INFO_HOR_ACCURACY_ELIP_AZIMUTH_BIT    = (1<<7),
+    GNSS_LOCATION_INFO_HOR_ACCURACY_ELIP_AZIMUTH_BIT    = (1ULL<<7),
     /** GnssLocation has valid
      *  GnssLocation::svUsedInPosition and
      *  GnssLocation::measUsageInfo. <br/>   */
-    GNSS_LOCATION_INFO_GNSS_SV_USED_DATA_BIT            = (1<<8),
+    GNSS_LOCATION_INFO_GNSS_SV_USED_DATA_BIT            = (1ULL<<8),
     /** GnssLocation has valid
      *  GnssLocation::navSolutionMask. <br/>   */
-    GNSS_LOCATION_INFO_NAV_SOLUTION_MASK_BIT            = (1<<9),
+    GNSS_LOCATION_INFO_NAV_SOLUTION_MASK_BIT            = (1ULL<<9),
     /** GnssLocation has valid
      *  GnssLocation::posTechMask. <br/>   */
-    GNSS_LOCATION_INFO_POS_TECH_MASK_BIT                = (1<<10),
+    GNSS_LOCATION_INFO_POS_TECH_MASK_BIT                = (1ULL<<10),
     /** Deplicated field as there is no corresponding field in
      *  GnssLocation. <br/>   */
-    GNSS_LOCATION_INFO_SV_SOURCE_INFO_BIT               = (1<<11),
+    GNSS_LOCATION_INFO_SV_SOURCE_INFO_BIT               = (1ULL<<11),
     /** GnssLocation has valid
      *  GnssLocation::altitudeMeanSeaLevel. <br/> */
-    GNSS_LOCATION_INFO_POS_DYNAMICS_DATA_BIT            = (1<<12),
+    GNSS_LOCATION_INFO_POS_DYNAMICS_DATA_BIT            = (1ULL<<12),
     /** GnssLocation has valid
      *  GnssLocation::gdop and
      *  GnssLocation::tdop. <br/>   */
-    GNSS_LOCATION_INFO_EXT_DOP_BIT                      = (1<<13),
+    GNSS_LOCATION_INFO_EXT_DOP_BIT                      = (1ULL<<13),
     /** GnssLocation has valid GnssLocation::northStdDeviation.
      *  <br/> */
-    GNSS_LOCATION_INFO_NORTH_STD_DEV_BIT                = (1<<14),
+    GNSS_LOCATION_INFO_NORTH_STD_DEV_BIT                = (1ULL<<14),
     /** GnssLocation has valid
      *  GnssLocation::eastStdDeviation. <br/>   */
-    GNSS_LOCATION_INFO_EAST_STD_DEV_BIT                 = (1<<15),
+    GNSS_LOCATION_INFO_EAST_STD_DEV_BIT                 = (1ULL<<15),
     /** GnssLocation has valid
      *  GnssLocation::northVelocity. <br/>   */
-    GNSS_LOCATION_INFO_NORTH_VEL_BIT                    = (1<<16),
+    GNSS_LOCATION_INFO_NORTH_VEL_BIT                    = (1ULL<<16),
     /** GnssLocation has valid
      *  GnssLocation::eastVelocity. <br/>   */
-    GNSS_LOCATION_INFO_EAST_VEL_BIT                     = (1<<17),
+    GNSS_LOCATION_INFO_EAST_VEL_BIT                     = (1ULL<<17),
     /** GnssLocation has valid
      *  GnssLocation::upVelocity. <br/>   */
-    GNSS_LOCATION_INFO_UP_VEL_BIT                       = (1<<18),
+    GNSS_LOCATION_INFO_UP_VEL_BIT                       = (1ULL<<18),
     /** GnssLocation has valid
      *  GnssLocation::northVelocityStdDeviation. <br/>   */
-    GNSS_LOCATION_INFO_NORTH_VEL_UNC_BIT                = (1<<19),
+    GNSS_LOCATION_INFO_NORTH_VEL_UNC_BIT                = (1ULL<<19),
     /** GnssLocation has valid
      *  GnssLocation::eastVelocityStdDeviation. <br/>   */
-    GNSS_LOCATION_INFO_EAST_VEL_UNC_BIT                 = (1<<20),
+    GNSS_LOCATION_INFO_EAST_VEL_UNC_BIT                 = (1ULL<<20),
     /** GnssLocation has valid
      *  GnssLocation::upVelocityStdDeviation. <br/>   */
-    GNSS_LOCATION_INFO_UP_VEL_UNC_BIT                   = (1<<21),
+    GNSS_LOCATION_INFO_UP_VEL_UNC_BIT                   = (1ULL<<21),
     /** GnssLocation has valid
      *  GnssLocation::leapSeconds. <br/>   */
-    GNSS_LOCATION_INFO_LEAP_SECONDS_BIT                 = (1<<22),
+    GNSS_LOCATION_INFO_LEAP_SECONDS_BIT                 = (1ULL<<22),
     /** GnssLocation has valid
      *  GnssLocation::timeUncMs. <br/>   */
-    GNSS_LOCATION_INFO_TIME_UNC_BIT                     = (1<<23),
+    GNSS_LOCATION_INFO_TIME_UNC_BIT                     = (1ULL<<23),
     /** GnssLocation has valid
      *  GnssLocation::numSvUsedInPosition. <br/>   */
-    GNSS_LOCATION_INFO_NUM_SV_USED_IN_POSITION_BIT      = (1<<24),
+    GNSS_LOCATION_INFO_NUM_SV_USED_IN_POSITION_BIT      = (1ULL<<24),
     /** GnssLocation has valid
      *  GnssLocation::calibrationConfidencePercent. <br/>   */
-    GNSS_LOCATION_INFO_CALIBRATION_CONFIDENCE_PERCENT_BIT = (1<<25),
+    GNSS_LOCATION_INFO_CALIBRATION_CONFIDENCE_PERCENT_BIT = (1ULL<<25),
     /** GnssLocation has valid
      *  GnssLocation::calibrationStatus.  <br/>   */
-    GNSS_LOCATION_INFO_CALIBRATION_STATUS_BIT           = (1<<26),
+    GNSS_LOCATION_INFO_CALIBRATION_STATUS_BIT           = (1ULL<<26),
     /** GnssLocation has valid
      *  GnssLocation::locOutputEngType.  <br/>   */
-    GNSS_LOCATION_INFO_OUTPUT_ENG_TYPE_BIT              = (1<<27),
+    GNSS_LOCATION_INFO_OUTPUT_ENG_TYPE_BIT              = (1ULL<<27),
     /** GnssLocation has valid
      *  GnssLocation::locOutputEngMask. <br/>   */
-    GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT              = (1<<28),
+    GNSS_LOCATION_INFO_OUTPUT_ENG_MASK_BIT              = (1ULL<<28),
     /** GnssLocation has valid GnssLocation::conformityIndex.
      *  <br/> */
-    GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT             = (1<<29),
+    GNSS_LOCATION_INFO_CONFORMITY_INDEX_BIT             = (1ULL<<29),
     /** GnssLocation has valid
      *  GnssLocation::llaVRPBased. <br/>   */
-    GNSS_LOCATION_INFO_LLA_VRP_BASED_BIT                = (1<<30),
+    GNSS_LOCATION_INFO_LLA_VRP_BASED_BIT                = (1ULL<<30),
     /** GnssLocation has valid GnssLocation::enuVelocityVRPBased.
      *  <br/> */
-    GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT       = (1<<31),
+    GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT       = (1ULL<<31),
+    /** GnssLocation has valid GnssLocation::drSolutionStatusMask.
+     *  <br/>   */
+    GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT      = (1ULL<<32),
 };
 
 /** Specify the reliability level of
@@ -899,7 +902,22 @@ typedef struct {
     /** Altitude above the WGS 84 reference ellipsoid, in unit
     of meters. <br/> */
     float altitude;
+
+    /** Method to print the struct to human readable form, for logging.
+     *  <br/> */
+    string toString() const;
 } LLAInfo;
+
+/** Specify various status that contributes to the DR poisition
+ *  engine. <br/> */
+enum DrSolutionStatusMask {
+    /** Vehicle sensor speed input was detected by the DR position
+     *  engine. <br/> */
+    DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_DETECTED = (1<<0),
+    /** Vehicle sensor speed input was used by the DR position
+     *  engine. <br/> */
+    DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_USED     = (1<<1),
+};
 
 /** Specify the location info received by client via
  *  startPositionSession(uint32_t, const
@@ -1009,6 +1027,8 @@ struct GnssLocation : public Location {
     LLAInfo llaVRPBased;
     /** VRR-based east, north, and up velocity */
     float enuVelocityVRPBased[3];
+    /** Dead reckoning position engine status.  <br/> */
+    DrSolutionStatusMask drSolutionStatusMask;
 
     /* Default constructor to initalize GnssLocation structure */
     inline GnssLocation() :
@@ -1033,7 +1053,8 @@ struct GnssLocation : public Location {
             locOutputEngMask((PositioningEngineMask)0),
             conformityIndex(0.0f),
             llaVRPBased({}),
-            enuVelocityVRPBased{0.0f, 0.0f, 0.0f} {
+            enuVelocityVRPBased{0.0f, 0.0f, 0.0f},
+            drSolutionStatusMask((DrSolutionStatusMask)0) {
     }
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
@@ -1342,7 +1363,7 @@ enum GnssMeasurementsClockFlagsMask {
 };
 
 /** Specify the SV pseudo range and carrier phase measurement
- *  from GNSS positioning engine. <br/>
+ *  from standard SPE engine. <br/>
  *
  *  User should determine whether a field in
  *  GnssMeasurementsClock is valid or not by
@@ -2053,11 +2074,9 @@ public:
                               ResponseCb responseCallback);
 
     /** @brief Stop the ongoing positioning session and
-     *  de-register the callbacks of previous
-     *  startPositionSession. <br/>
-     *  If ResponseCb is registerd with previous
-     *  startPositionSession(), it will be invoked to deliver the
-     *  processing status. <br/> */
+     *  de-register the callbacks of previous startPositionSession.
+     *  No callback will be issued regarding the procesing status.
+     *  <br/> */
     void stopPositionSession();
 
     /** @example example1:testTrackingApi

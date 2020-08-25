@@ -160,6 +160,7 @@ public:
 
     void pingTest(PingTestCb pingTestCallback);
     inline uint16_t getYearOfHw() {return mYearOfHw;}
+    void invokePositionSessionResponseCb(LocationResponse responseCode);
 
 private:
     ~LocationClientApiImpl();
@@ -186,6 +187,7 @@ private:
     LocationCapabilitiesMask   mCapsMask;
     //Year of HW information, 0 is invalid
     uint16_t                   mYearOfHw;
+    bool                       mPositionSessionResponseCbPending;
 
     // callbacks
     CapabilitiesCb          mCapabilitiesCb;

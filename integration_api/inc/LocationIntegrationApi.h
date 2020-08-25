@@ -30,7 +30,7 @@
 #define LOCATION_INTEGRATION_API_H
 
 #include <loc_pla.h>
-
+#include <unordered_set>
 #ifdef NO_UNORDERED_SET_OR_MAP
     #include <map>
 #else
@@ -66,10 +66,17 @@ enum LocConfigTypeEnum{
     /** Config vehicle Body-to-Sensor mount angles for dead
      *  reckoning position engine. <br/> */
     CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS = 8,
+    /** Config various parameters for dead reckoning position
+     *  engine. <br/> */
+    CONFIG_DEAD_RECKONING_ENGINE = 8,
     /** Config minimum SV elevation angle setting used by the GNSS
      *  standard position engine (SPE).
      *  <br/> */
     CONFIG_MIN_SV_ELEVATION = 9,
+    /** Config the secondary band for configurations used by the GNSS
+     *  standard position engine (SPE).
+     *  <br/> */
+    CONFIG_CONSTELLATION_SECONDARY_BAND = 10,
 
     /** Get configuration regarding robust location setting used by
      *  the GNSS standard position engine (SPE).  <br/> */
@@ -81,6 +88,9 @@ enum LocConfigTypeEnum{
     /** Get minimum SV elevation angle setting used by the GNSS
      *  standard position engine (SPE). <br/> */
     GET_MIN_SV_ELEVATION = 102,
+    /** Get the secondary band configuration for constellation
+     *  used by the GNSS standard position engine (SPE). <br/> */
+    GET_CONSTELLATION_SECONDARY_BAND_CONFIG = 103,
 } ;
 
 /**
@@ -118,10 +128,8 @@ typedef std::unordered_map<LocConfigTypeEnum, uint32_t>
 typedef uint32_t GnssConstellationMask;
 
 /**
- *  Specify SV Constellation types that can be configured via
- *  configConstellations(). <br/>
- *  Please note that GPS constellation can not be disabled
- *  and thus not included in the enum list. <br/> */
+ *  Specify SV Constellation types that is used in
+ *  constellation configuration. <br/> */
 enum GnssConstellationType {
     /** GLONASS SV system  <br/> */
     GNSS_CONSTELLATION_TYPE_GLONASS  = 1,
@@ -134,7 +142,11 @@ enum GnssConstellationType {
     /** SBAS SV system <br/> */
     GNSS_CONSTELLATION_TYPE_SBAS     = 5,
     /** NAVIC SV system <br/> */
-    GNSS_CONSTELLATION_TYPE_NAVIC     = 6
+    GNSS_CONSTELLATION_TYPE_NAVIC    = 6,
+    /** GPS SV system <br/> */
+    GNSS_CONSTELLATION_TYPE_GPS      = 7,
+    /** Maximum constellatoin system */
+    GNSS_CONSTELLATION_TYPE_MAX      = 7,
 };
 
 /**
@@ -161,6 +173,9 @@ struct GnssSvIdInfo {
 enum AidingDataDeletionMask {
     /** Mask to delete ephemeris aiding data <br/> */
     AIDING_DATA_DELETION_EPHEMERIS  = (1 << 0),
+    /** Mask to delete calibration data from dead reckoning position
+     *  engine.<br/> */
+    AIDING_DATA_DELETION_DR_SENSOR_CALIBRATION  = (1 << 1),
 };
 
 /**
@@ -193,31 +208,109 @@ struct LeverArmParams {
 };
 
 /**
- * Specify vehicle body-to-Sensor mount parameters to be used
- * by dead reckoning positioning engine. <br/> */
+ * Specify vehicle body-to-Sensor mount parameters for use by
+ * dead reckoning positioning engine. <br/> */
 struct BodyToSensorMountParams {
     /** The misalignment of the sensor board along the
      *  horizontal plane of the vehicle chassis measured looking
      *  from the vehicle to forward direction. <br/>
-     *  In unit of degrees. <br/>   */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float rollOffset;
     /** The misalignment along the horizontal plane of the vehicle
      *  chassis measured looking from the vehicle to the right
      *  side. Positive pitch indicates vehicle is inclined such
      *  that forward wheels are at higher elevation than rear
      *  wheels. <br/>
-     *  In unit of degrees. <br/>  */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float yawOffset;
     /** The angle between the vehicle forward direction and the
      *  sensor axis as seen from the top of the vehicle, and
      *  measured in counterclockwise direction. <br/>
-     *  In unit of degrees. <br/> */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float pitchOffset;
     /** Single uncertainty number that may be the largest of the
      *  uncertainties for roll offset, pitch offset and yaw
      *  offset. <br/>
-     *  In unit of degrees. <br/> */
+     *  In unit of degrees. <br/>
+     *  Range [-180.0, 180.0]. <br/> */
     float offsetUnc;
+};
+
+/** Specify the valid mask for the configuration paramters of
+ *  dead reckoning position engine <br/> */
+enum DeadReckoningEngineConfigValidMask {
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::bodyToSensorMountParams. */
+    BODY_TO_SENSOR_MOUNT_PARAMS_VALID    = (1<<0),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::vehicleSpeedScaleFactor. */
+    VEHICLE_SPEED_SCALE_FACTOR_VALID     = (1<<1),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::vehicleSpeedScaleFactorUnc. */
+    VEHICLE_SPEED_SCALE_FACTOR_UNC_VALID = (1<<2),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::gyroScaleFactor. */
+    GYRO_SCALE_FACTOR_VALID              = (1<<3),
+    /** DeadReckoningEngineConfig has valid
+     *  DeadReckoningEngineConfig::gyroScaleFactorUnc. */
+    GYRO_SCALE_FACTOR_UNC_VALID          = (1<<4),
+};
+
+/** Specify the valid mask for the dead reckoning position
+ *  engine <br/> */
+struct DeadReckoningEngineConfig{
+    /** Specify the valid fields in the config. */
+    DeadReckoningEngineConfigValidMask validMask;
+    /** Body to sensor mount parameters for use by dead reckoning
+     *  positioning engine */
+    BodyToSensorMountParams bodyToSensorMountParams;
+
+    /** Vehicle Speed Scale Factor configuration input for the dead
+      * reckoning positioning engine. The multiplicative scale
+      * factor is applied to received Vehicle Speed value (in m/s)
+      * to obtain the true Vehicle Speed.
+      *
+      * Range is [0.9 to 1.1].
+      *
+      * Note: The scale factor is specific to a given vehicle
+      * make & model. */
+    float vehicleSpeedScaleFactor;
+    /** Vehicle Speed Scale Factor Uncertainty (68% confidence)
+      * configuration input for the dead reckoning positioning
+      * engine.
+      *
+      * Range is [0.0 to 0.1].
+      *
+      * Note: The scale factor unc is specific to a given vehicle
+      * make & model. */
+    float vehicleSpeedScaleFactorUnc;
+
+    /** Gyroscope Scale Factor configuration input for the dead
+      * reckoning positioning engine. The multiplicative scale
+      * factor is applied to received gyroscope value to obtain the
+      * true value.
+      *
+      * Range is [0.9 to 1.1].
+      *
+      * Note: The scale factor is specific to the Gyroscope sensor
+      * and typically derived from either sensor data-sheet or
+      * from actual calibration. */
+    float gyroScaleFactor;
+
+    /** Gyroscope Scale Factor uncertainty (68% confidence)
+      * configuration input for the dead reckoning positioning
+      * engine.
+      *
+      * Range is [0.0 to 0.1].
+      * engine.
+      *
+      * Note: The scale factor unc is specific to the make & model
+      * of Gyroscope sensor and typically derived from either
+      * sensor data-sheet or from actual calibration. */
+    float gyroScaleFactorUnc;
 };
 
 /**
@@ -247,13 +340,19 @@ typedef std::unordered_map<LeverArmType, LeverArmParams> LeverArmParamsMap;
  * standard position engine (SPE) by default. Blacklisting SBAS
  * SV only blocks SBAS data demod and will not disable SBAS
  * cross-correlation detection algorithms as they are necessary
- * for optimal GNSS standard position engine (SPE)
- * performance.<br/>
+ * for optimal GNSS standard position engine (SPE) performance.
+ * Also, if SBAS is disabld via NV in modem, then it can not be
+ * re-enabled via location integration API. <br/>
  *
  * For SV id range, refer documentation of GnssSvIdInfo::svId. <br/>
  */
 #define GNSS_SV_ID_BLACKLIST_ALL (0)
 typedef std::vector<GnssSvIdInfo> LocConfigBlacklistedSvIdList;
+
+/**
+ * Define the constellation set.
+ */
+typedef std::unordered_set<GnssConstellationType> ConstellationSet;
 
 /** @brief
     Used to get the asynchronous notification of the processing
@@ -359,6 +458,20 @@ typedef std::function<void(
    uint8_t minSvElevation
 )> LocConfigGetMinSvElevationCb;
 
+/** @brief
+    LocConfigGetConstellationSecondaryBandConfigCb is for
+    receiving the GNSS secondary band configuration for
+    constellation. <br/>
+
+    @param secondaryBandDisablementSet: GNSS secondary
+    band control configuration. <br/>
+    An empty set means secondary bands are enabled for every
+    supported constellation. <br/>
+*/
+typedef std::function<void(
+    const ConstellationSet& secondaryBandDisablementSet
+)> LocConfigGetConstellationSecondaryBandConfigCb;
+
 /**
  *  Specify the set of callbacks that can be passed to
  *  LocationIntegrationAPI constructor to receive configuration
@@ -376,6 +489,9 @@ struct LocIntegrationCbs {
     /** Callback to receive the minimum SV elevation angle setting
      *  used by the GNSS standard position engine (SPE). <br/> */
     LocConfigGetMinSvElevationCb getMinSvElevationCb;
+    /** Callback to receive the secondary band configuration for
+     *  constellation. <br/> */
+    LocConfigGetConstellationSecondaryBandConfigCb getConstellationSecondaryBandConfigCb;
 };
 
 class LocationIntegrationApiImpl;
@@ -419,6 +535,12 @@ public:
         position engine (SPE).
         <br/>
 
+        Please also note that GPS constellation can not be disabled
+        and GPS SV can not be blacklisted. So, if GPS constellation
+        is specified to be disabled or GPS SV is specified to be
+        blacklisted in the blacklistedSvList, those will be ignored.
+        <br/>
+
         Client should wait for the command to finish, e.g.: via
         LocConfigCb() received before issuing a second
         configConstellations() command. Behavior is not defined if
@@ -427,14 +549,17 @@ public:
         configConstellations() request. <br/>
 
         @param
-        blacklistedSvList: specify the set of constellations and SVs
-        that should not be used by the GNSS standard position engine
-        (SPE). Constellations and SVs not specified in
-        blacklistedSvList will be allowed
-        to get used by the GNSS standard position engine (SPE). <br/>
+        blacklistedSvList, if not set to nullptr, shall contain
+        the complete list of blacklisted constellations and
+        blacklisted SVs. Constellations and SVs not specified in
+        this parameter will be considered to be allowed to get used
+        by GNSS standard position engine (SPE). <br/>
 
         Nullptr of blacklistedSvList will be interpreted as to reset
         the constellation configuration to device default. <br/>
+
+        Empty blacklistedSvList will be interpreted as to not
+        disable any constellation and to not blacklist any SV. <br/>
 
         @return true, if request is successfully processed as
                 requested. When returning true, LocConfigCb() will
@@ -447,6 +572,74 @@ public:
     */
     bool configConstellations(const LocConfigBlacklistedSvIdList*
                               blacklistedSvList=nullptr);
+
+    /** @brief
+        This API configures the secondary band constellations used
+        by the GNSS standard position engine. <br/>
+
+        Please note this API call is not incremental and the new
+        setting will completely overwrite the previous call. </br>
+
+        secondaryBandDisablementSet contains
+        the enable/disable secondary band info for supported
+        constellations. If a constellation is not specified in the
+        set, it will be treated as to enable the secondary bands
+        for that constellation. Also, please note that the secondary
+        bands can only be disabled then re-enabled for the
+        constellation via this API if the secondary bands are
+        enabled in NV in modem. If the NV in modem is set to disable
+        the secondary bands for a particular constellation, then
+        attempt to enable the secondary bands for this constellation
+        via this API will be no-op. <br/>
+
+        Client should wait for the command to finish, e.g.: via
+        LocConfigCb() received before issuing a second
+        configConstellationSecondaryBand() command. Behavior is not
+        defined if client issues a second request of
+        configConstellationSecondaryBand() without waiting for the
+        finish of the previous configConstellationSecondaryBand()
+        request. <br/>
+
+        @param
+        secondaryBandDisablementSet: specify the set of
+        constellations whose secondary bands need to be
+        disabled. <br/>
+
+        Nullptr and empty secondaryBandDisablementSet will be
+        interpreted as to enable the secondary bands for all
+        supported constellations. Please note that if the secondary
+        band for the constellation is disabled via modem NV, then it
+        can not be enabled via this API. <br/>
+
+        @return true, if request is successfully processed as
+                requested. When returning true, LocConfigCb() will
+                be invoked to deliver asynchronous processing
+                status. <br/>
+
+        @return false, if request is not successfully processed as
+                requested. When returning false, LocConfigCb() will
+                not be invoked. <br/>
+    */
+    bool configConstellationSecondaryBand(
+            const ConstellationSet* secondaryBandDisablementSet);
+
+    /** @brief
+        Retrieve the secondary band config for constellation used by
+        the standard GNSS engine (SPE). <br/>
+
+        @return true, if the API request has been accepted. The
+                successful status will be returned via configCB, and
+                secondary band configuration used by the GNSS
+                standard position engine (SPE) will be returned via
+                LocConfigGetConstellationSecondaryBandConfigCb()
+                passed via the constructor. <br/>
+
+        @return false, if the API request has not been accepted for
+                further processing. When returning false, LocConfigCb()
+                and LocConfigGetConstellationSecondaryBandConfigCb()
+                will not be invoked. <br/>
+    */
+    bool getConstellationSecondaryBandConfig();
 
      /** @brief
          Enable or disable the constrained time uncertainty feature.
@@ -760,6 +953,30 @@ public:
     bool configBodyToSensorMountParams(const BodyToSensorMountParams& b2sParams);
 
     /** @brief
+        Configure various parameters for dead reckoning position engine. <br/>
+
+        Client should wait for the command to finish, e.g.:
+        via LocConfigCb() received before issuing a second
+        configDeadReckoningEngineParams() command. Behavior is not
+        defined if client issues a second request of
+        configDeadReckoningEngineParams() without waiting for the
+        finish of the previous configDeadReckoningEngineParams()
+        request. <br/>
+
+        @param
+        config: dead reckoning engine configuration. <br/>
+
+        @return true, if the request is accepted for further
+                processing. When returning true, LocConfigCb() will be
+                invoked to deliver asynchronous processing status. <br/>
+
+        @return false, if the request is not accepted for further
+                processing. When returning false, LocConfigCb() will not
+                be invoked. <br/>
+    */
+    bool configDeadReckoningEngineParams(const DeadReckoningEngineConfig& config);
+
+    /** @brief
         Configure the minimum SV elevation angle setting used by the
         GNSS standard position engine (SPE). Configuring minimum SV
         elevation setting will not cause SPE to stop tracking low
@@ -776,7 +993,7 @@ public:
         specified in location_client::GnssMeasurementsData will not
         be filtered based on the minimum SV elevation angle setting. <br/>
 
-        To apply the setitng, the GNSS standard position engine(SPE)
+        To apply the setting, the GNSS standard position engine(SPE)
         will require MGP to be turned off briefly. This may cause
         glitch for on-going tracking session and may have other
         performance impact. So, it is advised to use this API with

@@ -66,10 +66,10 @@ typedef struct {
 
 typedef struct {
     bool             isValid;
-    bool             resetToDeFault;
-    GnssSvTypeConfig svTypeConfig;
-    GnssSvIdConfig   svIdConfig;
-} SVConfigInfo;
+    GnssSvTypeConfig constellationEnablementConfig;
+    GnssSvIdConfig   blacklistSvConfig;
+    GnssSvTypeConfig secondaryBandConfig;
+} SvConfigInfo;
 
 typedef struct {
     bool isValid;
@@ -79,8 +79,8 @@ typedef struct {
 
 typedef struct {
     bool isValid;
-    ::BodyToSensorMountParams b2sParams;
-} BodyToSensorMountConfigInfo;
+    ::DeadReckoningEngineConfig dreConfig;
+} DeadReckoningEngineConfigInfo;
 
 class IpcListener;
 
@@ -96,17 +96,20 @@ public:
         return (mIpcSender != nullptr) && LocIpc::send(*mIpcSender, data, length);
     }
 
-    // config API
-    virtual uint32_t resetConstellationConfig() override;
-    virtual uint32_t configConstellations(const GnssSvTypeConfig& svTypeConfig,
-                                          const GnssSvIdConfig&   svIdConfig) override;
+    // reset to defaut will apply to enable/disable SV constellation and
+    // blacklist/unblacklist SVs
+    virtual uint32_t configConstellations(
+            const GnssSvTypeConfig& constellationEnablementConfig,
+            const GnssSvIdConfig&   blacklistSvConfig) override;
+    virtual uint32_t configConstellationSecondaryBand(
+                                          const GnssSvTypeConfig& secondaryBandConfig) override;
     virtual uint32_t configConstrainedTimeUncertainty(
             bool enable, float tuncThreshold, uint32_t energyBudget) override;
     virtual uint32_t configPositionAssistedClockEstimator(bool enable) override;
     virtual uint32_t configLeverArm(const LeverArmConfigInfo& configInfo) override;
     virtual uint32_t configRobustLocation(bool enable, bool enableForE911) override;
-    virtual uint32_t configBodyToSensorMountParams(
-            const ::BodyToSensorMountParams& b2sParams) override;
+    virtual uint32_t configDeadReckoningEngineParams(
+            const ::DeadReckoningEngineConfig& dreConfig) override;
     virtual uint32_t* gnssUpdateConfig(const GnssConfig& config) override;
     virtual uint32_t gnssDeleteAidingData(GnssAidingData& data) override;
     virtual uint32_t configMinGpsWeek(uint16_t minGpsWeek) override;
@@ -116,6 +119,8 @@ public:
 
     uint32_t configMinSvElevation(uint8_t minSvElevation);
     uint32_t getMinSvElevation();
+
+    uint32_t getConstellationSecondaryBandConfig();
 
 private:
     ~LocationIntegrationApiImpl();
@@ -134,6 +139,8 @@ private:
             const LocConfigGetRobustLocationConfigRespMsg* pRespMsg);
     void processGetMinGpsWeekRespCb(const LocConfigGetMinGpsWeekRespMsg* pRespMsg);
     void processGetMinSvElevationRespCb(const LocConfigGetMinSvElevationRespMsg* pRespMsg);
+    void processGetConstellationSecondaryBandConfigRespCb(
+            const LocConfigGetConstellationSecondaryBandConfigRespMsg* pRespMsg);
 
     // internal session parameter
     static mutex             mMutex;
@@ -149,10 +156,10 @@ private:
     // and restarts
     TuncConfigInfo           mTuncConfigInfo;
     PaceConfigInfo           mPaceConfigInfo;
-    SVConfigInfo             mSVConfigInfo;
+    SvConfigInfo             mSvConfigInfo;
     LeverArmConfigInfo       mLeverArmConfigInfo;
     RobustLocationConfigInfo mRobustLocationConfigInfo;
-    BodyToSensorMountConfigInfo mB2sConfigInfo;
+    DeadReckoningEngineConfigInfo mDreConfigInfo;
 
     LocConfigReqCntMap       mConfigReqCntMap;
     LocIntegrationCbs        mIntegrationCbs;

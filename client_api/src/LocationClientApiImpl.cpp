@@ -598,7 +598,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
 
     GnssLocation locationInfo;
     parseLocation(halLocationInfo.location, locationInfo);
-    uint32_t flags = 0;
+    uint64_t flags = 0;
 
     if (::GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT & halLocationInfo.flags) {
         flags |= GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT;
@@ -704,6 +704,10 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT;
     }
 
+    if (::GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT;
+    }
+
     locationInfo.gnssInfoFlags = (GnssLocationInfoFlagMask)flags;
     locationInfo.altitudeMeanSeaLevel = halLocationInfo.altitudeMeanSeaLevel;
     locationInfo.pdop = halLocationInfo.pdop;
@@ -741,6 +745,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     locationInfo.enuVelocityVRPBased[1] = halLocationInfo.enuVelocityVRPBased[1];
     locationInfo.enuVelocityVRPBased[2] = halLocationInfo.enuVelocityVRPBased[2];
     parseGnssMeasUsageInfo(halLocationInfo, locationInfo.measUsageInfo);
+    locationInfo.drSolutionStatusMask = (DrSolutionStatusMask) halLocationInfo.drSolutionStatusMask;
 
     flags = 0;
     if (::LOCATION_SBAS_CORRECTION_IONO_BIT & halLocationInfo.navSolutionMask) {
@@ -1058,6 +1063,7 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         mLastAddedClientIds({}),
         mCapabilitiesCb(capabitiescb),
         mResponseCb(nullptr),
+        mPositionSessionResponseCbPending(false),
         mLocationCb(nullptr),
         mGnssLocationCb(nullptr),
         mEngLocationsCb(nullptr),
@@ -1233,6 +1239,8 @@ void LocationClientApiImpl::updateCallbacks(LocationCallbacks& callbacks) {
                 mApiImpl(apiImpl), mCallBacks(callbacks) {}
         virtual ~UpdateCallbacksReq() {}
         void proc() const {
+            // set up the flag to indicate that responseCb is pending
+            mApiImpl->mPositionSessionResponseCbPending = true;
 
             //convert callbacks to callBacksMask
             LocationCallbacksMask callBacksMask = 0;
@@ -1343,9 +1351,7 @@ uint32_t LocationClientApiImpl::startTracking(TrackingOptions& option) {
                         mApiImpl, const_cast<TrackingOptions&>(mOption));
             } else {
                 LOC_LOGd(">>> StartTrackingReq - no change in option");
-                if (mApiImpl->mResponseCb) {
-                    mApiImpl->mResponseCb(LOCATION_RESPONSE_SUCCESS);
-                }
+                mApiImpl->invokePositionSessionResponseCb(LOCATION_RESPONSE_SUCCESS);
             }
         }
         LocationClientApiImpl* mApiImpl;
@@ -1931,6 +1937,15 @@ void LocationClientApiImpl::pingTest(PingTestCb pingTestCallback) {
     return;
 }
 
+void LocationClientApiImpl::invokePositionSessionResponseCb(LocationResponse responseCode) {
+    if (mPositionSessionResponseCbPending) {
+        if (nullptr != mResponseCb) {
+            mResponseCb(responseCode);
+        }
+        mPositionSessionResponseCbPending = false;
+    }
+}
+
 /******************************************************************************
 LocationClientApiImpl -ILocIpcListener
 ******************************************************************************/
@@ -2008,10 +2023,10 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     LOC_LOGw("payload size does not match for message with id: %d",
                              pMsg->msgId);
                 }
-                const LocAPIGenericRespMsg* pRespMsg = (LocAPIGenericRespMsg*)(pMsg);
-                LocationResponse response = parseLocationError(pRespMsg->err);
-                if (mApiImpl.mResponseCb) {
-                    mApiImpl.mResponseCb(response);
+                if (pMsg->msgId != E_LOCAPI_STOP_TRACKING_MSG_ID) {
+                    const LocAPIGenericRespMsg* pRespMsg = (LocAPIGenericRespMsg*)(pMsg);
+                    LocationResponse response = parseLocationError(pRespMsg->err);
+                    mApiImpl.invokePositionSessionResponseCb(response);
                 }
                 break;
             }

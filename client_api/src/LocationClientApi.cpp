@@ -824,6 +824,12 @@ DECLARE_TBL(LocationSystemInfoMask) = {
     {LOC_SYS_INFO_LEAP_SECOND, "LEAP_SEC"}
 };
 
+// LocationSystemInfoMask
+DECLARE_TBL(DrSolutionStatusMask) = {
+    {DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_DETECTED, "VEHICLE_SENSOR_SPEED_INPUT_DETECTED"},
+    {DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_USED, "VEHICLE_SENSOR_SPEED_INPUT_USED"}
+};
+
 string GnssLocationSvUsedInPosition::toString() const {
     string out;
     out.reserve(256);
@@ -938,6 +944,15 @@ string GnssSystemTime::toString() const {
     }
 }
 
+string LLAInfo::toString() const {
+    string out;
+    out.reserve(256);
+    out +=  "VRP based " + FIELDVAL_DEC(latitude);
+    out +=  "VRP based " + FIELDVAL_DEC(longitude);
+    out +=  "VRP based " + FIELDVAL_DEC(altitude);
+    return out;
+}
+
 string Location::toString() const {
     string out;
     out.reserve(256);
@@ -960,7 +975,7 @@ string Location::toString() const {
 
 string GnssLocation::toString() const {
     string out;
-    out.reserve(1024);
+    out.reserve(8096);
 
     out += Location::toString();
     out += FIELDVAL_MASK(gnssInfoFlags, GnssLocationInfoFlagMask_tbl);
@@ -993,7 +1008,7 @@ string GnssLocation::toString() const {
     uint32_t ind = 0;
     for (auto measUsage : measUsageInfo) {
         out += "measUsageInfo[";
-        out += ind;
+        out += to_string(ind);
         out += "]: ";
         out += measUsage.toString();
         ind++;
@@ -1006,6 +1021,11 @@ string GnssLocation::toString() const {
     out += FIELDVAL_ENUM(locOutputEngType, LocOutputEngineType_tbl);
     out += FIELDVAL_MASK(locOutputEngMask, PositioningEngineMask_tbl);
     out += FIELDVAL_DEC(conformityIndex);
+    out += llaVRPBased.toString();
+    out += FIELDVAL_DEC(enuVelocityVRPBased[0]);
+    out += FIELDVAL_DEC(enuVelocityVRPBased[1]);
+    out += FIELDVAL_DEC(enuVelocityVRPBased[2]);
+    out += FIELDVAL_MASK(drSolutionStatusMask, DrSolutionStatusMask_tbl);
 
     return out;
 }
