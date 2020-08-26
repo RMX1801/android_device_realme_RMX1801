@@ -199,7 +199,8 @@ protected:
                         mAddr.sq_node = le32_to_cpu(pkt.server.node);
                         mAddr.sq_port = le32_to_cpu(pkt.server.port);
                         LOC_LOGv("server found pkt.cmd %d, service %d, node, %d, port %d",
-                                 pkt.cmd, pkt.server.service, mAddr.sq_node, mAddr.sq_port);
+                                 le32_to_cpu(pkt.cmd), le32_to_cpu(pkt.server.service),
+                                 mAddr.sq_node, mAddr.sq_port);
                         break;
                     }
                 }
@@ -276,25 +277,29 @@ class LocIpcQrtrListener : public ILocIpcListener {
             const uint32_t cmd = le32_to_cpu(pkt->cmd);
             if (cmd >= QRTR_TYPE_DATA && cmd <= QRTR_TYPE_DEL_LOOKUP) {
                 handledAsQrtrCtrlMsg = true;
-                LOC_LOGv("qrtr control msg: cmd %d, server.service:instance-node:port %d:%d-%d:%d, "
-                         "client node:port %d:%d", cmd, pkt->server.service, pkt->server.instance,
-                         pkt->server.node, pkt->server.port, pkt->client.node, pkt->client.port);
+                int serviceId = le32_to_cpu(pkt->server.service);
+                int instanceId = le32_to_cpu(pkt->server.instance);
+                uint32_t serverNodeId = le32_to_cpu(pkt->server.node);
+                uint32_t serverPort = le32_to_cpu(pkt->server.port);
+                int clientNodeId = le32_to_cpu(pkt->client.node);
+                int clientPort = le32_to_cpu(pkt->client.port);
 
-                int serviceId = pkt->server.service;
-                int nodeId = pkt->client.node;
+                LOC_LOGv("qrtr control msg: cmd %d, server.service:instance-node:port %d:%d-%d:%d,"
+                         " client node:port %d:%d", cmd, serviceId, instanceId, serverNodeId,
+                         serverPort, clientNodeId, clientPort);
+
                 if (nullptr != mQrtrWatcher) {
                     if ((QRTR_TYPE_NEW_SERVER == cmd || QRTR_TYPE_DEL_SERVER == cmd) &&
                         mQrtrWatcher->isServiceInWatch(serviceId)) {
-                        int instanceId = pkt->server.instance;
                         LocIpcQrtrWatcher::ServiceStatus status = (QRTR_TYPE_NEW_SERVER == cmd) ?
                                 LocIpcQrtrWatcher::ServiceStatus::UP :
                                 LocIpcQrtrWatcher::ServiceStatus::DOWN;
-                        sockaddr_qrtr addr = {AF_QIPCRTR, pkt->server.node, pkt->server.port};
+                        sockaddr_qrtr addr = {AF_QIPCRTR, serverNodeId, serverPort};
                         const LocIpcQrtrSender sender(addr);
                         mQrtrWatcher->onServiceStatusChange(serviceId, instanceId, status, sender);
                     } else if ((QRTR_TYPE_DEL_CLIENT == cmd || QRTR_TYPE_BYE == cmd) &&
-                               mQrtrWatcher->isClientInWatch(nodeId)) {
-                        mQrtrWatcher->onClientGone(nodeId, pkt->client.port);
+                               mQrtrWatcher->isClientInWatch(clientNodeId)) {
+                        mQrtrWatcher->onClientGone(clientNodeId, clientPort);
                     }
                 }
             }
