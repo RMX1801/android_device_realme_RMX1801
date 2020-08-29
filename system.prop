@@ -19,7 +19,6 @@ ro.bluetooth.library_name=libbluetooth_qti.so
 ro.bluetooth.a2dp_offload.supported=true  
 ro.bluetooth.emb_wp_mode=false
 ro.bluetooth.wipower=false
-vendor.audio.feature.a2dp_offload.enable=true
 vendor.bluetooth.soc=cherokee
 
 # Camera

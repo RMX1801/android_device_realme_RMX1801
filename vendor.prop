@@ -32,6 +32,7 @@ vendor.video.disable.ubwc=1
 vendor.voice.path.for.pcm.voip=true
 
 # Audio-feature
+vendor.audio.feature.a2dp_offload.enable=true
 vendor.audio.feature.afe_proxy.enable=true
 vendor.audio.feature.anc_headset.enable=true
 vendor.audio.feature.audiozoom.enable=false
