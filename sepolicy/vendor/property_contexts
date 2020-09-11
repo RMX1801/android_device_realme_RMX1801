@@ -18,6 +18,9 @@ persist.vendor.fingerprint.                      u:object_r:oppo_fp_prop:s0
 # NLP
 oppo.nlp.proxy                                   u:object_r:oppo_loc_prop:s0
 
+# Power
+vendor.powerhal.                                 u:object_r:vendor_power_prop:s0
+
 # Radio
 oppo.device.imeicache                            u:object_r:vendor_radio_prop:s0
 persist.oppo.nw.region.lock                      u:object_r:vendor_radio_prop:s0
