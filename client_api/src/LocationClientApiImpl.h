@@ -214,7 +214,7 @@ private:
     LocationSystemInfoCb    mLocationSysInfoCb;
     ResponseCb              mLocationSysInfoResponseCb;
 
-    MsgTask*                   mMsgTask;
+    MsgTask                    mMsgTask;
 
     LocIpc                     mIpc;
     shared_ptr<LocIpcSender>   mIpcSender;

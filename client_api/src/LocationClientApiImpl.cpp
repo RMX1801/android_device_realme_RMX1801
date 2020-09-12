@@ -1076,13 +1076,13 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         mLocationSysInfoCb(nullptr),
         mLocationSysInfoResponseCb(nullptr),
         mPingTestCb(nullptr),
+        mMsgTask("ClientApiImpl"),
         mLogger()
 {
     // read configuration file
     UTIL_READ_CONF(LOC_PATH_GPS_CONF, gConfigTable);
     LOC_LOGd("gDebug=%u", gDebug);
 
-    mMsgTask = new MsgTask("ClientApiImpl", false);
     // get pid to generate sokect name
     uint32_t pid = (uint32_t)getpid();
 
@@ -1123,7 +1123,7 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
                  LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
         return;
     }
-    shared_ptr<IpcListener> listener(make_shared<IpcListener>(*this, *mMsgTask, SockNode::Eap));
+    shared_ptr<IpcListener> listener(make_shared<IpcListener>(*this, mMsgTask, SockNode::Eap));
     unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(listener,
             sock.getId1(), sock.getId2(), make_shared<IpcQrtrWatcher>(listener, mIpcSender));
 #else
@@ -1146,7 +1146,7 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         return;
     }
     unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcLocalRecver(
-            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Local), mSocketName);
+            make_shared<IpcListener>(*this, mMsgTask, SockNode::Local), mSocketName);
 #endif
 
     LOC_LOGd("listen on socket: %s", mSocketName);
@@ -1171,10 +1171,6 @@ void LocationClientApiImpl::destroy() {
                 mApiImpl->mIpcSender = nullptr;
             }
 
-            if (mApiImpl->mMsgTask) {
-                mApiImpl->mMsgTask->destroy();
-            }
-
 #ifdef FEATURE_EXTERNAL_AP
             {
                 // get clientId
@@ -1189,7 +1185,7 @@ void LocationClientApiImpl::destroy() {
         LocationClientApiImpl* mApiImpl;
     };
 
-    mMsgTask->sendMsg(new (nothrow) DestroyReq(this));
+    mMsgTask.sendMsg(new (nothrow) DestroyReq(this));
 }
 
 /******************************************************************************
@@ -1229,7 +1225,7 @@ void LocationClientApiImpl::updateCallbackFunctions(const ClientCallbacks& cbs,
         const ClientCallbacks mCbs;
         ReportCbEnumType mReportCbType;
     };
-    mMsgTask->sendMsg(new (nothrow) UpdateCallbackFunctionsReq(this, cbs, reportCbType));
+    mMsgTask.sendMsg(new (nothrow) UpdateCallbackFunctionsReq(this, cbs, reportCbType));
 }
 
 void LocationClientApiImpl::updateCallbacks(LocationCallbacks& callbacks) {
@@ -1301,7 +1297,7 @@ void LocationClientApiImpl::updateCallbacks(LocationCallbacks& callbacks) {
         LocationClientApiImpl* mApiImpl;
         const LocationCallbacks mCallBacks;
     };
-    mMsgTask->sendMsg(new (nothrow) UpdateCallbacksReq(this, callbacks));
+    mMsgTask.sendMsg(new (nothrow) UpdateCallbacksReq(this, callbacks));
 }
 
 uint32_t LocationClientApiImpl::startTracking(TrackingOptions& option) {
@@ -1357,7 +1353,7 @@ uint32_t LocationClientApiImpl::startTracking(TrackingOptions& option) {
         LocationClientApiImpl* mApiImpl;
         TrackingOptions mOption;
     };
-    mMsgTask->sendMsg(new (nothrow) StartTrackingReq(this, option));
+    mMsgTask.sendMsg(new (nothrow) StartTrackingReq(this, option));
     return 0;
 }
 
@@ -1389,7 +1385,7 @@ void LocationClientApiImpl::stopTracking(uint32_t) {
         }
         LocationClientApiImpl* mApiImpl;
     };
-    mMsgTask->sendMsg(new (nothrow) StopTrackingReq(this));
+    mMsgTask.sendMsg(new (nothrow) StopTrackingReq(this));
 }
 
 void LocationClientApiImpl::updateTrackingOptionsSync(
@@ -1464,7 +1460,7 @@ uint32_t LocationClientApiImpl::startBatching(BatchingOptions& batchOptions) {
         LocationClientApiImpl *mApiImpl;
         BatchingOptions mBatchOptions;
     };
-    mMsgTask->sendMsg(new (nothrow) StartBatchingReq(this, batchOptions));
+    mMsgTask.sendMsg(new (nothrow) StartBatchingReq(this, batchOptions));
     return 0;
 }
 
@@ -1485,7 +1481,7 @@ void LocationClientApiImpl::stopBatching(uint32_t id) {
         }
         LocationClientApiImpl *mApiImpl;
     };
-    mMsgTask->sendMsg(new (nothrow) StopBatchingReq(this));
+    mMsgTask.sendMsg(new (nothrow) StopBatchingReq(this));
 }
 
 void LocationClientApiImpl::updateBatchingOptions(uint32_t id, BatchingOptions& batchOptions) {
@@ -1513,7 +1509,7 @@ void LocationClientApiImpl::updateBatchingOptions(uint32_t id, BatchingOptions& 
     if ((mBatchingOptions.minInterval != batchOptions.minInterval) ||
             (mBatchingOptions.minDistance != batchOptions.minDistance) ||
             mBatchingOptions.batchingMode != batchOptions.batchingMode) {
-        mMsgTask->sendMsg(new (nothrow) UpdateBatchingOptionsReq(this, batchOptions));
+        mMsgTask.sendMsg(new (nothrow) UpdateBatchingOptionsReq(this, batchOptions));
     } else {
         LOC_LOGd("No UpdateBatchingOptions because same Interval=%d Distance=%d, BatchingMode=%d",
                 batchOptions.minInterval, batchOptions.minDistance, batchOptions.batchingMode);
@@ -1590,7 +1586,7 @@ uint32_t* LocationClientApiImpl::addGeofences(size_t count, GeofenceOption* opti
         GeofenceInfo* mGfInfos;
         std::vector<uint32_t>  mClientIds;
     };
-    mMsgTask->sendMsg(new (nothrow) AddGeofencesReq(this, count, options, infos,
+    mMsgTask.sendMsg(new (nothrow) AddGeofencesReq(this, count, options, infos,
             mLastAddedClientIds));
     return nullptr;
 }
@@ -1630,7 +1626,7 @@ void LocationClientApiImpl::removeGeofences(size_t count, uint32_t* ids) {
         uint32_t mGfCount;
         uint32_t* mGfIds;
     };
-    mMsgTask->sendMsg(new (nothrow) RemoveGeofencesReq(this, count, ids));
+    mMsgTask.sendMsg(new (nothrow) RemoveGeofencesReq(this, count, ids));
 }
 
 void LocationClientApiImpl::modifyGeofences(
@@ -1677,7 +1673,7 @@ void LocationClientApiImpl::modifyGeofences(
         uint32_t* mGfIds;
         GeofenceOption* mGfOptions;
     };
-    mMsgTask->sendMsg(new (nothrow) ModifyGeofencesReq(this, count, ids, options));
+    mMsgTask.sendMsg(new (nothrow) ModifyGeofencesReq(this, count, ids, options));
 }
 
 void LocationClientApiImpl::pauseGeofences(size_t count, uint32_t* ids) {
@@ -1715,7 +1711,7 @@ void LocationClientApiImpl::pauseGeofences(size_t count, uint32_t* ids) {
         uint32_t mGfCount;
         uint32_t* mGfIds;
     };
-    mMsgTask->sendMsg(new (nothrow) PauseGeofencesReq(this, count, ids));
+    mMsgTask.sendMsg(new (nothrow) PauseGeofencesReq(this, count, ids));
 }
 
 void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
@@ -1753,7 +1749,7 @@ void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
         uint32_t mGfCount;
         uint32_t* mGfIds;
     };
-    mMsgTask->sendMsg(new (nothrow) ResumeGeofencesReq(this, count, ids));
+    mMsgTask.sendMsg(new (nothrow) ResumeGeofencesReq(this, count, ids));
 }
 
 void LocationClientApiImpl::updateNetworkAvailability(bool available) {
@@ -1772,7 +1768,7 @@ void LocationClientApiImpl::updateNetworkAvailability(bool available) {
         const LocationClientApiImpl* mApiImpl;
         const bool mAvailable;
     };
-    mMsgTask->sendMsg(new (nothrow) UpdateNetworkAvailabilityReq(this, available));
+    mMsgTask.sendMsg(new (nothrow) UpdateNetworkAvailabilityReq(this, available));
 }
 
 void LocationClientApiImpl::getGnssEnergyConsumed(
@@ -1813,7 +1809,7 @@ void LocationClientApiImpl::getGnssEnergyConsumed(
     };
 
     LOC_LOGd(">>> getGnssEnergyConsumed ");
-    mMsgTask->sendMsg(new (nothrow)GetGnssEnergyConsumedReq(
+    mMsgTask.sendMsg(new (nothrow)GetGnssEnergyConsumedReq(
             this, gnssEnergyConsumedCallback, responseCallback));
 }
 
@@ -1882,7 +1878,7 @@ void LocationClientApiImpl::updateLocationSystemInfoListener(
     };
 
     LOC_LOGd(">>> updateLocationSystemInfoListener ");
-    mMsgTask->sendMsg(new (nothrow)UpdateLocationSystemInfoListenerReq(
+    mMsgTask.sendMsg(new (nothrow)UpdateLocationSystemInfoListenerReq(
             this, locSystemInfoCallback, responseCallback));
 }
 
@@ -1933,7 +1929,7 @@ void LocationClientApiImpl::pingTest(PingTestCb pingTestCallback) {
         }
         LocationClientApiImpl *mApiImpl;
     };
-    mMsgTask->sendMsg(new (nothrow) PingTestReq(this));
+    mMsgTask.sendMsg(new (nothrow) PingTestReq(this));
     return;
 }
 

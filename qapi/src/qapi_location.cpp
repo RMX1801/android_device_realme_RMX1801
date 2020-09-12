@@ -39,6 +39,7 @@
 #include <LocTimer.h>
 
 using namespace std;
+using namespace loc_util;
 using namespace location_client;
 using Runnable = std::function<void()>;
 
