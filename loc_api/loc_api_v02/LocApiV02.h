@@ -510,14 +510,29 @@ public:
   virtual GnssSignalTypeMask convertQmiGnssSignalType(
         qmiLocGnssSignalTypeMaskT_v02 qmiGnssSignalType);
 
+  void convertQmiBlacklistedSvConfigToGnssConfig(
+        const qmiLocGetBlacklistSvIndMsgT_v02& qmiBlacklistConfig,
+        GnssSvIdConfig& gnssBlacklistConfig);
+
+  virtual void convertQmiSecondaryConfigToGnssConfig(
+        qmiLocGNSSConstellEnumT_v02 qmiSecondaryBandConfig,
+        GnssSvTypeConfig& secondaryBandConfig);
+
   /* Requests for SV/Constellation Control */
   virtual LocationError setBlacklistSvSync(const GnssSvIdConfig& config);
-  virtual void setBlacklistSv(const GnssSvIdConfig& config);
+  virtual void setBlacklistSv(const GnssSvIdConfig& config,
+                              LocApiResponse* adapterResponse=nullptr);
   virtual void getBlacklistSv();
   virtual void setConstellationControl(const GnssSvTypeConfig& config,
                                        LocApiResponse *adapterResponse=nullptr);
   virtual void getConstellationControl();
   virtual void resetConstellationControl(LocApiResponse *adapterResponse=nullptr);
+
+  virtual void configConstellationMultiBand(const GnssSvTypeConfig& secondaryBandConfig,
+                                            LocApiResponse* adapterResponse=nullptr);
+
+  virtual void getConstellationMultiBandConfig(uint32_t sessionId,
+                                      LocApiResponse* adapterResponse=nullptr);
 
   locClientStatusEnumType locSyncSendReq(uint32_t req_id, locClientReqUnionType req_payload,
           uint32_t timeout_msec, uint32_t ind_id, void* ind_payload_ptr);

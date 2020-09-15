@@ -2548,9 +2548,14 @@ LocationError
 SynergyLocApi::setBlacklistSvSync(const GnssSvIdConfig& config) {
 
     LocationError rtv = LOCATION_ERROR_SUCCESS;
+    enum loc_api_adapter_err adapRtv = LOC_API_ADAPTER_ERR_SUCCESS;
 
     if ((nullptr != sllReqIf) && (nullptr != sllReqIf->sllSetBlacklistSv)) {
-        setBlacklistSv(config);
+        adapRtv = sllReqIf->sllSetBlacklistSv(config, ((void *)this));
+        if (LOC_API_ADAPTER_ERR_SUCCESS != adapRtv) {
+           LOC_LOGe ("Error: %d", adapRtv);
+           rtv = LOCATION_ERROR_GENERAL_FAILURE;
+        }
     } else {
         rtv = LOCATION_ERROR_NOT_SUPPORTED;
     }
@@ -2572,15 +2577,11 @@ SynergyLocApi::setBlacklistSvSync(const GnssSvIdConfig& config) {
         None.
 */
 void
-SynergyLocApi::setBlacklistSv(const GnssSvIdConfig& config) {
-    sendMsg(new LocApiMsg([this, config] () {
-        enum loc_api_adapter_err rtv = LOC_API_ADAPTER_ERR_SUCCESS;
-
-        if ((nullptr != sllReqIf) && (nullptr != sllReqIf->sllSetBlacklistSv)) {
-            rtv = sllReqIf->sllSetBlacklistSv(config, ((void *)this));
-            if (LOC_API_ADAPTER_ERR_SUCCESS != rtv) {
-               LOC_LOGe ("Error: %d", rtv);
-            }
+SynergyLocApi::setBlacklistSv(const GnssSvIdConfig& config, LocApiResponse* adapterResponse) {
+    sendMsg(new LocApiMsg([this, config, adapterResponse] () {
+        LocationError err = setBlacklistSvSync(config);
+        if (adapterResponse) {
+            adapterResponse->returnToSender(err);
         }
     }));
 }

@@ -163,8 +163,28 @@ static LocationCapabilitiesMask parseCapabilitiesMask(::LocationCapabilitiesMask
     return static_cast<LocationCapabilitiesMask>(capsMask);
 }
 
-static Location parseLocation(const ::Location &halLocation) {
-    Location location;
+static uint16_t parseYearOfHw(::LocationCapabilitiesMask mask) {
+    uint16_t yearOfHw = 2015;
+    if (::LOCATION_CAPABILITIES_GNSS_MEASUREMENTS_BIT & mask) {
+        yearOfHw++; // 2016
+        if (::LOCATION_CAPABILITIES_DEBUG_NMEA_BIT & mask) {
+            yearOfHw++; // 2017
+            if (::LOCATION_CAPABILITIES_CONSTELLATION_ENABLEMENT_BIT & mask ||
+                ::LOCATION_CAPABILITIES_AGPM_BIT & mask) {
+                yearOfHw++; // 2018
+                if (::LOCATION_CAPABILITIES_PRIVACY_BIT & mask) {
+                    yearOfHw++; // 2019
+                    if (::LOCATION_CAPABILITIES_MEASUREMENTS_CORRECTION_BIT & mask) {
+                        yearOfHw++; // 2020
+                    }
+                }
+            }
+        }
+    }
+    return yearOfHw;
+}
+
+static void parseLocation(const ::Location &halLocation, Location& location) {
     uint32_t flags = 0;
 
     location.timestamp = halLocation.timestamp;
@@ -220,8 +240,27 @@ static Location parseLocation(const ::Location &halLocation) {
     if (::LOCATION_TECHNOLOGY_SENSORS_BIT & halLocation.techMask) {
         flags |= LOCATION_TECHNOLOGY_SENSORS_BIT;
     }
+    if (::LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT & halLocation.techMask) {
+        flags |= LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT;
+    }
+    if (::LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT & halLocation.techMask) {
+        flags |= LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT;
+    }
+    if (::LOCATION_TECHNOLOGY_AFLT_BIT & halLocation.techMask) {
+        flags |= LOCATION_TECHNOLOGY_AFLT_BIT;
+    }
+    if (::LOCATION_TECHNOLOGY_HYBRID_BIT & halLocation.techMask) {
+        flags |= LOCATION_TECHNOLOGY_HYBRID_BIT;
+    }
+    if (::LOCATION_TECHNOLOGY_PPE_BIT & halLocation.techMask) {
+        flags |= LOCATION_TECHNOLOGY_PPE_BIT;
+    }
     location.techMask = (LocationTechnologyMask)flags;
+}
 
+static Location parseLocation(const ::Location &halLocation) {
+    Location location;
+    parseLocation(halLocation, location);
     return location;
 }
 
@@ -558,64 +597,9 @@ static GnssSystemTime parseSystemTime(const ::GnssSystemTime &halSystemTime) {
 static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halLocationInfo) {
 
     GnssLocation locationInfo;
-    ::Location halLocation = halLocationInfo.location;
-    uint32_t flags = 0;
-    locationInfo.timestamp = halLocation.timestamp;
-    locationInfo.latitude = halLocation.latitude;
-    locationInfo.longitude = halLocation.longitude;
-    locationInfo.altitude = halLocation.altitude;
-    locationInfo.speed = halLocation.speed;
-    locationInfo.bearing = halLocation.bearing;
-    locationInfo.horizontalAccuracy = halLocation.accuracy;
-    locationInfo.verticalAccuracy = halLocation.verticalAccuracy;
-    locationInfo.speedAccuracy = halLocation.speedAccuracy;
-    locationInfo.bearingAccuracy = halLocation.bearingAccuracy;
+    parseLocation(halLocationInfo.location, locationInfo);
+    uint64_t flags = 0;
 
-    if (0 != halLocation.timestamp) {
-        flags |= LOCATION_HAS_TIMESTAMP_BIT;
-    }
-    if (::LOCATION_HAS_LAT_LONG_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_LAT_LONG_BIT;
-    }
-    if (::LOCATION_HAS_ALTITUDE_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_ALTITUDE_BIT;
-    }
-    if (::LOCATION_HAS_SPEED_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_SPEED_BIT;
-    }
-    if (::LOCATION_HAS_BEARING_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_BEARING_BIT;
-    }
-    if (::LOCATION_HAS_ACCURACY_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_ACCURACY_BIT;
-    }
-    if (::LOCATION_HAS_VERTICAL_ACCURACY_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_VERTICAL_ACCURACY_BIT;
-    }
-    if (::LOCATION_HAS_SPEED_ACCURACY_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_SPEED_ACCURACY_BIT;
-    }
-    if (::LOCATION_HAS_BEARING_ACCURACY_BIT & halLocation.flags) {
-        flags |= LOCATION_HAS_BEARING_ACCURACY_BIT;
-    }
-    locationInfo.flags = (LocationFlagsMask)flags;
-
-    flags = 0;
-    if (::LOCATION_TECHNOLOGY_GNSS_BIT & halLocation.techMask) {
-        flags |= LOCATION_TECHNOLOGY_GNSS_BIT;
-    }
-    if (::LOCATION_TECHNOLOGY_CELL_BIT & halLocation.techMask) {
-        flags |= LOCATION_TECHNOLOGY_CELL_BIT;
-    }
-    if (::LOCATION_TECHNOLOGY_WIFI_BIT & halLocation.techMask) {
-        flags |= LOCATION_TECHNOLOGY_WIFI_BIT;
-    }
-    if (::LOCATION_TECHNOLOGY_SENSORS_BIT & halLocation.techMask) {
-        flags |= LOCATION_TECHNOLOGY_SENSORS_BIT;
-    }
-    locationInfo.techMask = (LocationTechnologyMask)flags;
-
-    flags = 0;
     if (::GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT & halLocationInfo.flags) {
         flags |= GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT;
     }
@@ -646,9 +630,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     if (::GNSS_LOCATION_INFO_NAV_SOLUTION_MASK_BIT & halLocationInfo.flags) {
         flags |= GNSS_LOCATION_INFO_NAV_SOLUTION_MASK_BIT;
     }
-    if (::GNSS_LOCATION_INFO_POS_TECH_MASK_BIT & halLocationInfo.flags) {
-        flags |= GNSS_LOCATION_INFO_POS_TECH_MASK_BIT;
-    }
+    flags |= GNSS_LOCATION_INFO_POS_TECH_MASK_BIT;
     if (::GNSS_LOCATION_INFO_SV_SOURCE_INFO_BIT & halLocationInfo.flags) {
         flags |= GNSS_LOCATION_INFO_SV_SOURCE_INFO_BIT;
     }
@@ -722,6 +704,10 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_ENU_VELOCITY_VRP_BASED_BIT;
     }
 
+    if (::GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT;
+    }
+
     locationInfo.gnssInfoFlags = (GnssLocationInfoFlagMask)flags;
     locationInfo.altitudeMeanSeaLevel = halLocationInfo.altitudeMeanSeaLevel;
     locationInfo.pdop = halLocationInfo.pdop;
@@ -759,6 +745,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     locationInfo.enuVelocityVRPBased[1] = halLocationInfo.enuVelocityVRPBased[1];
     locationInfo.enuVelocityVRPBased[2] = halLocationInfo.enuVelocityVRPBased[2];
     parseGnssMeasUsageInfo(halLocationInfo, locationInfo.measUsageInfo);
+    locationInfo.drSolutionStatusMask = (DrSolutionStatusMask) halLocationInfo.drSolutionStatusMask;
 
     flags = 0;
     if (::LOCATION_SBAS_CORRECTION_IONO_BIT & halLocationInfo.navSolutionMask) {
@@ -791,38 +778,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     }
     locationInfo.navSolutionMask = (GnssLocationNavSolutionMask)flags;
 
-    flags = 0;
-    if (::LOCATION_POS_TECH_DEFAULT_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_DEFAULT_BIT;
-    }
-    if (::LOCATION_POS_TECH_SATELLITE_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_SATELLITE_BIT;
-    }
-    if (::LOCATION_POS_TECH_CELLID_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_CELLID_BIT;
-    }
-    if (::LOCATION_POS_TECH_WIFI_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_WIFI_BIT;
-    }
-    if (::LOCATION_POS_TECH_SENSORS_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_SENSORS_BIT;
-    }
-    if (::LOCATION_POS_TECH_REFERENCE_LOCATION_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_REFERENCE_LOCATION_BIT;
-    }
-    if (::LOCATION_POS_TECH_INJECTED_COARSE_POSITION_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_INJECTED_COARSE_POSITION_BIT;
-    }
-    if (::LOCATION_POS_TECH_AFLT_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_AFLT_BIT;
-    }
-    if (::LOCATION_POS_TECH_HYBRID_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_HYBRID_BIT;
-    }
-    if (::LOCATION_POS_TECH_PPE_BIT & halLocationInfo.posTechMask) {
-        flags |= LOCATION_POS_TECH_PPE_BIT;
-    }
-    locationInfo.posTechMask = (GnssLocationPosTechMask)flags;
+    locationInfo.posTechMask = locationInfo.techMask;
     locationInfo.bodyFrameData = parseLocationPositionDynamics(
             halLocationInfo.bodyFrameData, halLocationInfo.bodyFrameDataExt);
     locationInfo.gnssSystemTime = parseSystemTime(halLocationInfo.gnssSystemTime);
@@ -1051,6 +1007,42 @@ public:
 };
 
 /******************************************************************************
+LocIpcQrtrWatcher override
+******************************************************************************/
+class IpcQrtrWatcher : public LocIpcQrtrWatcher {
+    const weak_ptr<IpcListener> mIpcListener;
+    const weak_ptr<LocIpcSender> mIpcSender;
+    LocIpcQrtrWatcher::ServiceStatus mKnownStatus;
+public:
+    inline IpcQrtrWatcher(shared_ptr<IpcListener>& listener, shared_ptr<LocIpcSender>& sender) :
+            LocIpcQrtrWatcher({LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID}),
+            mIpcListener(listener), mIpcSender(sender),
+            mKnownStatus(LocIpcQrtrWatcher::ServiceStatus::DOWN) {
+    }
+    inline virtual void onServiceStatusChange(int serviceId, int instanceId,
+            LocIpcQrtrWatcher::ServiceStatus status, const LocIpcSender& refSender) {
+        if (LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID == serviceId &&
+            LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID == instanceId) {
+            if (mKnownStatus != status) {
+                mKnownStatus = status;
+                if (LocIpcQrtrWatcher::ServiceStatus::UP == status) {
+                    LOC_LOGv("case LocIpcQrtrWatcher::ServiceStatus::UP");
+                    auto sender = mIpcSender.lock();
+                    if (nullptr != sender) {
+                        sender->copyDestAddrFrom(refSender);
+                    }
+                    auto listener = mIpcListener.lock();
+                    if (nullptr != listener) {
+                        const LocAPIHalReadyIndMsg msg(SERVICE_NAME);
+                        listener->onReceive((const char*)&msg, sizeof(msg), nullptr);
+                    }
+                }
+            }
+        }
+    }
+};
+
+/******************************************************************************
 LocationClientApiImpl
 ******************************************************************************/
 
@@ -1067,9 +1059,11 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         mHalRegistered(false),
         mCallbacksMask(0),
         mCapsMask((LocationCapabilitiesMask)0),
+        mYearOfHw(0),
         mLastAddedClientIds({}),
         mCapabilitiesCb(capabitiescb),
         mResponseCb(nullptr),
+        mPositionSessionResponseCbPending(false),
         mLocationCb(nullptr),
         mGnssLocationCb(nullptr),
         mEngLocationsCb(nullptr),
@@ -1119,18 +1113,19 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
     SockNodeEap sock(LOCATION_CLIENT_API_QSOCKET_CLIENT_SERVICE_ID,
                      pid * 100 + mClientId);
     strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
-    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(
-            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Eap),
-            sock.getId1(), sock.getId2());
 
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcQrtrSender(LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
                                      LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
     if (mIpcSender == nullptr) {
         LOC_LOGe("create sender socket failed for service id: %d instance id: %d",
-                LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID, LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
+                 LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
+                 LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
         return;
     }
+    shared_ptr<IpcListener> listener(make_shared<IpcListener>(*this, *mMsgTask, SockNode::Eap));
+    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcQrtrRecver(listener,
+            sock.getId1(), sock.getId2(), make_shared<IpcQrtrWatcher>(listener, mIpcSender));
 #else
     // get clientId
     lock_guard<mutex> lock(mMutex);
@@ -1143,8 +1138,6 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
 
     SockNodeLocal sock(LOCATION_CLIENT_API, pid, mClientId);
     strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
-    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcLocalRecver(
-            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Local), mSocketName);
 
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcLocalSender(SOCKET_TO_LOCATION_HAL_DAEMON);
@@ -1152,6 +1145,8 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         LOC_LOGe("create sender socket failed %s", SOCKET_TO_LOCATION_HAL_DAEMON);
         return;
     }
+    unique_ptr<LocIpcRecver> recver = LocIpc::getLocIpcLocalRecver(
+            make_shared<IpcListener>(*this, *mMsgTask, SockNode::Local), mSocketName);
 #endif
 
     LOC_LOGd("listen on socket: %s", mSocketName);
@@ -1181,11 +1176,13 @@ void LocationClientApiImpl::destroy() {
             }
 
 #ifdef FEATURE_EXTERNAL_AP
-            // get clientId
-            lock_guard<mutex> lock(mMutex);
-            mApiImpl->mClientIdGenerator &= ~(1UL << mApiImpl->mClientId);
-            LOC_LOGd("client id generarator 0x%x, id %d",
-                     mApiImpl->mClientIdGenerator, mApiImpl->mClientId);
+            {
+                // get clientId
+                lock_guard<mutex> lock(mMutex);
+                mApiImpl->mClientIdGenerator &= ~(1UL << mApiImpl->mClientId);
+                LOC_LOGd("client id generarator 0x%x, id %d",
+                         mApiImpl->mClientIdGenerator, mApiImpl->mClientId);
+            }
 #endif //FEATURE_EXTERNAL_AP
             delete mApiImpl;
         }
@@ -1242,6 +1239,8 @@ void LocationClientApiImpl::updateCallbacks(LocationCallbacks& callbacks) {
                 mApiImpl(apiImpl), mCallBacks(callbacks) {}
         virtual ~UpdateCallbacksReq() {}
         void proc() const {
+            // set up the flag to indicate that responseCb is pending
+            mApiImpl->mPositionSessionResponseCbPending = true;
 
             //convert callbacks to callBacksMask
             LocationCallbacksMask callBacksMask = 0;
@@ -1352,9 +1351,7 @@ uint32_t LocationClientApiImpl::startTracking(TrackingOptions& option) {
                         mApiImpl, const_cast<TrackingOptions&>(mOption));
             } else {
                 LOC_LOGd(">>> StartTrackingReq - no change in option");
-                if (mApiImpl->mResponseCb) {
-                    mApiImpl->mResponseCb(LOCATION_RESPONSE_SUCCESS);
-                }
+                mApiImpl->invokePositionSessionResponseCb(LOCATION_RESPONSE_SUCCESS);
             }
         }
         LocationClientApiImpl* mApiImpl;
@@ -1570,6 +1567,7 @@ uint32_t* LocationClientApiImpl::addGeofences(size_t count, GeofenceOption* opti
                 memset(msg, 0, msglen);
                 LocAPIAddGeofencesReqMsg *pMsg = reinterpret_cast<LocAPIAddGeofencesReqMsg*>(msg);
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_ADD_GEOFENCES_MSG_ID;
                 pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->geofences.count = mGfCount;
@@ -1618,6 +1616,7 @@ void LocationClientApiImpl::removeGeofences(size_t count, uint32_t* ids) {
                 LocAPIRemoveGeofencesReqMsg* pMsg = (LocAPIRemoveGeofencesReqMsg*)msg;
                 pMsg->gfClientIds.count = mGfCount;
                 memcpy(pMsg->gfClientIds.gfIds, mGfIds, sizeof(uint32_t) * mGfCount);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_REMOVE_GEOFENCES_MSG_ID;
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
                 bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(msg),
@@ -1658,6 +1657,7 @@ void LocationClientApiImpl::modifyGeofences(
                 LocAPIModifyGeofencesReqMsg *pMsg =
                         reinterpret_cast<LocAPIModifyGeofencesReqMsg*>(msg);
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_MODIFY_GEOFENCES_MSG_ID;
                 pMsg->geofences.count = mGfCount;
                 for (int i=0; i<mGfCount; ++i) {
@@ -1701,6 +1701,7 @@ void LocationClientApiImpl::pauseGeofences(size_t count, uint32_t* ids) {
                 LocAPIPauseGeofencesReqMsg* pMsg = (LocAPIPauseGeofencesReqMsg*)msg;
                 pMsg->gfClientIds.count = mGfCount;
                 memcpy(&(pMsg->gfClientIds.gfIds[0]), mGfIds, sizeof(uint32_t) * mGfCount);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_PAUSE_GEOFENCES_MSG_ID;
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
                 bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(msg),
@@ -1738,6 +1739,7 @@ void LocationClientApiImpl::resumeGeofences(size_t count, uint32_t* ids) {
                 LocAPIResumeGeofencesReqMsg* pMsg = (LocAPIResumeGeofencesReqMsg*)msg;
                 pMsg->gfClientIds.count = mGfCount;
                 memcpy(pMsg->gfClientIds.gfIds, mGfIds, sizeof(uint32_t) * mGfCount);
+                pMsg->msgVersion = LOCATION_REMOTE_API_MSG_VERSION;
                 pMsg->msgId = E_LOCAPI_RESUME_GEOFENCES_MSG_ID;
                 strlcpy(pMsg->mSocketName, mApiImpl->mSocketName, MAX_SOCKET_PATHNAME_LENGTH);
                 bool rc = mApiImpl->sendMessage(reinterpret_cast<uint8_t*>(msg),
@@ -1898,6 +1900,8 @@ void LocationClientApiImpl::capabilitesCallback(ELocMsgID msgId, const void* msg
         mCapabilitiesCb(mCapsMask);
     }
 
+    mYearOfHw = parseYearOfHw(pCapabilitiesIndMsg->capabilitiesMask);
+
     // send updatecallback request
     if (0 != mCallbacksMask) {
         LocAPIUpdateCallbacksReqMsg msg(mSocketName, mCallbacksMask);
@@ -1931,6 +1935,15 @@ void LocationClientApiImpl::pingTest(PingTestCb pingTestCallback) {
     };
     mMsgTask->sendMsg(new (nothrow) PingTestReq(this));
     return;
+}
+
+void LocationClientApiImpl::invokePositionSessionResponseCb(LocationResponse responseCode) {
+    if (mPositionSessionResponseCbPending) {
+        if (nullptr != mResponseCb) {
+            mResponseCb(responseCode);
+        }
+        mPositionSessionResponseCbPending = false;
+    }
 }
 
 /******************************************************************************
@@ -1990,14 +2003,6 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                              pMsg->msgId);
                 }
 
-                // when hal daemon crashes, we need to find the new node/port
-                // when remote socket api is used
-                // this code can not be moved to inside of onListenerReady as
-                // onListenerReady can be invoked from other places
-                if (mApiImpl.mIpcSender != nullptr) {
-                    mApiImpl.mIpcSender->informRecverRestarted();
-                }
-
                 // location hal deamon has restarted, need to set this
                 // flag to false to prevent messages to be sent to hal
                 // before registeration completes
@@ -2018,10 +2023,10 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     LOC_LOGw("payload size does not match for message with id: %d",
                              pMsg->msgId);
                 }
-                const LocAPIGenericRespMsg* pRespMsg = (LocAPIGenericRespMsg*)(pMsg);
-                LocationResponse response = parseLocationError(pRespMsg->err);
-                if (mApiImpl.mResponseCb) {
-                    mApiImpl.mResponseCb(response);
+                if (pMsg->msgId != E_LOCAPI_STOP_TRACKING_MSG_ID) {
+                    const LocAPIGenericRespMsg* pRespMsg = (LocAPIGenericRespMsg*)(pMsg);
+                    LocationResponse response = parseLocationError(pRespMsg->err);
+                    mApiImpl.invokePositionSessionResponseCb(response);
                 }
                 break;
             }

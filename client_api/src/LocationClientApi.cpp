@@ -349,6 +349,7 @@ void LocationClientApi::addGeofences(std::vector<Geofence>& geofences,
             std::shared_ptr<GeofenceImpl> gfImpl(new GeofenceImpl(&geofences[i]));
             gfImpl->bindGeofence(&geofences[i]);
             mApiImpl->mLastAddedClientIds.push_back(gfImpl->getClientId());
+            LOC_LOGd("Geofence LastAddedClientId: %d", gfImpl->getClientId());
             mApiImpl->addGeofenceMap(mApiImpl->mLastAddedClientIds[i], geofences[i]);
         }
 
@@ -371,6 +372,7 @@ void LocationClientApi::removeGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("removeGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");
@@ -401,6 +403,7 @@ void LocationClientApi::modifyGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("modifyGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");
@@ -428,6 +431,7 @@ void LocationClientApi::pauseGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("pauseGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");
@@ -453,6 +457,7 @@ void LocationClientApi::resumeGeofences(std::vector<Geofence>& geofences) {
                 return;
             }
             gfIds[i] = geofences[i].mGeofenceImpl->getClientId();
+            LOC_LOGd("resumeGeofences id : %d", gfIds[i]);
         }
         if (!mApiImpl->checkGeofenceMap(geofences.size(), gfIds)) {
             LOC_LOGe ("Wrong geofence IDs");
@@ -494,6 +499,15 @@ void LocationClientApi::updateLocationSystemInfoListener(
             locSystemInfoCallback, responseCallback);
     } else {
         LOC_LOGe ("NULL mApiImpl");
+    }
+}
+
+uint16_t LocationClientApi::getYearOfHw() {
+    if (mApiImpl) {
+        return mApiImpl->getYearOfHw();
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
+        return 0;
     }
 }
 
@@ -541,7 +555,12 @@ DECLARE_TBL(LocationTechnologyMask) = {
     {LOCATION_TECHNOLOGY_GNSS_BIT, "GNSS"},
     {LOCATION_TECHNOLOGY_CELL_BIT, "CELL"},
     {LOCATION_TECHNOLOGY_WIFI_BIT, "WIFI"},
-    {LOCATION_TECHNOLOGY_SENSORS_BIT, "SENSOR"}
+    {LOCATION_TECHNOLOGY_SENSORS_BIT, "SENSOR"},
+    {LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT, "REF_LOC"},
+    {LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT, "CPI"},
+    {LOCATION_TECHNOLOGY_AFLT_BIT, "AFLT"},
+    {LOCATION_TECHNOLOGY_HYBRID_BIT, "HYBRID"},
+    {LOCATION_TECHNOLOGY_PPE_BIT, "PPE"}
 };
 // GnssLocationNavSolutionMask
 DECLARE_TBL(GnssLocationNavSolutionMask) = {
@@ -555,18 +574,6 @@ DECLARE_TBL(GnssLocationNavSolutionMask) = {
     {LOCATION_NAV_CORRECTION_RTK_FIXED_BIT, "NAV_CORR_RTK_FIXED"},
     {LOCATION_NAV_CORRECTION_ONLY_SBAS_CORRECTED_SV_USED_BIT,
             "NAV_CORR_ONLY_SBAS_CORRECTED_SV_USED"}
-};
-// GnssLocationPosTechMask
-DECLARE_TBL(GnssLocationPosTechMask) = {
-    {LOCATION_POS_TECH_SATELLITE_BIT, "SATELLITE"},
-    {LOCATION_POS_TECH_CELLID_BIT, "CELLID"},
-    {LOCATION_POS_TECH_WIFI_BIT, "WIFI"},
-    {LOCATION_POS_TECH_SENSORS_BIT, "SENSORS"},
-    {LOCATION_POS_TECH_REFERENCE_LOCATION_BIT, "REF_LOC"},
-    {LOCATION_POS_TECH_INJECTED_COARSE_POSITION_BIT, "CPI"},
-    {LOCATION_POS_TECH_AFLT_BIT, "AFLT"},
-    {LOCATION_POS_TECH_HYBRID_BIT, "HYBRID"},
-    {LOCATION_POS_TECH_PPE_BIT, "PPE"}
 };
 // GnssLocationPosDataMask
 DECLARE_TBL(GnssLocationPosDataMask) = {
@@ -817,6 +824,12 @@ DECLARE_TBL(LocationSystemInfoMask) = {
     {LOC_SYS_INFO_LEAP_SECOND, "LEAP_SEC"}
 };
 
+// LocationSystemInfoMask
+DECLARE_TBL(DrSolutionStatusMask) = {
+    {DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_DETECTED, "VEHICLE_SENSOR_SPEED_INPUT_DETECTED"},
+    {DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_USED, "VEHICLE_SENSOR_SPEED_INPUT_USED"}
+};
+
 string GnssLocationSvUsedInPosition::toString() const {
     string out;
     out.reserve(256);
@@ -931,6 +944,15 @@ string GnssSystemTime::toString() const {
     }
 }
 
+string LLAInfo::toString() const {
+    string out;
+    out.reserve(256);
+    out +=  "VRP based " + FIELDVAL_DEC(latitude);
+    out +=  "VRP based " + FIELDVAL_DEC(longitude);
+    out +=  "VRP based " + FIELDVAL_DEC(altitude);
+    return out;
+}
+
 string Location::toString() const {
     string out;
     out.reserve(256);
@@ -953,7 +975,7 @@ string Location::toString() const {
 
 string GnssLocation::toString() const {
     string out;
-    out.reserve(1024);
+    out.reserve(8096);
 
     out += Location::toString();
     out += FIELDVAL_MASK(gnssInfoFlags, GnssLocationInfoFlagMask_tbl);
@@ -980,14 +1002,13 @@ string GnssLocation::toString() const {
     out += FIELDVAL_DEC(numSvUsedInPosition);
     out += svUsedInPosition.toString();
     out += FIELDVAL_MASK(navSolutionMask, GnssLocationNavSolutionMask_tbl);
-    out += FIELDVAL_MASK(posTechMask, GnssLocationPosTechMask_tbl);
     out += bodyFrameData.toString();
     out += gnssSystemTime.toString();
 
     uint32_t ind = 0;
     for (auto measUsage : measUsageInfo) {
         out += "measUsageInfo[";
-        out += ind;
+        out += to_string(ind);
         out += "]: ";
         out += measUsage.toString();
         ind++;
@@ -1000,6 +1021,11 @@ string GnssLocation::toString() const {
     out += FIELDVAL_ENUM(locOutputEngType, LocOutputEngineType_tbl);
     out += FIELDVAL_MASK(locOutputEngMask, PositioningEngineMask_tbl);
     out += FIELDVAL_DEC(conformityIndex);
+    out += llaVRPBased.toString();
+    out += FIELDVAL_DEC(enuVelocityVRPBased[0]);
+    out += FIELDVAL_DEC(enuVelocityVRPBased[1]);
+    out += FIELDVAL_DEC(enuVelocityVRPBased[2]);
+    out += FIELDVAL_MASK(drSolutionStatusMask, DrSolutionStatusMask_tbl);
 
     return out;
 }

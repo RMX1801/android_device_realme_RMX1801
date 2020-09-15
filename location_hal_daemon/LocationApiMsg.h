@@ -46,7 +46,7 @@ Constants
 // Maximum fully qualified path(including the file name)
 // for the location remote API service and client socket name
 #define MAX_SOCKET_PATHNAME_LENGTH (128)
-
+#define SERVICE_NAME "locapiservice"
 #define LOCATION_CLIENT_SESSION_ID_INVALID (0)
 
 #define LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID    (5001)
@@ -59,8 +59,6 @@ Constants
 
 using namespace std;
 using namespace loc_util;
-
-static const char SERVICE_NAME[] = "locapiservice";
 
 class SockNode {
     const int32_t mId1;
@@ -119,21 +117,13 @@ public:
         }
         return type;
     }
-    inline shared_ptr<LocIpcSender> createSender(bool createFsNode = false) {
+    inline shared_ptr<LocIpcSender> createSender() {
         const string socket = getNodePathname();
         const char* sock = socket.c_str();
         switch (getNodeType()) {
         case SockNode::Local:
             return LocIpc::getLocIpcLocalSender(sock);
         case SockNode::Eap:
-            if (createFsNode) {
-                FILE * pFile = fopen(sock, "w");
-                if (nullptr == pFile) {
-                    LOC_LOGe("<-- failed to open file %s error: %s", sock, strerror(errno));
-                } else {
-                    fclose (pFile);
-                }
-            }
             return LocIpc::getLocIpcQrtrSender(getId1(), getId2());
         default:
             return nullptr;
@@ -228,8 +218,9 @@ enum ELocMsgID {
     E_INTAPI_CONFIG_LEVER_ARM_MSG_ID  = 204,
     E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID  = 205,
     E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID  = 206,
-    E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID = 207,
+    E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID = 207,
     E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID = 208,
+    E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID  = 209,
 
     // integration API config retrieval request/response
     E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID  = 300,
@@ -240,6 +231,9 @@ enum ELocMsgID {
 
     E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID  = 304,
     E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID  = 305,
+
+    E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID = 306,
+    E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID = 307,
 };
 
 typedef uint32_t LocationCallbacksMask;
@@ -766,18 +760,25 @@ struct LocConfigPositionAssistedClockEstimatorReqMsg: LocAPIMsgHeader
 
 struct LocConfigSvConstellationReqMsg: LocAPIMsgHeader
 {
-    bool mResetToDefault;
-    GnssSvTypeConfig mSvTypeConfig;
-    GnssSvIdConfig   mSvIdConfig;
+    GnssSvTypeConfig mConstellationEnablementConfig;
+    GnssSvIdConfig   mBlacklistSvConfig;
 
     inline LocConfigSvConstellationReqMsg(const char* name,
-                                          bool resetToDefault,
-                                          const GnssSvTypeConfig& svTypeConfig,
-                                          const GnssSvIdConfig& svIdConfig) :
+                                          const GnssSvTypeConfig& constellationEnablementConfig,
+                                          const GnssSvIdConfig& blacklistSvConfig) :
             LocAPIMsgHeader(name, E_INTAPI_CONFIG_SV_CONSTELLATION_MSG_ID),
-            mResetToDefault(resetToDefault),
-            mSvTypeConfig(svTypeConfig),
-            mSvIdConfig(svIdConfig){ }
+            mConstellationEnablementConfig(constellationEnablementConfig),
+            mBlacklistSvConfig(blacklistSvConfig) { }
+};
+
+struct LocConfigConstellationSecondaryBandReqMsg: LocAPIMsgHeader
+{
+    GnssSvTypeConfig mSecondaryBandConfig;
+
+    inline LocConfigConstellationSecondaryBandReqMsg(
+            const char* name, const GnssSvTypeConfig& secondaryBandConfig) :
+            LocAPIMsgHeader(name, E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID),
+            mSecondaryBandConfig(secondaryBandConfig){ }
 };
 
 // defintion for message with msg id of E_LOCAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID
@@ -823,13 +824,13 @@ struct LocConfigMinGpsWeekReqMsg: LocAPIMsgHeader
         mMinGpsWeek(minGpsWeek) { }
 };
 
-struct LocConfigB2sMountParamsReqMsg: LocAPIMsgHeader
+struct LocConfigDrEngineParamsReqMsg: LocAPIMsgHeader
 {
-    BodyToSensorMountParams mB2sParams;
-    inline LocConfigB2sMountParamsReqMsg(const char* name,
-                                         const BodyToSensorMountParams& b2sParams) :
-        LocAPIMsgHeader(name, E_INTAPI_CONFIG_BODY_TO_SENSOR_MOUNT_PARAMS_MSG_ID),
-        mB2sParams(b2sParams) { }
+    DeadReckoningEngineConfig mDreConfig;
+    inline LocConfigDrEngineParamsReqMsg(const char* name,
+                                         const DeadReckoningEngineConfig& dreConfig) :
+        LocAPIMsgHeader(name, E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID),
+        mDreConfig(dreConfig) { }
 };
 
 struct LocConfigMinSvElevationReqMsg: LocAPIMsgHeader
@@ -890,6 +891,22 @@ struct LocConfigGetMinSvElevationRespMsg: LocAPIMsgHeader
                                              uint8_t minSvElevation) :
         LocAPIMsgHeader(name, E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID),
         mMinSvElevation(minSvElevation) { }
+};
+
+struct LocConfigGetConstellationSecondaryBandConfigReqMsg: LocAPIMsgHeader
+{
+    inline LocConfigGetConstellationSecondaryBandConfigReqMsg(const char* name) :
+        LocAPIMsgHeader(name, E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID) { }
+};
+
+struct LocConfigGetConstellationSecondaryBandConfigRespMsg: LocAPIMsgHeader
+{
+    GnssSvTypeConfig mSecondaryBandConfig;
+
+    inline LocConfigGetConstellationSecondaryBandConfigRespMsg(const char* name,
+                                                  GnssSvTypeConfig secondaryBandConfig) :
+        LocAPIMsgHeader(name, E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID),
+        mSecondaryBandConfig(secondaryBandConfig){ }
 };
 
 /******************************************************************************

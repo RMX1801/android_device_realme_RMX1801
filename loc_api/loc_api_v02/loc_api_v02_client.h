@@ -819,6 +819,9 @@ typedef union
             *pGetParameterReq;
     /*QMI_LOC_GET_PARAMETER_REQ_V02*/
 
+    const qmiLocSetMultibandConfigReqMsgT_v02
+            *pSetMultibandConfigReq;
+    /*QMI_LOC_SET_MULTIBAND_CONFIG_REQ_V02*/
 }locClientReqUnionType;
 
 

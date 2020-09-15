@@ -183,7 +183,8 @@ public:
 
     /* Requests for SV/Constellation Control */
     virtual LocationError setBlacklistSvSync(const GnssSvIdConfig& config);
-    virtual void setBlacklistSv(const GnssSvIdConfig& config);
+    virtual void setBlacklistSv(const GnssSvIdConfig& config,
+                                LocApiResponse* adapterResponse=nullptr);
     virtual void getBlacklistSv();
     virtual void setConstellationControl(const GnssSvTypeConfig& config,
                                          LocApiResponse *adapterResponse=nullptr);

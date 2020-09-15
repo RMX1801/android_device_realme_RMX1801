@@ -54,8 +54,6 @@
 #undef LOG_TAG
 #define LOG_TAG "LocSvc_HalDaemon"
 
-#define SERVICE_NAME "locapiservice"
-
 typedef struct {
     uint32_t autoStartGnss;
     uint32_t gnssSessionTbfMs;
@@ -192,17 +190,21 @@ private:
             const LocConfigPositionAssistedClockEstimatorReqMsg* pMsg);
     void configConstellations(
             const LocConfigSvConstellationReqMsg* pMsg);
+    void configConstellationSecondaryBand(
+            const LocConfigConstellationSecondaryBandReqMsg* pMsg);
     void configAidingDataDeletion(
             LocConfigAidingDataDeletionReqMsg* pMsg);
     void configLeverArm(const LocConfigLeverArmReqMsg* pMsg);
     void configRobustLocation(const LocConfigRobustLocationReqMsg* pMsg);
     void configMinGpsWeek(const LocConfigMinGpsWeekReqMsg* pMsg);
-    void configB2sMountParams(const LocConfigB2sMountParamsReqMsg* pMsg);
+    void configDeadReckoningEngineParams(const LocConfigDrEngineParamsReqMsg* pMsg);
     void configMinSvElevation(const LocConfigMinSvElevationReqMsg* pMsg);
 
     // Location configuration API get/read requests
     void getGnssConfig(const LocAPIMsgHeader* pReqMsg,
                        GnssConfigFlagsBits configFlag);
+    void getConstellationSecondaryBandConfig(
+            const LocConfigGetConstellationSecondaryBandConfigReqMsg* pReqMsg);
 
     // Location configuration API util routines
     void addConfigRequestToMap(uint32_t sessionId,

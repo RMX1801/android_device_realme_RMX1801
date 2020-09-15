@@ -88,7 +88,6 @@ int main(int argc, char *argv[])
 
     waitForDir(SOCKET_DIR_LOCATION);
     waitForDir(SOCKET_LOC_CLIENT_DIR);
-    waitForDir(EAP_LOC_CLIENT_DIR);
     waitForDir(SOCKET_DIR_EHUB);
 
     LOC_LOGd("starting loc_hal_daemon");
@@ -96,7 +95,8 @@ int main(int argc, char *argv[])
 #ifdef INIT_SYSTEM_SYSV
     // set supplementary groups for sysvinit
     // For systemd, common supplementary groups are set via service files
-    char groupNames[LOC_MAX_PARAM_NAME] = "gps diag powermgr locclient inet vnw";
+    char groupNames[LOC_MAX_PARAM_NAME] = "gps radio diag powermgr locclient inet vnw";
+
     gid_t groupIds[LOC_PROCESS_MAX_NUM_GROUPS] = {};
     char *splitGrpString[LOC_PROCESS_MAX_NUM_GROUPS];
     int numGrps = loc_util_split_string(groupNames, splitGrpString,
