@@ -32,6 +32,7 @@ vendor.video.disable.ubwc=1
 vendor.voice.path.for.pcm.voip=true
 
 # Audio-feature
+vendor.audio.feature.a2dp_offload.enable=true
 vendor.audio.feature.afe_proxy.enable=true
 vendor.audio.feature.anc_headset.enable=true
 vendor.audio.feature.audiozoom.enable=false
@@ -49,7 +50,7 @@ vendor.audio.feature.dynamic_ecns.enable=false
 vendor.audio.feature.ext_hw_plugin.enable=false
 vendor.audio.feature.external_dsp.enable=false
 vendor.audio.feature.external_speaker.enable=false
-vendor.audio.feature.external_speaker_tfa.enable=fals
+vendor.audio.feature.external_speaker_tfa.enable=false
 vendor.audio.feature.fluence.enable=true
 vendor.audio.feature.fm.enable=true
 vendor.audio.feature.hdmi_edid.enable=true
