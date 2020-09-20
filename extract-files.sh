@@ -65,14 +65,6 @@ setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" false "${CLEAN_VENDOR}"
 extract "${MY_DIR}/proprietary-files.txt" "${SRC}" ${KANG} --section "${SECTION}"
 
 # Fix proprietary blobs
-patchelf --remove-needed android.hidl.base@1.0.so \
-        "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/lib/libwfdnative.so"
-patchelf --remove-needed android.hidl.base@1.0.so \
-        "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/lib64/libwfdnative.so"
-
-sed -i 's/<library name="android.hidl.manager-V1.0-java"/<library name="android.hidl.manager@1.0-java"/g' \
-        "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/etc/permissions/qti_libpermissions.xml"
-
 sed -i 's/xml version="2.0"/xml version="1.0"/g' \
         "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml" \
         "${LINEAGE_ROOT}/vendor/${VENDOR}/${DEVICE}/proprietary/product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml"
