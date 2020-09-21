@@ -435,10 +435,6 @@ public:
     setServerSync(const char* url, int len, LocServerType type);
   virtual LocationError
     setServerSync(unsigned int ip, int port, LocServerType type);
-  virtual enum loc_api_adapter_err
-    setXtraData(char* data, int length);
-  virtual enum loc_api_adapter_err
-    requestXtraServer();
   virtual void
     atlOpenStatus(int handle, int is_succ, char* apn, uint32_t apnLen, AGpsBearerType bear,
                    LocAGpsType agpsType, LocApnTypeMask mask);
@@ -477,7 +473,7 @@ public:
                                       LocApiResponse *adapterResponse=nullptr);
   virtual void setPositionAssistedClockEstimatorMode(bool enabled,
                                                      LocApiResponse *adapterResponse=nullptr);
-  virtual LocationError getGnssEnergyConsumed();
+  virtual void getGnssEnergyConsumed();
   virtual void updateSystemPowerState(PowerStateType powerState);
   virtual void requestForAidingData(GnssAidingDataSvMask svDataMask);
   virtual void configRobustLocation(bool enable, bool enableForE911,
@@ -495,9 +491,6 @@ public:
   */
   virtual int setSvMeasurementConstellation(const locClientEventMaskType mask);
   virtual LocationError setXtraVersionCheckSync(uint32_t check);
-  virtual void installAGpsCert(const LocDerEncodedCertificate* pData,
-                               size_t length,
-                               uint32_t slotBitMask);
 
   virtual LocPosTechMask convertPosTechMask(qmiLocPosTechMaskT_v02 mask);
   virtual LocNavSolutionMask convertNavSolutionMask(qmiLocNavSolutionMaskT_v02 mask);
@@ -505,8 +498,8 @@ public:
   virtual GnssConfigLppeControlPlaneMask convertLppeCp(const uint32_t lppeControlPlaneMask);
   virtual GnssConfigLppeUserPlaneMask convertLppeUp(const uint32_t lppeUserPlaneMask);
   virtual LocationError setEmergencyExtensionWindowSync(const uint32_t emergencyExtensionSeconds);
-  virtual LocationError setMeasurementCorrections(
-        const GnssMeasurementCorrections gnssMeasurementCorrections);
+  virtual void setMeasurementCorrections(
+        const GnssMeasurementCorrections& gnssMeasurementCorrections);
   virtual GnssSignalTypeMask convertQmiGnssSignalType(
         qmiLocGnssSignalTypeMaskT_v02 qmiGnssSignalType);
 
