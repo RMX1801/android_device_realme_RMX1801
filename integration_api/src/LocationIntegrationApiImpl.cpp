@@ -198,8 +198,12 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
 #ifdef FEATURE_EXTERNAL_AP
     SockNodeEap sock(LOCATION_CLIENT_API_QSOCKET_CLIENT_SERVICE_ID,
                      pid * 100);
-    strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
-
+    size_t pathNameLength = strlcpy(mSocketName, sock.getNodePathname().c_str(),
+                                    sizeof(mSocketName));
+    if (pathNameLength >= sizeof(mSocketName)) {
+        LOC_LOGe("socket name length exceeds limit of %d bytes", sizeof(mSocketName));
+        return;
+    }
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcQrtrSender(LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
                                              LOCATION_CLIENT_API_QSOCKET_HALDAEMON_INSTANCE_ID);
@@ -214,7 +218,12 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
             sock.getId1(), sock.getId2(), make_shared<IpcQrtrWatcher>(listener, mIpcSender));
 #else
     SockNodeLocal sock(LOCATION_INTEGRATION_API, pid, 0);
-    strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
+    size_t pathNameLength = strlcpy(mSocketName, sock.getNodePathname().c_str(),
+                                    sizeof(mSocketName));
+    if (pathNameLength >= sizeof(mSocketName)) {
+        LOC_LOGe("socket name length exceeds limit of %d bytes", sizeof(mSocketName));
+        return;
+    }
 
     LOC_LOGd("create sender socket: %s", mSocketName);
     // establish an ipc sender to the hal daemon
