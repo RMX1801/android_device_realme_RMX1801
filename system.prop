@@ -15,6 +15,9 @@ ro.bluetooth.emb_wp_mode=false
 ro.bluetooth.wipower=false
 vendor.bluetooth.soc=cherokee
 
+# BPF
+ro.kernel.ebpf.supported=true
+
 # Camera
 persist.camera.aifb=1
 persist.camera.filter.version=1
