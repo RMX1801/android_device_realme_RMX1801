@@ -1126,6 +1126,8 @@ void LocationApiService::getGnssConfig(const LocAPIMsgHeader* pReqMsg,
     if (sessionIds) {
         LOC_LOGd(">-- session id %d", *sessionIds);
         sessionId = *sessionIds;
+        // free the memory used by sessionIds
+        delete[] sessionIds;
     }
     // if sessionId is 0, e.g.: error callback will be delivered
     // by addConfigRequestToMap
