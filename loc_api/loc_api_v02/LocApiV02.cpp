@@ -3867,6 +3867,42 @@ void  LocApiV02 :: reportSvMeasurement (
         svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_BDSB1IB2A_TIME_BIAS;
     }
 
+    if (1 == gnss_raw_measurement_ptr->GpsL1L2cTimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->GpsL1L2cTimeBias;
+
+        getInterSystemTimeBias("gpsL1L2cTimeBias",
+                               svMeasSetHead.gpsL1L2cTimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GPSL1L2C_TIME_BIAS;
+    }
+
+    if (1 == gnss_raw_measurement_ptr->GloG1G2TimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->GloG1G2TimeBias;
+
+        getInterSystemTimeBias("gloG1G2TimeBias",
+                               svMeasSetHead.gloG1G2TimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GLOG1G2_TIME_BIAS;
+    }
+
+    if (1 == gnss_raw_measurement_ptr->BdsB1iB1cTimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->BdsB1iB1cTimeBias;
+
+        getInterSystemTimeBias("bdsB1iB1cTimeBias",
+                               svMeasSetHead.bdsB1iB1cTimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_BDSB1IB1C_TIME_BIAS;
+    }
+
+    if (1 == gnss_raw_measurement_ptr->GalE1E5bTimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_raw_measurement_ptr->GalE1E5bTimeBias;
+
+        getInterSystemTimeBias("galE1E5bTimeBias",
+                               svMeasSetHead.galE1E5bTimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GALE1E5B_TIME_BIAS;
+    }
+
     if (1 == gnss_raw_measurement_ptr->gloTime_valid) {
         GnssGloTimeStructType & gloSystemTime = svMeasSetHead.gloSystemTime;
 
