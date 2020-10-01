@@ -1031,7 +1031,12 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
 
     SockNodeEap sock(LOCATION_CLIENT_API_QSOCKET_CLIENT_SERVICE_ID,
                      pid * 100 + mClientId);
-    strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
+    size_t pathNameLength = strlcpy(mSocketName, sock.getNodePathname().c_str(),
+                                    sizeof(mSocketName));
+    if (pathNameLength >= sizeof(mSocketName)) {
+        LOC_LOGe("socket name length exceeds limit of %d bytes", sizeof(mSocketName));
+        return;
+    }
 
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcQrtrSender(LOCATION_CLIENT_API_QSOCKET_HALDAEMON_SERVICE_ID,
@@ -1056,7 +1061,12 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
     }
 
     SockNodeLocal sock(LOCATION_CLIENT_API, pid, mClientId);
-    strlcpy(mSocketName, sock.getNodePathname().c_str(), sizeof(mSocketName));
+    size_t pathNameLength = strlcpy(mSocketName, sock.getNodePathname().c_str(),
+                                    sizeof(mSocketName));
+    if (pathNameLength >= sizeof(mSocketName)) {
+        LOC_LOGe("socket name length exceeds limit of %d bytes", sizeof(mSocketName));
+        return;
+    }
 
     // establish an ipc sender to the hal daemon
     mIpcSender = LocIpc::getLocIpcLocalSender(SOCKET_TO_LOCATION_HAL_DAEMON);
