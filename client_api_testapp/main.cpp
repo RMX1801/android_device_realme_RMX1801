@@ -84,6 +84,7 @@ static uint32_t numGnssMeasurementsCb = 0;
 #define CONFIG_DR_ENGINE    "configDrEngine"
 #define CONFIG_MIN_SV_ELEVATION "configMinSvElevation"
 #define GET_MIN_SV_ELEVATION    "getMinSvElevation"
+#define CONFIG_ENGINE_RUN_STATE "configEngineRunState"
 
 // debug utility
 static uint64_t getTimestamp() {
@@ -124,7 +125,7 @@ static void onGnssLocationCb(const location_client::GnssLocation& location) {
     if (!outputEnabled) {
         return;
     }
-    printf("<<< onGnssLocationCb_new cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
+    printf("<<< onGnssLocationCb cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
             numGnssLocationCb,
             location.timestamp,
             location.flags,
@@ -251,6 +252,7 @@ static void printHelp() {
     printf("%s: config DR engine\n", CONFIG_DR_ENGINE);
     printf("%s: set min sv elevation angle\n", CONFIG_MIN_SV_ELEVATION);
     printf("%s: get min sv elevation angle\n", GET_MIN_SV_ELEVATION);
+    printf("%s: config engine run state\n", CONFIG_ENGINE_RUN_STATE);
 }
 
 void setRequiredPermToRunAsLocClient() {
@@ -746,6 +748,24 @@ int main(int argc, char *argv[]) {
             pIntClient->configMinSvElevation(minSvElevation);
         } else if (strncmp(buf, GET_MIN_SV_ELEVATION, strlen(GET_MIN_SV_ELEVATION)) == 0) {
             pIntClient->getMinSvElevation();
+        } else if (strncmp(buf, CONFIG_ENGINE_RUN_STATE, strlen(CONFIG_ENGINE_RUN_STATE)) == 0) {
+            printf("%s 3(DRE) 1(pause)/2(resume)", CONFIG_ENGINE_RUN_STATE);
+            static char *save = nullptr;
+            LocIntegrationEngineType engType = (LocIntegrationEngineType)0;
+            LocIntegrationEngineRunState engState = (LocIntegrationEngineRunState) 0;
+            // skip first argument of configEngineRunState
+            char* token = strtok_r(buf, " ", &save);
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+               engType = (LocIntegrationEngineType) atoi(token);
+                token = strtok_r(NULL, " ", &save);
+                if (token != NULL) {
+                    engState = (LocIntegrationEngineRunState) atoi(token);
+                }
+            }
+            printf("eng type %d, eng state %d\n", engType, engState);
+            bool retVal = pIntClient->configEngineRunState(engType, engState);
+            printf("configEngineRunState returned %d\n", retVal);
         } else {
             int command = buf[0];
             switch(command) {
