@@ -44,6 +44,9 @@ public class RealmeParts extends PreferenceFragment implements
     public static final String PREF_GAME_SWITCH = "game";
     public static final String GAME_SWITCH_PATH = "/proc/touchpanel/game_switch_enable";
 
+    public static final String TP_LIMIT_ENABLE = "/proc/touchpanel/oppo_tp_limit_enable";
+    public static final String TP_DIRECTION = "/proc/touchpanel/oppo_tp_direction";
+
     private static TwoStatePreference mUSBFastChgModeSwitch;
     private static TwoStatePreference mOTGModeSwitch;
     private static TwoStatePreference mGameModeSwitch;

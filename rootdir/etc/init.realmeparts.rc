@@ -11,6 +11,12 @@ on boot
     chown system system /sys/class/power_supply/usb/otg_switch
     chmod 0666 /sys/class/power_supply/usb/otg_switch
 
+    # Oppo Touchpanel
+    chown system system /proc/touchpanel/oppo_tp_direction
+    chown system system /proc/touchpanel/oppo_tp_limit_enable
+    chmod 0666 /proc/touchpanel/oppo_tp_direction
+    chmod 0666 /proc/touchpanel/oppo_tp_limit_enable
+
     # Vibrator
     chown system system /sys/class/timed_output/vibrator/vtg_default
     chown system system /sys/class/timed_output/vibrator/vtg_level
@@ -32,3 +38,9 @@ on boot
     chmod 660 /sys/devices/platform/kcal_ctrl.0/kcal_val
     chmod 660 /sys/devices/platform/kcal_ctrl.0/kcal_min
     chmod 660 /sys/devices/platform/kcal_ctrl.0/kcal
+
+    # Disable edge limit control interface
+    write /proc/touchpanel/oppo_tp_limit_enable 0
+
+    # Enable oppo's touchpanel direction
+    write /proc/touchpanel/oppo_tp_direction 1

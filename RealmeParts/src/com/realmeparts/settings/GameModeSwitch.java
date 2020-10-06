@@ -53,7 +53,9 @@ public class GameModeSwitch implements OnPreferenceChangeListener {
         final String key = preference.getKey();
         switch (key) {
             case RealmeParts.PREF_GAME_SWITCH:
-                FileUtils.setValue(RealmeParts.GAME_SWITCH_PATH, (boolean) newValue);
+                FileUtils.setValue(RealmeParts.GAME_SWITCH_PATH, (boolean) newValue ? "1" : "0");
+                FileUtils.setValue(RealmeParts.TP_LIMIT_ENABLE, (boolean) newValue ? "0" : "1");
+                FileUtils.setValue(RealmeParts.TP_DIRECTION, (boolean) newValue ? "1" : "0");
                 break;
             default:
                 break;

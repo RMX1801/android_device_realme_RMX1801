@@ -66,6 +66,8 @@ public class GameModeTileService extends TileService {
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         enabled = GameModeSwitch.isCurrentlyEnabled(this);
         FileUtils.setValue(GameModeSwitch.getFile(), enabled ? "0" : "1");
+        FileUtils.setValue(RealmeParts.TP_LIMIT_ENABLE, enabled ? "1" : "0" );
+        FileUtils.setValue(RealmeParts.TP_DIRECTION, enabled ? "0" : "1" );
         sharedPrefs.edit().putBoolean(RealmeParts.PREF_GAME_SWITCH, enabled ? false : true).commit();
         getQsTile().setState(enabled ? Tile.STATE_INACTIVE : Tile.STATE_ACTIVE);
         getQsTile().updateTile();
