@@ -820,7 +820,9 @@ void LocHalDaemonClientHandler::onEngLocationsInfoCb(
                 ((locPtr->locOutputEngType == LOC_OUTPUT_ENGINE_SPE) &&
                  (mOptions.locReqEngTypeMask & LOC_REQ_ENGINE_SPE_BIT)) ||
                 ((locPtr->locOutputEngType == LOC_OUTPUT_ENGINE_PPE) &&
-                 (mOptions.locReqEngTypeMask & LOC_REQ_ENGINE_PPE_BIT ))) {
+                 (mOptions.locReqEngTypeMask & LOC_REQ_ENGINE_PPE_BIT )) ||
+                ((locPtr->locOutputEngType == LOC_OUTPUT_ENGINE_VPE) &&
+                 (mOptions.locReqEngTypeMask & LOC_REQ_ENGINE_VPE_BIT))) {
                 engineLocationInfoNotification[reportCount++] = *locPtr;
             }
         }
