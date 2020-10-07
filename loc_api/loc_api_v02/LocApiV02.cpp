@@ -2720,6 +2720,12 @@ void LocApiV02 :: reportPosition (
             location.gpsLocation.altitude = location_report_ptr->altitudeWrtEllipsoid;
         }
 
+        // Altitude assumed or calculated info
+        if (location_report_ptr->altitudeAssumed_valid == 1) {
+            locationExtended.flags |= GPS_LOCATION_EXTENDED_HAS_ALTITUDE_ASSUMED;
+            locationExtended.altitudeAssumed = location_report_ptr->altitudeAssumed;
+        }
+
         // Speed
         if (location_report_ptr->speedHorizontal_valid == 1)
         {

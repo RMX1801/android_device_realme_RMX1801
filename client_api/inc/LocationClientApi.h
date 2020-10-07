@@ -469,6 +469,9 @@ enum GnssLocationInfoFlagMask {
     /** GnssLocation has valid GnssLocation::drSolutionStatusMask.
      *  <br/>   */
     GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT      = (1ULL<<32),
+    /** GnssLocation has valid GnssLocation::altitudeAssumed.
+     *  <br/> */
+    GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT             = (1ULL<<33),
 };
 
 /** Specify the reliability level of
@@ -1044,6 +1047,12 @@ struct GnssLocation : public Location {
     float enuVelocityVRPBased[3];
     /** Dead reckoning position engine status.  <br/> */
     DrSolutionStatusMask drSolutionStatusMask;
+    /** When this field is valid, it will indicates whether altitude
+     *  is assumed or calculated. <br/>
+     *  false: Altitude is calculated. <br/>
+     *  true:  Altitude is assumed; there may not be enough
+     *         satellites to determine the precise altitude. <br/> */
+    bool altitudeAssumed;
 
     /* Default constructor to initalize GnssLocation structure */
     inline GnssLocation() :
@@ -1069,7 +1078,8 @@ struct GnssLocation : public Location {
             conformityIndex(0.0f),
             llaVRPBased({}),
             enuVelocityVRPBased{0.0f, 0.0f, 0.0f},
-            drSolutionStatusMask((DrSolutionStatusMask)0) {
+            drSolutionStatusMask((DrSolutionStatusMask)0),
+            altitudeAssumed(false) {
     }
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */

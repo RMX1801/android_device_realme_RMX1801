@@ -643,6 +643,10 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT;
     }
 
+    if (::GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT;
+    }
+
     locationInfo.gnssInfoFlags = (GnssLocationInfoFlagMask)flags;
     locationInfo.altitudeMeanSeaLevel = halLocationInfo.altitudeMeanSeaLevel;
     locationInfo.pdop = halLocationInfo.pdop;
@@ -681,6 +685,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     locationInfo.enuVelocityVRPBased[2] = halLocationInfo.enuVelocityVRPBased[2];
     parseGnssMeasUsageInfo(halLocationInfo, locationInfo.measUsageInfo);
     locationInfo.drSolutionStatusMask = (DrSolutionStatusMask) halLocationInfo.drSolutionStatusMask;
+    locationInfo.altitudeAssumed = halLocationInfo.altitudeAssumed;
 
     flags = 0;
     if (::LOCATION_SBAS_CORRECTION_IONO_BIT & halLocationInfo.navSolutionMask) {
