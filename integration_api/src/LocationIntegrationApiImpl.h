@@ -167,7 +167,7 @@ private:
     LocIpc                   mIpc;
     shared_ptr<LocIpcSender> mIpcSender;
 
-    MsgTask*                 mMsgTask;
+    MsgTask                  mMsgTask;
 };
 
 } // namespace location_client

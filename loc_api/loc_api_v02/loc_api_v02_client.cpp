@@ -769,6 +769,9 @@ static const locClientRespIndTableStructT locClientRespIndTable[]= {
    { QMI_LOC_GET_ROBUST_LOCATION_CONFIG_IND_V02,
      sizeof(qmiLocGetRobustLocationConfigIndMsgT_v02) },
 
+   { QMI_LOC_INJECT_ENV_AIDING_IND_V02,
+     sizeof(qmiLocGenReqStatusIndMsgT_v02) },
+
    { QMI_LOC_SET_MIN_GPS_WEEK_NUMBER_IND_V02,
      sizeof(qmiLocGenReqStatusIndMsgT_v02) },
 
@@ -1941,7 +1944,7 @@ static locClientStatusEnumType locClientQmiCtrlPointInit(
     locClientCallbackDataType *pLocClientCbData,
     int instanceId)
 {
-  qmi_client_type clnt, notifier;
+  qmi_client_type clnt, notifier = nullptr;
   bool notifierInitFlag = false;
   locClientStatusEnumType status = eLOC_CLIENT_SUCCESS;
   // os_params must stay in the same scope as notifier
@@ -1950,7 +1953,7 @@ static locClientStatusEnumType locClientQmiCtrlPointInit(
   // used when notifier is released.
   qmi_client_os_params os_params;
   // instances of this service
-  qmi_service_info serviceInfo;
+  qmi_service_info serviceInfo = {};
 
   do
   {
@@ -2108,6 +2111,7 @@ locClientStatusEnumType locClientOpenInstance (
       status = eLOC_CLIENT_FAILURE_INTERNAL;
       break;
     }
+    memset(pCallbackData, 0, sizeof(locClientCallbackDataType));
 
     /* Initialize the QMI control point; this function will block
      * until a service is up or a timeout occurs. If the connection to

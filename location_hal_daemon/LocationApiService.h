@@ -81,24 +81,17 @@ class MaintTimer : public LocTimer {
 public:
     MaintTimer(LocationApiService* locationApiService) :
             mLocationApiService(locationApiService),
-            mMsgTask(new MsgTask("LocHalDaemonMaintenanceMsgTask", false)) {
-        if (!mMsgTask) {
-            LOC_LOGe("failed to create msg task");
-        }
+            mMsgTask("LocHalDaemonMaintenanceMsgTask") {
     };
 
-    ~MaintTimer() {
-        if (mMsgTask) {
-            mMsgTask->destroy();
-        }
-    }
+    ~MaintTimer()  = default;
 
 public:
     void timeOutCallback() override;
 
 private:
     LocationApiService* mLocationApiService;
-    MsgTask*            mMsgTask;
+    MsgTask             mMsgTask;
 };
 
 class LocationApiService

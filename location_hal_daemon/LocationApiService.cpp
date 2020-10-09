@@ -1363,7 +1363,5 @@ void MaintTimer::timeOutCallback() {
         }
         LocationApiService* mLocationApiService;
     };
-    if (mMsgTask) {
-        mMsgTask->sendMsg(new (nothrow) PerformMaintenanceReq(mLocationApiService));
-    }
+    mMsgTask.sendMsg(new (nothrow) PerformMaintenanceReq(mLocationApiService));
 }

@@ -1753,62 +1753,6 @@ SynergyLocApi::setServerSync(unsigned int ip, int port, LocServerType type) {
 
 
 /**
-   This API to Inject XTRA data, this module breaks down the XTRA
-   file into "chunks" and injects them one at a time
-
-   @param char* data[Input]    XTRA Data Buffer
-   @param int length[Input]    XTRA Data Buffer length
-
-   @return
-        enum loc_api_adapter_err.
-
-   @dependencies
-       None.
-*/
-enum loc_api_adapter_err SynergyLocApi::setXtraData(char* data, int length) {
-
-    enum loc_api_adapter_err rtv = LOC_API_ADAPTER_ERR_SUCCESS;
-
-    if ((nullptr != sllReqIf) && (nullptr != sllReqIf->sllSetXtraData)) {
-        rtv = sllReqIf->sllSetXtraData(data, length, ((void *)this));
-        if (LOC_API_ADAPTER_ERR_SUCCESS != rtv) {
-             LOC_LOGe ("Error: %d", rtv);
-        }
-    } else {
-        rtv = LOC_API_ADAPTER_ERR_UNSUPPORTED;
-    }
-
-    return rtv;
-}
-
-/**
-   This API request the Xtra Server Url
-
-   @param
-        none
-
-   @return
-        enum loc_api_adapter_err.
-
-   @dependencies
-       None.
-*/
-enum loc_api_adapter_err SynergyLocApi::requestXtraServer() {
-    enum loc_api_adapter_err rtv = LOC_API_ADAPTER_ERR_SUCCESS;
-
-    if ((nullptr != sllReqIf) && (nullptr != sllReqIf->sllRequestXtraServer)) {
-        rtv= sllReqIf->sllRequestXtraServer((void *)this);
-        if (LOC_API_ADAPTER_ERR_SUCCESS != rtv) {
-             LOC_LOGe ("Error: %d", rtv);
-        }
-    } else {
-        rtv = LOC_API_ADAPTER_ERR_UNSUPPORTED;
-    }
-
-    return rtv;
-}
-
-/**
    This API request to OPEN ATL Status
 
    @param handle[Input]     ATL Connection handle
@@ -2317,36 +2261,6 @@ SynergyLocApi::setXtraVersionCheckSync(uint32_t check) {
 
 
 /**
-   Check XTRA Version Check
-
-   @param LocDerEncodedCertificate[Input]   AGPS Certificate Buffer
-   @param numberOfCerts[Input]              Number of AGPS Certificates
-   @param slotBitMask[Input]                Bit mask of Certificates
-
-   @return
-        None.
-
-   @dependencies
-       None.
-*/
-void SynergyLocApi::installAGpsCert(const LocDerEncodedCertificate* pData,
-                                  size_t numberOfCerts,
-                                  uint32_t slotBitMask) {
-
-    enum loc_api_adapter_err rtv = LOC_API_ADAPTER_ERR_SUCCESS;
-
-    if ((nullptr != sllReqIf) && (nullptr != sllReqIf->sllInstallAGpsCert)) {
-        rtv = sllReqIf->sllInstallAGpsCert(pData, numberOfCerts, slotBitMask, ((void *)this));
-        if (LOC_API_ADAPTER_ERR_SUCCESS != rtv) {
-            LOC_LOGe ("Error: %d", rtv);
-        }
-    } else {
-        rtv = LOC_API_ADAPTER_ERR_UNSUPPORTED;
-    }
-}
-
-
-/**
    Set Constrained Tunc Mode
 
    @param enabled[Input]                     Enabled OR Disabled
@@ -2399,6 +2313,7 @@ void SynergyLocApi::setConstrainedTuncMode(bool enabled,
 void SynergyLocApi::setPositionAssistedClockEstimatorMode(bool enabled,
                                                           LocApiResponse* adapterResponse) {
     sendMsg(new LocApiMsg([this, enabled, adapterResponse] () {
+
     LocationError err = LOCATION_ERROR_GENERAL_FAILURE;
     enum loc_api_adapter_err rtv = LOC_API_ADAPTER_ERR_SUCCESS;
 
@@ -2415,6 +2330,7 @@ void SynergyLocApi::setPositionAssistedClockEstimatorMode(bool enabled,
     if (adapterResponse != NULL) {
             adapterResponse->returnToSender(err);
         }
+
     }));
 }
 
@@ -2431,7 +2347,9 @@ void SynergyLocApi::setPositionAssistedClockEstimatorMode(bool enabled,
    @dependencies
         None.
 */
-LocationError SynergyLocApi::getGnssEnergyConsumed() {
+void SynergyLocApi::getGnssEnergyConsumed() {
+
+    sendMsg(new LocApiMsg([this] {
 
     LocationError err = LOCATION_ERROR_GENERAL_FAILURE;
     enum loc_api_adapter_err rtv = LOC_API_ADAPTER_ERR_SUCCESS;
@@ -2444,7 +2362,8 @@ LocationError SynergyLocApi::getGnssEnergyConsumed() {
     } else {
         err = LOCATION_ERROR_NOT_SUPPORTED;
     }
-    return err;
+
+    }));
 }
 
 

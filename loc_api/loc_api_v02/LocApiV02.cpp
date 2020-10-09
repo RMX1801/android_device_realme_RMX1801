@@ -1727,127 +1727,6 @@ LocApiV02::setServerSync(unsigned int ip, int port, LocServerType type)
   return err;
 }
 
-/* Inject XTRA data, this module breaks down the XTRA
-   file into "chunks" and injects them one at a time */
-enum loc_api_adapter_err LocApiV02 :: setXtraData(
-  char* data, int length)
-{
-  locClientStatusEnumType status = eLOC_CLIENT_SUCCESS;
-  uint16_t  total_parts;
-  uint16_t  part;
-  uint32_t  len_injected;
-
-  locClientReqUnionType req_union;
-  qmiLocInjectPredictedOrbitsDataReqMsgT_v02 inject_xtra;
-  qmiLocInjectPredictedOrbitsDataIndMsgT_v02 inject_xtra_ind;
-
-  req_union.pInjectPredictedOrbitsDataReq = &inject_xtra;
-
-  LOC_LOGD("%s:%d]: xtra size = %d\n", __func__, __LINE__, length);
-
-  inject_xtra.formatType_valid = 1;
-  inject_xtra.formatType = eQMI_LOC_PREDICTED_ORBITS_XTRA_V02;
-  inject_xtra.totalSize = length;
-
-  total_parts = ((length - 1) / QMI_LOC_MAX_PREDICTED_ORBITS_PART_LEN_V02) + 1;
-
-  inject_xtra.totalParts = total_parts;
-
-  len_injected = 0; // O bytes injected
-
-  // XTRA injection starts with part 1
-  for (part = 1; part <= total_parts; part++)
-  {
-    inject_xtra.partNum = part;
-
-    if (QMI_LOC_MAX_PREDICTED_ORBITS_PART_LEN_V02 > (length - len_injected))
-    {
-      inject_xtra.partData_len = length - len_injected;
-    }
-    else
-    {
-      inject_xtra.partData_len = QMI_LOC_MAX_PREDICTED_ORBITS_PART_LEN_V02;
-    }
-
-    // copy data into the message
-    memcpy(inject_xtra.partData, data+len_injected, inject_xtra.partData_len);
-
-    LOC_LOGD("[%s:%d] part %d/%d, len = %d, total injected = %d\n",
-                  __func__, __LINE__,
-                  inject_xtra.partNum, total_parts, inject_xtra.partData_len,
-                  len_injected);
-
-    memset(&inject_xtra_ind, 0, sizeof(inject_xtra_ind));
-    status = locSyncSendReq(QMI_LOC_INJECT_PREDICTED_ORBITS_DATA_REQ_V02,
-                            req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
-                            QMI_LOC_INJECT_PREDICTED_ORBITS_DATA_IND_V02,
-                            &inject_xtra_ind);
-
-    if (status != eLOC_CLIENT_SUCCESS ||
-        eQMI_LOC_SUCCESS_V02 != inject_xtra_ind.status ||
-        inject_xtra.partNum != inject_xtra_ind.partNum)
-    {
-      LOC_LOGE ("%s:%d]: failed status = %s, inject_pos_ind.status = %s,"
-                     " part num = %d, ind.partNum = %d\n", __func__, __LINE__,
-                loc_get_v02_client_status_name(status),
-                loc_get_v02_qmi_status_name(inject_xtra_ind.status),
-                inject_xtra.partNum, inject_xtra_ind.partNum);
-    } else {
-      len_injected += inject_xtra.partData_len;
-      LOC_LOGD("%s:%d]: XTRA injected length: %d\n", __func__, __LINE__,
-               len_injected);
-    }
-  }
-
-  return convertErr(status);
-}
-
-/* Request the Xtra Server Url from the modem */
-enum loc_api_adapter_err LocApiV02 :: requestXtraServer()
-{
-  locClientStatusEnumType status = eLOC_CLIENT_SUCCESS;
-
-  locClientReqUnionType req_union;
-  qmiLocGetPredictedOrbitsDataSourceIndMsgT_v02 request_xtra_server_ind;
-
-  memset(&request_xtra_server_ind, 0, sizeof(request_xtra_server_ind));
-
-  status = locSyncSendReq(QMI_LOC_GET_PREDICTED_ORBITS_DATA_SOURCE_REQ_V02,
-                          req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
-                          QMI_LOC_GET_PREDICTED_ORBITS_DATA_SOURCE_IND_V02,
-                          &request_xtra_server_ind);
-
-  if (status == eLOC_CLIENT_SUCCESS &&
-      eQMI_LOC_SUCCESS_V02 == request_xtra_server_ind.status &&
-      false != request_xtra_server_ind.serverList_valid &&
-      0 != request_xtra_server_ind.serverList.serverList_len)
-  {
-    if (request_xtra_server_ind.serverList.serverList_len == 1)
-    {
-      reportXtraServer(request_xtra_server_ind.serverList.serverList[0].serverUrl,
-                       "",
-                       "",
-                       QMI_LOC_MAX_SERVER_ADDR_LENGTH_V02);
-    }
-    else if (request_xtra_server_ind.serverList.serverList_len == 2)
-    {
-      reportXtraServer(request_xtra_server_ind.serverList.serverList[0].serverUrl,
-                       request_xtra_server_ind.serverList.serverList[1].serverUrl,
-                       "",
-                       QMI_LOC_MAX_SERVER_ADDR_LENGTH_V02);
-    }
-    else
-    {
-      reportXtraServer(request_xtra_server_ind.serverList.serverList[0].serverUrl,
-                       request_xtra_server_ind.serverList.serverList[1].serverUrl,
-                       request_xtra_server_ind.serverList.serverList[2].serverUrl,
-                       QMI_LOC_MAX_SERVER_ADDR_LENGTH_V02);
-    }
-  }
-
-  return convertErr(status);
-}
-
 void LocApiV02 :: atlOpenStatus(
   int handle, int is_succ, char* apn, uint32_t apnLen, AGpsBearerType bear,
   LocAGpsType /*agpsType*/, LocApnTypeMask apnTypeMask)
@@ -2195,11 +2074,11 @@ enum loc_api_adapter_err LocApiV02 :: setSensorPropertiesSync(
 
 /* set the Sensor Performance Config */
 enum loc_api_adapter_err LocApiV02 :: setSensorPerfControlConfigSync(int controlMode,
-                                                                        int accelSamplesPerBatch, int accelBatchesPerSec,
-                                                                        int gyroSamplesPerBatch, int gyroBatchesPerSec,
-                                                                        int accelSamplesPerBatchHigh, int accelBatchesPerSecHigh,
-                                                                        int gyroSamplesPerBatchHigh, int gyroBatchesPerSecHigh,
-                                                                        int algorithmConfig)
+        int accelSamplesPerBatch, int accelBatchesPerSec,
+        int gyroSamplesPerBatch, int gyroBatchesPerSec,
+        int accelSamplesPerBatchHigh, int accelBatchesPerSecHigh,
+        int gyroSamplesPerBatchHigh, int gyroBatchesPerSecHigh,
+        int algorithmConfig)
 {
   locClientStatusEnumType result = eLOC_CLIENT_SUCCESS;
   locClientReqUnionType req_union;
@@ -3651,13 +3530,9 @@ void  LocApiV02 :: reportSv (
 
                 if (sv_info_ptr->validMask & QMI_LOC_SV_INFO_MASK_VALID_SNR_V02) {
                     gnssSv_ref.cN0Dbhz = sv_info_ptr->snr;
-                    if ((1 == gnss_report_ptr->expandedSvList_valid) &&
-                        (1 == gnss_report_ptr->rfLoss_valid)) {
-                        gnssSv_ref.basebandCarrierToNoiseDbHz = gnssSv_ref.cN0Dbhz -
-                                gnss_report_ptr->rfLoss[i];
-                    } else {
-                        double rfLoss = 0;
-
+                    double rfLoss = gnss_report_ptr->rfLoss[i];
+                    if ((1 != gnss_report_ptr->expandedSvList_valid) ||
+                        (1 != gnss_report_ptr->rfLoss_valid)) {
                         switch (gnssSv_ref.gnssSignalTypeMask) {
                         case GNSS_SIGNAL_GPS_L1CA:
                         case GNSS_SIGNAL_GPS_L1C:
@@ -3704,7 +3579,10 @@ void  LocApiV02 :: reportSv (
                         default:
                             break;
                         }
-                        LOC_LOGv("rfLoss=%f gloFrequency=%d", rfLoss, gloFrequency);
+                    }
+                    LOC_LOGv("cN0Dbhz=%f rfLoss=%f gloFrequency=%d",
+                             gnssSv_ref.cN0Dbhz, rfLoss, gloFrequency);
+                    if (gnssSv_ref.cN0Dbhz > rfLoss) {
                         gnssSv_ref.basebandCarrierToNoiseDbHz = gnssSv_ref.cN0Dbhz - rfLoss;
                     }
                 }
@@ -7019,121 +6897,6 @@ LocApiV02:: setXtraVersionCheckSync(uint32_t check)
     return err;
 }
 
-void LocApiV02 :: installAGpsCert(const LocDerEncodedCertificate* pData,
-                                  size_t numberOfCerts,
-                                  uint32_t slotBitMask)
-{
-    LOC_LOGD("%s:%d]:, slot mask=%u number of certs=%zu",
-            __func__, __LINE__, slotBitMask, numberOfCerts);
-
-    uint8_t certIndex = 0;
-    for (uint8_t slot = 0; slot <= LOC_AGPS_CERTIFICATE_MAX_SLOTS-1; slot++, slotBitMask >>= 1)
-    {
-        if (slotBitMask & 1) //slot is writable
-        {
-            if (certIndex < numberOfCerts && pData[certIndex].data && pData[certIndex].length > 0)
-            {
-                LOC_LOGD("%s:%d]:, Inject cert#%u slot=%u length=%zu",
-                         __func__, __LINE__, certIndex, slot, pData[certIndex].length);
-
-                locClientReqUnionType req_union;
-                locClientStatusEnumType status;
-                qmiLocInjectSuplCertificateReqMsgT_v02 injectCertReq;
-                qmiLocInjectSuplCertificateIndMsgT_v02 injectCertInd;
-
-                memset(&injectCertReq, 0, sizeof(injectCertReq));
-                memset(&injectCertInd, 0, sizeof(injectCertInd));
-                injectCertReq.suplCertId = slot;
-                injectCertReq.suplCertData_len = pData[certIndex].length;
-                memcpy(injectCertReq.suplCertData, pData[certIndex].data, pData[certIndex].length);
-
-                req_union.pInjectSuplCertificateReq = &injectCertReq;
-
-                status = locSyncSendReq(QMI_LOC_INJECT_SUPL_CERTIFICATE_REQ_V02,
-                                        req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
-                                        QMI_LOC_INJECT_SUPL_CERTIFICATE_IND_V02,
-                                        &injectCertInd);
-
-                if (status != eLOC_CLIENT_SUCCESS ||
-                    eQMI_LOC_SUCCESS_V02 != injectCertInd.status)
-                {
-                    LOC_LOGE ("%s:%d]: inject-error status = %s, set_server_ind.status = %s",
-                              __func__,__LINE__,
-                              loc_get_v02_client_status_name(status),
-                              loc_get_v02_qmi_status_name(injectCertInd.status));
-                }
-
-                certIndex++; //move to next cert
-
-            } else {
-
-                LOC_LOGD("%s:%d]:, Delete slot=%u",
-                         __func__, __LINE__, slot);
-
-                // A fake cert is injected first before delete is called to workaround
-                // an issue that is seen with trying to delete an empty slot.
-                {
-                    locClientReqUnionType req_union;
-                    locClientStatusEnumType status;
-                    qmiLocInjectSuplCertificateReqMsgT_v02 injectFakeCertReq;
-                    qmiLocInjectSuplCertificateIndMsgT_v02 injectFakeCertInd;
-
-                    memset(&injectFakeCertReq, 0, sizeof(injectFakeCertReq));
-                    memset(&injectFakeCertInd, 0, sizeof(injectFakeCertInd));
-                    injectFakeCertReq.suplCertId = slot;
-                    injectFakeCertReq.suplCertData_len = 1;
-                    injectFakeCertReq.suplCertData[0] = 1;
-
-                    req_union.pInjectSuplCertificateReq = &injectFakeCertReq;
-
-                    status = locSyncSendReq(QMI_LOC_INJECT_SUPL_CERTIFICATE_REQ_V02,
-                                            req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
-                                            QMI_LOC_INJECT_SUPL_CERTIFICATE_IND_V02,
-                                            &injectFakeCertInd);
-
-                    if (status != eLOC_CLIENT_SUCCESS ||
-                        eQMI_LOC_SUCCESS_V02 != injectFakeCertInd.status)
-                    {
-                        LOC_LOGE ("%s:%d]: inject-fake-error status = %s, set_server_ind.status = %s",
-                                  __func__,__LINE__,
-                                  loc_get_v02_client_status_name(status),
-                                  loc_get_v02_qmi_status_name(injectFakeCertInd.status));
-                    }
-                }
-
-                locClientReqUnionType req_union;
-                locClientStatusEnumType status;
-                qmiLocDeleteSuplCertificateReqMsgT_v02 deleteCertReq;
-                qmiLocDeleteSuplCertificateIndMsgT_v02 deleteCertInd;
-
-                memset(&deleteCertReq, 0, sizeof(deleteCertReq));
-                memset(&deleteCertInd, 0, sizeof(deleteCertInd));
-                deleteCertReq.suplCertId = slot;
-                deleteCertReq.suplCertId_valid = 1;
-
-                req_union.pDeleteSuplCertificateReq = &deleteCertReq;
-
-                status = locSyncSendReq(QMI_LOC_DELETE_SUPL_CERTIFICATE_REQ_V02,
-                                        req_union, LOC_ENGINE_SYNC_REQUEST_TIMEOUT,
-                                        QMI_LOC_DELETE_SUPL_CERTIFICATE_IND_V02,
-                                        &deleteCertInd);
-
-                if (status != eLOC_CLIENT_SUCCESS ||
-                    eQMI_LOC_SUCCESS_V02 != deleteCertInd.status)
-                {
-                    LOC_LOGE("%s:%d]: delete-error status = %s, set_server_ind.status = %s",
-                              __func__,__LINE__,
-                              loc_get_v02_client_status_name(status),
-                              loc_get_v02_qmi_status_name(deleteCertInd.status));
-                }
-            }
-        } else {
-            LOC_LOGD("%s:%d]:, Not writable slot=%u",
-                     __func__, __LINE__, slot);
-        }
-    }
-}
-
 int LocApiV02::setSvMeasurementConstellation(const locClientEventMaskType mask)
 {
     enum loc_api_adapter_err ret_val = LOC_API_ADAPTER_ERR_SUCCESS;
@@ -7271,7 +7034,9 @@ void LocApiV02::setPositionAssistedClockEstimatorMode
     }));
 }
 
-LocationError LocApiV02::getGnssEnergyConsumed() {
+void LocApiV02::getGnssEnergyConsumed() {
+    sendMsg(new LocApiMsg([this] {
+
     LocationError err = LOCATION_ERROR_SUCCESS;
 
     qmiLocQueryGNSSEnergyConsumedReqMsgT_v02 req;
@@ -7299,7 +7064,7 @@ LocationError LocApiV02::getGnssEnergyConsumed() {
     }
 
     LOC_LOGd("Exit. err: %u", err);
-    return err;
+    }));
 }
 
 void LocApiV02 :: updateSystemPowerState(PowerStateType powerState){
@@ -8113,9 +7878,11 @@ LocApiV02::setEmergencyExtensionWindowSync(const uint32_t emergencyExtensionSeco
     return err;
 }
 
-LocationError
-LocApiV02::setMeasurementCorrections(const GnssMeasurementCorrections gnssMeasurementCorrections)
+void
+LocApiV02::setMeasurementCorrections(const GnssMeasurementCorrections& gnssMeasurementCorrections)
 {
+    sendMsg(new LocApiMsg([this, gnssMeasurementCorrections] {
+
     LocationError err = LOCATION_ERROR_SUCCESS;
     locClientStatusEnumType result = eLOC_CLIENT_SUCCESS;
     locClientReqUnionType req_union = {};
@@ -8309,7 +8076,7 @@ LocApiV02::setMeasurementCorrections(const GnssMeasurementCorrections gnssMeasur
         err = LOCATION_ERROR_GENERAL_FAILURE;
     }
 
-    return err;
+    }));
 }
 
 LocationError
