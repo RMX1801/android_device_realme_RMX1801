@@ -1537,6 +1537,11 @@ int LocConfigSvConstellationReqMsg::serializeToProtobuf(string& protoStr) {
         return 0;
     }
 
+    // bool mResetToDefault = 3;
+    // size field in constellationEnablementConfig to 0 to indicate to restore to modem default
+    bool resetToDefault = (0 == mConstellationEnablementConfig.size);
+    pbLocConfSvConst.set_mresettodefault(resetToDefault);
+
     string pbStr;
     if (!pbLocConfSvConst.SerializeToString(&pbStr)) {
         LOC_LOGe("SerializeToString on pbLocConfSvConst failed!");
@@ -2704,6 +2709,15 @@ LocConfigSvConstellationReqMsg::LocConfigSvConstellationReqMsg(const char* name,
     // PBGnssSvIdConfig   mBlacklistSvConfig = 2;
     pLocApiPbMsgConv->pbConvertToGnssSvIdConfig(pbConfigSvConstReqMsg.mblacklistsvconfig(),
             mBlacklistSvConfig);
+    // bool mResetToDefault = 3;
+    if (pbConfigSvConstReqMsg.mresettodefault()) {
+        // set size field in constellationEnablementConfig to 0 to indicate
+        // to restore to modem default
+        mConstellationEnablementConfig.size = 0;
+    } else {
+        mConstellationEnablementConfig.size = sizeof(GnssSvTypeConfig);
+    }
+    mBlacklistSvConfig.size = sizeof(GnssSvIdConfig);
 }
 
 // Decode PBLocConfigConstellationSecondaryBandReqMsg -> LocConfigConstellationSecondaryBandReqMsg

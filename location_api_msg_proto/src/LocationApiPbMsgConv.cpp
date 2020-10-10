@@ -62,10 +62,10 @@ LocationApiPbMsgConv::LocationApiPbMsgConv() {
     UTIL_READ_CONF(LOC_PATH_GPS_CONF, gpsConfParamTable);
     LOC_LOGd("LocApiPB logs - Debug log: %d, Verbose log:%d",
             mPbDebugLogEnabled, mPbVerboseLogEnabled);
-    LOC_LOGi("LocationApiMsg version  Major:%d, Minor:%d, Micro:%d", LOCAPI_MSG_VER_MAJOR,
-            LOCAPI_MSG_VER_MINOR, LOCAPI_MSG_VER_MICRO);
-    LOC_LOGi("LocationApiDataTypes version  Major:%d, Minor:%d, Micro:%d",
-            LOCAPI_DATA_TYPES_VER_MAJOR, LOCAPI_DATA_TYPES_VER_MINOR, LOCAPI_DATA_TYPES_VER_MICRO);
+    LOC_LOGi("LocationApiMsg version  Major:%d, Minor:%d",
+            LOCAPI_MSG_VER_MAJOR, LOCAPI_MSG_VER_MINOR);
+    LOC_LOGi("LocationApiDataTypes version  Major:%d, Minor:%d",
+            LOCAPI_DATA_TYPES_VER_MAJOR, LOCAPI_DATA_TYPES_VER_MINOR);
 }
 
 // **** helper function for enum conversion from protobuf enums to normal format.
