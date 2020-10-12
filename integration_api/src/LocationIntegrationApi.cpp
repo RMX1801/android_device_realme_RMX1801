@@ -269,6 +269,9 @@ bool LocationIntegrationApi::deleteAllAidingData() {
         GnssAidingData aidingData = {};
         aidingData.deleteAll = true;
         aidingData.posEngineMask = POSITION_ENGINE_MASK_ALL;
+        aidingData.sv.svTypeMask = GNSS_AIDING_DATA_SV_TYPE_MASK_ALL;
+        aidingData.sv.svMask |= GNSS_AIDING_DATA_SV_EPHEMERIS_BIT;
+        aidingData.dreAidingDataMask |= DR_ENGINE_AIDING_DATA_CALIBRATION_BIT;
         mApiImpl->gnssDeleteAidingData(aidingData);
         return true;
     } else {

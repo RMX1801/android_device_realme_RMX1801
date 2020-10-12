@@ -44,7 +44,7 @@
 
 using namespace std;
 
-#define MAX_GEOFENCE_COUNT (200)
+#define MAX_GEOFENCE_COUNT (20)
 #define MAINT_TIMER_INTERVAL_MSEC (60000)
 #define AUTO_START_CLIENT_NAME "default"
 
@@ -106,11 +106,16 @@ public:
             if (0 == fname.compare(0, mClientSockPathnamePrefix.size(),
                                    mClientSockPathnamePrefix)) {
                 shared_ptr<LocIpcSender> sender = LocHalDaemonClientHandler::createSender(fname);
-                LocAPIHalReadyIndMsg msg(SERVICE_NAME);
-                LOC_LOGd("<-- Sending ready to socket: %s, msg size %d",
-                         fname.c_str(), sizeof(msg));
-                LocIpc::send(*sender, reinterpret_cast<const uint8_t*>(&msg),
-                             sizeof(msg));
+                LocAPIHalReadyIndMsg msg(SERVICE_NAME, &mService.mPbufMsgConv);
+                string pbStr;
+                if (msg.serializeToProtobuf(pbStr)) {
+                    LOC_LOGd("<-- Sending ready to socket: %s, msg size %d",
+                            fname.c_str(), pbStr.size());
+                    LocIpc::send(*sender, reinterpret_cast<const uint8_t*>(pbStr.c_str()),
+                            pbStr.size());
+                } else {
+                    LOC_LOGe("LocAPIHalReadyIndMsg serializeToProtobuf failed");
+                }
             }
         }
         closedir(dirp);
@@ -243,281 +248,342 @@ LocationApiService - implementation - registration
 ******************************************************************************/
 void LocationApiService::processClientMsg(const char* data, uint32_t length) {
 
-    // parse received message
-    LocAPIMsgHeader* pMsg = (LocAPIMsgHeader*)data;
+    string mMsgData(data, length);
 
-    // throw away msg that does not come from location hal daemon client, e.g. LCA/LIA
-    if (false == pMsg->isValidClientMsg(length)) {
+    // parse received message
+    // Protobuff Encoding enabled, so we need to convert the message from proto
+    // encoded format to local structure
+    PBLocAPIMsgHeader pbLocApiMsg;
+    if (0 == pbLocApiMsg.ParseFromString(mMsgData)) {
+        LOC_LOGe("Failed to parse pbLocApiMsg from input stream!! length: %u",
+                mMsgData.length());
         return;
     }
 
-    LOC_LOGi(">-- onReceive len=%u remote client=%s msgId=%u\n",
-            length, pMsg->mSocketName, pMsg->msgId);
+    ELocMsgID eLocMsgid = mPbufMsgConv.getEnumForPBELocMsgID(pbLocApiMsg.msgid());
+    string sockName = pbLocApiMsg.msocketname();
+    uint32_t msgVer = pbLocApiMsg.msgversion();
+    uint32_t payloadSize = pbLocApiMsg.payloadsize();
+    // pbLocApiMsg.payload() contains the payload data.
 
-    switch (pMsg->msgId) {
+    LOC_LOGi(">-- onReceive Rcvd msg id: %d, remote client: %s, payload size: %d", eLocMsgid,
+            sockName.c_str(), payloadSize);
+    LocAPIMsgHeader locApiMsg(sockName.c_str(), eLocMsgid);
+
+    // throw away msg that does not come from location hal daemon client, e.g. LCA/LIA
+    if (false == locApiMsg.isValidClientMsg(payloadSize)) {
+        return;
+    }
+
+    switch (eLocMsgid) {
         case E_LOCAPI_CLIENT_REGISTER_MSG_ID: {
             // new client
-            if (sizeof(LocAPIClientRegisterReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIClientRegisterReqMsg pbLocApiClientRegReqMsg;
+            if (0 == pbLocApiClientRegReqMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiClientRegReqMsg from payload!!");
+                return;
             }
-            newClient(reinterpret_cast<LocAPIClientRegisterReqMsg*>(pMsg));
+            LocAPIClientRegisterReqMsg msg(pbLocApiMsg.msocketname().c_str(),
+                    pbLocApiClientRegReqMsg, &mPbufMsgConv);
+            newClient(reinterpret_cast<LocAPIClientRegisterReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_CLIENT_DEREGISTER_MSG_ID: {
             // delete client
-            if (sizeof(LocAPIClientDeregisterReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
-            deleteClient(reinterpret_cast<LocAPIClientDeregisterReqMsg*>(pMsg));
+            LocAPIClientDeregisterReqMsg msg(sockName.c_str(), &mPbufMsgConv);
+            deleteClient(reinterpret_cast<LocAPIClientDeregisterReqMsg*>(&msg));
             break;
         }
 
         case E_LOCAPI_START_TRACKING_MSG_ID: {
             // start
-            if (sizeof(LocAPIStartTrackingReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIStartTrackingReqMsg pbLocApiStartTrackMsg;
+            if (0 == pbLocApiStartTrackMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiStartTrackMsg from payload!!");
+                return;
             }
-            startTracking(reinterpret_cast<LocAPIStartTrackingReqMsg*>(pMsg));
+            LocAPIStartTrackingReqMsg msg(sockName.c_str(), pbLocApiStartTrackMsg, &mPbufMsgConv);
+            startTracking(reinterpret_cast<LocAPIStartTrackingReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_STOP_TRACKING_MSG_ID: {
             // stop
-            if (sizeof(LocAPIStopTrackingReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
-            stopTracking(reinterpret_cast<LocAPIStopTrackingReqMsg*>(pMsg));
+            LocAPIStopTrackingReqMsg msg(sockName.c_str(), &mPbufMsgConv);
+            stopTracking(reinterpret_cast<LocAPIStopTrackingReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_UPDATE_CALLBACKS_MSG_ID: {
             // update subscription
-            if (sizeof(LocAPIUpdateCallbacksReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIUpdateCallbacksReqMsg pbLocApiUpdateCbsReqMsg;
+            if (0 == pbLocApiUpdateCbsReqMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiUpdateCbsReqMsg from payload!!");
+                return;
             }
-            updateSubscription(reinterpret_cast<LocAPIUpdateCallbacksReqMsg*>(pMsg));
+            LocAPIUpdateCallbacksReqMsg msg(sockName.c_str(), pbLocApiUpdateCbsReqMsg,
+                    &mPbufMsgConv);
+            updateSubscription(reinterpret_cast<LocAPIUpdateCallbacksReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_UPDATE_TRACKING_OPTIONS_MSG_ID: {
-            if (sizeof(LocAPIUpdateTrackingOptionsReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIUpdateTrackingOptionsReqMsg pbLocApiUpdateTrackOptMsg;
+            if (0 == pbLocApiUpdateTrackOptMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiUpdateTrackOptMsg from payload!!");
+                return;
             }
-            updateTrackingOptions(reinterpret_cast
-                    <LocAPIUpdateTrackingOptionsReqMsg*>(pMsg));
+            LocAPIUpdateTrackingOptionsReqMsg msg(sockName.c_str(), pbLocApiUpdateTrackOptMsg,
+                    &mPbufMsgConv);
+            updateTrackingOptions(reinterpret_cast <LocAPIUpdateTrackingOptionsReqMsg*>(&msg));
             break;
         }
 
         case E_LOCAPI_START_BATCHING_MSG_ID: {
             // start
-            if (sizeof(LocAPIStartBatchingReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIStartBatchingReqMsg pbLocApiStartBatchReq;
+            if (0 == pbLocApiStartBatchReq.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiStartBatchReq from payload!!");
+                return;
             }
-            startBatching(reinterpret_cast<LocAPIStartBatchingReqMsg*>(pMsg));
+            LocAPIStartBatchingReqMsg msg(sockName.c_str(), pbLocApiStartBatchReq, &mPbufMsgConv);
+            startBatching(reinterpret_cast<LocAPIStartBatchingReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_STOP_BATCHING_MSG_ID: {
             // stop
-            if (sizeof(LocAPIStopBatchingReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
-            stopBatching(reinterpret_cast<LocAPIStopBatchingReqMsg*>(pMsg));
+            LocAPIStopBatchingReqMsg msg(sockName.c_str(), &mPbufMsgConv);
+            stopBatching(reinterpret_cast<LocAPIStopBatchingReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_UPDATE_BATCHING_OPTIONS_MSG_ID: {
-            if (sizeof(LocAPIUpdateBatchingOptionsReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIUpdateBatchingOptionsReqMsg pbLocApiUpdateBatch;
+            if (0 == pbLocApiUpdateBatch.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiUpdateBatch from payload!!");
+                return;
             }
-            updateBatchingOptions(reinterpret_cast
-                    <LocAPIUpdateBatchingOptionsReqMsg*>(pMsg));
+            LocAPIUpdateBatchingOptionsReqMsg msg(sockName.c_str(), pbLocApiUpdateBatch,
+                    &mPbufMsgConv);
+            updateBatchingOptions(reinterpret_cast <LocAPIUpdateBatchingOptionsReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_ADD_GEOFENCES_MSG_ID: {
-            addGeofences(reinterpret_cast<LocAPIAddGeofencesReqMsg*>(pMsg));
+            PBLocAPIAddGeofencesReqMsg pbLocApiAddGf;
+            if (0 == pbLocApiAddGf.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiAddGf from payload!!");
+                return;
+            }
+            LocAPIAddGeofencesReqMsg msg(sockName.c_str(), pbLocApiAddGf, &mPbufMsgConv);
+            addGeofences(reinterpret_cast<LocAPIAddGeofencesReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_REMOVE_GEOFENCES_MSG_ID: {
-            removeGeofences(reinterpret_cast<LocAPIRemoveGeofencesReqMsg*>(pMsg));
+            PBLocAPIRemoveGeofencesReqMsg pbLocApiRnGfReq;
+            if (0 == pbLocApiRnGfReq.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiRnGfReq from payload!!");
+                return;
+            }
+            LocAPIRemoveGeofencesReqMsg msg(sockName.c_str(), pbLocApiRnGfReq, &mPbufMsgConv);
+            removeGeofences(reinterpret_cast<LocAPIRemoveGeofencesReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_MODIFY_GEOFENCES_MSG_ID: {
-            modifyGeofences(reinterpret_cast<LocAPIModifyGeofencesReqMsg*>(pMsg));
+            PBLocAPIModifyGeofencesReqMsg pbLocApiModGf;
+            if (0 == pbLocApiModGf.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiModGf from payload!!");
+                return;
+            }
+            LocAPIModifyGeofencesReqMsg msg(sockName.c_str(), pbLocApiModGf, &mPbufMsgConv);
+            modifyGeofences(reinterpret_cast<LocAPIModifyGeofencesReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_PAUSE_GEOFENCES_MSG_ID: {
-            pauseGeofences(reinterpret_cast<LocAPIPauseGeofencesReqMsg*>(pMsg));
+            PBLocAPIPauseGeofencesReqMsg pbLocApiPauseGf;
+            if (0 == pbLocApiPauseGf.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiPauseGf from payload!!");
+                return;
+            }
+            LocAPIPauseGeofencesReqMsg msg(sockName.c_str(), pbLocApiPauseGf, &mPbufMsgConv);
+            pauseGeofences(reinterpret_cast<LocAPIPauseGeofencesReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_RESUME_GEOFENCES_MSG_ID: {
-            resumeGeofences(reinterpret_cast<LocAPIResumeGeofencesReqMsg*>(pMsg));
+            PBLocAPIResumeGeofencesReqMsg pbLocApiResumeGf;
+            if (0 == pbLocApiResumeGf.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiResumeGf from payload!!");
+                return;
+            }
+            LocAPIResumeGeofencesReqMsg msg(sockName.c_str(), pbLocApiResumeGf, &mPbufMsgConv);
+            resumeGeofences(reinterpret_cast<LocAPIResumeGeofencesReqMsg*>(&msg));
             break;
         }
         case E_LOCAPI_CONTROL_UPDATE_NETWORK_AVAILABILITY_MSG_ID: {
-            if (sizeof(LocAPIUpdateNetworkAvailabilityReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIUpdateNetworkAvailabilityReqMsg pbLocApiUpdateNetwAvail;
+            if (0 == pbLocApiUpdateNetwAvail.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiUpdateNetwAvail from payload!!");
+                return;
             }
-            updateNetworkAvailability(reinterpret_cast
-                    <LocAPIUpdateNetworkAvailabilityReqMsg*>(pMsg)->mAvailability);
+            LocAPIUpdateNetworkAvailabilityReqMsg msg(sockName.c_str(), pbLocApiUpdateNetwAvail,
+                    &mPbufMsgConv);
+            updateNetworkAvailability(msg.mAvailability);
             break;
         }
         case E_LOCAPI_GET_GNSS_ENGERY_CONSUMED_MSG_ID: {
-            if (sizeof(LocAPIGetGnssEnergyConsumedReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
-            }
-            getGnssEnergyConsumed(reinterpret_cast
-                    <LocAPIGetGnssEnergyConsumedReqMsg*>(pMsg)->mSocketName);
+            getGnssEnergyConsumed(sockName.c_str());
             break;
         }
         case E_LOCAPI_PINGTEST_MSG_ID: {
-            if (sizeof(LocAPIPingTestReqMsg) != length) {
-                LOC_LOGe("invalid message");
-                break;
+            PBLocAPIPingTestReqMsg pbLocApiPingTestMsg;
+            if (0 == pbLocApiPingTestMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiPingTestMsg from payload!!");
+                return;
             }
-            pingTest(reinterpret_cast<LocAPIPingTestReqMsg*>(pMsg));
+            LocAPIPingTestReqMsg msg(sockName.c_str(), pbLocApiPingTestMsg, &mPbufMsgConv);
+            pingTest(reinterpret_cast<LocAPIPingTestReqMsg*>(&msg));
             break;
         }
 
         // location configuration API
         case E_INTAPI_CONFIG_CONSTRAINTED_TUNC_MSG_ID: {
-            if (sizeof(LocConfigConstrainedTuncReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigConstrainedTuncReqMsg");
-                break;
+            PBLocConfigConstrainedTuncReqMsg pbLocApiConfConstrTunc;
+            if (0 == pbLocApiConfConstrTunc.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiConfConstrTunc from payload!!");
+                return;
             }
-            configConstrainedTunc(reinterpret_cast<LocConfigConstrainedTuncReqMsg*>(pMsg));
+            LocConfigConstrainedTuncReqMsg msg(sockName.c_str(), pbLocApiConfConstrTunc,
+                    &mPbufMsgConv);
+            configConstrainedTunc(reinterpret_cast<LocConfigConstrainedTuncReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_POSITION_ASSISTED_CLOCK_ESTIMATOR_MSG_ID: {
-            if (sizeof(LocConfigPositionAssistedClockEstimatorReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigPositionAssistedClockEstimatorReqMsg");
-                break;
+            PBLocConfigPositionAssistedClockEstimatorReqMsg pbLocApiConfPosAsstdClockEst;
+            if (0 == pbLocApiConfPosAsstdClockEst.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiConfPosAsstdClockEst from payload!!");
+                return;
             }
+            LocConfigPositionAssistedClockEstimatorReqMsg msg(sockName.c_str(),
+                    pbLocApiConfPosAsstdClockEst, &mPbufMsgConv);
             configPositionAssistedClockEstimator(reinterpret_cast
-                    <LocConfigPositionAssistedClockEstimatorReqMsg*>(pMsg));
+                        <LocConfigPositionAssistedClockEstimatorReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_SV_CONSTELLATION_MSG_ID: {
-            if (sizeof(LocConfigSvConstellationReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigSvConstellationReqMsg");
-                break;
+            PBLocConfigSvConstellationReqMsg pbLocApiConfSvConstReqMsg;
+            if (0 == pbLocApiConfSvConstReqMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocApiConfSvConstReqMsg from payload!!");
+                return;
             }
-            configConstellations(reinterpret_cast
-                    <LocConfigSvConstellationReqMsg*>(pMsg));
+            LocConfigSvConstellationReqMsg msg(sockName.c_str(), pbLocApiConfSvConstReqMsg,
+                    &mPbufMsgConv);
+            configConstellations(reinterpret_cast<LocConfigSvConstellationReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID: {
-            if (sizeof(LocConfigConstellationSecondaryBandReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigConstellationSecondaryBandReqMsg");
-                break;
+            PBLocConfigConstellationSecondaryBandReqMsg pbLocCfgConstlSecBandReqMsg;
+            if (0 == pbLocCfgConstlSecBandReqMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocCfgConstlSecBandReqMsg from payload!!");
+                return;
             }
+            LocConfigConstellationSecondaryBandReqMsg msg(sockName.c_str(),
+                    pbLocCfgConstlSecBandReqMsg, &mPbufMsgConv);
             configConstellationSecondaryBand(reinterpret_cast
-                    <LocConfigConstellationSecondaryBandReqMsg*>(pMsg));
+                    <LocConfigConstellationSecondaryBandReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG_ID: {
-            if (sizeof(LocConfigAidingDataDeletionReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigAidingDataDeletionReqMsg");
-                break;
+            PBLocConfigAidingDataDeletionReqMsg pbLocConfAidDataDelMsg;
+            if (0 == pbLocConfAidDataDelMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocConfAidDataDelMsg from payload!!");
+                return;
             }
-            configAidingDataDeletion(reinterpret_cast<LocConfigAidingDataDeletionReqMsg*>(pMsg));
+            LocConfigAidingDataDeletionReqMsg msg(sockName.c_str(), pbLocConfAidDataDelMsg,
+                    &mPbufMsgConv);
+            configAidingDataDeletion(reinterpret_cast<LocConfigAidingDataDeletionReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_LEVER_ARM_MSG_ID: {
-            if (sizeof(LocConfigLeverArmReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigLeverArmReqMsg");
-                break;
+            PBLocConfigLeverArmReqMsg pbLocConfLeverArmMsg;
+            if (0 == pbLocConfLeverArmMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocConfLeverArmMsg from payload!!");
+                return;
             }
-            configLeverArm(reinterpret_cast<LocConfigLeverArmReqMsg*>(pMsg));
+            LocConfigLeverArmReqMsg msg(sockName.c_str(), pbLocConfLeverArmMsg, &mPbufMsgConv);
+            configLeverArm(reinterpret_cast<LocConfigLeverArmReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_ROBUST_LOCATION_MSG_ID: {
-            if (sizeof(LocConfigRobustLocationReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigRobustLocationReqMsg");
-                break;
+            PBLocConfigRobustLocationReqMsg pbLocConfRobustLocMsg;
+            if (0 == pbLocConfRobustLocMsg.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocConfRobustLocMsg from payload!!");
+                return;
             }
-            configRobustLocation(reinterpret_cast<LocConfigRobustLocationReqMsg*>(pMsg));
+            LocConfigRobustLocationReqMsg msg(sockName.c_str(), pbLocConfRobustLocMsg,
+                    &mPbufMsgConv);
+            configRobustLocation(reinterpret_cast<LocConfigRobustLocationReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID: {
-            if (sizeof(LocConfigMinGpsWeekReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigMinGpsWeekReqMsg");
-                break;
+            PBLocConfigMinGpsWeekReqMsg pbLocConfMinGpsWeek;
+            if (0 == pbLocConfMinGpsWeek.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocConfMinGpsWeek from payload!!");
+                return;
             }
-            configMinGpsWeek(reinterpret_cast<LocConfigMinGpsWeekReqMsg*>(pMsg));
+            LocConfigMinGpsWeekReqMsg msg(sockName.c_str(), pbLocConfMinGpsWeek, &mPbufMsgConv);
+            configMinGpsWeek(reinterpret_cast<LocConfigMinGpsWeekReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID: {
-            if (sizeof(LocConfigDrEngineParamsReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigDrEngineParamsReqMsg");
-                break;
+            PBLocConfigDrEngineParamsReqMsg pbLocCfgDrEngParamReq;
+            if (0 == pbLocCfgDrEngParamReq.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocCfgDrEngParamReq from payload!!");
+                return;
             }
-            configDeadReckoningEngineParams(reinterpret_cast<LocConfigDrEngineParamsReqMsg*>(pMsg));
+            LocConfigDrEngineParamsReqMsg msg(sockName.c_str(), pbLocCfgDrEngParamReq,
+                    &mPbufMsgConv);
+            configDeadReckoningEngineParams(
+                    reinterpret_cast<LocConfigDrEngineParamsReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID: {
-            if (sizeof(LocConfigMinSvElevationReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigMinSvElevationReqMsg");
-                break;
+            PBLocConfigMinSvElevationReqMsg pbLocConfMinSvElev;
+            if (0 == pbLocConfMinSvElev.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocConfMinSvElev from payload!!");
+                return;
             }
-            configMinSvElevation(reinterpret_cast<LocConfigMinSvElevationReqMsg*>(pMsg));
+            LocConfigMinSvElevationReqMsg msg(sockName.c_str(), pbLocConfMinSvElev, &mPbufMsgConv);
+            configMinSvElevation(reinterpret_cast<LocConfigMinSvElevationReqMsg*>(&msg));
             break;
         }
 
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID: {
-            if (sizeof(LocConfigGetRobustLocationConfigReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigGetRobustLocationConfigReqMsg");
-                break;
-            }
-            getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_ROBUST_LOCATION_BIT);
+            getGnssConfig(&locApiMsg, GNSS_CONFIG_FLAGS_ROBUST_LOCATION_BIT);
             break;
         }
 
         case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID: {
-            if (sizeof(LocConfigGetMinGpsWeekReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigGetMinGpsWeekReqMsg");
-                break;
-            }
-            getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_MIN_GPS_WEEK_BIT);
+            getGnssConfig(&locApiMsg, GNSS_CONFIG_FLAGS_MIN_GPS_WEEK_BIT);
             break;
         }
 
         case E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID: {
-            if (sizeof(LocConfigGetMinSvElevationReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigGetMinSvElevationReqMsg");
-                break;
-            }
-            getGnssConfig(pMsg, GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT);
+            getGnssConfig(&locApiMsg, GNSS_CONFIG_FLAGS_MIN_SV_ELEVATION_BIT);
             break;
         }
 
         case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID: {
-            if (sizeof(LocConfigGetConstellationSecondaryBandConfigReqMsg) != length) {
-                LOC_LOGe("invalid LocConfigGetConstellationSecondaryBandConfigReqMsg");
-                break;
-            }
             getConstellationSecondaryBandConfig(
-                    (const LocConfigGetConstellationSecondaryBandConfigReqMsg*) pMsg);
+                    (const LocConfigGetConstellationSecondaryBandConfigReqMsg*) &locApiMsg);
             break;
         }
 
         default: {
-            LOC_LOGe("Unknown message with id: %d ", pMsg->msgId);
+            LOC_LOGe("Unknown message with id: %d ", eLocMsgid);
             break;
         }
     }
@@ -834,9 +900,9 @@ void LocationApiService::addGeofences(LocAPIAddGeofencesReqMsg* pMsg) {
     }
 
     for(int i=0; i < pMsg->geofences.count; ++i) {
-        gfOptions[i] = (*(pMsg->geofences.gfPayload + i)).gfOption;
-        gfInfos[i] = (*(pMsg->geofences.gfPayload + i)).gfInfo;
-        clientIds[i] = (*(pMsg->geofences.gfPayload + i)).gfClientId;
+        gfOptions[i] = pMsg->geofences.gfPayload[i].gfOption;
+        gfInfos[i] = pMsg->geofences.gfPayload[i].gfInfo;
+        clientIds[i] = pMsg->geofences.gfPayload[i].gfClientId;
     }
 
     uint32_t* sessions = pClient->addGeofences(pMsg->geofences.count, gfOptions, gfInfos);
@@ -898,8 +964,8 @@ void LocationApiService::modifyGeofences(LocAPIModifyGeofencesReqMsg* pMsg) {
         return;
     }
     for (int i=0; i<pMsg->geofences.count; ++i) {
-        gfOptions[i] = (*(pMsg->geofences.gfPayload + i)).gfOption;
-        clientIds[i] = (*(pMsg->geofences.gfPayload + i)).gfClientId;
+        gfOptions[i] = pMsg->geofences.gfPayload[i].gfOption;
+        clientIds[i] = pMsg->geofences.gfPayload[i].gfClientId;
     }
     uint32_t* sessions = pClient->getSessionIds(pMsg->geofences.count, clientIds);
 
@@ -1126,6 +1192,8 @@ void LocationApiService::getGnssConfig(const LocAPIMsgHeader* pReqMsg,
     if (sessionIds) {
         LOC_LOGd(">-- session id %d", *sessionIds);
         sessionId = *sessionIds;
+        // free the memory used by sessionIds
+        delete[] sessionIds;
     }
     // if sessionId is 0, e.g.: error callback will be delivered
     // by addConfigRequestToMap
@@ -1263,7 +1331,8 @@ void LocationApiService::onGnssEnergyConsumedCb(uint64_t totalGnssEnergyConsumed
     std::lock_guard<std::mutex> lock(mMutex);
     LOC_LOGd("--< onGnssEnergyConsumedCb");
 
-    LocAPIGnssEnergyConsumedIndMsg msg(SERVICE_NAME, totalGnssEnergyConsumedSinceFirstBoot);
+    LocAPIGnssEnergyConsumedIndMsg msg(SERVICE_NAME, totalGnssEnergyConsumedSinceFirstBoot,
+            &mPbufMsgConv);
     for (auto each : mClients) {
         // deliver the engergy info to registered client
         each.second->onGnssEnergyConsumedInfoAvailable(msg);
@@ -1334,9 +1403,15 @@ void LocationApiService::performMaintenance() {
     }
 
     for (auto client : clientsToCheck) {
-        LocAPIPingTestReqMsg msg(SERVICE_NAME);
-        bool messageSent = LocIpc::send(*client.second, reinterpret_cast<const uint8_t*>(&msg),
-                                            sizeof(msg));
+        string pbStr;
+        bool messageSent = false;
+        LocAPIPingTestReqMsg msg(SERVICE_NAME, &mPbufMsgConv);
+        if (msg.serializeToProtobuf(pbStr)) {
+            messageSent = LocIpc::send(*client.second,
+                    reinterpret_cast<uint8_t *>((uint8_t *)pbStr.c_str()), pbStr.size());
+        } else {
+            LOC_LOGe("LocAPIPingTestReqMsg serializeToProtobuf failed");
+        }
         LOC_LOGd("send ping message returned %d for client %s", messageSent, client.first.c_str());
         if (messageSent == false) {
             LOC_LOGe("--< ping failed for client %s", client.first.c_str());
