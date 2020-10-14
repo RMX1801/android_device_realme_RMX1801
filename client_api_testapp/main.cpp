@@ -36,9 +36,11 @@
 #include <grp.h>
 #include <sys/types.h>
 #include <sys/prctl.h>
+#include <sys/capability.h>
 #include <semaphore.h>
 #include <loc_pla.h>
 #include <loc_cfg.h>
+#include <loc_misc_utils.h>
 #ifdef NO_UNORDERED_SET_OR_MAP
     #include <map>
 #else
@@ -251,50 +253,59 @@ static void printHelp() {
     printf("%s: get min sv elevation angle\n", GET_MIN_SV_ELEVATION);
 }
 
-void setRequiredPermToRunAsLocClient()
-{
+void setRequiredPermToRunAsLocClient() {
 #ifdef USE_GLIB
     if (0 == getuid()) {
-        printf("Test app set perm");
+        char groupNames[LOC_MAX_PARAM_NAME] = "diag locclient";
+        printf("group ids: diag locclient\n");
 
-        // For LE, we need to also add "diag" to existing groups
-        // to run in loc client mode for diag logging.
-        // We need to add diag grpid at end, so MAX+1
-        gid_t appGrpsIds[LOC_PROCESS_MAX_NUM_GROUPS+1] = {};
-        int i = 0, numGrpIds = 0;
+        gid_t groupIds[LOC_PROCESS_MAX_NUM_GROUPS] = {};
+        char *splitGrpString[LOC_PROCESS_MAX_NUM_GROUPS];
+        int numGrps = loc_util_split_string(groupNames, splitGrpString,
+                LOC_PROCESS_MAX_NUM_GROUPS, ' ');
 
-        // Get current set of supplementary groups.
-        memset(appGrpsIds, 0, sizeof(appGrpsIds));
-        numGrpIds = getgroups(LOC_PROCESS_MAX_NUM_GROUPS, appGrpsIds);
-        if(numGrpIds == -1) {
-            printf("Could not find groups. ngroups:%d\n", numGrpIds);
-            numGrpIds = 0;
-        }
-        else {
-            printf("Curr num_groups = %d, Current GIDs: ", numGrpIds);
-            for(i=0; i<numGrpIds; i++) {
-                printf("%d ", appGrpsIds[i]);
+        int numGrpIds=0;
+        for (int i = 0; i < numGrps; i++) {
+            struct group* grp = getgrnam(splitGrpString[i]);
+            if (grp) {
+                groupIds[numGrpIds] = grp->gr_gid;
+                printf("Group %s = %d\n", splitGrpString[i], groupIds[numGrpIds]);
+                numGrpIds++;
             }
         }
-
-        // get group id for diag and update supplementary groups to add "diag" to its list.
-        struct group* grp = getgrnam("diag");
-        if (grp) {
-            // we added diag also to grpid array and setgroups
-            appGrpsIds[numGrpIds] = grp->gr_gid;
-            printf("Diag Group id = %d", appGrpsIds[numGrpIds]);
-            numGrpIds++;
-            i = setgroups(numGrpIds, appGrpsIds);
-            if(i == -1) {
-                printf("Could not set groups. errno:%d, %s", errno, strerror(errno));
-            } else {
-                printf("Total of %d groups set for test app", numGrpIds);
+        if (0 != numGrpIds) {
+            if (-1 == setgroups(numGrpIds, groupIds)) {
+                printf("Error: setgroups failed %s", strerror(errno));
             }
+        }
+        // Set the group id first and then set the effective userid, to locclient.
+        if (-1 == setgid(GID_LOCCLIENT)) {
+            printf("Error: setgid failed. %s", strerror(errno));
+        }
+        // Set user id to locclient
+        if (-1 == setuid(UID_LOCCLIENT)) {
+            printf("Error: setuid failed. %s", strerror(errno));
+        }
+
+        // Set capabilities
+        struct __user_cap_header_struct cap_hdr = {};
+        cap_hdr.version = _LINUX_CAPABILITY_VERSION;
+        cap_hdr.pid = getpid();
+        if (prctl(PR_SET_KEEPCAPS, 1) < 0) {
+            printf("Error: prctl failed. %s", strerror(errno));
+        }
+
+        // Set access to CAP_NET_BIND_SERVICE
+        struct __user_cap_data_struct cap_data = {};
+        cap_data.permitted = (1 << CAP_NET_BIND_SERVICE);
+        cap_data.effective = cap_data.permitted;
+        printf("cap_data.permitted: %d", (int)cap_data.permitted);
+        if (capset(&cap_hdr, &cap_data)) {
+            printf("Error: capset failed. %s", strerror(errno));
         }
     } else {
         printf("Test app started as user: %d", getuid());
     }
-
 #endif// USE_GLIB
 }
 
