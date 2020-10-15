@@ -3622,14 +3622,28 @@ void  LocApiV02 :: reportSvMeasurement (
 {
     static uint32_t prevRefFCount = 0;
     static bool newMeasProcessed = false;
+    uint8_t maxSubSeqNum = 0;
+    uint8_t subSeqNum = 0;
 
     if (!gnss_raw_measurement_ptr) {
         return;
     }
 
-    LOC_LOGi("[SvMeas] nHz (%d, %d), SeqNum: %d, MaxMsgNum: %d, SvSystem: %d SignalType: %" PRIu64 ", refFCnt: %d, MeasValid: %d, #of SV: %d\n",
-             gnss_raw_measurement_ptr->nHzMeasurement_valid, gnss_raw_measurement_ptr->nHzMeasurement,
+    if (gnss_raw_measurement_ptr->maxSubSeqNum_valid &&
+        gnss_raw_measurement_ptr->subSeqNum_valid) {
+        maxSubSeqNum = gnss_raw_measurement_ptr->maxSubSeqNum;
+        subSeqNum = gnss_raw_measurement_ptr->subSeqNum;
+    } else {
+        maxSubSeqNum = 0;
+        subSeqNum = 0;
+    }
+
+    LOC_LOGi("[SvMeas] nHz (%d, %d), SeqNum: %d, MaxMsgNum: %d, SubSeqNum: %d, MaxSubSeqNum: %d, "
+             "SvSystem: %d SignalType: %" PRIu64 ", refFCnt: %d, MeasValid: %d, #of SV: %d\n",
+             gnss_raw_measurement_ptr->nHzMeasurement_valid,
+             gnss_raw_measurement_ptr->nHzMeasurement,
              gnss_raw_measurement_ptr->seqNum, gnss_raw_measurement_ptr->maxMessageNum,
+             subSeqNum, maxSubSeqNum,
              gnss_raw_measurement_ptr->system, gnss_raw_measurement_ptr->gnssSignalType,
              gnss_raw_measurement_ptr->systemTimeExt.refFCount,
              gnss_raw_measurement_ptr->svMeasurement_valid,
@@ -3652,7 +3666,7 @@ void  LocApiV02 :: reportSvMeasurement (
 
     // in case the measurement with seqNum of 1 is dropped, we will use ref count
     // to reset the measurement
-    if ((gnss_raw_measurement_ptr->seqNum == 1) ||
+    if ((gnss_raw_measurement_ptr->seqNum == 1 && subSeqNum <= 1) ||
         (gnss_raw_measurement_ptr->systemTimeExt.refFCount != prevRefFCount)) {
         // we have received some valid info since we last reported when
         // seq num matches with max seq num
@@ -4018,7 +4032,8 @@ void  LocApiV02 :: reportSvMeasurement (
     // set up indication that we have processed some new measurement
     newMeasProcessed = true;
 
-    if (gnss_raw_measurement_ptr->seqNum == gnss_raw_measurement_ptr->maxMessageNum) {
+    if (gnss_raw_measurement_ptr->seqNum == gnss_raw_measurement_ptr->maxMessageNum &&
+        maxSubSeqNum == subSeqNum) {
         reportSvMeasurementInternal();
         resetSvMeasurementReport();
         // set up flag to indicate that no new info in mSvMeasurementSet
