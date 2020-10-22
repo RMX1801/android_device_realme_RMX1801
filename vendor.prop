@@ -93,6 +93,9 @@ persist.vendor.dpm.feature=1
 # Codec2 switch
 debug.media.codec2=2
 
+# Dalvik dex2oat
+dalvik.vm.dex2oat64.enabled=true
+
 # DRM
 drm.service.enabled=true
 
