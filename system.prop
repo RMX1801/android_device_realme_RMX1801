@@ -78,7 +78,6 @@ persist.radio.custom_exp_ecc=1
 ril.subscription.types=NV,RUIM
 rild.libpath=/system/vendor/lib64/libril-qc-hal-qmi.so
 ro.telephony.default_network=22,22
-persist.sys.fflag.override.settings_network_and_internet_v2=true
 telephony.lteOnCdmaDevice=1
 
 # Sensors
