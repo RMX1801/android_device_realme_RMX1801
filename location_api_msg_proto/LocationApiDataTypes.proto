@@ -45,7 +45,7 @@ enum LocationApiDataTypesVersion {
     LOCAPI_DATA_TYPES_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_DATA_TYPES_VER_MINOR = 0;
+    LOCAPI_DATA_TYPES_VER_MINOR = 1;
 }
 
 // ============================================================================
@@ -188,6 +188,11 @@ enum PBGnssLocationInfoFlagMask {
                                                                         // velocity
     PB_GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT      = 1073741824; // DR solution status
 }
+
+enum PBGnssLocationInfoExtFlagMask {
+    PB_GNSS_LOCATION_INFO_EXT_INVALID          = 0;
+    PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT = 1; // valid altitude mean sea level
+};
 
 enum PBGnssLocationNavSolutionMask {
     PB_LOCATION_NAV_SOLUTION_MASK_INVALID = 0;
@@ -380,6 +385,12 @@ enum PBLocApiPositioningEngineMask {
     PB_DEAD_RECKONING_ENGINE       = 2;
     PB_PRECISE_POSITIONING_ENGINE  = 4;
 }
+
+enum PBLocEngineRunState {
+    PB_LOC_ENGINE_RUN_STATE_INVALID = 0;
+    PB_LOC_ENGINE_RUN_STATE_PAUSE   = 1;
+    PB_LOC_ENGINE_RUN_STATE_RESUME  = 2;
+};
 
 enum PBDrEngineAidingDataMask {
     PB_DR_ENGINE_AIDING_DATA_INVALID = 0;
@@ -902,6 +913,12 @@ message PBGnssLocationInfoNotification {
     repeated float enuVelocityVRPBased = 38;
     // PBDrSolutionStatusMask
     uint32 drSolutionStatusMask = 39;
+    // Contains PBGnssLocationInfoExtFlagMask bits.
+    // Bitwise OR of PBGnssLocationInfoExtFlagMask for param validity
+    // for fields 41: e.g.:altitudeAssumed and onwards
+    uint32 extFlags = 40;
+    // PBAltitudeAssumed, validity is set via extFlags
+    bool altitudeAssumed = 41;
 }
 
 message PBGnssDataNotification {

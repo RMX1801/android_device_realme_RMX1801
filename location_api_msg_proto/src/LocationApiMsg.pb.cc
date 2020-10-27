@@ -135,6 +135,8 @@ class PBLocConfigDrEngineParamsReqMsgDefaultTypeInternal : public ::google::prot
 } _PBLocConfigDrEngineParamsReqMsg_default_instance_;
 class PBLocConfigMinSvElevationReqMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigMinSvElevationReqMsg> {
 } _PBLocConfigMinSvElevationReqMsg_default_instance_;
+class PBLocConfigEngineRunStateReqMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigEngineRunStateReqMsg> {
+} _PBLocConfigEngineRunStateReqMsg_default_instance_;
 class PBLocConfigGetConstltnSecondaryBandConfigRespMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigGetConstltnSecondaryBandConfigRespMsg> {
 } _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_;
 class PBLocConfigGetRobustLocationConfigRespMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigGetRobustLocationConfigRespMsg> {
@@ -155,7 +157,7 @@ namespace protobuf_LocationApiMsg_2eproto {
 
 namespace {
 
-::google::protobuf::Metadata file_level_metadata[53];
+::google::protobuf::Metadata file_level_metadata[54];
 const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[6];
 
 }  // namespace
@@ -171,6 +173,7 @@ PROTOBUF_CONSTEXPR_VAR ::google::protobuf::internal::AuxillaryParseTableField
 };
 PROTOBUF_CONSTEXPR_VAR ::google::protobuf::internal::ParseTable const
     TableStruct::schema[] = {
+  { NULL, NULL, 0, -1, -1, false },
   { NULL, NULL, 0, -1, -1, false },
   { NULL, NULL, 0, -1, -1, false },
   { NULL, NULL, 0, -1, -1, false },
@@ -480,6 +483,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigSvConstellationReqMsg, mconstellationenablementconfig_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigSvConstellationReqMsg, mblacklistsvconfig_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigSvConstellationReqMsg, mresettodefault_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigConstellationSecondaryBandReqMsg, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -523,6 +527,13 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigMinSvElevationReqMsg, mminsvelevation_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigEngineRunStateReqMsg, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigEngineRunStateReqMsg, mengtype_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigEngineRunStateReqMsg, mengstate_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigGetConstltnSecondaryBandConfigRespMsg, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -613,20 +624,21 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 232, -1, sizeof(PBLocConfigConstrainedTuncReqMsg)},
   { 240, -1, sizeof(PBLocConfigPositionAssistedClockEstimatorReqMsg)},
   { 246, -1, sizeof(PBLocConfigSvConstellationReqMsg)},
-  { 253, -1, sizeof(PBLocConfigConstellationSecondaryBandReqMsg)},
-  { 259, -1, sizeof(PBLocConfigAidingDataDeletionReqMsg)},
-  { 265, -1, sizeof(PBLocConfigLeverArmReqMsg)},
-  { 271, -1, sizeof(PBLocConfigRobustLocationReqMsg)},
-  { 278, -1, sizeof(PBLocConfigMinGpsWeekReqMsg)},
-  { 284, -1, sizeof(PBLocConfigDrEngineParamsReqMsg)},
-  { 290, -1, sizeof(PBLocConfigMinSvElevationReqMsg)},
-  { 296, -1, sizeof(PBLocConfigGetConstltnSecondaryBandConfigRespMsg)},
-  { 302, -1, sizeof(PBLocConfigGetRobustLocationConfigRespMsg)},
-  { 308, -1, sizeof(PBLocConfigGetMinGpsWeekRespMsg)},
-  { 314, -1, sizeof(PBLocConfigGetMinSvElevationRespMsg)},
-  { 320, -1, sizeof(PBLocAPIPingTestReqMsg)},
-  { 327, -1, sizeof(PBLocAPIPingTestIndMsg)},
-  { 334, -1, sizeof(PBLocAPIMsgHeader)},
+  { 254, -1, sizeof(PBLocConfigConstellationSecondaryBandReqMsg)},
+  { 260, -1, sizeof(PBLocConfigAidingDataDeletionReqMsg)},
+  { 266, -1, sizeof(PBLocConfigLeverArmReqMsg)},
+  { 272, -1, sizeof(PBLocConfigRobustLocationReqMsg)},
+  { 279, -1, sizeof(PBLocConfigMinGpsWeekReqMsg)},
+  { 285, -1, sizeof(PBLocConfigDrEngineParamsReqMsg)},
+  { 291, -1, sizeof(PBLocConfigMinSvElevationReqMsg)},
+  { 297, -1, sizeof(PBLocConfigEngineRunStateReqMsg)},
+  { 304, -1, sizeof(PBLocConfigGetConstltnSecondaryBandConfigRespMsg)},
+  { 310, -1, sizeof(PBLocConfigGetRobustLocationConfigRespMsg)},
+  { 316, -1, sizeof(PBLocConfigGetMinGpsWeekRespMsg)},
+  { 322, -1, sizeof(PBLocConfigGetMinSvElevationRespMsg)},
+  { 328, -1, sizeof(PBLocAPIPingTestReqMsg)},
+  { 335, -1, sizeof(PBLocAPIPingTestIndMsg)},
+  { 342, -1, sizeof(PBLocAPIMsgHeader)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -676,6 +688,7 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigMinGpsWeekReqMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigDrEngineParamsReqMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigMinSvElevationReqMsg_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigEngineRunStateReqMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetRobustLocationConfigRespMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetMinGpsWeekRespMsg_default_instance_),
@@ -703,7 +716,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 53);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 54);
 }
 
 }  // namespace
@@ -801,20 +814,22 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[44].reflection;
   _PBLocConfigMinSvElevationReqMsg_default_instance_.Shutdown();
   delete file_level_metadata[45].reflection;
-  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.Shutdown();
+  _PBLocConfigEngineRunStateReqMsg_default_instance_.Shutdown();
   delete file_level_metadata[46].reflection;
-  _PBLocConfigGetRobustLocationConfigRespMsg_default_instance_.Shutdown();
+  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.Shutdown();
   delete file_level_metadata[47].reflection;
-  _PBLocConfigGetMinGpsWeekRespMsg_default_instance_.Shutdown();
+  _PBLocConfigGetRobustLocationConfigRespMsg_default_instance_.Shutdown();
   delete file_level_metadata[48].reflection;
-  _PBLocConfigGetMinSvElevationRespMsg_default_instance_.Shutdown();
+  _PBLocConfigGetMinGpsWeekRespMsg_default_instance_.Shutdown();
   delete file_level_metadata[49].reflection;
-  _PBLocAPIPingTestReqMsg_default_instance_.Shutdown();
+  _PBLocConfigGetMinSvElevationRespMsg_default_instance_.Shutdown();
   delete file_level_metadata[50].reflection;
-  _PBLocAPIPingTestIndMsg_default_instance_.Shutdown();
+  _PBLocAPIPingTestReqMsg_default_instance_.Shutdown();
   delete file_level_metadata[51].reflection;
-  _PBLocAPIMsgHeader_default_instance_.Shutdown();
+  _PBLocAPIPingTestIndMsg_default_instance_.Shutdown();
   delete file_level_metadata[52].reflection;
+  _PBLocAPIMsgHeader_default_instance_.Shutdown();
+  delete file_level_metadata[53].reflection;
 }
 
 void TableStruct::InitDefaultsImpl() {
@@ -868,6 +883,7 @@ void TableStruct::InitDefaultsImpl() {
   _PBLocConfigMinGpsWeekReqMsg_default_instance_.DefaultConstruct();
   _PBLocConfigDrEngineParamsReqMsg_default_instance_.DefaultConstruct();
   _PBLocConfigMinSvElevationReqMsg_default_instance_.DefaultConstruct();
+  _PBLocConfigEngineRunStateReqMsg_default_instance_.DefaultConstruct();
   _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.DefaultConstruct();
   _PBLocConfigGetRobustLocationConfigRespMsg_default_instance_.DefaultConstruct();
   _PBLocConfigGetMinGpsWeekRespMsg_default_instance_.DefaultConstruct();
@@ -1019,124 +1035,129 @@ void AddDescriptorsImpl() {
       "eqMsg\022\017\n\007mEnable\030\001 \001(\010\022\027\n\017mTuncConstrain"
       "t\030\002 \001(\002\022\025\n\rmEnergyBudget\030\003 \001(\r\"B\n/PBLocC"
       "onfigPositionAssistedClockEstimatorReqMs"
-      "g\022\017\n\007mEnable\030\001 \001(\010\"\216\001\n PBLocConfigSvCons"
+      "g\022\017\n\007mEnable\030\001 \001(\010\"\247\001\n PBLocConfigSvCons"
       "tellationReqMsg\022;\n\036mConstellationEnablem"
       "entConfig\030\001 \001(\0132\023.PBGnssSvTypeConfig\022-\n\022"
       "mBlacklistSvConfig\030\002 \001(\0132\021.PBGnssSvIdCon"
-      "fig\"`\n+PBLocConfigConstellationSecondary"
-      "BandReqMsg\0221\n\024mSecondaryBandConfig\030\001 \001(\013"
-      "2\023.PBGnssSvTypeConfig\"I\n#PBLocConfigAidi"
-      "ngDataDeletionReqMsg\022\"\n\013mAidingData\030\001 \001("
-      "\0132\r.PBAidingData\"R\n\031PBLocConfigLeverArmR"
-      "eqMsg\0225\n\023mLeverArmConfigInfo\030\001 \001(\0132\030.PBL"
-      "IALeverArmConfigInfo\"J\n\037PBLocConfigRobus"
-      "tLocationReqMsg\022\017\n\007mEnable\030\001 \001(\010\022\026\n\016mEna"
-      "bleForE911\030\002 \001(\010\"2\n\033PBLocConfigMinGpsWee"
-      "kReqMsg\022\023\n\013mMinGpsWeek\030\001 \001(\r\"S\n\037PBLocCon"
-      "figDrEngineParamsReqMsg\0220\n\nmDreConfig\030\001 "
-      "\001(\0132\034.PBDeadReckoningEngineConfig\":\n\037PBL"
-      "ocConfigMinSvElevationReqMsg\022\027\n\017mMinSvEl"
-      "evation\030\001 \001(\r\"e\n0PBLocConfigGetConstltnS"
-      "econdaryBandConfigRespMsg\0221\n\024mSecondaryB"
-      "andConfig\030\001 \001(\0132\023.PBGnssSvTypeConfig\"f\n)"
-      "PBLocConfigGetRobustLocationConfigRespMs"
-      "g\0229\n\024mRobustLoationConfig\030\001 \001(\0132\033.PBGnss"
-      "ConfigRobustLocation\"6\n\037PBLocConfigGetMi"
-      "nGpsWeekRespMsg\022\023\n\013mMinGpsWeek\030\001 \001(\r\">\n#"
-      "PBLocConfigGetMinSvElevationRespMsg\022\027\n\017m"
-      "MinSvElevation\030\001 \001(\r\"<\n\026PBLocAPIPingTest"
-      "ReqMsg\022\024\n\014numberOfPing\030\001 \001(\r\022\014\n\004data\030\002 \003"
-      "(\r\"<\n\026PBLocAPIPingTestIndMsg\022\024\n\014numberOf"
-      "Ping\030\001 \001(\r\022\014\n\004data\030\002 \003(\r\"\177\n\021PBLocAPIMsgH"
-      "eader\022\023\n\013mSocketName\030\001 \001(\t\022\033\n\005msgId\030\002 \001("
-      "\0162\014.PBELocMsgID\022\022\n\nmsgVersion\030\003 \001(\r\022\017\n\007p"
-      "ayload\030\004 \001(\014\022\023\n\013payloadSize\030\005 \001(\r*\205\001\n\025Lo"
-      "cationApiMsgVersion\022\032\n\026LOCAPI_MSG_VER_IN"
-      "VALID\020\000\022\030\n\024LOCAPI_MSG_VER_MAJOR\020\001\022\030\n\024LOC"
-      "API_MSG_VER_MINOR\020\000\022\030\n\024LOCAPI_MSG_VER_MI"
-      "CRO\020\000\032\002\020\001*\323\021\n\013PBELocMsgID\022 \n\034PB_E_LOCAPI"
-      "_UNDEFINED_MSG_ID\020\000\022&\n\"PB_E_LOCAPI_CLIEN"
-      "T_REGISTER_MSG_ID\020\001\022(\n$PB_E_LOCAPI_CLIEN"
-      "T_DEREGISTER_MSG_ID\020\002\022$\n PB_E_LOCAPI_CAP"
-      "ABILILTIES_MSG_ID\020\003\022 \n\034PB_E_LOCAPI_HAL_R"
-      "EADY_MSG_ID\020\004\022%\n!PB_E_LOCAPI_START_TRACK"
-      "ING_MSG_ID\020\005\022$\n PB_E_LOCAPI_STOP_TRACKIN"
-      "G_MSG_ID\020\006\022\'\n#PB_E_LOCAPI_UPDATE_CALLBAC"
-      "KS_MSG_ID\020\007\022.\n*PB_E_LOCAPI_UPDATE_TRACKI"
-      "NG_OPTIONS_MSG_ID\020\010\022,\n(PB_E_LOCAPI_CONTR"
-      "OL_UPDATE_CONFIG_MSG_ID\020\t\0221\n-PB_E_LOCAPI"
-      "_CONTROL_DELETE_AIDING_DATA_MSG_ID\020\n\022:\n6"
-      "PB_E_LOCAPI_CONTROL_UPDATE_NETWORK_AVAIL"
-      "ABILITY_MSG_ID\020\013\022\037\n\033PB_E_LOCAPI_LOCATION"
-      "_MSG_ID\020\014\022$\n PB_E_LOCAPI_LOCATION_INFO_M"
-      "SG_ID\020\r\022(\n$PB_E_LOCAPI_SATELLITE_VEHICLE"
-      "_MSG_ID\020\016\022\033\n\027PB_E_LOCAPI_NMEA_MSG_ID\020\017\022\033"
-      "\n\027PB_E_LOCAPI_DATA_MSG_ID\020\020\022/\n+PB_E_LOCA"
-      "PI_GET_GNSS_ENGERY_CONSUMED_MSG_ID\020\021\022+\n\'"
-      "PB_E_LOCAPI_LOCATION_SYSTEM_INFO_MSG_ID\020"
-      "\022\022,\n(PB_E_LOCAPI_ENGINE_LOCATIONS_INFO_M"
-      "SG_ID\020\023\022%\n!PB_E_LOCAPI_START_BATCHING_MS"
-      "G_ID\020\024\022$\n PB_E_LOCAPI_STOP_BATCHING_MSG_"
-      "ID\020\025\022.\n*PB_E_LOCAPI_UPDATE_BATCHING_OPTI"
-      "ONS_MSG_ID\020\026\022\037\n\033PB_E_LOCAPI_BATCHING_MSG"
-      "_ID\020\027\022$\n PB_E_LOCAPI_ADD_GEOFENCES_MSG_I"
-      "D\020\030\022\'\n#PB_E_LOCAPI_REMOVE_GEOFENCES_MSG_"
-      "ID\020\031\022\'\n#PB_E_LOCAPI_MODIFY_GEOFENCES_MSG"
-      "_ID\020\032\022&\n\"PB_E_LOCAPI_PAUSE_GEOFENCES_MSG"
-      "_ID\020\033\022\'\n#PB_E_LOCAPI_RESUME_GEOFENCES_MS"
-      "G_ID\020\034\022&\n\"PB_E_LOCAPI_GEOFENCE_BREACH_MS"
-      "G_ID\020\035\022\033\n\027PB_E_LOCAPI_MEAS_MSG_ID\020\036\022\037\n\033P"
-      "B_E_LOCAPI_PINGTEST_MSG_ID\020c\0220\n+PB_E_INT"
-      "API_CONFIG_CONSTRAINTED_TUNC_MSG_ID\020\310\001\022@"
-      "\n;PB_E_INTAPI_CONFIG_POSITION_ASSISTED_C"
-      "LOCK_ESTIMATOR_MSG_ID\020\311\001\022/\n*PB_E_INTAPI_"
-      "CONFIG_SV_CONSTELLATION_MSG_ID\020\312\001\0223\n.PB_"
-      "E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG"
-      "_ID\020\313\001\022(\n#PB_E_INTAPI_CONFIG_LEVER_ARM_M"
-      "SG_ID\020\314\001\022.\n)PB_E_INTAPI_CONFIG_ROBUST_LO"
-      "CATION_MSG_ID\020\315\001\022+\n&PB_E_INTAPI_CONFIG_M"
-      "IN_GPS_WEEK_MSG_ID\020\316\001\0224\n/PB_E_INTAPI_CON"
-      "FIG_DEAD_RECKONING_ENGINE_MSG_ID\020\317\001\022/\n*P"
-      "B_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_I"
-      "D\020\320\001\022;\n6PB_E_INTAPI_CONFIG_CONSTELLATION"
-      "_SECONDARY_BAND_MSG_ID\020\321\001\0226\n1PB_E_INTAPI"
-      "_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID\020\254"
-      "\002\0227\n2PB_E_INTAPI_GET_ROBUST_LOCATION_CON"
-      "FIG_RESP_MSG_ID\020\255\002\022,\n\'PB_E_INTAPI_GET_MI"
-      "N_GPS_WEEK_REQ_MSG_ID\020\256\002\022-\n(PB_E_INTAPI_"
-      "GET_MIN_GPS_WEEK_RESP_MSG_ID\020\257\002\0220\n+PB_E_"
-      "INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID\020\260"
-      "\002\0221\n,PB_E_INTAPI_GET_MIN_SV_ELEVATION_RE"
-      "SP_MSG_ID\020\261\002\022C\n>PB_E_INTAPI_GET_CONSTELL"
-      "ATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID\020\262"
-      "\002\022D\n\?PB_E_INTAPI_GET_CONSTELLATION_SECON"
-      "DARY_BAND_CONFIG_RESP_MSG_ID\020\263\002*p\n\014PBCli"
-      "entType\022#\n\037PB_LOCATION_CLIENT_TYPE_INVAL"
-      "ID\020\000\022\032\n\026PB_LOCATION_CLIENT_API\020\001\022\037\n\033PB_L"
-      "OCATION_INTEGRATION_API\020\002*\344\003\n\027PBLocation"
-      "CallbacksMask\022\027\n\023PB_E_LOC_CB_INVALID\020\000\022+"
-      "\n\'PB_E_LOC_CB_DISTANCE_BASED_TRACKING_BI"
-      "T\020\001\022&\n\"PB_E_LOC_CB_GNSS_LOCATION_INFO_BI"
-      "T\020\002\022\033\n\027PB_E_LOC_CB_GNSS_SV_BIT\020\004\022\035\n\031PB_E"
-      "_LOC_CB_GNSS_NMEA_BIT\020\010\022\035\n\031PB_E_LOC_CB_G"
-      "NSS_DATA_BIT\020\020\022\037\n\033PB_E_LOC_CB_SYSTEM_INF"
-      "O_BIT\020 \022\034\n\030PB_E_LOC_CB_BATCHING_BIT\020@\022$\n"
-      "\037PB_E_LOC_CB_BATCHING_STATUS_BIT\020\200\001\022$\n\037P"
-      "B_E_LOC_CB_GEOFENCE_BREACH_BIT\020\200\002\022*\n%PB_"
-      "E_LOC_CB_ENGINE_LOCATIONS_INFO_BIT\020\200\004\022)\n"
-      "$PB_E_LOC_CB_SIMPLE_LOCATION_INFO_BIT\020\200\010"
-      "\022\036\n\031PB_E_LOC_CB_GNSS_MEAS_BIT\020\200\020*n\n\031PBEn"
-      "gineInfoCallbacksMask\022\037\n\033PB_E_ENGINE_INF"
-      "O_CB_INVALID\020\000\0220\n,PB_E_ENGINE_INFO_CB_GN"
-      "SS_ENERGY_CONSUMED_BIT\020\001*\310\001\n\030PBGeofenceB"
-      "reachTypeMask\022\036\n\032PB_GEOFENCE_BREACH_INVA"
-      "LID\020\000\022 \n\034PB_GEOFENCE_BREACH_ENTER_BIT\020\001\022"
-      "\037\n\033PB_GEOFENCE_BREACH_EXIT_BIT\020\002\022#\n\037PB_G"
-      "EOFENCE_BREACH_DWELL_IN_BIT\020\004\022$\n PB_GEOF"
-      "ENCE_BREACH_DWELL_OUT_BIT\020\010b\006proto3"
+      "fig\022\027\n\017mResetToDefault\030\003 \001(\010\"`\n+PBLocCon"
+      "figConstellationSecondaryBandReqMsg\0221\n\024m"
+      "SecondaryBandConfig\030\001 \001(\0132\023.PBGnssSvType"
+      "Config\"I\n#PBLocConfigAidingDataDeletionR"
+      "eqMsg\022\"\n\013mAidingData\030\001 \001(\0132\r.PBAidingDat"
+      "a\"R\n\031PBLocConfigLeverArmReqMsg\0225\n\023mLever"
+      "ArmConfigInfo\030\001 \001(\0132\030.PBLIALeverArmConfi"
+      "gInfo\"J\n\037PBLocConfigRobustLocationReqMsg"
+      "\022\017\n\007mEnable\030\001 \001(\010\022\026\n\016mEnableForE911\030\002 \001("
+      "\010\"2\n\033PBLocConfigMinGpsWeekReqMsg\022\023\n\013mMin"
+      "GpsWeek\030\001 \001(\r\"S\n\037PBLocConfigDrEnginePara"
+      "msReqMsg\0220\n\nmDreConfig\030\001 \001(\0132\034.PBDeadRec"
+      "koningEngineConfig\":\n\037PBLocConfigMinSvEl"
+      "evationReqMsg\022\027\n\017mMinSvElevation\030\001 \001(\r\"|"
+      "\n\037PBLocConfigEngineRunStateReqMsg\0220\n\010mEn"
+      "gType\030\001 \001(\0162\036.PBLocApiPositioningEngineM"
+      "ask\022\'\n\tmEngState\030\002 \001(\0162\024.PBLocEngineRunS"
+      "tate\"e\n0PBLocConfigGetConstltnSecondaryB"
+      "andConfigRespMsg\0221\n\024mSecondaryBandConfig"
+      "\030\001 \001(\0132\023.PBGnssSvTypeConfig\"f\n)PBLocConf"
+      "igGetRobustLocationConfigRespMsg\0229\n\024mRob"
+      "ustLoationConfig\030\001 \001(\0132\033.PBGnssConfigRob"
+      "ustLocation\"6\n\037PBLocConfigGetMinGpsWeekR"
+      "espMsg\022\023\n\013mMinGpsWeek\030\001 \001(\r\">\n#PBLocConf"
+      "igGetMinSvElevationRespMsg\022\027\n\017mMinSvElev"
+      "ation\030\001 \001(\r\"<\n\026PBLocAPIPingTestReqMsg\022\024\n"
+      "\014numberOfPing\030\001 \001(\r\022\014\n\004data\030\002 \003(\r\"<\n\026PBL"
+      "ocAPIPingTestIndMsg\022\024\n\014numberOfPing\030\001 \001("
+      "\r\022\014\n\004data\030\002 \003(\r\"\177\n\021PBLocAPIMsgHeader\022\023\n\013"
+      "mSocketName\030\001 \001(\t\022\033\n\005msgId\030\002 \001(\0162\014.PBELo"
+      "cMsgID\022\022\n\nmsgVersion\030\003 \001(\r\022\017\n\007payload\030\004 "
+      "\001(\014\022\023\n\013payloadSize\030\005 \001(\r*k\n\025LocationApiM"
+      "sgVersion\022\032\n\026LOCAPI_MSG_VER_INVALID\020\000\022\030\n"
+      "\024LOCAPI_MSG_VER_MAJOR\020\001\022\030\n\024LOCAPI_MSG_VE"
+      "R_MINOR\020\001\032\002\020\001*\204\022\n\013PBELocMsgID\022 \n\034PB_E_LO"
+      "CAPI_UNDEFINED_MSG_ID\020\000\022&\n\"PB_E_LOCAPI_C"
+      "LIENT_REGISTER_MSG_ID\020\001\022(\n$PB_E_LOCAPI_C"
+      "LIENT_DEREGISTER_MSG_ID\020\002\022$\n PB_E_LOCAPI"
+      "_CAPABILILTIES_MSG_ID\020\003\022 \n\034PB_E_LOCAPI_H"
+      "AL_READY_MSG_ID\020\004\022%\n!PB_E_LOCAPI_START_T"
+      "RACKING_MSG_ID\020\005\022$\n PB_E_LOCAPI_STOP_TRA"
+      "CKING_MSG_ID\020\006\022\'\n#PB_E_LOCAPI_UPDATE_CAL"
+      "LBACKS_MSG_ID\020\007\022.\n*PB_E_LOCAPI_UPDATE_TR"
+      "ACKING_OPTIONS_MSG_ID\020\010\022,\n(PB_E_LOCAPI_C"
+      "ONTROL_UPDATE_CONFIG_MSG_ID\020\t\0221\n-PB_E_LO"
+      "CAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID\020\n"
+      "\022:\n6PB_E_LOCAPI_CONTROL_UPDATE_NETWORK_A"
+      "VAILABILITY_MSG_ID\020\013\022\037\n\033PB_E_LOCAPI_LOCA"
+      "TION_MSG_ID\020\014\022$\n PB_E_LOCAPI_LOCATION_IN"
+      "FO_MSG_ID\020\r\022(\n$PB_E_LOCAPI_SATELLITE_VEH"
+      "ICLE_MSG_ID\020\016\022\033\n\027PB_E_LOCAPI_NMEA_MSG_ID"
+      "\020\017\022\033\n\027PB_E_LOCAPI_DATA_MSG_ID\020\020\022/\n+PB_E_"
+      "LOCAPI_GET_GNSS_ENGERY_CONSUMED_MSG_ID\020\021"
+      "\022+\n\'PB_E_LOCAPI_LOCATION_SYSTEM_INFO_MSG"
+      "_ID\020\022\022,\n(PB_E_LOCAPI_ENGINE_LOCATIONS_IN"
+      "FO_MSG_ID\020\023\022%\n!PB_E_LOCAPI_START_BATCHIN"
+      "G_MSG_ID\020\024\022$\n PB_E_LOCAPI_STOP_BATCHING_"
+      "MSG_ID\020\025\022.\n*PB_E_LOCAPI_UPDATE_BATCHING_"
+      "OPTIONS_MSG_ID\020\026\022\037\n\033PB_E_LOCAPI_BATCHING"
+      "_MSG_ID\020\027\022$\n PB_E_LOCAPI_ADD_GEOFENCES_M"
+      "SG_ID\020\030\022\'\n#PB_E_LOCAPI_REMOVE_GEOFENCES_"
+      "MSG_ID\020\031\022\'\n#PB_E_LOCAPI_MODIFY_GEOFENCES"
+      "_MSG_ID\020\032\022&\n\"PB_E_LOCAPI_PAUSE_GEOFENCES"
+      "_MSG_ID\020\033\022\'\n#PB_E_LOCAPI_RESUME_GEOFENCE"
+      "S_MSG_ID\020\034\022&\n\"PB_E_LOCAPI_GEOFENCE_BREAC"
+      "H_MSG_ID\020\035\022\033\n\027PB_E_LOCAPI_MEAS_MSG_ID\020\036\022"
+      "\037\n\033PB_E_LOCAPI_PINGTEST_MSG_ID\020c\0220\n+PB_E"
+      "_INTAPI_CONFIG_CONSTRAINTED_TUNC_MSG_ID\020"
+      "\310\001\022@\n;PB_E_INTAPI_CONFIG_POSITION_ASSIST"
+      "ED_CLOCK_ESTIMATOR_MSG_ID\020\311\001\022/\n*PB_E_INT"
+      "API_CONFIG_SV_CONSTELLATION_MSG_ID\020\312\001\0223\n"
+      ".PB_E_INTAPI_CONFIG_AIDING_DATA_DELETION"
+      "_MSG_ID\020\313\001\022(\n#PB_E_INTAPI_CONFIG_LEVER_A"
+      "RM_MSG_ID\020\314\001\022.\n)PB_E_INTAPI_CONFIG_ROBUS"
+      "T_LOCATION_MSG_ID\020\315\001\022+\n&PB_E_INTAPI_CONF"
+      "IG_MIN_GPS_WEEK_MSG_ID\020\316\001\0224\n/PB_E_INTAPI"
+      "_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID\020\317\001\022"
+      "/\n*PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_M"
+      "SG_ID\020\320\001\022;\n6PB_E_INTAPI_CONFIG_CONSTELLA"
+      "TION_SECONDARY_BAND_MSG_ID\020\321\001\022/\n*PB_E_IN"
+      "TAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID\020\322\001\0226"
+      "\n1PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG"
+      "_REQ_MSG_ID\020\254\002\0227\n2PB_E_INTAPI_GET_ROBUST"
+      "_LOCATION_CONFIG_RESP_MSG_ID\020\255\002\022,\n\'PB_E_"
+      "INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID\020\256\002\022-\n"
+      "(PB_E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_I"
+      "D\020\257\002\0220\n+PB_E_INTAPI_GET_MIN_SV_ELEVATION"
+      "_REQ_MSG_ID\020\260\002\0221\n,PB_E_INTAPI_GET_MIN_SV"
+      "_ELEVATION_RESP_MSG_ID\020\261\002\022C\n>PB_E_INTAPI"
+      "_GET_CONSTELLATION_SECONDARY_BAND_CONFIG"
+      "_REQ_MSG_ID\020\262\002\022D\n\?PB_E_INTAPI_GET_CONSTE"
+      "LLATION_SECONDARY_BAND_CONFIG_RESP_MSG_I"
+      "D\020\263\002*p\n\014PBClientType\022#\n\037PB_LOCATION_CLIE"
+      "NT_TYPE_INVALID\020\000\022\032\n\026PB_LOCATION_CLIENT_"
+      "API\020\001\022\037\n\033PB_LOCATION_INTEGRATION_API\020\002*\344"
+      "\003\n\027PBLocationCallbacksMask\022\027\n\023PB_E_LOC_C"
+      "B_INVALID\020\000\022+\n\'PB_E_LOC_CB_DISTANCE_BASE"
+      "D_TRACKING_BIT\020\001\022&\n\"PB_E_LOC_CB_GNSS_LOC"
+      "ATION_INFO_BIT\020\002\022\033\n\027PB_E_LOC_CB_GNSS_SV_"
+      "BIT\020\004\022\035\n\031PB_E_LOC_CB_GNSS_NMEA_BIT\020\010\022\035\n\031"
+      "PB_E_LOC_CB_GNSS_DATA_BIT\020\020\022\037\n\033PB_E_LOC_"
+      "CB_SYSTEM_INFO_BIT\020 \022\034\n\030PB_E_LOC_CB_BATC"
+      "HING_BIT\020@\022$\n\037PB_E_LOC_CB_BATCHING_STATU"
+      "S_BIT\020\200\001\022$\n\037PB_E_LOC_CB_GEOFENCE_BREACH_"
+      "BIT\020\200\002\022*\n%PB_E_LOC_CB_ENGINE_LOCATIONS_I"
+      "NFO_BIT\020\200\004\022)\n$PB_E_LOC_CB_SIMPLE_LOCATIO"
+      "N_INFO_BIT\020\200\010\022\036\n\031PB_E_LOC_CB_GNSS_MEAS_B"
+      "IT\020\200\020*n\n\031PBEngineInfoCallbacksMask\022\037\n\033PB"
+      "_E_ENGINE_INFO_CB_INVALID\020\000\0220\n,PB_E_ENGI"
+      "NE_INFO_CB_GNSS_ENERGY_CONSUMED_BIT\020\001*\310\001"
+      "\n\030PBGeofenceBreachTypeMask\022\036\n\032PB_GEOFENC"
+      "E_BREACH_INVALID\020\000\022 \n\034PB_GEOFENCE_BREACH"
+      "_ENTER_BIT\020\001\022\037\n\033PB_GEOFENCE_BREACH_EXIT_"
+      "BIT\020\002\022#\n\037PB_GEOFENCE_BREACH_DWELL_IN_BIT"
+      "\020\004\022$\n PB_GEOFENCE_BREACH_DWELL_OUT_BIT\020\010"
+      "b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 7755);
+      descriptor, 7928);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "LocationApiMsg.proto", &protobuf_RegisterTypes);
   ::protobuf_LocationApiDataTypes_2eproto::AddDescriptors();
@@ -1218,6 +1239,7 @@ bool PBELocMsgID_IsValid(int value) {
     case 207:
     case 208:
     case 209:
+    case 210:
     case 300:
     case 301:
     case 302:
@@ -12066,6 +12088,7 @@ void PBLocConfigPositionAssistedClockEstimatorReqMsg::set_menable(bool value) {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PBLocConfigSvConstellationReqMsg::kMConstellationEnablementConfigFieldNumber;
 const int PBLocConfigSvConstellationReqMsg::kMBlacklistSvConfigFieldNumber;
+const int PBLocConfigSvConstellationReqMsg::kMResetToDefaultFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 PBLocConfigSvConstellationReqMsg::PBLocConfigSvConstellationReqMsg()
@@ -12091,12 +12114,13 @@ PBLocConfigSvConstellationReqMsg::PBLocConfigSvConstellationReqMsg(const PBLocCo
   } else {
     mblacklistsvconfig_ = NULL;
   }
+  mresettodefault_ = from.mresettodefault_;
   // @@protoc_insertion_point(copy_constructor:PBLocConfigSvConstellationReqMsg)
 }
 
 void PBLocConfigSvConstellationReqMsg::SharedCtor() {
-  ::memset(&mconstellationenablementconfig_, 0, reinterpret_cast<char*>(&mblacklistsvconfig_) -
-    reinterpret_cast<char*>(&mconstellationenablementconfig_) + sizeof(mblacklistsvconfig_));
+  ::memset(&mconstellationenablementconfig_, 0, reinterpret_cast<char*>(&mresettodefault_) -
+    reinterpret_cast<char*>(&mconstellationenablementconfig_) + sizeof(mresettodefault_));
   _cached_size_ = 0;
 }
 
@@ -12147,6 +12171,7 @@ void PBLocConfigSvConstellationReqMsg::Clear() {
     delete mblacklistsvconfig_;
   }
   mblacklistsvconfig_ = NULL;
+  mresettodefault_ = false;
 }
 
 bool PBLocConfigSvConstellationReqMsg::MergePartialFromCodedStream(
@@ -12177,6 +12202,20 @@ bool PBLocConfigSvConstellationReqMsg::MergePartialFromCodedStream(
             static_cast< ::google::protobuf::uint8>(18u)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_mblacklistsvconfig()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // bool mResetToDefault = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(24u)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &mresettodefault_)));
         } else {
           goto handle_unusual;
         }
@@ -12222,6 +12261,11 @@ void PBLocConfigSvConstellationReqMsg::SerializeWithCachedSizes(
       2, *this->mblacklistsvconfig_, output);
   }
 
+  // bool mResetToDefault = 3;
+  if (this->mresettodefault() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->mresettodefault(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:PBLocConfigSvConstellationReqMsg)
 }
 
@@ -12245,6 +12289,11 @@ void PBLocConfigSvConstellationReqMsg::SerializeWithCachedSizes(
         2, *this->mblacklistsvconfig_, deterministic, target);
   }
 
+  // bool mResetToDefault = 3;
+  if (this->mresettodefault() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->mresettodefault(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:PBLocConfigSvConstellationReqMsg)
   return target;
 }
@@ -12265,6 +12314,11 @@ size_t PBLocConfigSvConstellationReqMsg::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->mblacklistsvconfig_);
+  }
+
+  // bool mResetToDefault = 3;
+  if (this->mresettodefault() != 0) {
+    total_size += 1 + 1;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -12302,6 +12356,9 @@ void PBLocConfigSvConstellationReqMsg::MergeFrom(const PBLocConfigSvConstellatio
   if (from.has_mblacklistsvconfig()) {
     mutable_mblacklistsvconfig()->::PBGnssSvIdConfig::MergeFrom(from.mblacklistsvconfig());
   }
+  if (from.mresettodefault() != 0) {
+    set_mresettodefault(from.mresettodefault());
+  }
 }
 
 void PBLocConfigSvConstellationReqMsg::CopyFrom(const ::google::protobuf::Message& from) {
@@ -12329,6 +12386,7 @@ void PBLocConfigSvConstellationReqMsg::Swap(PBLocConfigSvConstellationReqMsg* ot
 void PBLocConfigSvConstellationReqMsg::InternalSwap(PBLocConfigSvConstellationReqMsg* other) {
   std::swap(mconstellationenablementconfig_, other->mconstellationenablementconfig_);
   std::swap(mblacklistsvconfig_, other->mblacklistsvconfig_);
+  std::swap(mresettodefault_, other->mresettodefault_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -12416,6 +12474,20 @@ void PBLocConfigSvConstellationReqMsg::set_allocated_mblacklistsvconfig(::PBGnss
 
   }
   // @@protoc_insertion_point(field_set_allocated:PBLocConfigSvConstellationReqMsg.mBlacklistSvConfig)
+}
+
+// bool mResetToDefault = 3;
+void PBLocConfigSvConstellationReqMsg::clear_mresettodefault() {
+  mresettodefault_ = false;
+}
+bool PBLocConfigSvConstellationReqMsg::mresettodefault() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigSvConstellationReqMsg.mResetToDefault)
+  return mresettodefault_;
+}
+void PBLocConfigSvConstellationReqMsg::set_mresettodefault(bool value) {
+
+  mresettodefault_ = value;
+  // @@protoc_insertion_point(field_set:PBLocConfigSvConstellationReqMsg.mResetToDefault)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -14248,6 +14320,298 @@ void PBLocConfigMinSvElevationReqMsg::set_mminsvelevation(::google::protobuf::ui
 
   mminsvelevation_ = value;
   // @@protoc_insertion_point(field_set:PBLocConfigMinSvElevationReqMsg.mMinSvElevation)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int PBLocConfigEngineRunStateReqMsg::kMEngTypeFieldNumber;
+const int PBLocConfigEngineRunStateReqMsg::kMEngStateFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+PBLocConfigEngineRunStateReqMsg::PBLocConfigEngineRunStateReqMsg()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_LocationApiMsg_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:PBLocConfigEngineRunStateReqMsg)
+}
+PBLocConfigEngineRunStateReqMsg::PBLocConfigEngineRunStateReqMsg(const PBLocConfigEngineRunStateReqMsg& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&mengtype_, &from.mengtype_,
+    reinterpret_cast<char*>(&mengstate_) -
+    reinterpret_cast<char*>(&mengtype_) + sizeof(mengstate_));
+  // @@protoc_insertion_point(copy_constructor:PBLocConfigEngineRunStateReqMsg)
+}
+
+void PBLocConfigEngineRunStateReqMsg::SharedCtor() {
+  ::memset(&mengtype_, 0, reinterpret_cast<char*>(&mengstate_) -
+    reinterpret_cast<char*>(&mengtype_) + sizeof(mengstate_));
+  _cached_size_ = 0;
+}
+
+PBLocConfigEngineRunStateReqMsg::~PBLocConfigEngineRunStateReqMsg() {
+  // @@protoc_insertion_point(destructor:PBLocConfigEngineRunStateReqMsg)
+  SharedDtor();
+}
+
+void PBLocConfigEngineRunStateReqMsg::SharedDtor() {
+}
+
+void PBLocConfigEngineRunStateReqMsg::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PBLocConfigEngineRunStateReqMsg::descriptor() {
+  protobuf_LocationApiMsg_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_LocationApiMsg_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const PBLocConfigEngineRunStateReqMsg& PBLocConfigEngineRunStateReqMsg::default_instance() {
+  protobuf_LocationApiMsg_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+PBLocConfigEngineRunStateReqMsg* PBLocConfigEngineRunStateReqMsg::New(::google::protobuf::Arena* arena) const {
+  PBLocConfigEngineRunStateReqMsg* n = new PBLocConfigEngineRunStateReqMsg;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void PBLocConfigEngineRunStateReqMsg::Clear() {
+// @@protoc_insertion_point(message_clear_start:PBLocConfigEngineRunStateReqMsg)
+  ::memset(&mengtype_, 0, reinterpret_cast<char*>(&mengstate_) -
+    reinterpret_cast<char*>(&mengtype_) + sizeof(mengstate_));
+}
+
+bool PBLocConfigEngineRunStateReqMsg::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:PBLocConfigEngineRunStateReqMsg)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .PBLocApiPositioningEngineMask mEngType = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_mengtype(static_cast< ::PBLocApiPositioningEngineMask >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .PBLocEngineRunState mEngState = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(16u)) {
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_mengstate(static_cast< ::PBLocEngineRunState >(value));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:PBLocConfigEngineRunStateReqMsg)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:PBLocConfigEngineRunStateReqMsg)
+  return false;
+#undef DO_
+}
+
+void PBLocConfigEngineRunStateReqMsg::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:PBLocConfigEngineRunStateReqMsg)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .PBLocApiPositioningEngineMask mEngType = 1;
+  if (this->mengtype() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->mengtype(), output);
+  }
+
+  // .PBLocEngineRunState mEngState = 2;
+  if (this->mengstate() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      2, this->mengstate(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:PBLocConfigEngineRunStateReqMsg)
+}
+
+::google::protobuf::uint8* PBLocConfigEngineRunStateReqMsg::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:PBLocConfigEngineRunStateReqMsg)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .PBLocApiPositioningEngineMask mEngType = 1;
+  if (this->mengtype() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->mengtype(), target);
+  }
+
+  // .PBLocEngineRunState mEngState = 2;
+  if (this->mengstate() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      2, this->mengstate(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:PBLocConfigEngineRunStateReqMsg)
+  return target;
+}
+
+size_t PBLocConfigEngineRunStateReqMsg::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:PBLocConfigEngineRunStateReqMsg)
+  size_t total_size = 0;
+
+  // .PBLocApiPositioningEngineMask mEngType = 1;
+  if (this->mengtype() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->mengtype());
+  }
+
+  // .PBLocEngineRunState mEngState = 2;
+  if (this->mengstate() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->mengstate());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PBLocConfigEngineRunStateReqMsg::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:PBLocConfigEngineRunStateReqMsg)
+  GOOGLE_DCHECK_NE(&from, this);
+  const PBLocConfigEngineRunStateReqMsg* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const PBLocConfigEngineRunStateReqMsg>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:PBLocConfigEngineRunStateReqMsg)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:PBLocConfigEngineRunStateReqMsg)
+    MergeFrom(*source);
+  }
+}
+
+void PBLocConfigEngineRunStateReqMsg::MergeFrom(const PBLocConfigEngineRunStateReqMsg& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:PBLocConfigEngineRunStateReqMsg)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.mengtype() != 0) {
+    set_mengtype(from.mengtype());
+  }
+  if (from.mengstate() != 0) {
+    set_mengstate(from.mengstate());
+  }
+}
+
+void PBLocConfigEngineRunStateReqMsg::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:PBLocConfigEngineRunStateReqMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PBLocConfigEngineRunStateReqMsg::CopyFrom(const PBLocConfigEngineRunStateReqMsg& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:PBLocConfigEngineRunStateReqMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PBLocConfigEngineRunStateReqMsg::IsInitialized() const {
+  return true;
+}
+
+void PBLocConfigEngineRunStateReqMsg::Swap(PBLocConfigEngineRunStateReqMsg* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void PBLocConfigEngineRunStateReqMsg::InternalSwap(PBLocConfigEngineRunStateReqMsg* other) {
+  std::swap(mengtype_, other->mengtype_);
+  std::swap(mengstate_, other->mengstate_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata PBLocConfigEngineRunStateReqMsg::GetMetadata() const {
+  protobuf_LocationApiMsg_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_LocationApiMsg_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// PBLocConfigEngineRunStateReqMsg
+
+// .PBLocApiPositioningEngineMask mEngType = 1;
+void PBLocConfigEngineRunStateReqMsg::clear_mengtype() {
+  mengtype_ = 0;
+}
+::PBLocApiPositioningEngineMask PBLocConfigEngineRunStateReqMsg::mengtype() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigEngineRunStateReqMsg.mEngType)
+  return static_cast< ::PBLocApiPositioningEngineMask >(mengtype_);
+}
+void PBLocConfigEngineRunStateReqMsg::set_mengtype(::PBLocApiPositioningEngineMask value) {
+
+  mengtype_ = value;
+  // @@protoc_insertion_point(field_set:PBLocConfigEngineRunStateReqMsg.mEngType)
+}
+
+// .PBLocEngineRunState mEngState = 2;
+void PBLocConfigEngineRunStateReqMsg::clear_mengstate() {
+  mengstate_ = 0;
+}
+::PBLocEngineRunState PBLocConfigEngineRunStateReqMsg::mengstate() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigEngineRunStateReqMsg.mEngState)
+  return static_cast< ::PBLocEngineRunState >(mengstate_);
+}
+void PBLocConfigEngineRunStateReqMsg::set_mengstate(::PBLocEngineRunState value) {
+
+  mengstate_ = value;
+  // @@protoc_insertion_point(field_set:PBLocConfigEngineRunStateReqMsg.mEngState)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

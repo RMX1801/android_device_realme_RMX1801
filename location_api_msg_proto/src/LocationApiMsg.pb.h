@@ -266,6 +266,9 @@ extern PBLocConfigConstrainedTuncReqMsgDefaultTypeInternal _PBLocConfigConstrain
 class PBLocConfigDrEngineParamsReqMsg;
 class PBLocConfigDrEngineParamsReqMsgDefaultTypeInternal;
 extern PBLocConfigDrEngineParamsReqMsgDefaultTypeInternal _PBLocConfigDrEngineParamsReqMsg_default_instance_;
+class PBLocConfigEngineRunStateReqMsg;
+class PBLocConfigEngineRunStateReqMsgDefaultTypeInternal;
+extern PBLocConfigEngineRunStateReqMsgDefaultTypeInternal _PBLocConfigEngineRunStateReqMsg_default_instance_;
 class PBLocConfigGetConstltnSecondaryBandConfigRespMsg;
 class PBLocConfigGetConstltnSecondaryBandConfigRespMsgDefaultTypeInternal;
 extern PBLocConfigGetConstltnSecondaryBandConfigRespMsgDefaultTypeInternal _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_;
@@ -323,8 +326,7 @@ void InitDefaults();
 enum LocationApiMsgVersion {
   LOCAPI_MSG_VER_INVALID = 0,
   LOCAPI_MSG_VER_MAJOR = 1,
-  LOCAPI_MSG_VER_MINOR = 0,
-  LOCAPI_MSG_VER_MICRO = 0,
+  LOCAPI_MSG_VER_MINOR = 1,
   LocationApiMsgVersion_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   LocationApiMsgVersion_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
@@ -386,6 +388,7 @@ enum PBELocMsgID {
   PB_E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID = 207,
   PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID = 208,
   PB_E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID = 209,
+  PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID = 210,
   PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID = 300,
   PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID = 301,
   PB_E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID = 302,
@@ -3867,12 +3870,19 @@ class PBLocConfigSvConstellationReqMsg : public ::google::protobuf::Message /* @
   ::PBGnssSvIdConfig* release_mblacklistsvconfig();
   void set_allocated_mblacklistsvconfig(::PBGnssSvIdConfig* mblacklistsvconfig);
 
+  // bool mResetToDefault = 3;
+  void clear_mresettodefault();
+  static const int kMResetToDefaultFieldNumber = 3;
+  bool mresettodefault() const;
+  void set_mresettodefault(bool value);
+
   // @@protoc_insertion_point(class_scope:PBLocConfigSvConstellationReqMsg)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::PBGnssSvTypeConfig* mconstellationenablementconfig_;
   ::PBGnssSvIdConfig* mblacklistsvconfig_;
+  bool mresettodefault_;
   mutable int _cached_size_;
   friend struct protobuf_LocationApiMsg_2eproto::TableStruct;
 };
@@ -4457,6 +4467,93 @@ class PBLocConfigMinSvElevationReqMsg : public ::google::protobuf::Message /* @@
 };
 // -------------------------------------------------------------------
 
+class PBLocConfigEngineRunStateReqMsg : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:PBLocConfigEngineRunStateReqMsg) */ {
+ public:
+  PBLocConfigEngineRunStateReqMsg();
+  virtual ~PBLocConfigEngineRunStateReqMsg();
+
+  PBLocConfigEngineRunStateReqMsg(const PBLocConfigEngineRunStateReqMsg& from);
+
+  inline PBLocConfigEngineRunStateReqMsg& operator=(const PBLocConfigEngineRunStateReqMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PBLocConfigEngineRunStateReqMsg& default_instance();
+
+  static inline const PBLocConfigEngineRunStateReqMsg* internal_default_instance() {
+    return reinterpret_cast<const PBLocConfigEngineRunStateReqMsg*>(
+               &_PBLocConfigEngineRunStateReqMsg_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    46;
+
+  void Swap(PBLocConfigEngineRunStateReqMsg* other);
+
+  // implements Message ----------------------------------------------
+
+  inline PBLocConfigEngineRunStateReqMsg* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  PBLocConfigEngineRunStateReqMsg* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const PBLocConfigEngineRunStateReqMsg& from);
+  void MergeFrom(const PBLocConfigEngineRunStateReqMsg& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(PBLocConfigEngineRunStateReqMsg* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .PBLocApiPositioningEngineMask mEngType = 1;
+  void clear_mengtype();
+  static const int kMEngTypeFieldNumber = 1;
+  ::PBLocApiPositioningEngineMask mengtype() const;
+  void set_mengtype(::PBLocApiPositioningEngineMask value);
+
+  // .PBLocEngineRunState mEngState = 2;
+  void clear_mengstate();
+  static const int kMEngStateFieldNumber = 2;
+  ::PBLocEngineRunState mengstate() const;
+  void set_mengstate(::PBLocEngineRunState value);
+
+  // @@protoc_insertion_point(class_scope:PBLocConfigEngineRunStateReqMsg)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  int mengtype_;
+  int mengstate_;
+  mutable int _cached_size_;
+  friend struct protobuf_LocationApiMsg_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
 class PBLocConfigGetConstltnSecondaryBandConfigRespMsg : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:PBLocConfigGetConstltnSecondaryBandConfigRespMsg) */ {
  public:
   PBLocConfigGetConstltnSecondaryBandConfigRespMsg();
@@ -4477,7 +4574,7 @@ class PBLocConfigGetConstltnSecondaryBandConfigRespMsg : public ::google::protob
                &_PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    46;
+    47;
 
   void Swap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other);
 
@@ -4560,7 +4657,7 @@ class PBLocConfigGetRobustLocationConfigRespMsg : public ::google::protobuf::Mes
                &_PBLocConfigGetRobustLocationConfigRespMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    47;
+    48;
 
   void Swap(PBLocConfigGetRobustLocationConfigRespMsg* other);
 
@@ -4643,7 +4740,7 @@ class PBLocConfigGetMinGpsWeekRespMsg : public ::google::protobuf::Message /* @@
                &_PBLocConfigGetMinGpsWeekRespMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    48;
+    49;
 
   void Swap(PBLocConfigGetMinGpsWeekRespMsg* other);
 
@@ -4723,7 +4820,7 @@ class PBLocConfigGetMinSvElevationRespMsg : public ::google::protobuf::Message /
                &_PBLocConfigGetMinSvElevationRespMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    49;
+    50;
 
   void Swap(PBLocConfigGetMinSvElevationRespMsg* other);
 
@@ -4803,7 +4900,7 @@ class PBLocAPIPingTestReqMsg : public ::google::protobuf::Message /* @@protoc_in
                &_PBLocAPIPingTestReqMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    50;
+    51;
 
   void Swap(PBLocAPIPingTestReqMsg* other);
 
@@ -4897,7 +4994,7 @@ class PBLocAPIPingTestIndMsg : public ::google::protobuf::Message /* @@protoc_in
                &_PBLocAPIPingTestIndMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    51;
+    52;
 
   void Swap(PBLocAPIPingTestIndMsg* other);
 
@@ -4991,7 +5088,7 @@ class PBLocAPIMsgHeader : public ::google::protobuf::Message /* @@protoc_inserti
                &_PBLocAPIMsgHeader_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    52;
+    53;
 
   void Swap(PBLocAPIMsgHeader* other);
 
@@ -6750,6 +6847,20 @@ inline void PBLocConfigSvConstellationReqMsg::set_allocated_mblacklistsvconfig(:
   // @@protoc_insertion_point(field_set_allocated:PBLocConfigSvConstellationReqMsg.mBlacklistSvConfig)
 }
 
+// bool mResetToDefault = 3;
+inline void PBLocConfigSvConstellationReqMsg::clear_mresettodefault() {
+  mresettodefault_ = false;
+}
+inline bool PBLocConfigSvConstellationReqMsg::mresettodefault() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigSvConstellationReqMsg.mResetToDefault)
+  return mresettodefault_;
+}
+inline void PBLocConfigSvConstellationReqMsg::set_mresettodefault(bool value) {
+
+  mresettodefault_ = value;
+  // @@protoc_insertion_point(field_set:PBLocConfigSvConstellationReqMsg.mResetToDefault)
+}
+
 // -------------------------------------------------------------------
 
 // PBLocConfigConstellationSecondaryBandReqMsg
@@ -6988,6 +7099,38 @@ inline void PBLocConfigMinSvElevationReqMsg::set_mminsvelevation(::google::proto
 
   mminsvelevation_ = value;
   // @@protoc_insertion_point(field_set:PBLocConfigMinSvElevationReqMsg.mMinSvElevation)
+}
+
+// -------------------------------------------------------------------
+
+// PBLocConfigEngineRunStateReqMsg
+
+// .PBLocApiPositioningEngineMask mEngType = 1;
+inline void PBLocConfigEngineRunStateReqMsg::clear_mengtype() {
+  mengtype_ = 0;
+}
+inline ::PBLocApiPositioningEngineMask PBLocConfigEngineRunStateReqMsg::mengtype() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigEngineRunStateReqMsg.mEngType)
+  return static_cast< ::PBLocApiPositioningEngineMask >(mengtype_);
+}
+inline void PBLocConfigEngineRunStateReqMsg::set_mengtype(::PBLocApiPositioningEngineMask value) {
+
+  mengtype_ = value;
+  // @@protoc_insertion_point(field_set:PBLocConfigEngineRunStateReqMsg.mEngType)
+}
+
+// .PBLocEngineRunState mEngState = 2;
+inline void PBLocConfigEngineRunStateReqMsg::clear_mengstate() {
+  mengstate_ = 0;
+}
+inline ::PBLocEngineRunState PBLocConfigEngineRunStateReqMsg::mengstate() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigEngineRunStateReqMsg.mEngState)
+  return static_cast< ::PBLocEngineRunState >(mengstate_);
+}
+inline void PBLocConfigEngineRunStateReqMsg::set_mengstate(::PBLocEngineRunState value) {
+
+  mengstate_ = value;
+  // @@protoc_insertion_point(field_set:PBLocConfigEngineRunStateReqMsg.mEngState)
 }
 
 // -------------------------------------------------------------------
@@ -7361,6 +7504,8 @@ inline void PBLocAPIMsgHeader::set_payloadsize(::google::protobuf::uint32 value)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
