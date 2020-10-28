@@ -11,12 +11,6 @@ ro.af.client_heap_size_kbyte=7168
 # Bluetooth
 bt.max.hfpclient.connections=1
 persist.bt.a2dp.aac_disable=true
-persist.bluetooth.a2dp_offload.disabled=false
-persist.vendor.bt.a2dp.aac_whitelist=false
-persist.vendor.qcom.bluetooth.enable.splita2dp=true
-persist.vendor.qcom.bluetooth.a2dp_offload_cap=sbc-aptx-aptxhd-aac-ldac
-ro.bluetooth.library_name=libbluetooth_qti.so
-ro.bluetooth.a2dp_offload.supported=true  
 ro.bluetooth.emb_wp_mode=false
 ro.bluetooth.wipower=false
 vendor.bluetooth.soc=cherokee
