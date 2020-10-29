@@ -1,4 +1,4 @@
-## RMX1801 package version: RMX1801EX_11.F.08, unless stated otherwise
+## RMX1801 package version: RMX1801EX_11.F.12, unless stated otherwise
 
 # ADSP
 vendor/bin/adsprpcd
