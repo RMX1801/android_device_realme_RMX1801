@@ -1,3 +1,6 @@
+on post-fs
+    setprop oppo.camera.packname com.oppo.camera
+
 on boot
     mkdir /data/opponvitems  0771 radio radio
     mkdir /persist/camera 0777 system system
