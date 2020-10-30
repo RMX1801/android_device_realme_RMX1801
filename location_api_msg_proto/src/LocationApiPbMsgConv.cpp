@@ -195,6 +195,9 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
         case PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
             eLocMsgId = E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID;
             break;
+        case PB_E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID:
+            eLocMsgId = E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID;
+            break;
         case PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             eLocMsgId = E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
             break;
@@ -212,6 +215,12 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
             break;
         case PB_E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID:
             eLocMsgId = E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID;
+            break;
+        case PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID:
+            eLocMsgId = E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID;
+            break;
+        case PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID:
+            eLocMsgId = E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID;
             break;
         default:
             break;
@@ -560,6 +569,9 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
         case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID;
             break;
+        case E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID;
+            break;
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
             break;
@@ -577,6 +589,12 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
             break;
         case E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID;
+            break;
+        case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID;
+            break;
+        case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID;
             break;
         default:
             break;
@@ -4477,7 +4495,7 @@ int LocationApiPbMsgConv::pbConvertToGnssAidingData(const PBAidingData &pbGnssAi
     gnssAidData.sv.svMask = getGnssAidingDataSvMaskFromPB(pbGnssAidData.gnssaidingdatasvmask());
 
     // uint32 dreAidingDataMask = 3;- PBDrEngineAidingDataMask
-    gnssAidData.dreAidingDataMask = getDrSolutionStatusMaskFromPB(
+    gnssAidData.dreAidingDataMask = getDrEngineAidingDataMaskFromPB(
             pbGnssAidData.dreaidingdatamask());
 
     // Masks from - PBLocApiPositioningEngineMask

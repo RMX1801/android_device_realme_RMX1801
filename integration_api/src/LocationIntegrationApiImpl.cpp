@@ -544,11 +544,16 @@ uint32_t LocationIntegrationApiImpl::getConstellationSecondaryBandConfig() {
                 mApiImpl(apiImpl) {}
         virtual ~GetConstellationSecondaryBandConfigReq() {}
         void proc() const {
+            string pbStr;
             LocConfigGetConstellationSecondaryBandConfigReqMsg msg(mApiImpl->mSocketName,
                     &mApiImpl->mPbufMsgConv);
-            mApiImpl->sendConfigMsgToHalDaemon(GET_CONSTELLATION_SECONDARY_BAND_CONFIG,
-                                               reinterpret_cast<uint8_t*>(&msg),
-                                               sizeof(msg));
+            if (msg.serializeToProtobuf(pbStr)) {
+                mApiImpl->sendConfigMsgToHalDaemon(GET_CONSTELLATION_SECONDARY_BAND_CONFIG,
+                                   reinterpret_cast<uint8_t*>((uint8_t *)pbStr.c_str()),
+                                   pbStr.size());
+            } else {
+                LOC_LOGe("LocCgGetCnstlSecondaryBandConfigReqMsg serializeToProtobuf failed");
+            }
         }
         LocationIntegrationApiImpl* mApiImpl;
     };
