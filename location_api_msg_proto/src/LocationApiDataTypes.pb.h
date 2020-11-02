@@ -164,7 +164,6 @@ enum LocationApiDataTypesVersion {
   LOCAPI_DATA_TYPES_VER_INVALID = 0,
   LOCAPI_DATA_TYPES_VER_MAJOR = 1,
   LOCAPI_DATA_TYPES_VER_MINOR = 0,
-  LOCAPI_DATA_TYPES_VER_MICRO = 0,
   LocationApiDataTypesVersion_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   LocationApiDataTypesVersion_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
@@ -371,6 +370,27 @@ inline bool PBGnssLocationInfoFlagMask_Parse(
     const ::std::string& name, PBGnssLocationInfoFlagMask* value) {
   return ::google::protobuf::internal::ParseNamedEnum<PBGnssLocationInfoFlagMask>(
     PBGnssLocationInfoFlagMask_descriptor(), name, value);
+}
+enum PBGnssLocationInfoExtFlagMask {
+  PB_GNSS_LOCATION_INFO_EXT_INVALID = 0,
+  PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT = 1,
+  PBGnssLocationInfoExtFlagMask_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  PBGnssLocationInfoExtFlagMask_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool PBGnssLocationInfoExtFlagMask_IsValid(int value);
+const PBGnssLocationInfoExtFlagMask PBGnssLocationInfoExtFlagMask_MIN = PB_GNSS_LOCATION_INFO_EXT_INVALID;
+const PBGnssLocationInfoExtFlagMask PBGnssLocationInfoExtFlagMask_MAX = PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT;
+const int PBGnssLocationInfoExtFlagMask_ARRAYSIZE = PBGnssLocationInfoExtFlagMask_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* PBGnssLocationInfoExtFlagMask_descriptor();
+inline const ::std::string& PBGnssLocationInfoExtFlagMask_Name(PBGnssLocationInfoExtFlagMask value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    PBGnssLocationInfoExtFlagMask_descriptor(), value);
+}
+inline bool PBGnssLocationInfoExtFlagMask_Parse(
+    const ::std::string& name, PBGnssLocationInfoExtFlagMask* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<PBGnssLocationInfoExtFlagMask>(
+    PBGnssLocationInfoExtFlagMask_descriptor(), name, value);
 }
 enum PBGnssLocationNavSolutionMask {
   PB_LOCATION_NAV_SOLUTION_MASK_INVALID = 0,
@@ -774,6 +794,28 @@ inline bool PBLocApiPositioningEngineMask_Parse(
     const ::std::string& name, PBLocApiPositioningEngineMask* value) {
   return ::google::protobuf::internal::ParseNamedEnum<PBLocApiPositioningEngineMask>(
     PBLocApiPositioningEngineMask_descriptor(), name, value);
+}
+enum PBLocEngineRunState {
+  PB_LOC_ENGINE_RUN_STATE_INVALID = 0,
+  PB_LOC_ENGINE_RUN_STATE_PAUSE = 1,
+  PB_LOC_ENGINE_RUN_STATE_RESUME = 2,
+  PBLocEngineRunState_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  PBLocEngineRunState_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool PBLocEngineRunState_IsValid(int value);
+const PBLocEngineRunState PBLocEngineRunState_MIN = PB_LOC_ENGINE_RUN_STATE_INVALID;
+const PBLocEngineRunState PBLocEngineRunState_MAX = PB_LOC_ENGINE_RUN_STATE_RESUME;
+const int PBLocEngineRunState_ARRAYSIZE = PBLocEngineRunState_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* PBLocEngineRunState_descriptor();
+inline const ::std::string& PBLocEngineRunState_Name(PBLocEngineRunState value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    PBLocEngineRunState_descriptor(), value);
+}
+inline bool PBLocEngineRunState_Parse(
+    const ::std::string& name, PBLocEngineRunState* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<PBLocEngineRunState>(
+    PBLocEngineRunState_descriptor(), name, value);
 }
 enum PBDrEngineAidingDataMask {
   PB_DR_ENGINE_AIDING_DATA_INVALID = 0,
@@ -3038,6 +3080,18 @@ class PBGnssLocationInfoNotification : public ::google::protobuf::Message /* @@p
   ::google::protobuf::uint32 drsolutionstatusmask() const;
   void set_drsolutionstatusmask(::google::protobuf::uint32 value);
 
+  // uint32 extFlags = 40;
+  void clear_extflags();
+  static const int kExtFlagsFieldNumber = 40;
+  ::google::protobuf::uint32 extflags() const;
+  void set_extflags(::google::protobuf::uint32 value);
+
+  // bool altitudeAssumed = 41;
+  void clear_altitudeassumed();
+  static const int kAltitudeAssumedFieldNumber = 41;
+  bool altitudeassumed() const;
+  void set_altitudeassumed(bool value);
+
   // @@protoc_insertion_point(class_scope:PBGnssLocationInfoNotification)
  private:
 
@@ -3082,6 +3136,8 @@ class PBGnssLocationInfoNotification : public ::google::protobuf::Message /* @@p
   ::google::protobuf::uint32 locoutputengmask_;
   float conformityindex_;
   ::google::protobuf::uint32 drsolutionstatusmask_;
+  ::google::protobuf::uint32 extflags_;
+  bool altitudeassumed_;
   mutable int _cached_size_;
   friend struct protobuf_LocationApiDataTypes_2eproto::TableStruct;
 };
@@ -7105,6 +7161,34 @@ inline void PBGnssLocationInfoNotification::set_drsolutionstatusmask(::google::p
   // @@protoc_insertion_point(field_set:PBGnssLocationInfoNotification.drSolutionStatusMask)
 }
 
+// uint32 extFlags = 40;
+inline void PBGnssLocationInfoNotification::clear_extflags() {
+  extflags_ = 0u;
+}
+inline ::google::protobuf::uint32 PBGnssLocationInfoNotification::extflags() const {
+  // @@protoc_insertion_point(field_get:PBGnssLocationInfoNotification.extFlags)
+  return extflags_;
+}
+inline void PBGnssLocationInfoNotification::set_extflags(::google::protobuf::uint32 value) {
+
+  extflags_ = value;
+  // @@protoc_insertion_point(field_set:PBGnssLocationInfoNotification.extFlags)
+}
+
+// bool altitudeAssumed = 41;
+inline void PBGnssLocationInfoNotification::clear_altitudeassumed() {
+  altitudeassumed_ = false;
+}
+inline bool PBGnssLocationInfoNotification::altitudeassumed() const {
+  // @@protoc_insertion_point(field_get:PBGnssLocationInfoNotification.altitudeAssumed)
+  return altitudeassumed_;
+}
+inline void PBGnssLocationInfoNotification::set_altitudeassumed(bool value) {
+
+  altitudeassumed_ = value;
+  // @@protoc_insertion_point(field_set:PBGnssLocationInfoNotification.altitudeAssumed)
+}
+
 // -------------------------------------------------------------------
 
 // PBGnssDataNotification
@@ -8440,6 +8524,11 @@ template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::PBGnssLocationInfoFlagMask>() {
   return ::PBGnssLocationInfoFlagMask_descriptor();
 }
+template <> struct is_proto_enum< ::PBGnssLocationInfoExtFlagMask> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::PBGnssLocationInfoExtFlagMask>() {
+  return ::PBGnssLocationInfoExtFlagMask_descriptor();
+}
 template <> struct is_proto_enum< ::PBGnssLocationNavSolutionMask> : ::google::protobuf::internal::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::PBGnssLocationNavSolutionMask>() {
@@ -8519,6 +8608,11 @@ template <> struct is_proto_enum< ::PBLocApiPositioningEngineMask> : ::google::p
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::PBLocApiPositioningEngineMask>() {
   return ::PBLocApiPositioningEngineMask_descriptor();
+}
+template <> struct is_proto_enum< ::PBLocEngineRunState> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::PBLocEngineRunState>() {
+  return ::PBLocEngineRunState_descriptor();
 }
 template <> struct is_proto_enum< ::PBDrEngineAidingDataMask> : ::google::protobuf::internal::true_type {};
 template <>
