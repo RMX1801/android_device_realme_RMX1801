@@ -163,13 +163,13 @@ void InitDefaults();
 enum LocationApiDataTypesVersion {
   LOCAPI_DATA_TYPES_VER_INVALID = 0,
   LOCAPI_DATA_TYPES_VER_MAJOR = 1,
-  LOCAPI_DATA_TYPES_VER_MINOR = 0,
+  LOCAPI_DATA_TYPES_VER_MINOR = 2,
   LocationApiDataTypesVersion_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   LocationApiDataTypesVersion_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool LocationApiDataTypesVersion_IsValid(int value);
 const LocationApiDataTypesVersion LocationApiDataTypesVersion_MIN = LOCAPI_DATA_TYPES_VER_INVALID;
-const LocationApiDataTypesVersion LocationApiDataTypesVersion_MAX = LOCAPI_DATA_TYPES_VER_MAJOR;
+const LocationApiDataTypesVersion LocationApiDataTypesVersion_MAX = LOCAPI_DATA_TYPES_VER_MINOR;
 const int LocationApiDataTypesVersion_ARRAYSIZE = LocationApiDataTypesVersion_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* LocationApiDataTypesVersion_descriptor();
@@ -1042,12 +1042,24 @@ enum PBLocationCapabilitiesMask {
   PB_LOCATION_CAPS_DISTANCE_BASED_BATCHING_BIT = 8,
   PB_LOCATION_CAPS_GEOFENCE_BIT = 16,
   PB_LOCATION_CAPS_OUTDOOR_TRIP_BATCHING_BIT = 32,
+  PB_LOCATION_CAPS_GNSS_MEASUREMENTS_BIT = 64,
+  PB_LOCATION_CAPS_CONSTELLATION_ENABLEMENT_BIT = 128,
+  PB_LOCATION_CAPS_QWES_CARRIER_PHASE_BIT = 256,
+  PB_LOCATION_CAPS_QWES_SV_POLYNOMIAL_BIT = 512,
+  PB_LOCATION_CAPS_QWES_GNSS_SINGLE_FREQUENCY = 1024,
+  PB_LOCATION_CAPS_QWES_GNSS_MULTI_FREQUENCY = 2048,
+  PB_LOCATION_CAPS_QWES_VPE = 4096,
+  PB_LOCATION_CAPS_QWES_CV2X_LOCATION_BASIC = 8192,
+  PB_LOCATION_CAPS_QWES_CV2X_LOCATION_PREMIUM = 16384,
+  PB_LOCATION_CAPS_QWES_PPE = 32768,
+  PB_LOCATION_CAPS_QWES_QDR2 = 65536,
+  PB_LOCATION_CAPS_QWES_QDR3 = 131072,
   PBLocationCapabilitiesMask_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   PBLocationCapabilitiesMask_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool PBLocationCapabilitiesMask_IsValid(int value);
 const PBLocationCapabilitiesMask PBLocationCapabilitiesMask_MIN = PB_LOCATION_CAPS_INVALID;
-const PBLocationCapabilitiesMask PBLocationCapabilitiesMask_MAX = PB_LOCATION_CAPS_OUTDOOR_TRIP_BATCHING_BIT;
+const PBLocationCapabilitiesMask PBLocationCapabilitiesMask_MAX = PB_LOCATION_CAPS_QWES_QDR3;
 const int PBLocationCapabilitiesMask_ARRAYSIZE = PBLocationCapabilitiesMask_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* PBLocationCapabilitiesMask_descriptor();

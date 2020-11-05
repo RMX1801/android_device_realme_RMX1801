@@ -326,13 +326,13 @@ void InitDefaults();
 enum LocationApiMsgVersion {
   LOCAPI_MSG_VER_INVALID = 0,
   LOCAPI_MSG_VER_MAJOR = 1,
-  LOCAPI_MSG_VER_MINOR = 1,
+  LOCAPI_MSG_VER_MINOR = 3,
   LocationApiMsgVersion_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   LocationApiMsgVersion_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool LocationApiMsgVersion_IsValid(int value);
 const LocationApiMsgVersion LocationApiMsgVersion_MIN = LOCAPI_MSG_VER_INVALID;
-const LocationApiMsgVersion LocationApiMsgVersion_MAX = LOCAPI_MSG_VER_MAJOR;
+const LocationApiMsgVersion LocationApiMsgVersion_MAX = LOCAPI_MSG_VER_MINOR;
 const int LocationApiMsgVersion_ARRAYSIZE = LocationApiMsgVersion_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* LocationApiMsgVersion_descriptor();
@@ -1593,17 +1593,17 @@ class PBLocAPICapabilitiesIndMsg : public ::google::protobuf::Message /* @@proto
 
   // accessors -------------------------------------------------------
 
-  // uint32 capabilitiesMask = 1;
+  // uint64 capabilitiesMask = 1;
   void clear_capabilitiesmask();
   static const int kCapabilitiesMaskFieldNumber = 1;
-  ::google::protobuf::uint32 capabilitiesmask() const;
-  void set_capabilitiesmask(::google::protobuf::uint32 value);
+  ::google::protobuf::uint64 capabilitiesmask() const;
+  void set_capabilitiesmask(::google::protobuf::uint64 value);
 
   // @@protoc_insertion_point(class_scope:PBLocAPICapabilitiesIndMsg)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::uint32 capabilitiesmask_;
+  ::google::protobuf::uint64 capabilitiesmask_;
   mutable int _cached_size_;
   friend struct protobuf_LocationApiMsg_2eproto::TableStruct;
 };
@@ -4554,89 +4554,6 @@ class PBLocConfigEngineRunStateReqMsg : public ::google::protobuf::Message /* @@
 };
 // -------------------------------------------------------------------
 
-class PBLocConfigGetConstltnSecondaryBandConfigRespMsg : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:PBLocConfigGetConstltnSecondaryBandConfigRespMsg) */ {
- public:
-  PBLocConfigGetConstltnSecondaryBandConfigRespMsg();
-  virtual ~PBLocConfigGetConstltnSecondaryBandConfigRespMsg();
-
-  PBLocConfigGetConstltnSecondaryBandConfigRespMsg(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from);
-
-  inline PBLocConfigGetConstltnSecondaryBandConfigRespMsg& operator=(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& default_instance();
-
-  static inline const PBLocConfigGetConstltnSecondaryBandConfigRespMsg* internal_default_instance() {
-    return reinterpret_cast<const PBLocConfigGetConstltnSecondaryBandConfigRespMsg*>(
-               &_PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_);
-  }
-  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    47;
-
-  void Swap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other);
-
-  // implements Message ----------------------------------------------
-
-  inline PBLocConfigGetConstltnSecondaryBandConfigRespMsg* New() const PROTOBUF_FINAL { return New(NULL); }
-
-  PBLocConfigGetConstltnSecondaryBandConfigRespMsg* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
-  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
-  void CopyFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from);
-  void MergeFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from);
-  void Clear() PROTOBUF_FINAL;
-  bool IsInitialized() const PROTOBUF_FINAL;
-
-  size_t ByteSizeLong() const PROTOBUF_FINAL;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
-  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const PROTOBUF_FINAL;
-  void InternalSwap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-  bool has_msecondarybandconfig() const;
-  void clear_msecondarybandconfig();
-  static const int kMSecondaryBandConfigFieldNumber = 1;
-  const ::PBGnssSvTypeConfig& msecondarybandconfig() const;
-  ::PBGnssSvTypeConfig* mutable_msecondarybandconfig();
-  ::PBGnssSvTypeConfig* release_msecondarybandconfig();
-  void set_allocated_msecondarybandconfig(::PBGnssSvTypeConfig* msecondarybandconfig);
-
-  // @@protoc_insertion_point(class_scope:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PBGnssSvTypeConfig* msecondarybandconfig_;
-  mutable int _cached_size_;
-  friend struct protobuf_LocationApiMsg_2eproto::TableStruct;
-};
-// -------------------------------------------------------------------
-
 class PBLocConfigGetRobustLocationConfigRespMsg : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:PBLocConfigGetRobustLocationConfigRespMsg) */ {
  public:
   PBLocConfigGetRobustLocationConfigRespMsg();
@@ -4657,7 +4574,7 @@ class PBLocConfigGetRobustLocationConfigRespMsg : public ::google::protobuf::Mes
                &_PBLocConfigGetRobustLocationConfigRespMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    48;
+    47;
 
   void Swap(PBLocConfigGetRobustLocationConfigRespMsg* other);
 
@@ -4740,7 +4657,7 @@ class PBLocConfigGetMinGpsWeekRespMsg : public ::google::protobuf::Message /* @@
                &_PBLocConfigGetMinGpsWeekRespMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    49;
+    48;
 
   void Swap(PBLocConfigGetMinGpsWeekRespMsg* other);
 
@@ -4820,7 +4737,7 @@ class PBLocConfigGetMinSvElevationRespMsg : public ::google::protobuf::Message /
                &_PBLocConfigGetMinSvElevationRespMsg_default_instance_);
   }
   static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
-    50;
+    49;
 
   void Swap(PBLocConfigGetMinSvElevationRespMsg* other);
 
@@ -4875,6 +4792,89 @@ class PBLocConfigGetMinSvElevationRespMsg : public ::google::protobuf::Message /
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::uint32 mminsvelevation_;
+  mutable int _cached_size_;
+  friend struct protobuf_LocationApiMsg_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class PBLocConfigGetConstltnSecondaryBandConfigRespMsg : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:PBLocConfigGetConstltnSecondaryBandConfigRespMsg) */ {
+ public:
+  PBLocConfigGetConstltnSecondaryBandConfigRespMsg();
+  virtual ~PBLocConfigGetConstltnSecondaryBandConfigRespMsg();
+
+  PBLocConfigGetConstltnSecondaryBandConfigRespMsg(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from);
+
+  inline PBLocConfigGetConstltnSecondaryBandConfigRespMsg& operator=(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& default_instance();
+
+  static inline const PBLocConfigGetConstltnSecondaryBandConfigRespMsg* internal_default_instance() {
+    return reinterpret_cast<const PBLocConfigGetConstltnSecondaryBandConfigRespMsg*>(
+               &_PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    50;
+
+  void Swap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other);
+
+  // implements Message ----------------------------------------------
+
+  inline PBLocConfigGetConstltnSecondaryBandConfigRespMsg* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  PBLocConfigGetConstltnSecondaryBandConfigRespMsg* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from);
+  void MergeFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+  bool has_msecondarybandconfig() const;
+  void clear_msecondarybandconfig();
+  static const int kMSecondaryBandConfigFieldNumber = 1;
+  const ::PBGnssSvTypeConfig& msecondarybandconfig() const;
+  ::PBGnssSvTypeConfig* mutable_msecondarybandconfig();
+  ::PBGnssSvTypeConfig* release_msecondarybandconfig();
+  void set_allocated_msecondarybandconfig(::PBGnssSvTypeConfig* msecondarybandconfig);
+
+  // @@protoc_insertion_point(class_scope:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PBGnssSvTypeConfig* msecondarybandconfig_;
   mutable int _cached_size_;
   friend struct protobuf_LocationApiMsg_2eproto::TableStruct;
 };
@@ -5758,15 +5758,15 @@ inline void PBLocAPIClientRegisterReqMsg::set_mclienttype(::PBClientType value) 
 
 // PBLocAPICapabilitiesIndMsg
 
-// uint32 capabilitiesMask = 1;
+// uint64 capabilitiesMask = 1;
 inline void PBLocAPICapabilitiesIndMsg::clear_capabilitiesmask() {
-  capabilitiesmask_ = 0u;
+  capabilitiesmask_ = GOOGLE_ULONGLONG(0);
 }
-inline ::google::protobuf::uint32 PBLocAPICapabilitiesIndMsg::capabilitiesmask() const {
+inline ::google::protobuf::uint64 PBLocAPICapabilitiesIndMsg::capabilitiesmask() const {
   // @@protoc_insertion_point(field_get:PBLocAPICapabilitiesIndMsg.capabilitiesMask)
   return capabilitiesmask_;
 }
-inline void PBLocAPICapabilitiesIndMsg::set_capabilitiesmask(::google::protobuf::uint32 value) {
+inline void PBLocAPICapabilitiesIndMsg::set_capabilitiesmask(::google::protobuf::uint64 value) {
 
   capabilitiesmask_ = value;
   // @@protoc_insertion_point(field_set:PBLocAPICapabilitiesIndMsg.capabilitiesMask)
@@ -7135,49 +7135,6 @@ inline void PBLocConfigEngineRunStateReqMsg::set_mengstate(::PBLocEngineRunState
 
 // -------------------------------------------------------------------
 
-// PBLocConfigGetConstltnSecondaryBandConfigRespMsg
-
-// .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-inline bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::has_msecondarybandconfig() const {
-  return this != internal_default_instance() && msecondarybandconfig_ != NULL;
-}
-inline void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::clear_msecondarybandconfig() {
-  if (GetArenaNoVirtual() == NULL && msecondarybandconfig_ != NULL) delete msecondarybandconfig_;
-  msecondarybandconfig_ = NULL;
-}
-inline const ::PBGnssSvTypeConfig& PBLocConfigGetConstltnSecondaryBandConfigRespMsg::msecondarybandconfig() const {
-  // @@protoc_insertion_point(field_get:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-  return msecondarybandconfig_ != NULL ? *msecondarybandconfig_
-                         : *::PBGnssSvTypeConfig::internal_default_instance();
-}
-inline ::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::mutable_msecondarybandconfig() {
-
-  if (msecondarybandconfig_ == NULL) {
-    msecondarybandconfig_ = new ::PBGnssSvTypeConfig;
-  }
-  // @@protoc_insertion_point(field_mutable:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-  return msecondarybandconfig_;
-}
-inline ::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::release_msecondarybandconfig() {
-  // @@protoc_insertion_point(field_release:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-
-  ::PBGnssSvTypeConfig* temp = msecondarybandconfig_;
-  msecondarybandconfig_ = NULL;
-  return temp;
-}
-inline void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::set_allocated_msecondarybandconfig(::PBGnssSvTypeConfig* msecondarybandconfig) {
-  delete msecondarybandconfig_;
-  msecondarybandconfig_ = msecondarybandconfig;
-  if (msecondarybandconfig) {
-
-  } else {
-
-  }
-  // @@protoc_insertion_point(field_set_allocated:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-}
-
-// -------------------------------------------------------------------
-
 // PBLocConfigGetRobustLocationConfigRespMsg
 
 // .PBGnssConfigRobustLocation mRobustLoationConfig = 1;
@@ -7253,6 +7210,49 @@ inline void PBLocConfigGetMinSvElevationRespMsg::set_mminsvelevation(::google::p
 
   mminsvelevation_ = value;
   // @@protoc_insertion_point(field_set:PBLocConfigGetMinSvElevationRespMsg.mMinSvElevation)
+}
+
+// -------------------------------------------------------------------
+
+// PBLocConfigGetConstltnSecondaryBandConfigRespMsg
+
+// .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+inline bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::has_msecondarybandconfig() const {
+  return this != internal_default_instance() && msecondarybandconfig_ != NULL;
+}
+inline void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::clear_msecondarybandconfig() {
+  if (GetArenaNoVirtual() == NULL && msecondarybandconfig_ != NULL) delete msecondarybandconfig_;
+  msecondarybandconfig_ = NULL;
+}
+inline const ::PBGnssSvTypeConfig& PBLocConfigGetConstltnSecondaryBandConfigRespMsg::msecondarybandconfig() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
+  return msecondarybandconfig_ != NULL ? *msecondarybandconfig_
+                         : *::PBGnssSvTypeConfig::internal_default_instance();
+}
+inline ::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::mutable_msecondarybandconfig() {
+
+  if (msecondarybandconfig_ == NULL) {
+    msecondarybandconfig_ = new ::PBGnssSvTypeConfig;
+  }
+  // @@protoc_insertion_point(field_mutable:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
+  return msecondarybandconfig_;
+}
+inline ::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::release_msecondarybandconfig() {
+  // @@protoc_insertion_point(field_release:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
+
+  ::PBGnssSvTypeConfig* temp = msecondarybandconfig_;
+  msecondarybandconfig_ = NULL;
+  return temp;
+}
+inline void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::set_allocated_msecondarybandconfig(::PBGnssSvTypeConfig* msecondarybandconfig) {
+  delete msecondarybandconfig_;
+  msecondarybandconfig_ = msecondarybandconfig;
+  if (msecondarybandconfig) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_set_allocated:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
 }
 
 // -------------------------------------------------------------------

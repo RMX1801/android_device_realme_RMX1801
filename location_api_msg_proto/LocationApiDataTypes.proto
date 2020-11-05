@@ -37,15 +37,12 @@ syntax = "proto3";
 // Proto file versioning
 // ============================================================================
 enum LocationApiDataTypesVersion {
-    // Allow multiple enum items to use the same enum value
-    option allow_alias = true;
-
     LOCAPI_DATA_TYPES_VER_INVALID = 0;
     // Major changes - compatibility breakage. Bump the first byte of version i.e. 1.x to 2.0
     LOCAPI_DATA_TYPES_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_DATA_TYPES_VER_MINOR = 1;
+    LOCAPI_DATA_TYPES_VER_MINOR = 2;
 }
 
 // ============================================================================
@@ -534,6 +531,55 @@ enum PBLocationCapabilitiesMask {
     /** LocationClientApi can support trip batching via
      *  LocationClientApi::startTripBatchingSession(). <br/>   */
     PB_LOCATION_CAPS_OUTDOOR_TRIP_BATCHING_BIT         = 32;
+    /** LocationClientApi can support receiving GnssMeasurements
+     *  data in GnssMeasurementsCb when LocationClientApi is in
+     *  a positioning session.. <br/>   */
+    PB_LOCATION_CAPS_GNSS_MEASUREMENTS_BIT             = 64;
+    /** LocationIntegrationApi can support configure constellations
+     *  via LocationIntegrationApi::configConstellations.  <br/>   */
+    PB_LOCATION_CAPS_CONSTELLATION_ENABLEMENT_BIT      = 128;
+    /** Modem supports Carrier Phase for Precise Positioning
+     *  Measurement Engine (PPME).
+     *  This is a Standalone Feature.  <br/>   */
+    PB_LOCATION_CAPS_QWES_CARRIER_PHASE_BIT                 = 256;
+    /** Modem supports SV Polynomial for tightly coupled
+     *  external DR support.
+     *  This is a Standalone Feature.  <br/>   */
+    PB_LOCATION_CAPS_QWES_SV_POLYNOMIAL_BIT                 = 512;
+    /** Modem supports GNSS Single Frequency feature.
+     *  This is a Standalone Feature.  <br/>   */
+    PB_LOCATION_CAPS_QWES_GNSS_SINGLE_FREQUENCY        = 1024;
+    /** Modem supports GNSS Multi Frequency feature. Multi
+     *  Frequency enables Single frequency also.  <br/>   */
+    PB_LOCATION_CAPS_QWES_GNSS_MULTI_FREQUENCY         = 2048;
+    /** This mask indicates VEPP license bundle is enabled.
+     *  VEPP bundle include Carrier Phase and SV Polynomial
+     *  features.  <br/>   */
+    PB_LOCATION_CAPS_QWES_VPE                          = 4096;
+    /** This mask indicates support for CV2X Location basic
+     *  features. This bundle includes features for GTS Time
+     *  & Freq, C-TUNC (Constrained Time uncertainity.
+     *  LocationIntegrationApi can support setting of C-TUNC
+     *  via configConstrainedTimeUncertainty. <br/> */
+    PB_LOCATION_CAPS_QWES_CV2X_LOCATION_BASIC          = 8192;
+    /** This mask indicates support for CV2X Location premium
+     *  features. This bundle includes features for CV2X Location
+     *  Basic features, QDR3 feature, and PACE. (Position
+     *  Assisted Clock Estimator.
+     *  LocationIntegrationApi can support setting of C-TUNC
+     *  via configPositionAssistedClockEstimator. <br/> */
+    PB_LOCATION_CAPS_QWES_CV2X_LOCATION_PREMIUM        = 16384;
+    /** This mask indicates that PPE (Precise Positioning Engine)
+     *  library is enabled or Precise Positioning Framework (PPF)
+     *  is available. This bundle includes features for Carrier
+     *  Phase and SV Ephermeris.  <br/>   */
+    PB_LOCATION_CAPS_QWES_PPE                          = 32768;
+    /** This mask indicates QDR2_C license bundle is enabled.
+     *  This bundle includes features for SV Polynomial. <br/> */
+    PB_LOCATION_CAPS_QWES_QDR2                         = 65536;
+    /** This mask indicates QDR3_C license bundle is enabled.
+     *  This bundle includes features for SV Polynomial. <br/> */
+    PB_LOCATION_CAPS_QWES_QDR3                         = 131072;
 }
 
 enum PBGnssDataMask {

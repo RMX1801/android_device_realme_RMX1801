@@ -44,7 +44,7 @@ enum LocationApiMsgVersion {
     LOCAPI_MSG_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_MSG_VER_MINOR = 2;
+    LOCAPI_MSG_VER_MINOR = 3;
 }
 
 // ============================================================================
@@ -272,7 +272,7 @@ message PBLocAPIClientRegisterReqMsg {
 message PBLocAPICapabilitiesIndMsg
 {
     // Bitwise OR of PBLocationCapabilitiesMask
-    uint32 capabilitiesMask = 1;
+    uint64 capabilitiesMask = 1;
 }
 
 // defintion for message with msg id of PB_E_LOCAPI_HAL_READY_MSG_ID
@@ -495,16 +495,6 @@ message PBLocConfigEngineRunStateReqMsg {
     PBLocEngineRunState mEngState = 2;
 }
 
-// defintion for message with msg id of
-// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID
-// LocConfigGetConstellationSecondaryBandConfigReqMsg - no struct member.
-
-// defintion for message with msg id of
-// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID
-message PBLocConfigGetConstltnSecondaryBandConfigRespMsg {
-    PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-}
-
 //******************************************************************************
 // IPC message structure - Location Integration API Get request/response message
 //******************************************************************************
@@ -531,6 +521,16 @@ message PBLocConfigGetMinGpsWeekRespMsg {
 // defintion for message with msg id of PB_E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID
 message PBLocConfigGetMinSvElevationRespMsg {
     uint32 mMinSvElevation = 1;
+}
+
+// defintion for message with msg id of
+// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID
+// LocConfigGetConstellationSecondaryBandConfigReqMsg - no struct member.
+
+// defintion for message with msg id of
+// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID
+message PBLocConfigGetConstltnSecondaryBandConfigRespMsg {
+    PBGnssSvTypeConfig mSecondaryBandConfig = 1;
 }
 
 //*****************************

@@ -137,14 +137,14 @@ class PBLocConfigMinSvElevationReqMsgDefaultTypeInternal : public ::google::prot
 } _PBLocConfigMinSvElevationReqMsg_default_instance_;
 class PBLocConfigEngineRunStateReqMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigEngineRunStateReqMsg> {
 } _PBLocConfigEngineRunStateReqMsg_default_instance_;
-class PBLocConfigGetConstltnSecondaryBandConfigRespMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigGetConstltnSecondaryBandConfigRespMsg> {
-} _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_;
 class PBLocConfigGetRobustLocationConfigRespMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigGetRobustLocationConfigRespMsg> {
 } _PBLocConfigGetRobustLocationConfigRespMsg_default_instance_;
 class PBLocConfigGetMinGpsWeekRespMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigGetMinGpsWeekRespMsg> {
 } _PBLocConfigGetMinGpsWeekRespMsg_default_instance_;
 class PBLocConfigGetMinSvElevationRespMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigGetMinSvElevationRespMsg> {
 } _PBLocConfigGetMinSvElevationRespMsg_default_instance_;
+class PBLocConfigGetConstltnSecondaryBandConfigRespMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocConfigGetConstltnSecondaryBandConfigRespMsg> {
+} _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_;
 class PBLocAPIPingTestReqMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocAPIPingTestReqMsg> {
 } _PBLocAPIPingTestReqMsg_default_instance_;
 class PBLocAPIPingTestIndMsgDefaultTypeInternal : public ::google::protobuf::internal::ExplicitlyConstructed<PBLocAPIPingTestIndMsg> {
@@ -535,12 +535,6 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigEngineRunStateReqMsg, mengtype_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigEngineRunStateReqMsg, mengstate_),
   ~0u,  // no _has_bits_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigGetConstltnSecondaryBandConfigRespMsg, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigGetConstltnSecondaryBandConfigRespMsg, msecondarybandconfig_),
-  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigGetRobustLocationConfigRespMsg, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -558,6 +552,12 @@ const ::google::protobuf::uint32 TableStruct::offsets[] = {
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigGetMinSvElevationRespMsg, mminsvelevation_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigGetConstltnSecondaryBandConfigRespMsg, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocConfigGetConstltnSecondaryBandConfigRespMsg, msecondarybandconfig_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PBLocAPIPingTestReqMsg, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -632,10 +632,10 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 285, -1, sizeof(PBLocConfigDrEngineParamsReqMsg)},
   { 291, -1, sizeof(PBLocConfigMinSvElevationReqMsg)},
   { 297, -1, sizeof(PBLocConfigEngineRunStateReqMsg)},
-  { 304, -1, sizeof(PBLocConfigGetConstltnSecondaryBandConfigRespMsg)},
-  { 310, -1, sizeof(PBLocConfigGetRobustLocationConfigRespMsg)},
-  { 316, -1, sizeof(PBLocConfigGetMinGpsWeekRespMsg)},
-  { 322, -1, sizeof(PBLocConfigGetMinSvElevationRespMsg)},
+  { 304, -1, sizeof(PBLocConfigGetRobustLocationConfigRespMsg)},
+  { 310, -1, sizeof(PBLocConfigGetMinGpsWeekRespMsg)},
+  { 316, -1, sizeof(PBLocConfigGetMinSvElevationRespMsg)},
+  { 322, -1, sizeof(PBLocConfigGetConstltnSecondaryBandConfigRespMsg)},
   { 328, -1, sizeof(PBLocAPIPingTestReqMsg)},
   { 335, -1, sizeof(PBLocAPIPingTestIndMsg)},
   { 342, -1, sizeof(PBLocAPIMsgHeader)},
@@ -689,10 +689,10 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigDrEngineParamsReqMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigMinSvElevationReqMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigEngineRunStateReqMsg_default_instance_),
-  reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetRobustLocationConfigRespMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetMinGpsWeekRespMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetMinSvElevationRespMsg_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocAPIPingTestReqMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocAPIPingTestIndMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&_PBLocAPIMsgHeader_default_instance_),
@@ -816,13 +816,13 @@ void TableStruct::Shutdown() {
   delete file_level_metadata[45].reflection;
   _PBLocConfigEngineRunStateReqMsg_default_instance_.Shutdown();
   delete file_level_metadata[46].reflection;
-  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.Shutdown();
-  delete file_level_metadata[47].reflection;
   _PBLocConfigGetRobustLocationConfigRespMsg_default_instance_.Shutdown();
-  delete file_level_metadata[48].reflection;
+  delete file_level_metadata[47].reflection;
   _PBLocConfigGetMinGpsWeekRespMsg_default_instance_.Shutdown();
-  delete file_level_metadata[49].reflection;
+  delete file_level_metadata[48].reflection;
   _PBLocConfigGetMinSvElevationRespMsg_default_instance_.Shutdown();
+  delete file_level_metadata[49].reflection;
+  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.Shutdown();
   delete file_level_metadata[50].reflection;
   _PBLocAPIPingTestReqMsg_default_instance_.Shutdown();
   delete file_level_metadata[51].reflection;
@@ -884,10 +884,10 @@ void TableStruct::InitDefaultsImpl() {
   _PBLocConfigDrEngineParamsReqMsg_default_instance_.DefaultConstruct();
   _PBLocConfigMinSvElevationReqMsg_default_instance_.DefaultConstruct();
   _PBLocConfigEngineRunStateReqMsg_default_instance_.DefaultConstruct();
-  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.DefaultConstruct();
   _PBLocConfigGetRobustLocationConfigRespMsg_default_instance_.DefaultConstruct();
   _PBLocConfigGetMinGpsWeekRespMsg_default_instance_.DefaultConstruct();
   _PBLocConfigGetMinSvElevationRespMsg_default_instance_.DefaultConstruct();
+  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.DefaultConstruct();
   _PBLocAPIPingTestReqMsg_default_instance_.DefaultConstruct();
   _PBLocAPIPingTestIndMsg_default_instance_.DefaultConstruct();
   _PBLocAPIMsgHeader_default_instance_.DefaultConstruct();
@@ -943,10 +943,10 @@ void TableStruct::InitDefaultsImpl() {
       ::PBLIALeverArmConfigInfo::internal_default_instance());
   _PBLocConfigDrEngineParamsReqMsg_default_instance_.get_mutable()->mdreconfig_ = const_cast< ::PBDeadReckoningEngineConfig*>(
       ::PBDeadReckoningEngineConfig::internal_default_instance());
-  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.get_mutable()->msecondarybandconfig_ = const_cast< ::PBGnssSvTypeConfig*>(
-      ::PBGnssSvTypeConfig::internal_default_instance());
   _PBLocConfigGetRobustLocationConfigRespMsg_default_instance_.get_mutable()->mrobustloationconfig_ = const_cast< ::PBGnssConfigRobustLocation*>(
       ::PBGnssConfigRobustLocation::internal_default_instance());
+  _PBLocConfigGetConstltnSecondaryBandConfigRespMsg_default_instance_.get_mutable()->msecondarybandconfig_ = const_cast< ::PBGnssSvTypeConfig*>(
+      ::PBGnssSvTypeConfig::internal_default_instance());
 }
 
 void InitDefaults() {
@@ -980,7 +980,7 @@ void AddDescriptorsImpl() {
       "nceResponse\"B\n\034PBLocAPIClientRegisterReq"
       "Msg\022\"\n\013mClientType\030\001 \001(\0162\r.PBClientType\""
       "6\n\032PBLocAPICapabilitiesIndMsg\022\030\n\020capabil"
-      "itiesMask\030\001 \001(\r\"7\n\026PBLocAPIGenericRespMs"
+      "itiesMask\030\001 \001(\004\"7\n\026PBLocAPIGenericRespMs"
       "g\022\035\n\003err\030\001 \001(\0162\020.PBLocationError\"K\n\031PBLo"
       "cAPICollectiveRespMsg\022.\n\rcollectiveRes\030\001"
       " \001(\0132\027.PBCollectiveResPayload\"E\n\033PBLocAP"
@@ -1056,108 +1056,108 @@ void AddDescriptorsImpl() {
       "\n\037PBLocConfigEngineRunStateReqMsg\0220\n\010mEn"
       "gType\030\001 \001(\0162\036.PBLocApiPositioningEngineM"
       "ask\022\'\n\tmEngState\030\002 \001(\0162\024.PBLocEngineRunS"
-      "tate\"e\n0PBLocConfigGetConstltnSecondaryB"
-      "andConfigRespMsg\0221\n\024mSecondaryBandConfig"
-      "\030\001 \001(\0132\023.PBGnssSvTypeConfig\"f\n)PBLocConf"
-      "igGetRobustLocationConfigRespMsg\0229\n\024mRob"
-      "ustLoationConfig\030\001 \001(\0132\033.PBGnssConfigRob"
-      "ustLocation\"6\n\037PBLocConfigGetMinGpsWeekR"
-      "espMsg\022\023\n\013mMinGpsWeek\030\001 \001(\r\">\n#PBLocConf"
-      "igGetMinSvElevationRespMsg\022\027\n\017mMinSvElev"
-      "ation\030\001 \001(\r\"<\n\026PBLocAPIPingTestReqMsg\022\024\n"
+      "tate\"f\n)PBLocConfigGetRobustLocationConf"
+      "igRespMsg\0229\n\024mRobustLoationConfig\030\001 \001(\0132"
+      "\033.PBGnssConfigRobustLocation\"6\n\037PBLocCon"
+      "figGetMinGpsWeekRespMsg\022\023\n\013mMinGpsWeek\030\001"
+      " \001(\r\">\n#PBLocConfigGetMinSvElevationResp"
+      "Msg\022\027\n\017mMinSvElevation\030\001 \001(\r\"e\n0PBLocCon"
+      "figGetConstltnSecondaryBandConfigRespMsg"
+      "\0221\n\024mSecondaryBandConfig\030\001 \001(\0132\023.PBGnssS"
+      "vTypeConfig\"<\n\026PBLocAPIPingTestReqMsg\022\024\n"
       "\014numberOfPing\030\001 \001(\r\022\014\n\004data\030\002 \003(\r\"<\n\026PBL"
       "ocAPIPingTestIndMsg\022\024\n\014numberOfPing\030\001 \001("
       "\r\022\014\n\004data\030\002 \003(\r\"\177\n\021PBLocAPIMsgHeader\022\023\n\013"
       "mSocketName\030\001 \001(\t\022\033\n\005msgId\030\002 \001(\0162\014.PBELo"
       "cMsgID\022\022\n\nmsgVersion\030\003 \001(\r\022\017\n\007payload\030\004 "
-      "\001(\014\022\023\n\013payloadSize\030\005 \001(\r*k\n\025LocationApiM"
+      "\001(\014\022\023\n\013payloadSize\030\005 \001(\r*g\n\025LocationApiM"
       "sgVersion\022\032\n\026LOCAPI_MSG_VER_INVALID\020\000\022\030\n"
       "\024LOCAPI_MSG_VER_MAJOR\020\001\022\030\n\024LOCAPI_MSG_VE"
-      "R_MINOR\020\001\032\002\020\001*\204\022\n\013PBELocMsgID\022 \n\034PB_E_LO"
-      "CAPI_UNDEFINED_MSG_ID\020\000\022&\n\"PB_E_LOCAPI_C"
-      "LIENT_REGISTER_MSG_ID\020\001\022(\n$PB_E_LOCAPI_C"
-      "LIENT_DEREGISTER_MSG_ID\020\002\022$\n PB_E_LOCAPI"
-      "_CAPABILILTIES_MSG_ID\020\003\022 \n\034PB_E_LOCAPI_H"
-      "AL_READY_MSG_ID\020\004\022%\n!PB_E_LOCAPI_START_T"
-      "RACKING_MSG_ID\020\005\022$\n PB_E_LOCAPI_STOP_TRA"
-      "CKING_MSG_ID\020\006\022\'\n#PB_E_LOCAPI_UPDATE_CAL"
-      "LBACKS_MSG_ID\020\007\022.\n*PB_E_LOCAPI_UPDATE_TR"
-      "ACKING_OPTIONS_MSG_ID\020\010\022,\n(PB_E_LOCAPI_C"
-      "ONTROL_UPDATE_CONFIG_MSG_ID\020\t\0221\n-PB_E_LO"
-      "CAPI_CONTROL_DELETE_AIDING_DATA_MSG_ID\020\n"
-      "\022:\n6PB_E_LOCAPI_CONTROL_UPDATE_NETWORK_A"
-      "VAILABILITY_MSG_ID\020\013\022\037\n\033PB_E_LOCAPI_LOCA"
-      "TION_MSG_ID\020\014\022$\n PB_E_LOCAPI_LOCATION_IN"
-      "FO_MSG_ID\020\r\022(\n$PB_E_LOCAPI_SATELLITE_VEH"
-      "ICLE_MSG_ID\020\016\022\033\n\027PB_E_LOCAPI_NMEA_MSG_ID"
-      "\020\017\022\033\n\027PB_E_LOCAPI_DATA_MSG_ID\020\020\022/\n+PB_E_"
-      "LOCAPI_GET_GNSS_ENGERY_CONSUMED_MSG_ID\020\021"
-      "\022+\n\'PB_E_LOCAPI_LOCATION_SYSTEM_INFO_MSG"
-      "_ID\020\022\022,\n(PB_E_LOCAPI_ENGINE_LOCATIONS_IN"
-      "FO_MSG_ID\020\023\022%\n!PB_E_LOCAPI_START_BATCHIN"
-      "G_MSG_ID\020\024\022$\n PB_E_LOCAPI_STOP_BATCHING_"
-      "MSG_ID\020\025\022.\n*PB_E_LOCAPI_UPDATE_BATCHING_"
-      "OPTIONS_MSG_ID\020\026\022\037\n\033PB_E_LOCAPI_BATCHING"
-      "_MSG_ID\020\027\022$\n PB_E_LOCAPI_ADD_GEOFENCES_M"
-      "SG_ID\020\030\022\'\n#PB_E_LOCAPI_REMOVE_GEOFENCES_"
-      "MSG_ID\020\031\022\'\n#PB_E_LOCAPI_MODIFY_GEOFENCES"
-      "_MSG_ID\020\032\022&\n\"PB_E_LOCAPI_PAUSE_GEOFENCES"
-      "_MSG_ID\020\033\022\'\n#PB_E_LOCAPI_RESUME_GEOFENCE"
-      "S_MSG_ID\020\034\022&\n\"PB_E_LOCAPI_GEOFENCE_BREAC"
-      "H_MSG_ID\020\035\022\033\n\027PB_E_LOCAPI_MEAS_MSG_ID\020\036\022"
-      "\037\n\033PB_E_LOCAPI_PINGTEST_MSG_ID\020c\0220\n+PB_E"
-      "_INTAPI_CONFIG_CONSTRAINTED_TUNC_MSG_ID\020"
-      "\310\001\022@\n;PB_E_INTAPI_CONFIG_POSITION_ASSIST"
-      "ED_CLOCK_ESTIMATOR_MSG_ID\020\311\001\022/\n*PB_E_INT"
-      "API_CONFIG_SV_CONSTELLATION_MSG_ID\020\312\001\0223\n"
-      ".PB_E_INTAPI_CONFIG_AIDING_DATA_DELETION"
-      "_MSG_ID\020\313\001\022(\n#PB_E_INTAPI_CONFIG_LEVER_A"
-      "RM_MSG_ID\020\314\001\022.\n)PB_E_INTAPI_CONFIG_ROBUS"
-      "T_LOCATION_MSG_ID\020\315\001\022+\n&PB_E_INTAPI_CONF"
-      "IG_MIN_GPS_WEEK_MSG_ID\020\316\001\0224\n/PB_E_INTAPI"
-      "_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID\020\317\001\022"
-      "/\n*PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_M"
-      "SG_ID\020\320\001\022;\n6PB_E_INTAPI_CONFIG_CONSTELLA"
-      "TION_SECONDARY_BAND_MSG_ID\020\321\001\022/\n*PB_E_IN"
-      "TAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID\020\322\001\0226"
-      "\n1PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG"
-      "_REQ_MSG_ID\020\254\002\0227\n2PB_E_INTAPI_GET_ROBUST"
-      "_LOCATION_CONFIG_RESP_MSG_ID\020\255\002\022,\n\'PB_E_"
-      "INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID\020\256\002\022-\n"
-      "(PB_E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_I"
-      "D\020\257\002\0220\n+PB_E_INTAPI_GET_MIN_SV_ELEVATION"
-      "_REQ_MSG_ID\020\260\002\0221\n,PB_E_INTAPI_GET_MIN_SV"
-      "_ELEVATION_RESP_MSG_ID\020\261\002\022C\n>PB_E_INTAPI"
-      "_GET_CONSTELLATION_SECONDARY_BAND_CONFIG"
-      "_REQ_MSG_ID\020\262\002\022D\n\?PB_E_INTAPI_GET_CONSTE"
-      "LLATION_SECONDARY_BAND_CONFIG_RESP_MSG_I"
-      "D\020\263\002*p\n\014PBClientType\022#\n\037PB_LOCATION_CLIE"
-      "NT_TYPE_INVALID\020\000\022\032\n\026PB_LOCATION_CLIENT_"
-      "API\020\001\022\037\n\033PB_LOCATION_INTEGRATION_API\020\002*\344"
-      "\003\n\027PBLocationCallbacksMask\022\027\n\023PB_E_LOC_C"
-      "B_INVALID\020\000\022+\n\'PB_E_LOC_CB_DISTANCE_BASE"
-      "D_TRACKING_BIT\020\001\022&\n\"PB_E_LOC_CB_GNSS_LOC"
-      "ATION_INFO_BIT\020\002\022\033\n\027PB_E_LOC_CB_GNSS_SV_"
-      "BIT\020\004\022\035\n\031PB_E_LOC_CB_GNSS_NMEA_BIT\020\010\022\035\n\031"
-      "PB_E_LOC_CB_GNSS_DATA_BIT\020\020\022\037\n\033PB_E_LOC_"
-      "CB_SYSTEM_INFO_BIT\020 \022\034\n\030PB_E_LOC_CB_BATC"
-      "HING_BIT\020@\022$\n\037PB_E_LOC_CB_BATCHING_STATU"
-      "S_BIT\020\200\001\022$\n\037PB_E_LOC_CB_GEOFENCE_BREACH_"
-      "BIT\020\200\002\022*\n%PB_E_LOC_CB_ENGINE_LOCATIONS_I"
-      "NFO_BIT\020\200\004\022)\n$PB_E_LOC_CB_SIMPLE_LOCATIO"
-      "N_INFO_BIT\020\200\010\022\036\n\031PB_E_LOC_CB_GNSS_MEAS_B"
-      "IT\020\200\020*n\n\031PBEngineInfoCallbacksMask\022\037\n\033PB"
-      "_E_ENGINE_INFO_CB_INVALID\020\000\0220\n,PB_E_ENGI"
-      "NE_INFO_CB_GNSS_ENERGY_CONSUMED_BIT\020\001*\310\001"
-      "\n\030PBGeofenceBreachTypeMask\022\036\n\032PB_GEOFENC"
-      "E_BREACH_INVALID\020\000\022 \n\034PB_GEOFENCE_BREACH"
-      "_ENTER_BIT\020\001\022\037\n\033PB_GEOFENCE_BREACH_EXIT_"
-      "BIT\020\002\022#\n\037PB_GEOFENCE_BREACH_DWELL_IN_BIT"
-      "\020\004\022$\n PB_GEOFENCE_BREACH_DWELL_OUT_BIT\020\010"
-      "b\006proto3"
+      "R_MINOR\020\003*\204\022\n\013PBELocMsgID\022 \n\034PB_E_LOCAPI"
+      "_UNDEFINED_MSG_ID\020\000\022&\n\"PB_E_LOCAPI_CLIEN"
+      "T_REGISTER_MSG_ID\020\001\022(\n$PB_E_LOCAPI_CLIEN"
+      "T_DEREGISTER_MSG_ID\020\002\022$\n PB_E_LOCAPI_CAP"
+      "ABILILTIES_MSG_ID\020\003\022 \n\034PB_E_LOCAPI_HAL_R"
+      "EADY_MSG_ID\020\004\022%\n!PB_E_LOCAPI_START_TRACK"
+      "ING_MSG_ID\020\005\022$\n PB_E_LOCAPI_STOP_TRACKIN"
+      "G_MSG_ID\020\006\022\'\n#PB_E_LOCAPI_UPDATE_CALLBAC"
+      "KS_MSG_ID\020\007\022.\n*PB_E_LOCAPI_UPDATE_TRACKI"
+      "NG_OPTIONS_MSG_ID\020\010\022,\n(PB_E_LOCAPI_CONTR"
+      "OL_UPDATE_CONFIG_MSG_ID\020\t\0221\n-PB_E_LOCAPI"
+      "_CONTROL_DELETE_AIDING_DATA_MSG_ID\020\n\022:\n6"
+      "PB_E_LOCAPI_CONTROL_UPDATE_NETWORK_AVAIL"
+      "ABILITY_MSG_ID\020\013\022\037\n\033PB_E_LOCAPI_LOCATION"
+      "_MSG_ID\020\014\022$\n PB_E_LOCAPI_LOCATION_INFO_M"
+      "SG_ID\020\r\022(\n$PB_E_LOCAPI_SATELLITE_VEHICLE"
+      "_MSG_ID\020\016\022\033\n\027PB_E_LOCAPI_NMEA_MSG_ID\020\017\022\033"
+      "\n\027PB_E_LOCAPI_DATA_MSG_ID\020\020\022/\n+PB_E_LOCA"
+      "PI_GET_GNSS_ENGERY_CONSUMED_MSG_ID\020\021\022+\n\'"
+      "PB_E_LOCAPI_LOCATION_SYSTEM_INFO_MSG_ID\020"
+      "\022\022,\n(PB_E_LOCAPI_ENGINE_LOCATIONS_INFO_M"
+      "SG_ID\020\023\022%\n!PB_E_LOCAPI_START_BATCHING_MS"
+      "G_ID\020\024\022$\n PB_E_LOCAPI_STOP_BATCHING_MSG_"
+      "ID\020\025\022.\n*PB_E_LOCAPI_UPDATE_BATCHING_OPTI"
+      "ONS_MSG_ID\020\026\022\037\n\033PB_E_LOCAPI_BATCHING_MSG"
+      "_ID\020\027\022$\n PB_E_LOCAPI_ADD_GEOFENCES_MSG_I"
+      "D\020\030\022\'\n#PB_E_LOCAPI_REMOVE_GEOFENCES_MSG_"
+      "ID\020\031\022\'\n#PB_E_LOCAPI_MODIFY_GEOFENCES_MSG"
+      "_ID\020\032\022&\n\"PB_E_LOCAPI_PAUSE_GEOFENCES_MSG"
+      "_ID\020\033\022\'\n#PB_E_LOCAPI_RESUME_GEOFENCES_MS"
+      "G_ID\020\034\022&\n\"PB_E_LOCAPI_GEOFENCE_BREACH_MS"
+      "G_ID\020\035\022\033\n\027PB_E_LOCAPI_MEAS_MSG_ID\020\036\022\037\n\033P"
+      "B_E_LOCAPI_PINGTEST_MSG_ID\020c\0220\n+PB_E_INT"
+      "API_CONFIG_CONSTRAINTED_TUNC_MSG_ID\020\310\001\022@"
+      "\n;PB_E_INTAPI_CONFIG_POSITION_ASSISTED_C"
+      "LOCK_ESTIMATOR_MSG_ID\020\311\001\022/\n*PB_E_INTAPI_"
+      "CONFIG_SV_CONSTELLATION_MSG_ID\020\312\001\0223\n.PB_"
+      "E_INTAPI_CONFIG_AIDING_DATA_DELETION_MSG"
+      "_ID\020\313\001\022(\n#PB_E_INTAPI_CONFIG_LEVER_ARM_M"
+      "SG_ID\020\314\001\022.\n)PB_E_INTAPI_CONFIG_ROBUST_LO"
+      "CATION_MSG_ID\020\315\001\022+\n&PB_E_INTAPI_CONFIG_M"
+      "IN_GPS_WEEK_MSG_ID\020\316\001\0224\n/PB_E_INTAPI_CON"
+      "FIG_DEAD_RECKONING_ENGINE_MSG_ID\020\317\001\022/\n*P"
+      "B_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_I"
+      "D\020\320\001\022;\n6PB_E_INTAPI_CONFIG_CONSTELLATION"
+      "_SECONDARY_BAND_MSG_ID\020\321\001\022/\n*PB_E_INTAPI"
+      "_CONFIG_ENGINE_RUN_STATE_MSG_ID\020\322\001\0226\n1PB"
+      "_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ"
+      "_MSG_ID\020\254\002\0227\n2PB_E_INTAPI_GET_ROBUST_LOC"
+      "ATION_CONFIG_RESP_MSG_ID\020\255\002\022,\n\'PB_E_INTA"
+      "PI_GET_MIN_GPS_WEEK_REQ_MSG_ID\020\256\002\022-\n(PB_"
+      "E_INTAPI_GET_MIN_GPS_WEEK_RESP_MSG_ID\020\257\002"
+      "\0220\n+PB_E_INTAPI_GET_MIN_SV_ELEVATION_REQ"
+      "_MSG_ID\020\260\002\0221\n,PB_E_INTAPI_GET_MIN_SV_ELE"
+      "VATION_RESP_MSG_ID\020\261\002\022C\n>PB_E_INTAPI_GET"
+      "_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ"
+      "_MSG_ID\020\262\002\022D\n\?PB_E_INTAPI_GET_CONSTELLAT"
+      "ION_SECONDARY_BAND_CONFIG_RESP_MSG_ID\020\263\002"
+      "*p\n\014PBClientType\022#\n\037PB_LOCATION_CLIENT_T"
+      "YPE_INVALID\020\000\022\032\n\026PB_LOCATION_CLIENT_API\020"
+      "\001\022\037\n\033PB_LOCATION_INTEGRATION_API\020\002*\344\003\n\027P"
+      "BLocationCallbacksMask\022\027\n\023PB_E_LOC_CB_IN"
+      "VALID\020\000\022+\n\'PB_E_LOC_CB_DISTANCE_BASED_TR"
+      "ACKING_BIT\020\001\022&\n\"PB_E_LOC_CB_GNSS_LOCATIO"
+      "N_INFO_BIT\020\002\022\033\n\027PB_E_LOC_CB_GNSS_SV_BIT\020"
+      "\004\022\035\n\031PB_E_LOC_CB_GNSS_NMEA_BIT\020\010\022\035\n\031PB_E"
+      "_LOC_CB_GNSS_DATA_BIT\020\020\022\037\n\033PB_E_LOC_CB_S"
+      "YSTEM_INFO_BIT\020 \022\034\n\030PB_E_LOC_CB_BATCHING"
+      "_BIT\020@\022$\n\037PB_E_LOC_CB_BATCHING_STATUS_BI"
+      "T\020\200\001\022$\n\037PB_E_LOC_CB_GEOFENCE_BREACH_BIT\020"
+      "\200\002\022*\n%PB_E_LOC_CB_ENGINE_LOCATIONS_INFO_"
+      "BIT\020\200\004\022)\n$PB_E_LOC_CB_SIMPLE_LOCATION_IN"
+      "FO_BIT\020\200\010\022\036\n\031PB_E_LOC_CB_GNSS_MEAS_BIT\020\200"
+      "\020*n\n\031PBEngineInfoCallbacksMask\022\037\n\033PB_E_E"
+      "NGINE_INFO_CB_INVALID\020\000\0220\n,PB_E_ENGINE_I"
+      "NFO_CB_GNSS_ENERGY_CONSUMED_BIT\020\001*\310\001\n\030PB"
+      "GeofenceBreachTypeMask\022\036\n\032PB_GEOFENCE_BR"
+      "EACH_INVALID\020\000\022 \n\034PB_GEOFENCE_BREACH_ENT"
+      "ER_BIT\020\001\022\037\n\033PB_GEOFENCE_BREACH_EXIT_BIT\020"
+      "\002\022#\n\037PB_GEOFENCE_BREACH_DWELL_IN_BIT\020\004\022$"
+      "\n PB_GEOFENCE_BREACH_DWELL_OUT_BIT\020\010b\006pr"
+      "oto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 7928);
+      descriptor, 7924);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "LocationApiMsg.proto", &protobuf_RegisterTypes);
   ::protobuf_LocationApiDataTypes_2eproto::AddDescriptors();
@@ -1185,6 +1185,7 @@ bool LocationApiMsgVersion_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
+    case 3:
       return true;
     default:
       return false;
@@ -4849,7 +4850,7 @@ PBLocAPICapabilitiesIndMsg::PBLocAPICapabilitiesIndMsg(const PBLocAPICapabilitie
 }
 
 void PBLocAPICapabilitiesIndMsg::SharedCtor() {
-  capabilitiesmask_ = 0u;
+  capabilitiesmask_ = GOOGLE_ULONGLONG(0);
   _cached_size_ = 0;
 }
 
@@ -4886,7 +4887,7 @@ PBLocAPICapabilitiesIndMsg* PBLocAPICapabilitiesIndMsg::New(::google::protobuf::
 
 void PBLocAPICapabilitiesIndMsg::Clear() {
 // @@protoc_insertion_point(message_clear_start:PBLocAPICapabilitiesIndMsg)
-  capabilitiesmask_ = 0u;
+  capabilitiesmask_ = GOOGLE_ULONGLONG(0);
 }
 
 bool PBLocAPICapabilitiesIndMsg::MergePartialFromCodedStream(
@@ -4899,13 +4900,13 @@ bool PBLocAPICapabilitiesIndMsg::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // uint32 capabilitiesMask = 1;
+      // uint64 capabilitiesMask = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(8u)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
                  input, &capabilitiesmask_)));
         } else {
           goto handle_unusual;
@@ -4940,9 +4941,9 @@ void PBLocAPICapabilitiesIndMsg::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 capabilitiesMask = 1;
+  // uint64 capabilitiesMask = 1;
   if (this->capabilitiesmask() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->capabilitiesmask(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(1, this->capabilitiesmask(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:PBLocAPICapabilitiesIndMsg)
@@ -4954,9 +4955,9 @@ void PBLocAPICapabilitiesIndMsg::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 capabilitiesMask = 1;
+  // uint64 capabilitiesMask = 1;
   if (this->capabilitiesmask() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->capabilitiesmask(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(1, this->capabilitiesmask(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:PBLocAPICapabilitiesIndMsg)
@@ -4967,10 +4968,10 @@ size_t PBLocAPICapabilitiesIndMsg::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:PBLocAPICapabilitiesIndMsg)
   size_t total_size = 0;
 
-  // uint32 capabilitiesMask = 1;
+  // uint64 capabilitiesMask = 1;
   if (this->capabilitiesmask() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
         this->capabilitiesmask());
   }
 
@@ -5043,15 +5044,15 @@ void PBLocAPICapabilitiesIndMsg::InternalSwap(PBLocAPICapabilitiesIndMsg* other)
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // PBLocAPICapabilitiesIndMsg
 
-// uint32 capabilitiesMask = 1;
+// uint64 capabilitiesMask = 1;
 void PBLocAPICapabilitiesIndMsg::clear_capabilitiesmask() {
-  capabilitiesmask_ = 0u;
+  capabilitiesmask_ = GOOGLE_ULONGLONG(0);
 }
-::google::protobuf::uint32 PBLocAPICapabilitiesIndMsg::capabilitiesmask() const {
+::google::protobuf::uint64 PBLocAPICapabilitiesIndMsg::capabilitiesmask() const {
   // @@protoc_insertion_point(field_get:PBLocAPICapabilitiesIndMsg.capabilitiesMask)
   return capabilitiesmask_;
 }
-void PBLocAPICapabilitiesIndMsg::set_capabilitiesmask(::google::protobuf::uint32 value) {
+void PBLocAPICapabilitiesIndMsg::set_capabilitiesmask(::google::protobuf::uint64 value) {
 
   capabilitiesmask_ = value;
   // @@protoc_insertion_point(field_set:PBLocAPICapabilitiesIndMsg.capabilitiesMask)
@@ -14619,276 +14620,6 @@ void PBLocConfigEngineRunStateReqMsg::set_mengstate(::PBLocEngineRunState value)
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int PBLocConfigGetConstltnSecondaryBandConfigRespMsg::kMSecondaryBandConfigFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-PBLocConfigGetConstltnSecondaryBandConfigRespMsg::PBLocConfigGetConstltnSecondaryBandConfigRespMsg()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
-    protobuf_LocationApiMsg_2eproto::InitDefaults();
-  }
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-}
-PBLocConfigGetConstltnSecondaryBandConfigRespMsg::PBLocConfigGetConstltnSecondaryBandConfigRespMsg(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from)
-  : ::google::protobuf::Message(),
-      _internal_metadata_(NULL),
-      _cached_size_(0) {
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  if (from.has_msecondarybandconfig()) {
-    msecondarybandconfig_ = new ::PBGnssSvTypeConfig(*from.msecondarybandconfig_);
-  } else {
-    msecondarybandconfig_ = NULL;
-  }
-  // @@protoc_insertion_point(copy_constructor:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SharedCtor() {
-  msecondarybandconfig_ = NULL;
-  _cached_size_ = 0;
-}
-
-PBLocConfigGetConstltnSecondaryBandConfigRespMsg::~PBLocConfigGetConstltnSecondaryBandConfigRespMsg() {
-  // @@protoc_insertion_point(destructor:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  SharedDtor();
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SharedDtor() {
-  if (this != internal_default_instance()) {
-    delete msecondarybandconfig_;
-  }
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::descriptor() {
-  protobuf_LocationApiMsg_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_LocationApiMsg_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
-}
-
-const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& PBLocConfigGetConstltnSecondaryBandConfigRespMsg::default_instance() {
-  protobuf_LocationApiMsg_2eproto::InitDefaults();
-  return *internal_default_instance();
-}
-
-PBLocConfigGetConstltnSecondaryBandConfigRespMsg* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::New(::google::protobuf::Arena* arena) const {
-  PBLocConfigGetConstltnSecondaryBandConfigRespMsg* n = new PBLocConfigGetConstltnSecondaryBandConfigRespMsg;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::Clear() {
-// @@protoc_insertion_point(message_clear_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  if (GetArenaNoVirtual() == NULL && msecondarybandconfig_ != NULL) {
-    delete msecondarybandconfig_;
-  }
-  msecondarybandconfig_ = NULL;
-}
-
-bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-      case 1: {
-        if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(10u)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_msecondarybandconfig()));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  return false;
-#undef DO_
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-  if (this->has_msecondarybandconfig()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, *this->msecondarybandconfig_, output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-}
-
-::google::protobuf::uint8* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-  if (this->has_msecondarybandconfig()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        1, *this->msecondarybandconfig_, deterministic, target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  return target;
-}
-
-size_t PBLocConfigGetConstltnSecondaryBandConfigRespMsg::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  size_t total_size = 0;
-
-  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-  if (this->has_msecondarybandconfig()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->msecondarybandconfig_);
-  }
-
-  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = cached_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  GOOGLE_DCHECK_NE(&from, this);
-  const PBLocConfigGetConstltnSecondaryBandConfigRespMsg* source =
-      ::google::protobuf::internal::DynamicCastToGenerated<const PBLocConfigGetConstltnSecondaryBandConfigRespMsg>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-    MergeFrom(*source);
-  }
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::MergeFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom(from._internal_metadata_);
-  ::google::protobuf::uint32 cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (from.has_msecondarybandconfig()) {
-    mutable_msecondarybandconfig()->::PBGnssSvTypeConfig::MergeFrom(from.msecondarybandconfig());
-  }
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::CopyFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::IsInitialized() const {
-  return true;
-}
-
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::Swap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::InternalSwap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other) {
-  std::swap(msecondarybandconfig_, other->msecondarybandconfig_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata PBLocConfigGetConstltnSecondaryBandConfigRespMsg::GetMetadata() const {
-  protobuf_LocationApiMsg_2eproto::protobuf_AssignDescriptorsOnce();
-  return protobuf_LocationApiMsg_2eproto::file_level_metadata[kIndexInFileMessages];
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// PBLocConfigGetConstltnSecondaryBandConfigRespMsg
-
-// .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
-bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::has_msecondarybandconfig() const {
-  return this != internal_default_instance() && msecondarybandconfig_ != NULL;
-}
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::clear_msecondarybandconfig() {
-  if (GetArenaNoVirtual() == NULL && msecondarybandconfig_ != NULL) delete msecondarybandconfig_;
-  msecondarybandconfig_ = NULL;
-}
-const ::PBGnssSvTypeConfig& PBLocConfigGetConstltnSecondaryBandConfigRespMsg::msecondarybandconfig() const {
-  // @@protoc_insertion_point(field_get:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-  return msecondarybandconfig_ != NULL ? *msecondarybandconfig_
-                         : *::PBGnssSvTypeConfig::internal_default_instance();
-}
-::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::mutable_msecondarybandconfig() {
-
-  if (msecondarybandconfig_ == NULL) {
-    msecondarybandconfig_ = new ::PBGnssSvTypeConfig;
-  }
-  // @@protoc_insertion_point(field_mutable:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-  return msecondarybandconfig_;
-}
-::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::release_msecondarybandconfig() {
-  // @@protoc_insertion_point(field_release:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-
-  ::PBGnssSvTypeConfig* temp = msecondarybandconfig_;
-  msecondarybandconfig_ = NULL;
-  return temp;
-}
-void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::set_allocated_msecondarybandconfig(::PBGnssSvTypeConfig* msecondarybandconfig) {
-  delete msecondarybandconfig_;
-  msecondarybandconfig_ = msecondarybandconfig;
-  if (msecondarybandconfig) {
-
-  } else {
-
-  }
-  // @@protoc_insertion_point(field_set_allocated:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PBLocConfigGetRobustLocationConfigRespMsg::kMRobustLoationConfigFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -15620,6 +15351,276 @@ void PBLocConfigGetMinSvElevationRespMsg::set_mminsvelevation(::google::protobuf
 
   mminsvelevation_ = value;
   // @@protoc_insertion_point(field_set:PBLocConfigGetMinSvElevationRespMsg.mMinSvElevation)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int PBLocConfigGetConstltnSecondaryBandConfigRespMsg::kMSecondaryBandConfigFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+PBLocConfigGetConstltnSecondaryBandConfigRespMsg::PBLocConfigGetConstltnSecondaryBandConfigRespMsg()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    protobuf_LocationApiMsg_2eproto::InitDefaults();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+}
+PBLocConfigGetConstltnSecondaryBandConfigRespMsg::PBLocConfigGetConstltnSecondaryBandConfigRespMsg(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_msecondarybandconfig()) {
+    msecondarybandconfig_ = new ::PBGnssSvTypeConfig(*from.msecondarybandconfig_);
+  } else {
+    msecondarybandconfig_ = NULL;
+  }
+  // @@protoc_insertion_point(copy_constructor:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SharedCtor() {
+  msecondarybandconfig_ = NULL;
+  _cached_size_ = 0;
+}
+
+PBLocConfigGetConstltnSecondaryBandConfigRespMsg::~PBLocConfigGetConstltnSecondaryBandConfigRespMsg() {
+  // @@protoc_insertion_point(destructor:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  SharedDtor();
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SharedDtor() {
+  if (this != internal_default_instance()) {
+    delete msecondarybandconfig_;
+  }
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::descriptor() {
+  protobuf_LocationApiMsg_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_LocationApiMsg_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& PBLocConfigGetConstltnSecondaryBandConfigRespMsg::default_instance() {
+  protobuf_LocationApiMsg_2eproto::InitDefaults();
+  return *internal_default_instance();
+}
+
+PBLocConfigGetConstltnSecondaryBandConfigRespMsg* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::New(::google::protobuf::Arena* arena) const {
+  PBLocConfigGetConstltnSecondaryBandConfigRespMsg* n = new PBLocConfigGetConstltnSecondaryBandConfigRespMsg;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::Clear() {
+// @@protoc_insertion_point(message_clear_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  if (GetArenaNoVirtual() == NULL && msecondarybandconfig_ != NULL) {
+    delete msecondarybandconfig_;
+  }
+  msecondarybandconfig_ = NULL;
+}
+
+bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_msecondarybandconfig()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  return false;
+#undef DO_
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+  if (this->has_msecondarybandconfig()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->msecondarybandconfig_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+}
+
+::google::protobuf::uint8* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+  if (this->has_msecondarybandconfig()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->msecondarybandconfig_, deterministic, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  return target;
+}
+
+size_t PBLocConfigGetConstltnSecondaryBandConfigRespMsg::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  size_t total_size = 0;
+
+  // .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+  if (this->has_msecondarybandconfig()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->msecondarybandconfig_);
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  GOOGLE_DCHECK_NE(&from, this);
+  const PBLocConfigGetConstltnSecondaryBandConfigRespMsg* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const PBLocConfigGetConstltnSecondaryBandConfigRespMsg>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+    MergeFrom(*source);
+  }
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::MergeFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.has_msecondarybandconfig()) {
+    mutable_msecondarybandconfig()->::PBGnssSvTypeConfig::MergeFrom(from.msecondarybandconfig());
+  }
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::CopyFrom(const PBLocConfigGetConstltnSecondaryBandConfigRespMsg& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:PBLocConfigGetConstltnSecondaryBandConfigRespMsg)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::IsInitialized() const {
+  return true;
+}
+
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::Swap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::InternalSwap(PBLocConfigGetConstltnSecondaryBandConfigRespMsg* other) {
+  std::swap(msecondarybandconfig_, other->msecondarybandconfig_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata PBLocConfigGetConstltnSecondaryBandConfigRespMsg::GetMetadata() const {
+  protobuf_LocationApiMsg_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_LocationApiMsg_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// PBLocConfigGetConstltnSecondaryBandConfigRespMsg
+
+// .PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+bool PBLocConfigGetConstltnSecondaryBandConfigRespMsg::has_msecondarybandconfig() const {
+  return this != internal_default_instance() && msecondarybandconfig_ != NULL;
+}
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::clear_msecondarybandconfig() {
+  if (GetArenaNoVirtual() == NULL && msecondarybandconfig_ != NULL) delete msecondarybandconfig_;
+  msecondarybandconfig_ = NULL;
+}
+const ::PBGnssSvTypeConfig& PBLocConfigGetConstltnSecondaryBandConfigRespMsg::msecondarybandconfig() const {
+  // @@protoc_insertion_point(field_get:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
+  return msecondarybandconfig_ != NULL ? *msecondarybandconfig_
+                         : *::PBGnssSvTypeConfig::internal_default_instance();
+}
+::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::mutable_msecondarybandconfig() {
+
+  if (msecondarybandconfig_ == NULL) {
+    msecondarybandconfig_ = new ::PBGnssSvTypeConfig;
+  }
+  // @@protoc_insertion_point(field_mutable:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
+  return msecondarybandconfig_;
+}
+::PBGnssSvTypeConfig* PBLocConfigGetConstltnSecondaryBandConfigRespMsg::release_msecondarybandconfig() {
+  // @@protoc_insertion_point(field_release:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
+
+  ::PBGnssSvTypeConfig* temp = msecondarybandconfig_;
+  msecondarybandconfig_ = NULL;
+  return temp;
+}
+void PBLocConfigGetConstltnSecondaryBandConfigRespMsg::set_allocated_msecondarybandconfig(::PBGnssSvTypeConfig* msecondarybandconfig) {
+  delete msecondarybandconfig_;
+  msecondarybandconfig_ = msecondarybandconfig;
+  if (msecondarybandconfig) {
+
+  } else {
+
+  }
+  // @@protoc_insertion_point(field_set_allocated:PBLocConfigGetConstltnSecondaryBandConfigRespMsg.mSecondaryBandConfig)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
