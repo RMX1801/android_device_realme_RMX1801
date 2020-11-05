@@ -80,17 +80,10 @@ typedef std::unordered_map<std::string, shared_ptr<LocIpcSender>> ClientNameIpcS
 class MaintTimer : public LocTimer {
 public:
     MaintTimer(LocationApiService* locationApiService) :
-            mLocationApiService(locationApiService),
-            mMsgTask(new MsgTask("LocHalDaemonMaintenanceMsgTask", false)) {
-        if (!mMsgTask) {
-            LOC_LOGe("failed to create msg task");
-        }
+            mLocationApiService(locationApiService) {
     };
 
     ~MaintTimer() {
-        if (mMsgTask) {
-            mMsgTask->destroy();
-        }
     }
 
 public:
@@ -98,8 +91,32 @@ public:
 
 private:
     LocationApiService* mLocationApiService;
-    MsgTask*            mMsgTask;
 };
+
+class SingleTerrestrialFixTimer : public LocTimer {
+public:
+
+    SingleTerrestrialFixTimer(LocationApiService* locationApiService,
+                              std::string& clientName) :
+            mLocationApiService(locationApiService),
+            mClientName(clientName) {
+    }
+
+    ~SingleTerrestrialFixTimer() {
+    }
+
+public:
+    void timeOutCallback() override;
+
+private:
+    LocationApiService* mLocationApiService;
+    const std::string mClientName;
+};
+
+// This keeps track of the client that requests single fix terrestrial position
+// and the timer that will fire when the timeout value has reached
+typedef std::unordered_map<std::string, SingleTerrestrialFixTimer>
+        SingleTerrestrialFixClientMap;
 
 class LocationApiService
 {
@@ -145,6 +162,11 @@ public:
     // Utility routine used by maintenance timer
     void performMaintenance();
 
+    // Utility routine used by gtp fix timeout timer
+    void gtpFixRequestTimeout(const std::string& clientName);
+
+    inline MsgTask* getMsgTask() {return mMsgTask;};
+
 private:
     // APIs can be invoked to process client's IPC messgage
     void newClient(LocAPIClientRegisterReqMsg*);
@@ -160,6 +182,7 @@ private:
     void updateTrackingOptions(LocAPIUpdateTrackingOptionsReqMsg*);
     void updateNetworkAvailability(bool availability);
     void getGnssEnergyConsumed(const char* clientSocketName);
+    void getSingleTerrestrialPos(LocAPIGetSingleTerrestrialPosReqMsg*);
 
     void startBatching(LocAPIStartBatchingReqMsg*);
     void stopBatching(LocAPIStopBatchingReqMsg*);
@@ -191,6 +214,12 @@ private:
     void onGnssConfigCallback(uint32_t sessionId, const GnssConfig& config);
     void onGnssEnergyConsumedCb(uint64_t totalEnergyConsumedSinceFirstBoot);
 
+    // Callbacks for location api used service GTP WWAN fix request
+    void onCapabilitiesCallback(LocationCapabilitiesMask mask);
+    void onResponseCb(LocationError err, uint32_t id);
+    void onCollectiveResponseCallback(size_t count, LocationError *errs, uint32_t *ids);
+    void onGtpWwanTrackingCallback(Location location);
+
     // Location configuration API requests
     void configConstrainedTunc(
             const LocConfigConstrainedTuncReqMsg* pMsg);
@@ -208,6 +237,8 @@ private:
     void configDeadReckoningEngineParams(const LocConfigDrEngineParamsReqMsg* pMsg);
     void configMinSvElevation(const LocConfigMinSvElevationReqMsg* pMsg);
     void configEngineRunState(const LocConfigEngineRunStateReqMsg* pMsg);
+    void configUserConsentTerrestrialPositioning(
+            LocConfigUserConsentTerrestrialPositioningReqMsg* pMsg);
 
     // Location configuration API get/read requests
     void getGnssConfig(const LocAPIMsgHeader* pReqMsg,
@@ -269,6 +300,18 @@ private:
 
     // maintenance timer
     MaintTimer mMaintTimer;
+
+   // msg task used by timers
+    MsgTask*   mMsgTask;
+
+    // Terrestrial service related APIs
+    // Location api interface for single short wwan fix
+    LocationAPI* mGtpWwanSsLocationApi;
+    LocationCallbacks mGtpWwanSsLocationApiCallbacks;
+    trackingCallback mGtpWwanPosCallback;
+    // -1: not set, 0: user not opt-in, 1: user opt in
+    int mOptInTerrestrialService;
+    SingleTerrestrialFixClientMap mTerrestrialFixReqs;
 };
 
 #endif //LOCATIONAPISERVICE_H
