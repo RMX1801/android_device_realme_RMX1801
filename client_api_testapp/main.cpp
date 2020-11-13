@@ -143,7 +143,8 @@ static void onEngLocationsCb(const std::vector<location_client::GnssLocation>& l
     }
     for (auto gnssLocation : locations) {
        printf("<<< onEngLocationsCb: cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n"
-              "info mask=0x%" PRIx64 ", nav solution maks = 0x%x, eng type %d, eng mask 0x%x",
+              "info mask=0x%" PRIx64 ", nav solution maks = 0x%x, eng type %d, eng mask 0x%x, "
+              "session status %d",
               numEngLocationCb,
               gnssLocation.timestamp,
               gnssLocation.flags,
@@ -153,7 +154,8 @@ static void onEngLocationsCb(const std::vector<location_client::GnssLocation>& l
               gnssLocation.gnssInfoFlags,
               gnssLocation.navSolutionMask,
               gnssLocation.locOutputEngType,
-              gnssLocation.locOutputEngMask);
+              gnssLocation.locOutputEngMask,
+              gnssLocation.sessionStatus);
     }
 }
 

@@ -522,6 +522,8 @@ enum GnssLocationInfoFlagMask {
     /** GnssLocation has valid GnssLocation::altitudeAssumed.
      *  <br/> */
     GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT             = (1ULL<<33),
+    /** GnssLocation has valid GnssLocation::sessionStatus. <br/> */
+    GNSS_LOCATION_INFO_SESSION_STATUS_BIT               = (1ULL<<34),
 };
 
 /** Specify the reliability level of
@@ -987,6 +989,17 @@ enum DrSolutionStatusMask {
     DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_USED     = (1<<1),
 };
 
+/** Specify the session status. <br/> */
+enum LocSessionStatus {
+    /** Session is successful. <br/> */
+    LOC_SESS_SUCCESS      = 0,
+    /** Session is still in progress, the reported has not yet
+    achieved the needed criteria. <br/>*/
+    LOC_SESS_INTERMEDIATE = 1,
+    /** Session has failed. <br/>*/
+    LOC_SESS_FAILURE      = 2,
+};
+
 /** Specify the location info received by client via
  *  startPositionSession(uint32_t, const
  *  GnssReportCbs&, ResponseCb) and
@@ -1103,6 +1116,9 @@ struct GnssLocation : public Location {
      *  true:  Altitude is assumed; there may not be enough
      *         satellites to determine the precise altitude. <br/> */
     bool altitudeAssumed;
+    /** Indicates whether session is success, failure or
+     *  intermediate. <br/> */
+    LocSessionStatus sessionStatus;
 
     /* Default constructor to initalize GnssLocation structure */
     inline GnssLocation() :
@@ -1129,7 +1145,7 @@ struct GnssLocation : public Location {
             llaVRPBased({}),
             enuVelocityVRPBased{0.0f, 0.0f, 0.0f},
             drSolutionStatusMask((DrSolutionStatusMask)0),
-            altitudeAssumed(false) {
+            altitudeAssumed(false), sessionStatus(LOC_SESS_FAILURE) {
     }
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */

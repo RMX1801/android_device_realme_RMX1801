@@ -641,6 +641,8 @@ private:
             const GnssMeasurementsMultipathIndicator &gnssMeasMultiPathIndic) const;
     PBLocApiGnss_LocSvSystemEnumType getPBEnumForGnssLocSvSystem(
             const Gnss_LocSvSystemEnumType &gnssLocSvSysEnumType) const;
+    // PBLocationSessionStatus from/to loc_sess_status
+    PBLocationSessionStatus getPBEnumForLocSessionStatus(const loc_sess_status &status) const;
 
     // ** Special enum conversion
     // GnssSvType to PBLocApiGnss_LocSvSystemEnumType
@@ -716,6 +718,7 @@ private:
             const PBLocApiGnss_LocSvSystemEnumType &pbGnssLocSvSysEnumType) const;
     LocOutputEngineType getEnumForPBLocOutputEngineType(
             const PBLocApiOutputEngineType &pbLocOpEngType) const;
+    loc_sess_status getLocSessionStatusFromPB(const PBLocationSessionStatus &pbStatus) const;
 
     // ** Special enum conversion
     // PBLocApiGnss_LocSvSystemEnumType to GnssSvType
