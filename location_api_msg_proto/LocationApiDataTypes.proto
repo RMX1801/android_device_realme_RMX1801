@@ -42,7 +42,7 @@ enum LocationApiDataTypesVersion {
     LOCAPI_DATA_TYPES_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_DATA_TYPES_VER_MINOR = 2;
+    LOCAPI_DATA_TYPES_VER_MINOR = 3;
 }
 
 // ============================================================================
@@ -188,7 +188,8 @@ enum PBGnssLocationInfoFlagMask {
 
 enum PBGnssLocationInfoExtFlagMask {
     PB_GNSS_LOCATION_INFO_EXT_INVALID          = 0;
-    PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT = 1; // valid altitude mean sea level
+    PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT = 0x1; // valid altitude mean sea level
+    PB_GNSS_LOCATION_INFO_SESSION_STATUS_BIT   = 0x2; // valid altitude mean sea level
 };
 
 enum PBGnssLocationNavSolutionMask {
@@ -367,6 +368,7 @@ enum PBLocationError {
     PB_LOCATION_ERROR_SUCCESS = 0;
     PB_LOCATION_ERROR_INVALID_PARAMETER = 1;
     PB_LOCATION_ERROR_NOT_SUPPORTED = 2;
+    PB_LOCATION_ERROR_GENERAL_FAILURE = 3;
 }
 
 enum PBLocReqEngineTypeMask {
@@ -611,6 +613,11 @@ enum PBDrSolutionStatusMask {
     PB_VEHICLE_SENSOR_SPEED_INPUT_USED = 2;
 }
 
+enum PBLocationSessionStatus {
+    PB_LOCATION_SESS_SUCCESS = 0;
+    PB_LOCATION_SESS_INTERMEDIATE = 1;
+    PB_LOCATION_SESS_FAILURE = 2;
+};
 
 // Specify the valid mask for the configuration paramters of
 // dead reckoning position engine.
@@ -965,6 +972,8 @@ message PBGnssLocationInfoNotification {
     uint32 extFlags = 40;
     // PBAltitudeAssumed, validity is set via extFlags
     bool altitudeAssumed = 41;
+    // PBLocationSessionStatus, validity is set via extFlags
+    PBLocationSessionStatus sessionStatus = 42;
 }
 
 message PBGnssDataNotification {
