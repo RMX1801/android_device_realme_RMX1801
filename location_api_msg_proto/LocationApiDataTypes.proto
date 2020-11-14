@@ -42,7 +42,7 @@ enum LocationApiDataTypesVersion {
     LOCAPI_DATA_TYPES_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_DATA_TYPES_VER_MINOR = 2;
+    LOCAPI_DATA_TYPES_VER_MINOR = 3;
 }
 
 // ============================================================================
@@ -403,25 +403,28 @@ enum PBGnssMeasurementsAdrStateMask {
 }
 
 enum PBGnssMeasurementsDataFlagsMask {
-    PB_GNSS_MEASUREMENTS_DATA_INVALID                          = 0;
-    PB_GNSS_MEASUREMENTS_DATA_SV_ID_BIT                        = 1;
-    PB_GNSS_MEASUREMENTS_DATA_SV_TYPE_BIT                      = 2;
-    PB_GNSS_MEASUREMENTS_DATA_STATE_BIT                        = 4;
-    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_BIT             = 8;
-    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_UNCERTAINTY_BIT = 16;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_TO_NOISE_BIT             = 32;
-    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_BIT             = 64;
-    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_UNCERTAINTY_BIT = 128;
-    PB_GNSS_MEASUREMENTS_DATA_ADR_STATE_BIT                    = 256;
-    PB_GNSS_MEASUREMENTS_DATA_ADR_BIT                          = 512;
-    PB_GNSS_MEASUREMENTS_DATA_ADR_UNCERTAINTY_BIT              = 1024;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT            = 2048;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_CYCLES_BIT               = 4096;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_BIT                = 8192;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_UNCERTAINTY_BIT    = 16384;
-    PB_GNSS_MEASUREMENTS_DATA_MULTIPATH_INDICATOR_BIT          = 32768;
-    PB_GNSS_MEASUREMENTS_DATA_SIGNAL_TO_NOISE_RATIO_BIT        = 65536;
-    PB_GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT       = 131072;
+    PB_GNSS_MEASUREMENTS_DATA_INVALID                          = 0x00000000;
+    PB_GNSS_MEASUREMENTS_DATA_SV_ID_BIT                        = 0x00000001;
+    PB_GNSS_MEASUREMENTS_DATA_SV_TYPE_BIT                      = 0x00000002;
+    PB_GNSS_MEASUREMENTS_DATA_STATE_BIT                        = 0x00000004;
+    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_BIT             = 0x00000008;
+    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_UNCERTAINTY_BIT = 0x00000010;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_TO_NOISE_BIT             = 0x00000020;
+    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_BIT             = 0x00000040;
+    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_UNCERTAINTY_BIT = 0x00000080;
+    PB_GNSS_MEASUREMENTS_DATA_ADR_STATE_BIT                    = 0x00000100;
+    PB_GNSS_MEASUREMENTS_DATA_ADR_BIT                          = 0x00000200;
+    PB_GNSS_MEASUREMENTS_DATA_ADR_UNCERTAINTY_BIT              = 0x00000400;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT            = 0x00000800;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_CYCLES_BIT               = 0x00001000;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_BIT                = 0x00002000;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_UNCERTAINTY_BIT    = 0x00004000;
+    PB_GNSS_MEASUREMENTS_DATA_MULTIPATH_INDICATOR_BIT          = 0x00008000;
+    PB_GNSS_MEASUREMENTS_DATA_SIGNAL_TO_NOISE_RATIO_BIT        = 0x00010000;
+    PB_GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT       = 0x00020000;
+    PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT                     = 0x00040000;
+    PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT         = 0x00080000;
+    PB_GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT             = 0x00100000;
 }
 
 enum PBGnssMeasurementsStateMask {
@@ -479,25 +482,29 @@ enum PBLocationFlagsMask {
 }
 
 enum PBLocationTechnologyMask {
-    PB_LOCATION_TECHNOLOGY_INVALID      = 0;
+    PB_LOCATION_TECHNOLOGY_INVALID      = 0x00000000;
     // location was calculated using GNSS
-    PB_LOCATION_TECHNOLOGY_GNSS_BIT     = 1;
+    PB_LOCATION_TECHNOLOGY_GNSS_BIT     = 0x00000001;
     // location was calculated using Cell
-    PB_LOCATION_TECHNOLOGY_CELL_BIT     = 2;
+    PB_LOCATION_TECHNOLOGY_CELL_BIT     = 0x00000002;
     // location was calculated using WiFi
-    PB_LOCATION_TECHNOLOGY_WIFI_BIT     = 4;
+    PB_LOCATION_TECHNOLOGY_WIFI_BIT     = 0x00000004;
     // location was calculated using Sensors
-    PB_LOCATION_TECHNOLOGY_SENSORS_BIT  = 8;
+    PB_LOCATION_TECHNOLOGY_SENSORS_BIT  = 0x00000008;
     // using reference location
-    PB_LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT   = 16;
+    PB_LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT   = 0x00000010;
     // using CPI
-    PB_LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT = 32;
+    PB_LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT = 0x00000020;
     // AFLT
-    PB_LOCATION_TECHNOLOGY_AFLT_BIT = 64;
+    PB_LOCATION_TECHNOLOGY_AFLT_BIT     = 0x00000040;
     // HYBRID
-    PB_LOCATION_TECHNOLOGY_HYBRID_BIT   = 128;
+    PB_LOCATION_TECHNOLOGY_HYBRID_BIT   = 0x00000080;
     // PPE
-    PB_LOCATION_TECHNOLOGY_PPE_BIT  = 256;
+    PB_LOCATION_TECHNOLOGY_PPE_BIT      = 0x000000100;
+    // Vehicular data
+    PB_LOCATION_TECHNOLOGY_VEH_BIT      = 0x000000200;
+    // Visual data
+    PB_LOCATION_TECHNOLOGY_VIS_BIT      = 0x000000400;
 }
 
 enum PBLocationCapabilitiesMask {
@@ -722,6 +729,7 @@ message PBLocApiGnssSv {
     uint32 gnssSvOptionsMask = 6; // Bitwise OR of PBLocApiGnssSvOptionsMask
     float carrierFrequencyHz = 7; // carrier frequency of the signal tracked
     uint32 gnssSignalTypeMask = 8; // Specifies GNSS signal type - PBGnssSignalTypeMask
+    double basebandCarrierToNoiseDbHz = 9; // Baseband signal strength Db Hz.
 }
 
 message PBLocApiGnssSvNotification {
@@ -772,6 +780,12 @@ message PBGnssMeasurementsData {
     PBGnssMeasurementsMultipathIndicator multipathIndicator = 18;
     double signalToNoiseRatioDb = 19;
     double agcLevelDb = 20;
+    double basebandCarrierToNoiseDbHz = 21;
+    // bitwise OR of  PBGnssSignalTypeMask
+    uint32 gnssSignalType = 22;
+    double fullInterSignalBiasNs = 23;
+    double fullInterSignalBiasUncertaintyNs = 24;
+    uint32 cycleSlipCount = 25;
 }
 
 message PBLocApiGnssLocationPositionDynamics {
