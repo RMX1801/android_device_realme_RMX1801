@@ -1,3 +1,4 @@
+android.frameworks.fingerprintservice::IFingerprintHalService                u:object_r:hal_fingerprint_oppo_hwservice:s0
 android.OPPO.IOppoAlgoDaemon                                                 u:object_r:oppoalgo_daemon_hwservice:s0
 vendor.lineage.touch::ITouchscreenGesture                                    u:object_r:hal_lineage_touch_hwservice:s0
 vendor.oppo.hardware.biometrics.fingerprint::IBiometricsFingerprint          u:object_r:hal_fingerprint_hwservice:s0
