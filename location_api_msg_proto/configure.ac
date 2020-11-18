@@ -1,11 +1,11 @@
-# configure.ac -- Autoconf script for gps location-client-api
+# configure.ac -- Autoconf script for gps location-api-msg-proto
 #
 # Process this file with autoconf to produce a configure script
 
 # Requires autoconf tool later than 2.61
 AC_PREREQ(2.61)
-# Initialize the location_client_api package version 1.0.0
-AC_INIT([location-client-api],1.0.0)
+# Initialize the location-api-msg-proto package version 1.0.0
+AC_INIT([location-api-msg-proto],1.0.0)
 # Does not strictly follow GNU Coding standards
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 # Disables auto rebuilding of configure, Makefile.ins
@@ -28,14 +28,13 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 PKG_PROG_PKG_CONFIG
 
-# Checks for libraries.
+AC_ARG_WITH([glib],
+      AC_HELP_STRING([--with-glib],
+         [enable glib, building HLOS systems which use glib]))
+
 PKG_CHECK_MODULES([GPSUTILS], [gps-utils])
 AC_SUBST([GPSUTILS_CFLAGS])
 AC_SUBST([GPSUTILS_LIBS])
-
-PKG_CHECK_MODULES([LOCAPIMSGPROTO], [location-api-msg-proto])
-AC_SUBST([LOCAPIMSGPROTO_CFLAGS])
-AC_SUBST([LOCAPIMSGPROTO_LIBS])
 
 AC_ARG_WITH([external_ap],
     AC_HELP_STRING([--with-external_ap=@<:@dir@:>@],
@@ -43,11 +42,11 @@ AC_ARG_WITH([external_ap],
     [],
     with_external_ap=no)
 
-AM_CONDITIONAL(USE_EXTERNAL_AP, test "x${with_external_ap}" = "xyes")
+if test "x$with_external_ap" != "xno"; then
+    CPPFLAGS="${CPPFLAGS} -DFEATURE_EXTERNAL_AP"
+fi
 
-AC_ARG_WITH([glib],
-      AC_HELP_STRING([--with-glib],
-         [enable glib, building HLOS systems which use glib]))
+AM_CONDITIONAL(USE_EXTERNAL_AP, test "x${with_external_ap}" = "xyes")
 
 if (test "x${with_glib}" = "xyes"); then
         AC_DEFINE(ENABLE_USEGLIB, 1, [Define if HLOS systems uses glib])
@@ -66,7 +65,8 @@ AM_CONDITIONAL(USE_GLIB, test "x${with_glib}" = "xyes")
 
 AC_CONFIG_FILES([ \
         Makefile \
-        location-client-api.pc
+        src/Makefile \
+        location-api-msg-proto.pc
         ])
 
 AC_OUTPUT
