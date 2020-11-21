@@ -68,7 +68,8 @@ bool LocationClientApi::startPositionSession(
         LocationCb locationCallback,
         ResponseCb responseCallback) {
 
-    loc_boot_kpi_marker("L - LCA standard startFix, tbf %d", intervalInMs);
+    loc_boot_kpi_marker("L - LCA ST-SPS %s %d",
+            program_invocation_short_name, intervalInMs);
     //Input parameter check
     if (!locationCallback) {
         LOC_LOGe ("NULL locationCallback");
@@ -114,7 +115,8 @@ bool LocationClientApi::startPositionSession(
         const GnssReportCbs& gnssReportCallbacks,
         ResponseCb responseCallback) {
 
-    loc_boot_kpi_marker("L - LCA Extended startFix, tbf %d", intervalInMs);
+    loc_boot_kpi_marker("L - LCA EX-SPS %s %d",
+            program_invocation_short_name, intervalInMs);
 
     if (!mApiImpl) {
         LOC_LOGe ("NULL mApiImpl");
@@ -164,7 +166,8 @@ bool LocationClientApi::startPositionSession(
         const EngineReportCbs& engReportCallbacks,
         ResponseCb responseCallback) {
 
-    loc_boot_kpi_marker("L - LCA Fused startFix, tbf %d", intervalInMs);
+    loc_boot_kpi_marker("L - LCA Fused-SPS %s %d",
+            program_invocation_short_name, intervalInMs);
     if (!mApiImpl) {
         LOC_LOGe ("NULL mApiImpl");
         return false;
