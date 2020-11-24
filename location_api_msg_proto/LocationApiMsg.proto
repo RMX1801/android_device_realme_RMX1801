@@ -39,15 +39,12 @@ import "LocationApiDataTypes.proto";
 // Proto file versioning
 // ============================================================================
 enum LocationApiMsgVersion {
-    // Allow multiple enum items to use the same enum value
-    option allow_alias = true;
-
     LOCAPI_MSG_VER_INVALID = 0;
     // Major changes - compatibility breakage. Bump the first byte of version i.e. 1.x to 2.0
     LOCAPI_MSG_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_MSG_VER_MINOR = 1;
+    LOCAPI_MSG_VER_MINOR = 3;
 }
 
 // ============================================================================
@@ -126,6 +123,7 @@ enum PBELocMsgID {
     PB_E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID = 207;
     PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID = 208;
     PB_E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID = 209;
+    PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID = 210;
 
     // integration API config retrieval request/response
     PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID  = 300;
@@ -274,7 +272,7 @@ message PBLocAPIClientRegisterReqMsg {
 message PBLocAPICapabilitiesIndMsg
 {
     // Bitwise OR of PBLocationCapabilitiesMask
-    uint32 capabilitiesMask = 1;
+    uint64 capabilitiesMask = 1;
 }
 
 // defintion for message with msg id of PB_E_LOCAPI_HAL_READY_MSG_ID
@@ -491,14 +489,10 @@ message PBLocConfigMinSvElevationReqMsg {
     uint32 mMinSvElevation = 1;
 }
 
-// defintion for message with msg id of
-// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID
-// LocConfigGetConstellationSecondaryBandConfigReqMsg - no struct member.
-
-// defintion for message with msg id of
-// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID
-message PBLocConfigGetConstltnSecondaryBandConfigRespMsg {
-    PBGnssSvTypeConfig mSecondaryBandConfig = 1;
+// defintion for message with msg id of PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID
+message PBLocConfigEngineRunStateReqMsg {
+    PBLocApiPositioningEngineMask mEngType = 1;
+    PBLocEngineRunState mEngState = 2;
 }
 
 //******************************************************************************
@@ -527,6 +521,16 @@ message PBLocConfigGetMinGpsWeekRespMsg {
 // defintion for message with msg id of PB_E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID
 message PBLocConfigGetMinSvElevationRespMsg {
     uint32 mMinSvElevation = 1;
+}
+
+// defintion for message with msg id of
+// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID
+// LocConfigGetConstellationSecondaryBandConfigReqMsg - no struct member.
+
+// defintion for message with msg id of
+// PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID
+message PBLocConfigGetConstltnSecondaryBandConfigRespMsg {
+    PBGnssSvTypeConfig mSecondaryBandConfig = 1;
 }
 
 //*****************************

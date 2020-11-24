@@ -74,6 +74,9 @@ static LocConfigTypeEnum getLocConfigTypeFromMsgId(ELocMsgID  msgId) {
     case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
         configType = CONFIG_MIN_SV_ELEVATION;
         break;
+    case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
+        configType = CONFIG_ENGINE_RUN_STATE;
+        break;
     case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
     case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID:
         configType = GET_ROBUST_LOCATION_CONFIG;
@@ -369,6 +372,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
             case E_INTAPI_CONFIG_MIN_GPS_WEEK_MSG_ID:
             case E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID:
             case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
+            case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
             case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
             case E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID:
@@ -540,11 +544,16 @@ uint32_t LocationIntegrationApiImpl::getConstellationSecondaryBandConfig() {
                 mApiImpl(apiImpl) {}
         virtual ~GetConstellationSecondaryBandConfigReq() {}
         void proc() const {
+            string pbStr;
             LocConfigGetConstellationSecondaryBandConfigReqMsg msg(mApiImpl->mSocketName,
                     &mApiImpl->mPbufMsgConv);
-            mApiImpl->sendConfigMsgToHalDaemon(GET_CONSTELLATION_SECONDARY_BAND_CONFIG,
-                                               reinterpret_cast<uint8_t*>(&msg),
-                                               sizeof(msg));
+            if (msg.serializeToProtobuf(pbStr)) {
+                mApiImpl->sendConfigMsgToHalDaemon(GET_CONSTELLATION_SECONDARY_BAND_CONFIG,
+                                   reinterpret_cast<uint8_t*>((uint8_t *)pbStr.c_str()),
+                                   pbStr.size());
+            } else {
+                LOC_LOGe("LocCgGetCnstlSecondaryBandConfigReqMsg serializeToProtobuf failed");
+            }
         }
         LocationIntegrationApiImpl* mApiImpl;
     };
@@ -909,6 +918,45 @@ uint32_t LocationIntegrationApiImpl::getMinSvElevation() {
     return 0;
 }
 
+uint32_t LocationIntegrationApiImpl::configEngineRunState(
+        PositioningEngineMask engType, LocEngineRunState engState) {
+
+    struct ConfigEngineRunStateReq : public LocMsg {
+        ConfigEngineRunStateReq(LocationIntegrationApiImpl* apiImpl,
+                                PositioningEngineMask engType,
+                                LocEngineRunState engState) :
+                mApiImpl(apiImpl), mEngType(engType), mEngState(engState) {}
+        virtual ~ConfigEngineRunStateReq() {}
+        void proc() const {
+            if (mApiImpl->mEngRunStateConfigMap.find(mEngType) ==
+                        std::end(mApiImpl->mEngRunStateConfigMap)) {
+                mApiImpl->mEngRunStateConfigMap.emplace(mEngType, mEngState);
+            } else {
+                // change the state for the eng
+                mApiImpl->mEngRunStateConfigMap[mEngType] = mEngState;
+            }
+
+            string pbStr;
+            LocConfigEngineRunStateReqMsg msg(mApiImpl->mSocketName,
+                    mEngType, mEngState, &mApiImpl->mPbufMsgConv);
+            if (msg.serializeToProtobuf(pbStr)) {
+                mApiImpl->sendConfigMsgToHalDaemon(CONFIG_ENGINE_RUN_STATE,
+                                            reinterpret_cast<uint8_t*>((uint8_t *)pbStr.c_str()),
+                                            pbStr.size());
+            } else {
+                LOC_LOGe("LocConfigEngineRunStateReqMsg serializeToProtobuf failed");
+            }
+        }
+
+        LocationIntegrationApiImpl* mApiImpl;
+        PositioningEngineMask mEngType;
+        LocEngineRunState mEngState;
+    };
+
+    mMsgTask.sendMsg(new (nothrow) ConfigEngineRunStateReq(this, engType, engState));
+    return 0;
+}
+
 void LocationIntegrationApiImpl::sendConfigMsgToHalDaemon(
         LocConfigTypeEnum configType, uint8_t* pMsg,
         size_t msgSize, bool invokeResponseCb) {
@@ -1051,6 +1099,18 @@ void LocationIntegrationApiImpl::processHalReadyMsg() {
                              pbStrLocCfgDrEngParam.size());
         } else {
             LOC_LOGe("LocConfigDrEngineParamsReqMsg serializeToProtobuf failed");
+        }
+    }
+
+    // send down engine state config request
+    for (auto it = mEngRunStateConfigMap.begin(); it != mEngRunStateConfigMap.end(); ++it) {
+        string pbStrLocCfgEngineRunState;
+        LocConfigEngineRunStateReqMsg msg(mSocketName, it->first, it->second, &mPbufMsgConv);
+        if (msg.serializeToProtobuf(pbStrLocCfgEngineRunState)) {
+            sendConfigMsgToHalDaemon(
+                    CONFIG_ENGINE_RUN_STATE,
+                    reinterpret_cast<uint8_t*>((uint8_t *)pbStrLocCfgEngineRunState.c_str()),
+                    pbStrLocCfgEngineRunState.size());
         }
     }
 }

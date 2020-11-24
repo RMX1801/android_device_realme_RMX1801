@@ -561,6 +561,18 @@ void LocationApiService::processClientMsg(const char* data, uint32_t length) {
             break;
         }
 
+        case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID: {
+            PBLocConfigEngineRunStateReqMsg pbLocConfEngineRunState;
+            if (0 == pbLocConfEngineRunState.ParseFromString(pbLocApiMsg.payload())) {
+                LOC_LOGe("Failed to parse pbLocConfEngineRunState from payload!!");
+                return;
+            }
+            LocConfigEngineRunStateReqMsg msg(sockName.c_str(),
+                                              pbLocConfEngineRunState,
+                                              &mPbufMsgConv);
+            configEngineRunState(reinterpret_cast<LocConfigEngineRunStateReqMsg*>(&msg));
+            break;
+        }
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID: {
             getGnssConfig(&locApiMsg, GNSS_CONFIG_FLAGS_ROBUST_LOCATION_BIT);
             break;
@@ -1175,6 +1187,19 @@ void LocationApiService::configMinSvElevation(const LocConfigMinSvElevationReqMs
     gnssConfig.minSvElevation = pMsg->mMinSvElevation;
     uint32_t sessionId = gnssUpdateConfig(gnssConfig);
 
+    addConfigRequestToMap(sessionId, pMsg);
+}
+
+void LocationApiService::configEngineRunState(const LocConfigEngineRunStateReqMsg* pMsg) {
+    if (!pMsg) {
+        return;
+    }
+    std::lock_guard<std::mutex> lock(mMutex);
+
+    LOC_LOGi(">-- client %s, eng type 0x%x, eng state %d",
+             pMsg->mSocketName, pMsg->mEngType, pMsg->mEngState);
+    uint32_t sessionId =
+            mLocationControlApi->configEngineRunState(pMsg->mEngType, pMsg->mEngState);
     addConfigRequestToMap(sessionId, pMsg);
 }
 

@@ -255,6 +255,7 @@ enum ELocMsgID {
     E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID = 207,
     E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID = 208,
     E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID  = 209,
+    E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID = 210,
 
     // integration API config retrieval request/response
     E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID  = 300,
@@ -1101,6 +1102,26 @@ struct LocConfigMinSvElevationReqMsg: LocAPIMsgHeader
         mMinSvElevation(minSvElevation) { }
     LocConfigMinSvElevationReqMsg(const char* name,
             const PBLocConfigMinSvElevationReqMsg &pbConfigMinSvElevReqMsg,
+            const LocationApiPbMsgConv *pbMsgConv);
+
+    int serializeToProtobuf(string& protoStr) override;
+};
+
+struct LocConfigEngineRunStateReqMsg: LocAPIMsgHeader
+{
+    // In this API, only one engine is configured at a time
+    PositioningEngineMask mEngType;
+    LocEngineRunState mEngState;
+
+    inline LocConfigEngineRunStateReqMsg(const char* name,
+                                         PositioningEngineMask engType,
+                                         LocEngineRunState engState,
+                                         const LocationApiPbMsgConv *pbMsgConv) :
+        LocAPIMsgHeader(name, E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID, pbMsgConv),
+        mEngType(engType), mEngState(engState) { }
+
+    LocConfigEngineRunStateReqMsg(const char* name,
+            const PBLocConfigEngineRunStateReqMsg &pbConfigEngineStateReqMsg,
             const LocationApiPbMsgConv *pbMsgConv);
 
     int serializeToProtobuf(string& protoStr) override;

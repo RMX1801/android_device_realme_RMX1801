@@ -52,6 +52,7 @@ using namespace location_integration;
 namespace location_integration
 {
 typedef std::unordered_map<LocConfigTypeEnum, int32_t> LocConfigReqCntMap;
+typedef std::unordered_map<PositioningEngineMask, LocEngineRunState> LocConfigEngRunStateMap;
 
 typedef struct {
     bool     isValid;
@@ -123,6 +124,8 @@ public:
 
     uint32_t getConstellationSecondaryBandConfig();
 
+    uint32_t configEngineRunState(PositioningEngineMask engType, LocEngineRunState engState);
+
 private:
     ~LocationIntegrationApiImpl();
     bool integrationClientAllowed();
@@ -164,6 +167,7 @@ private:
     LeverArmConfigInfo       mLeverArmConfigInfo;
     RobustLocationConfigInfo mRobustLocationConfigInfo;
     DeadReckoningEngineConfigInfo mDreConfigInfo;
+    LocConfigEngRunStateMap       mEngRunStateConfigMap;
 
     LocConfigReqCntMap       mConfigReqCntMap;
     LocIntegrationCbs        mIntegrationCbs;
