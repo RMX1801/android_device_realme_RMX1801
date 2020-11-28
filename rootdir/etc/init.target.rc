@@ -41,7 +41,6 @@ on fs
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
     mkdir /mnt/vendor/opporeserve 0771 system system
     mount_all /vendor/etc/fstab.qcom
-    swapon_all /vendor/etc/fstab.qcom
     chown root system /mnt/vendor/persist
     chmod 0771 /mnt/vendor/persist
     mkdir /mnt/vendor/persist/data 0700 system system
