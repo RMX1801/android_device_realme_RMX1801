@@ -197,9 +197,9 @@ PRODUCT_PACKAGES += \
     vendor.qti.hardware.camera.device@1.0 \
     vendor.qti.hardware.camera.device@1.0.vendor
 
-# Configstore
+# ConfigStore
 PRODUCT_PACKAGES += \
-    android.hardware.configstore@1.1-service
+    disable_configstore
 
 # Display
 PRODUCT_PACKAGES += \
