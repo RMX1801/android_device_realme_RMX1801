@@ -480,11 +480,11 @@ public:
     // LocationCallbacksMask to PBLocationCallbacksMask
     uint32_t getPBMaskForLocationCallbacksMask(const uint32_t &locCbMask) const;
     // LocationCapabilitiesMask to PBLocationCapabilitiesMask
-    uint32_t getPBMaskForLocationCapabilitiesMask(const uint32_t &locCapabMask) const;
+    uint64_t getPBMaskForLocationCapabilitiesMask(const uint64_t &locCapabMask) const;
 
     // **** helper function for mask conversion from protobuf masks to normal rigid values
     // PBLocationCapabilitiesMask to LocationCapabilitiesMask
-    uint32_t getLocationCapabilitiesMaskFromPB(const uint32_t &pbLocCapabMask) const;
+    uint64_t getLocationCapabilitiesMaskFromPB(const uint64_t &pbLocCapabMask) const;
     // PBLocationCallbacksMask to LocationCallbacksMask
     uint32_t getLocationCallbacksMaskFromPB(const uint32_t &pbLocCbMask) const;
 
@@ -494,6 +494,15 @@ public:
     ClientType getEnumForPBClientType(const PBClientType &pbClntTyp) const;
     LocationError getEnumForPBLocationError(const PBLocationError &pbLocErr) const;
     BatchingMode getEnumForPBBatchingMode(const PBBatchingMode &pbBatchMode) const;
+
+    // PositioningEngineMask to/from PB PositioningEngineMask
+    uint32_t getPBMaskForPositioningEngineMask(const uint32_t &posEngMask) const;
+    uint32_t getEnumForPBPositioningEngineMask(const uint32_t &pbPosEngMask) const;
+
+    // LocEngineRunState to/from PB LocEngineRunState
+    LocEngineRunState getEnumForPBLocEngineRunState
+            (const PBLocEngineRunState &pbLocEngRunState) const;
+    uint32_t getPBEnumForLocEngineRunState(const LocEngineRunState& locEngineRunState) const;
 
     // **** helper function for enum conversion from normal format to protobuf enums.
     PBBatchingMode getPBEnumForBatchingMode(const BatchingMode &batchMode) const;
@@ -561,8 +570,6 @@ private:
             PBLIABodyToSensorMountParams *pbBodyToSensorMntParams) const;
 
     // **** helper function for mask conversion to protobuf masks
-    // PositioningEngineMask to PBLocApiPositioningEngineMask
-    uint32_t getPBMaskForPositioningEngineMask(const uint32_t &posEngMask) const;
     // LeverArmTypeMask to PBLIALeverArmTypeMask
     uint32_t getPBMaskForLeverArmTypeMask(const uint32_t &leverArmTypeMask) const;
     // LocReqEngineTypeMask to PBLocReqEngineTypeMask
@@ -585,8 +592,10 @@ private:
     uint32_t getPBMaskForLocationFlagsMask(const uint32_t &locFlagsMask) const;
     // LocationTechnologyMask to PBLocationTechnologyMask
     uint32_t getPBMaskForLocationTechnologyMask(const uint32_t &locTechMask) const;
-    // GnssLocationInfoFlagMask to PBGnssLocationInfoFlagMask
-    uint32_t getPBMaskForGnssLocationInfoFlagMask(const uint32_t &gnssLocInfoFlagMask) const;
+    // GnssLocationInfoFlagMask (lower 32 bits) to PBGnssLocationInfoFlagMask
+    uint32_t getPBMaskForGnssLocationInfoFlagMask(const uint64_t &gnssLocInfoFlagMask) const;
+    // GnssLocationInfoFlagMask (upper 32 bits) to PBGnssLocationInfoExtFlagMask
+    uint32_t getPBMaskForGnssLocationInfoExtFlagMask(const uint64_t &gnssLocInfoFlagMask) const;
     // GnssLocationNavSolutionMask to PBGnssLocationNavSolutionMask
     uint32_t getPBMaskForGnssLocationNavSolutionMask(const uint32_t &gnssLocNavSolnMask) const;
     // DrCalibrationStatusMask to PBLocApiDrCalibrationStatusMask
@@ -643,8 +652,6 @@ private:
     // **** helper function for mask conversion from protobuf masks to normal rigid values
     // PBLIALeverArmTypeMask to LeverArmTypeMask
     uint32_t getLeverArmTypeMaskFromPB(const uint32_t &pbLeverTypeMask) const;
-    // PBLocApiPositioningEngineMask to PositioningEngineMask
-    uint32_t getPositioningEngineMaskFromPB(const uint32_t &pbPosEngMask) const;
     // PBGnssSvTypesMask to GnssSvTypesMask
     uint64_t getGnssSvTypesMaskFromPB(const uint64_t &pbGnssSvTypesMask) const;
     // PBLocApiGnssAidingDataSvMask to GnssAidingDataSvMask
@@ -676,7 +683,8 @@ private:
     // PBGnssMeasurementsAdrStateMask to GnssMeasurementsAdrStateMask
     uint32_t getGnssMeasurementsAdrStateMaskFromPB(const uint32_t &pbGnssMeasAdrStateMask) const;
     // PBGnssLocationInfoFlagMask to GnssLocationInfoFlagMask
-    uint32_t getGnssLocationInfoFlagMaskFromPB(const uint32_t &pbGnssLocInfoFlagMask) const;
+    uint64_t getGnssLocationInfoFlagMaskFromPB(const uint32_t &pbGnssLocInfoFlagMask,
+                                               const uint32_t &pbGnssLocInfoExtFlagMask) const;
     // PBGnssLocationNavSolutionMask to GnssLocationNavSolutionMask
     uint32_t getGnssLocationNavSolutionMaskFromPB(const uint32_t &pbGnssLocNavSoln) const;
     // PBLocApiDrCalibrationStatusMask to DrCalibrationStatusMask

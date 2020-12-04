@@ -37,15 +37,12 @@ syntax = "proto3";
 // Proto file versioning
 // ============================================================================
 enum LocationApiDataTypesVersion {
-    // Allow multiple enum items to use the same enum value
-    option allow_alias = true;
-
     LOCAPI_DATA_TYPES_VER_INVALID = 0;
     // Major changes - compatibility breakage. Bump the first byte of version i.e. 1.x to 2.0
     LOCAPI_DATA_TYPES_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_DATA_TYPES_VER_MINOR = 0;
+    LOCAPI_DATA_TYPES_VER_MINOR = 4;
 }
 
 // ============================================================================
@@ -188,6 +185,12 @@ enum PBGnssLocationInfoFlagMask {
                                                                         // velocity
     PB_GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT      = 1073741824; // DR solution status
 }
+
+enum PBGnssLocationInfoExtFlagMask {
+    PB_GNSS_LOCATION_INFO_EXT_INVALID          = 0;
+    PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT = 0x1; // valid altitude mean sea level
+    PB_GNSS_LOCATION_INFO_SESSION_STATUS_BIT   = 0x2; // valid altitude mean sea level
+};
 
 enum PBGnssLocationNavSolutionMask {
     PB_LOCATION_NAV_SOLUTION_MASK_INVALID = 0;
@@ -365,6 +368,7 @@ enum PBLocationError {
     PB_LOCATION_ERROR_SUCCESS = 0;
     PB_LOCATION_ERROR_INVALID_PARAMETER = 1;
     PB_LOCATION_ERROR_NOT_SUPPORTED = 2;
+    PB_LOCATION_ERROR_GENERAL_FAILURE = 3;
 }
 
 enum PBLocReqEngineTypeMask {
@@ -381,6 +385,12 @@ enum PBLocApiPositioningEngineMask {
     PB_PRECISE_POSITIONING_ENGINE  = 4;
 }
 
+enum PBLocEngineRunState {
+    PB_LOC_ENGINE_RUN_STATE_INVALID = 0;
+    PB_LOC_ENGINE_RUN_STATE_PAUSE   = 1;
+    PB_LOC_ENGINE_RUN_STATE_RESUME  = 2;
+};
+
 enum PBDrEngineAidingDataMask {
     PB_DR_ENGINE_AIDING_DATA_INVALID = 0;
     // Calibration data for DRE engine
@@ -395,25 +405,28 @@ enum PBGnssMeasurementsAdrStateMask {
 }
 
 enum PBGnssMeasurementsDataFlagsMask {
-    PB_GNSS_MEASUREMENTS_DATA_INVALID                          = 0;
-    PB_GNSS_MEASUREMENTS_DATA_SV_ID_BIT                        = 1;
-    PB_GNSS_MEASUREMENTS_DATA_SV_TYPE_BIT                      = 2;
-    PB_GNSS_MEASUREMENTS_DATA_STATE_BIT                        = 4;
-    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_BIT             = 8;
-    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_UNCERTAINTY_BIT = 16;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_TO_NOISE_BIT             = 32;
-    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_BIT             = 64;
-    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_UNCERTAINTY_BIT = 128;
-    PB_GNSS_MEASUREMENTS_DATA_ADR_STATE_BIT                    = 256;
-    PB_GNSS_MEASUREMENTS_DATA_ADR_BIT                          = 512;
-    PB_GNSS_MEASUREMENTS_DATA_ADR_UNCERTAINTY_BIT              = 1024;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT            = 2048;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_CYCLES_BIT               = 4096;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_BIT                = 8192;
-    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_UNCERTAINTY_BIT    = 16384;
-    PB_GNSS_MEASUREMENTS_DATA_MULTIPATH_INDICATOR_BIT          = 32768;
-    PB_GNSS_MEASUREMENTS_DATA_SIGNAL_TO_NOISE_RATIO_BIT        = 65536;
-    PB_GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT       = 131072;
+    PB_GNSS_MEASUREMENTS_DATA_INVALID                          = 0x00000000;
+    PB_GNSS_MEASUREMENTS_DATA_SV_ID_BIT                        = 0x00000001;
+    PB_GNSS_MEASUREMENTS_DATA_SV_TYPE_BIT                      = 0x00000002;
+    PB_GNSS_MEASUREMENTS_DATA_STATE_BIT                        = 0x00000004;
+    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_BIT             = 0x00000008;
+    PB_GNSS_MEASUREMENTS_DATA_RECEIVED_SV_TIME_UNCERTAINTY_BIT = 0x00000010;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_TO_NOISE_BIT             = 0x00000020;
+    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_BIT             = 0x00000040;
+    PB_GNSS_MEASUREMENTS_DATA_PSEUDORANGE_RATE_UNCERTAINTY_BIT = 0x00000080;
+    PB_GNSS_MEASUREMENTS_DATA_ADR_STATE_BIT                    = 0x00000100;
+    PB_GNSS_MEASUREMENTS_DATA_ADR_BIT                          = 0x00000200;
+    PB_GNSS_MEASUREMENTS_DATA_ADR_UNCERTAINTY_BIT              = 0x00000400;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_FREQUENCY_BIT            = 0x00000800;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_CYCLES_BIT               = 0x00001000;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_BIT                = 0x00002000;
+    PB_GNSS_MEASUREMENTS_DATA_CARRIER_PHASE_UNCERTAINTY_BIT    = 0x00004000;
+    PB_GNSS_MEASUREMENTS_DATA_MULTIPATH_INDICATOR_BIT          = 0x00008000;
+    PB_GNSS_MEASUREMENTS_DATA_SIGNAL_TO_NOISE_RATIO_BIT        = 0x00010000;
+    PB_GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT       = 0x00020000;
+    PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT                     = 0x00040000;
+    PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT         = 0x00080000;
+    PB_GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT             = 0x00100000;
 }
 
 enum PBGnssMeasurementsStateMask {
@@ -471,25 +484,29 @@ enum PBLocationFlagsMask {
 }
 
 enum PBLocationTechnologyMask {
-    PB_LOCATION_TECHNOLOGY_INVALID      = 0;
+    PB_LOCATION_TECHNOLOGY_INVALID      = 0x00000000;
     // location was calculated using GNSS
-    PB_LOCATION_TECHNOLOGY_GNSS_BIT     = 1;
+    PB_LOCATION_TECHNOLOGY_GNSS_BIT     = 0x00000001;
     // location was calculated using Cell
-    PB_LOCATION_TECHNOLOGY_CELL_BIT     = 2;
+    PB_LOCATION_TECHNOLOGY_CELL_BIT     = 0x00000002;
     // location was calculated using WiFi
-    PB_LOCATION_TECHNOLOGY_WIFI_BIT     = 4;
+    PB_LOCATION_TECHNOLOGY_WIFI_BIT     = 0x00000004;
     // location was calculated using Sensors
-    PB_LOCATION_TECHNOLOGY_SENSORS_BIT  = 8;
+    PB_LOCATION_TECHNOLOGY_SENSORS_BIT  = 0x00000008;
     // using reference location
-    PB_LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT   = 16;
+    PB_LOCATION_TECHNOLOGY_REFERENCE_LOCATION_BIT   = 0x00000010;
     // using CPI
-    PB_LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT = 32;
+    PB_LOCATION_TECHNOLOGY_INJECTED_COARSE_POSITION_BIT = 0x00000020;
     // AFLT
-    PB_LOCATION_TECHNOLOGY_AFLT_BIT = 64;
+    PB_LOCATION_TECHNOLOGY_AFLT_BIT     = 0x00000040;
     // HYBRID
-    PB_LOCATION_TECHNOLOGY_HYBRID_BIT   = 128;
+    PB_LOCATION_TECHNOLOGY_HYBRID_BIT   = 0x00000080;
     // PPE
-    PB_LOCATION_TECHNOLOGY_PPE_BIT  = 256;
+    PB_LOCATION_TECHNOLOGY_PPE_BIT      = 0x000000100;
+    // Vehicular data
+    PB_LOCATION_TECHNOLOGY_VEH_BIT      = 0x000000200;
+    // Visual data
+    PB_LOCATION_TECHNOLOGY_VIS_BIT      = 0x000000400;
 }
 
 enum PBLocationCapabilitiesMask {
@@ -523,6 +540,55 @@ enum PBLocationCapabilitiesMask {
     /** LocationClientApi can support trip batching via
      *  LocationClientApi::startTripBatchingSession(). <br/>   */
     PB_LOCATION_CAPS_OUTDOOR_TRIP_BATCHING_BIT         = 32;
+    /** LocationClientApi can support receiving GnssMeasurements
+     *  data in GnssMeasurementsCb when LocationClientApi is in
+     *  a positioning session.. <br/>   */
+    PB_LOCATION_CAPS_GNSS_MEASUREMENTS_BIT             = 64;
+    /** LocationIntegrationApi can support configure constellations
+     *  via LocationIntegrationApi::configConstellations.  <br/>   */
+    PB_LOCATION_CAPS_CONSTELLATION_ENABLEMENT_BIT      = 128;
+    /** Modem supports Carrier Phase for Precise Positioning
+     *  Measurement Engine (PPME).
+     *  This is a Standalone Feature.  <br/>   */
+    PB_LOCATION_CAPS_QWES_CARRIER_PHASE_BIT                 = 256;
+    /** Modem supports SV Polynomial for tightly coupled
+     *  external DR support.
+     *  This is a Standalone Feature.  <br/>   */
+    PB_LOCATION_CAPS_QWES_SV_POLYNOMIAL_BIT                 = 512;
+    /** Modem supports GNSS Single Frequency feature.
+     *  This is a Standalone Feature.  <br/>   */
+    PB_LOCATION_CAPS_QWES_GNSS_SINGLE_FREQUENCY        = 1024;
+    /** Modem supports GNSS Multi Frequency feature. Multi
+     *  Frequency enables Single frequency also.  <br/>   */
+    PB_LOCATION_CAPS_QWES_GNSS_MULTI_FREQUENCY         = 2048;
+    /** This mask indicates VEPP license bundle is enabled.
+     *  VEPP bundle include Carrier Phase and SV Polynomial
+     *  features.  <br/>   */
+    PB_LOCATION_CAPS_QWES_VPE                          = 4096;
+    /** This mask indicates support for CV2X Location basic
+     *  features. This bundle includes features for GTS Time
+     *  & Freq, C-TUNC (Constrained Time uncertainity.
+     *  LocationIntegrationApi can support setting of C-TUNC
+     *  via configConstrainedTimeUncertainty. <br/> */
+    PB_LOCATION_CAPS_QWES_CV2X_LOCATION_BASIC          = 8192;
+    /** This mask indicates support for CV2X Location premium
+     *  features. This bundle includes features for CV2X Location
+     *  Basic features, QDR3 feature, and PACE. (Position
+     *  Assisted Clock Estimator.
+     *  LocationIntegrationApi can support setting of C-TUNC
+     *  via configPositionAssistedClockEstimator. <br/> */
+    PB_LOCATION_CAPS_QWES_CV2X_LOCATION_PREMIUM        = 16384;
+    /** This mask indicates that PPE (Precise Positioning Engine)
+     *  library is enabled or Precise Positioning Framework (PPF)
+     *  is available. This bundle includes features for Carrier
+     *  Phase and SV Ephermeris.  <br/>   */
+    PB_LOCATION_CAPS_QWES_PPE                          = 32768;
+    /** This mask indicates QDR2_C license bundle is enabled.
+     *  This bundle includes features for SV Polynomial. <br/> */
+    PB_LOCATION_CAPS_QWES_QDR2                         = 65536;
+    /** This mask indicates QDR3_C license bundle is enabled.
+     *  This bundle includes features for SV Polynomial. <br/> */
+    PB_LOCATION_CAPS_QWES_QDR3                         = 131072;
 }
 
 enum PBGnssDataMask {
@@ -554,6 +620,11 @@ enum PBDrSolutionStatusMask {
     PB_VEHICLE_SENSOR_SPEED_INPUT_USED = 2;
 }
 
+enum PBLocationSessionStatus {
+    PB_LOCATION_SESS_SUCCESS = 0;
+    PB_LOCATION_SESS_INTERMEDIATE = 1;
+    PB_LOCATION_SESS_FAILURE = 2;
+};
 
 // Specify the valid mask for the configuration paramters of
 // dead reckoning position engine.
@@ -665,6 +736,7 @@ message PBLocApiGnssSv {
     uint32 gnssSvOptionsMask = 6; // Bitwise OR of PBLocApiGnssSvOptionsMask
     float carrierFrequencyHz = 7; // carrier frequency of the signal tracked
     uint32 gnssSignalTypeMask = 8; // Specifies GNSS signal type - PBGnssSignalTypeMask
+    double basebandCarrierToNoiseDbHz = 9; // Baseband signal strength Db Hz.
 }
 
 message PBLocApiGnssSvNotification {
@@ -715,6 +787,12 @@ message PBGnssMeasurementsData {
     PBGnssMeasurementsMultipathIndicator multipathIndicator = 18;
     double signalToNoiseRatioDb = 19;
     double agcLevelDb = 20;
+    double basebandCarrierToNoiseDbHz = 21;
+    // bitwise OR of  PBGnssSignalTypeMask
+    uint32 gnssSignalType = 22;
+    double fullInterSignalBiasNs = 23;
+    double fullInterSignalBiasUncertaintyNs = 24;
+    uint32 cycleSlipCount = 25;
 }
 
 message PBLocApiGnssLocationPositionDynamics {
@@ -902,6 +980,14 @@ message PBGnssLocationInfoNotification {
     repeated float enuVelocityVRPBased = 38;
     // PBDrSolutionStatusMask
     uint32 drSolutionStatusMask = 39;
+    // Contains PBGnssLocationInfoExtFlagMask bits.
+    // Bitwise OR of PBGnssLocationInfoExtFlagMask for param validity
+    // for fields 41: e.g.:altitudeAssumed and onwards
+    uint32 extFlags = 40;
+    // PBAltitudeAssumed, validity is set via extFlags
+    bool altitudeAssumed = 41;
+    // PBLocationSessionStatus, validity is set via extFlags
+    PBLocationSessionStatus sessionStatus = 42;
 }
 
 message PBGnssDataNotification {

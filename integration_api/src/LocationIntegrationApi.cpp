@@ -508,5 +508,43 @@ bool LocationIntegrationApi::getMinSvElevation() {
     }
 }
 
+bool LocationIntegrationApi::configEngineRunState(LocIntegrationEngineType engType,
+                                                  LocIntegrationEngineRunState engState) {
+    if (mApiImpl) {
+        PositioningEngineMask halEngType = (PositioningEngineMask)0;
+        LocEngineRunState halEngState = (LocEngineRunState)0;
+        switch (engType) {
+        case LOC_INT_ENGINE_SPE:
+            halEngType = STANDARD_POSITIONING_ENGINE;
+            break;
+        case LOC_INT_ENGINE_DRE:
+            halEngType = DEAD_RECKONING_ENGINE;
+            break;
+        case LOC_INT_ENGINE_PPE:
+            halEngType = PRECISE_POSITIONING_ENGINE;
+            break;
+        case LOC_INT_ENGINE_VPE:
+            halEngType = VP_POSITIONING_ENGINE;
+            break;
+        default:
+            LOC_LOGe("unknown engine type of %d", engType);
+            return false;
+        }
+
+        if (engState == LOC_INT_ENGINE_RUN_STATE_PAUSE) {
+            halEngState = LOC_ENGINE_RUN_STATE_PAUSE;
+        } else if (engState == LOC_INT_ENGINE_RUN_STATE_RESUME) {
+            halEngState = LOC_ENGINE_RUN_STATE_RESUME;
+        } else {
+             LOC_LOGe("unknown engine state %d", engState);
+            return false;
+        }
+        return (mApiImpl->configEngineRunState(halEngType, halEngState) == 0);
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
+        return false;
+    }
+}
+
 } // namespace location_integration
 

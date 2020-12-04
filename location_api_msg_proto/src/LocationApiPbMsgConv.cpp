@@ -195,6 +195,12 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
         case PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
             eLocMsgId = E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID;
             break;
+        case PB_E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID:
+            eLocMsgId = E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID;
+            break;
+        case PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
+            eLocMsgId = E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID;
+            break;
         case PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             eLocMsgId = E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
             break;
@@ -212,6 +218,12 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
             break;
         case PB_E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID:
             eLocMsgId = E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID;
+            break;
+        case PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID:
+            eLocMsgId = E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID;
+            break;
+        case PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID:
+            eLocMsgId = E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID;
             break;
         default:
             break;
@@ -402,6 +414,38 @@ LocOutputEngineType LocationApiPbMsgConv::getEnumForPBLocOutputEngineType(
     return locOpEngType;
 }
 
+// HAL position mask from PB position engine mask
+LocEngineRunState LocationApiPbMsgConv::getEnumForPBLocEngineRunState(
+            const PBLocEngineRunState &pbLocEngRunState) const {
+    LocEngineRunState locEngRunState = (LocEngineRunState) 0;
+
+    if (pbLocEngRunState == PB_LOC_ENGINE_RUN_STATE_PAUSE) {
+        locEngRunState = LOC_ENGINE_RUN_STATE_PAUSE;
+    } else if (pbLocEngRunState == PB_LOC_ENGINE_RUN_STATE_RESUME) {
+        locEngRunState = LOC_ENGINE_RUN_STATE_RESUME;
+    }
+
+    LocApiPb_LOGv("LocApiPB: pbEngineRunState:%d, llocEngRunState:%d",
+            pbLocEngRunState, locEngRunState);
+    return locEngRunState;
+}
+
+// HAL position mask to PB position engine mask
+uint32_t LocationApiPbMsgConv::getPBEnumForLocEngineRunState(
+        const LocEngineRunState& locEngineRunState) const {
+
+    PBLocEngineRunState pbEngineRunState = PB_LOC_ENGINE_RUN_STATE_INVALID;;
+
+    if (locEngineRunState == LOC_ENGINE_RUN_STATE_PAUSE) {
+        pbEngineRunState = PB_LOC_ENGINE_RUN_STATE_PAUSE;
+    } else if (locEngineRunState ==LOC_ENGINE_RUN_STATE_RESUME) {
+        pbEngineRunState = PB_LOC_ENGINE_RUN_STATE_RESUME;
+    }
+    LocApiPb_LOGd("LocApiPB: locEngineRunState: %d, pbEngineRunState: %d",
+                  locEngineRunState, pbEngineRunState);
+    return pbEngineRunState;
+}
+
 // PBLocApiGnss_LocSvSystemEnumType to GnssSvType
 GnssSvType LocationApiPbMsgConv::getGnssSvTypeFromPBGnssLocSvSystemEnumType(
             const PBLocApiGnss_LocSvSystemEnumType &pbGnssLocSvSysEnum) const {
@@ -560,6 +604,12 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
         case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID;
             break;
+        case E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID;
+            break;
+        case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID;
+            break;
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
             break;
@@ -577,6 +627,12 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
             break;
         case E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_GET_MIN_SV_ELEVATION_RESP_MSG_ID;
+            break;
+        case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID;
+            break;
+        case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_RESP_MSG_ID;
             break;
         default:
             break;
@@ -625,6 +681,9 @@ PBLocationError LocationApiPbMsgConv::getPBEnumForLocationError(
             break;
         case LOCATION_ERROR_INVALID_PARAMETER:
             pbLocErr = PB_LOCATION_ERROR_INVALID_PARAMETER;
+            break;
+        case LOCATION_ERROR_NOT_SUPPORTED:
+            pbLocErr = PB_LOCATION_ERROR_NOT_SUPPORTED;
             break;
         default:
             break;
@@ -853,9 +912,9 @@ uint32_t LocationApiPbMsgConv::getPBMaskForLocationCallbacksMask(const uint32_t 
     return pbLocCbMask;
 }
 
-uint32_t LocationApiPbMsgConv::getPBMaskForLocationCapabilitiesMask(
-        const uint32_t &locCapabMask) const {
-    uint32_t pbLocCapabMask = 0;
+uint64_t LocationApiPbMsgConv::getPBMaskForLocationCapabilitiesMask(
+        const uint64_t &locCapabMask) const {
+    uint64_t pbLocCapabMask = 0;
     if (locCapabMask & LOCATION_CAPABILITIES_TIME_BASED_TRACKING_BIT) {
         pbLocCapabMask |= PB_LOCATION_CAPS_TIME_BASED_TRACKING_BIT;
     }
@@ -874,7 +933,44 @@ uint32_t LocationApiPbMsgConv::getPBMaskForLocationCapabilitiesMask(
     if (locCapabMask & LOCATION_CAPABILITIES_OUTDOOR_TRIP_BATCHING_BIT) {
         pbLocCapabMask |= PB_LOCATION_CAPS_OUTDOOR_TRIP_BATCHING_BIT;
     }
-    LocApiPb_LOGv("LocApiPB: locCapabMask:%x, pbLocCapabMask:%x", locCapabMask, pbLocCapabMask);
+    if (locCapabMask & LOCATION_CAPABILITIES_GNSS_MEASUREMENTS_BIT) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_GNSS_MEASUREMENTS_BIT;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_CONSTELLATION_ENABLEMENT_BIT) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_CONSTELLATION_ENABLEMENT_BIT;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_CARRIER_PHASE_BIT) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_CARRIER_PHASE_BIT;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_SV_POLYNOMIAL_BIT) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_SV_POLYNOMIAL_BIT;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_GNSS_SINGLE_FREQUENCY) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_GNSS_SINGLE_FREQUENCY;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_GNSS_MULTI_FREQUENCY) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_GNSS_MULTI_FREQUENCY;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_VPE) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_VPE;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_CV2X_LOCATION_BASIC) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_CV2X_LOCATION_BASIC;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_CV2X_LOCATION_PREMIUM) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_CV2X_LOCATION_PREMIUM;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_PPE) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_PPE;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_QDR2) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_QDR2;
+    }
+    if (locCapabMask & LOCATION_CAPABILITIES_QWES_QDR3) {
+        pbLocCapabMask |= PB_LOCATION_CAPS_QWES_QDR3;
+    }
+    LOC_LOGi("LocApiPB: locCapabMask:0x%" PRIx64", pbLocCapabMask:0x%" PRIx64,
+            locCapabMask, pbLocCapabMask);
     return pbLocCapabMask;
 }
 
@@ -1080,12 +1176,18 @@ uint32_t LocationApiPbMsgConv::getPBMaskForLocationTechnologyMask(
     if (locTechMask & LOCATION_TECHNOLOGY_PPE_BIT) {
         pbLocTechMask |= PB_LOCATION_TECHNOLOGY_PPE_BIT;
     }
+    if (locTechMask & LOCATION_TECHNOLOGY_VEH_BIT) {
+        pbLocTechMask |= PB_LOCATION_TECHNOLOGY_VEH_BIT;
+    }
+    if (locTechMask & LOCATION_TECHNOLOGY_VIS_BIT) {
+        pbLocTechMask |= PB_LOCATION_TECHNOLOGY_VIS_BIT;
+    }
     LocApiPb_LOGv("LocApiPB: locTechMask:%x, pbLocTechMask:%x", locTechMask, pbLocTechMask);
     return pbLocTechMask;
 }
 
 uint32_t LocationApiPbMsgConv::getPBMaskForGnssLocationInfoFlagMask(
-        const uint32_t &gnssLocInfoFlagMask) const {
+        const uint64_t &gnssLocInfoFlagMask) const {
     uint32_t pbGnssLocInfoFlagMask = 0;
     if (gnssLocInfoFlagMask & GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT) {
         pbGnssLocInfoFlagMask |= PB_GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT;
@@ -1183,6 +1285,16 @@ uint32_t LocationApiPbMsgConv::getPBMaskForGnssLocationInfoFlagMask(
     }
     LocApiPb_LOGv("LocApiPB: gnssLocInfoFlagMask:%x, pbGnssLocInfoFlagMask:%x",
             gnssLocInfoFlagMask, pbGnssLocInfoFlagMask);
+    return pbGnssLocInfoFlagMask;
+}
+
+uint32_t LocationApiPbMsgConv::getPBMaskForGnssLocationInfoExtFlagMask(
+        const uint64_t &gnssLocInfoFlagMask) const {
+
+    uint32_t pbGnssLocInfoFlagMask = 0;
+    if (gnssLocInfoFlagMask & GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT) {
+        pbGnssLocInfoFlagMask |= PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT;
+    }
     return pbGnssLocInfoFlagMask;
 }
 
@@ -1300,6 +1412,15 @@ uint32_t LocationApiPbMsgConv::getPBMaskForGnssMeasurementsDataFlagsMask(
     }
     if (gnssMeasDataFlagsMask & GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT) {
         pbGnssMeasDataFlagsMask |= PB_GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT;
+    }
+    if (gnssMeasDataFlagsMask & GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT) {
+        pbGnssMeasDataFlagsMask |= PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
+    }
+    if (gnssMeasDataFlagsMask & GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT) {
+        pbGnssMeasDataFlagsMask |= PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
+    }
+    if (gnssMeasDataFlagsMask & GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT) {
+        pbGnssMeasDataFlagsMask |= PB_GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT;
     }
     LocApiPb_LOGv("LocApiPB: gnssMeasDataFlagsMask:%x, pbGnssMeasDataFlagsMask:%x",
             gnssMeasDataFlagsMask, pbGnssMeasDataFlagsMask);
@@ -1674,9 +1795,9 @@ uint32_t LocationApiPbMsgConv::getPBMaskForDrSolutionStatusMask(
 }
 
 // **** helper function for mask conversion from protobuf masks to normal rigid values
-uint32_t LocationApiPbMsgConv::getLocationCapabilitiesMaskFromPB(
-        const uint32_t &pbLocCapabMask) const {
-    uint32_t locCapabMask = 0;
+uint64_t LocationApiPbMsgConv::getLocationCapabilitiesMaskFromPB(
+        const uint64_t &pbLocCapabMask) const {
+    uint64_t locCapabMask = 0;
     if (pbLocCapabMask & PB_LOCATION_CAPS_TIME_BASED_TRACKING_BIT) {
         locCapabMask |= LOCATION_CAPABILITIES_TIME_BASED_TRACKING_BIT;
     }
@@ -1695,7 +1816,44 @@ uint32_t LocationApiPbMsgConv::getLocationCapabilitiesMaskFromPB(
     if (pbLocCapabMask & PB_LOCATION_CAPS_OUTDOOR_TRIP_BATCHING_BIT) {
         locCapabMask |= LOCATION_CAPABILITIES_OUTDOOR_TRIP_BATCHING_BIT;
     }
-    LocApiPb_LOGv("LocApiPB: pbLocCapabMask:%x, locCapabMask:%x", pbLocCapabMask, locCapabMask);
+    if (pbLocCapabMask & PB_LOCATION_CAPS_GNSS_MEASUREMENTS_BIT) {
+        locCapabMask |= LOCATION_CAPABILITIES_GNSS_MEASUREMENTS_BIT;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_CONSTELLATION_ENABLEMENT_BIT) {
+        locCapabMask |= LOCATION_CAPABILITIES_CONSTELLATION_ENABLEMENT_BIT;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_CARRIER_PHASE_BIT) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_CARRIER_PHASE_BIT;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_SV_POLYNOMIAL_BIT) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_SV_POLYNOMIAL_BIT;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_GNSS_SINGLE_FREQUENCY) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_GNSS_SINGLE_FREQUENCY;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_GNSS_MULTI_FREQUENCY) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_GNSS_MULTI_FREQUENCY;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_VPE) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_VPE;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_CV2X_LOCATION_BASIC) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_CV2X_LOCATION_BASIC;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_CV2X_LOCATION_PREMIUM) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_CV2X_LOCATION_PREMIUM;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_PPE) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_PPE;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_QDR2) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_QDR2;
+    }
+    if (pbLocCapabMask & PB_LOCATION_CAPS_QWES_QDR3) {
+        locCapabMask |= LOCATION_CAPABILITIES_QWES_QDR3;
+    }
+    LOC_LOGi("LocApiPB: pbLocCapabMask:0x%" PRIx64", locCapabMask:0x%" PRIx64,
+            pbLocCapabMask, locCapabMask);
     return locCapabMask;
 }
 
@@ -1757,16 +1915,17 @@ uint32_t LocationApiPbMsgConv::getLeverArmTypeMaskFromPB(const uint32_t &pbLever
     return leverYypeMask;
 }
 
-uint32_t LocationApiPbMsgConv::getPositioningEngineMaskFromPB(const uint32_t &pbPosEngMask) const {
+uint32_t LocationApiPbMsgConv::getEnumForPBPositioningEngineMask(
+        const uint32_t &pbPosEngMask) const {
     uint32_t posEngMask = 0;
-    if (pbPosEngMask & PB_STANDARD_POSITIONING_ENGINE) {
-        posEngMask |= STANDARD_POSITIONING_ENGINE;
-    }
     if (pbPosEngMask & PB_STANDARD_POSITIONING_ENGINE) {
         posEngMask |= STANDARD_POSITIONING_ENGINE;
     }
     if (pbPosEngMask & PB_PRECISE_POSITIONING_ENGINE) {
         posEngMask |= PRECISE_POSITIONING_ENGINE;
+    }
+    if (pbPosEngMask & PB_DEAD_RECKONING_ENGINE) {
+        posEngMask |= DEAD_RECKONING_ENGINE;
     }
     LocApiPb_LOGv("LocApiPB: pbPosEngMask:%x, posEngMask:%x", pbPosEngMask, posEngMask);
     return posEngMask;
@@ -2065,6 +2224,12 @@ uint32_t LocationApiPbMsgConv::getLocationTechnologyMaskFromPB(
     if (pbLocTechMask & PB_LOCATION_TECHNOLOGY_PPE_BIT) {
         locTechMask |= LOCATION_TECHNOLOGY_PPE_BIT;
     }
+    if (pbLocTechMask & PB_LOCATION_TECHNOLOGY_VEH_BIT) {
+        locTechMask |= LOCATION_TECHNOLOGY_VEH_BIT;
+    }
+    if (pbLocTechMask & PB_LOCATION_TECHNOLOGY_VIS_BIT) {
+        locTechMask |= LOCATION_TECHNOLOGY_VIS_BIT;
+    }
     LocApiPb_LOGv("LocApiPB: pbLocTechMask:%x, locTechMask:%x", pbLocTechMask, locTechMask);
     return locTechMask;
 }
@@ -2162,6 +2327,15 @@ uint32_t LocationApiPbMsgConv::getGnssMeasurementsDataFlagsMaskFromPB(
     if (pbGnssMeasDataFlgMask & PB_GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT) {
         gnssMeasDataFlgMask |= GNSS_MEASUREMENTS_DATA_AUTOMATIC_GAIN_CONTROL_BIT;
     }
+    if (pbGnssMeasDataFlgMask & PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT) {
+        gnssMeasDataFlgMask |= GNSS_MEASUREMENTS_DATA_FULL_ISB_BIT;
+    }
+    if (pbGnssMeasDataFlgMask & PB_GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT) {
+        gnssMeasDataFlgMask |= GNSS_MEASUREMENTS_DATA_FULL_ISB_UNCERTAINTY_BIT;
+    }
+    if (pbGnssMeasDataFlgMask & PB_GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT) {
+        gnssMeasDataFlgMask |= GNSS_MEASUREMENTS_DATA_CYCLE_SLIP_COUNT_BIT;
+    }
     LocApiPb_LOGv("LocApiPB: pbGnssMeasDataFlgMask:%x, gnssMeasDataFlgMask:%x",
             pbGnssMeasDataFlgMask, gnssMeasDataFlgMask);
     return gnssMeasDataFlgMask;
@@ -2185,9 +2359,11 @@ uint32_t LocationApiPbMsgConv::getGnssMeasurementsAdrStateMaskFromPB(
     return gnssMeasAdrStateMask;
 }
 
-uint32_t LocationApiPbMsgConv::getGnssLocationInfoFlagMaskFromPB(
-        const uint32_t &pbGnssLocInfoFlagMask) const {
-    uint32_t gnssLocInfoFlagMask = 0;
+uint64_t LocationApiPbMsgConv::getGnssLocationInfoFlagMaskFromPB(
+        const uint32_t &pbGnssLocInfoFlagMask,
+        const uint32_t &pbGnssLocInfoExtFlagMask) const {
+
+    uint64_t gnssLocInfoFlagMask = 0;
     if (pbGnssLocInfoFlagMask & PB_GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT) {
         gnssLocInfoFlagMask |= GNSS_LOCATION_INFO_ALTITUDE_MEAN_SEA_LEVEL_BIT;
     }
@@ -2281,8 +2457,14 @@ uint32_t LocationApiPbMsgConv::getGnssLocationInfoFlagMaskFromPB(
     if (pbGnssLocInfoFlagMask & PB_GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT) {
         gnssLocInfoFlagMask |= GNSS_LOCATION_INFO_DR_SOLUTION_STATUS_MASK_BIT;
     }
-    LocApiPb_LOGv("LocApiPB: pbGnssLocInfoFlagMask:%x, gnssLocInfoFlagMask:%x",
-            pbGnssLocInfoFlagMask, gnssLocInfoFlagMask);
+    if (pbGnssLocInfoExtFlagMask & PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT) {
+        gnssLocInfoFlagMask |= GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT;
+    }
+
+    LocApiPb_LOGv("LocApiPB: pbGnssLocInfoFlagMask:0x%x, pbGnssLocInfoExtFlagMask:0x%x, "
+                  "gnssLocInfoFlagMask:0x%" PRIu64"", pbGnssLocInfoFlagMask,
+                  pbGnssLocInfoExtFlagMask, gnssLocInfoFlagMask);
+
     return gnssLocInfoFlagMask;
 }
 
@@ -3168,6 +3350,14 @@ int LocationApiPbMsgConv::convertGnssLocInfoNotifToPB(
     pbGnssLocInfoNotif->set_drsolutionstatusmask(getPBMaskForDrSolutionStatusMask(
             (uint32_t)gnssLocInfoNotif.drSolutionStatusMask));
 
+    // uint32 extFlags = 40;
+    // bitwise OR of PBGnssLocationInfoExtFlagMask for fields 41 and onwards
+    pbGnssLocInfoNotif->set_extflags(
+            getPBMaskForGnssLocationInfoExtFlagMask(gnssLocInfoNotif.flags));
+
+    // bool altitudeAssumed = 41;
+    pbGnssLocInfoNotif->set_altitudeassumed(gnssLocInfoNotif.altitudeAssumed);
+
     LocApiPb_LOGd("LocApiPB: gnssLocInfoNotif - GLocInfoFlgMask:%u, pdop:%f, hdop:%f, vdop:%f",
             gnssLocInfoNotif.flags, gnssLocInfoNotif.pdop, gnssLocInfoNotif.hdop,
             gnssLocInfoNotif.vdop);
@@ -3554,6 +3744,23 @@ int LocationApiPbMsgConv::convertGnssMeasDataToPB(const GnssMeasurementsData &gn
     // double agcLevelDb = 20;
     pbGnssMeasData->set_agcleveldb(gnssMeasData.agcLevelDb);
 
+    // double basebandCarrierToNoiseDbHz = 21;
+    pbGnssMeasData->set_basebandcarriertonoisedbhz(gnssMeasData.basebandCarrierToNoiseDbHz);
+
+    // uint32 gnssSignalType = 22; - bitwise OR of  PBGnssSignalTypeMask
+    pbGnssMeasData->set_gnsssignaltype(
+            getPBMaskForGnssSignalTypeMask(gnssMeasData.gnssSignalType));
+
+    // double fullInterSignalBiasNs = 23;
+    pbGnssMeasData->set_fullintersignalbiasns(gnssMeasData.fullInterSignalBiasNs);
+
+    // double fullInterSignalBiasUncertaintyNs = 24;
+    pbGnssMeasData->set_fullintersignalbiasuncertaintyns(
+            gnssMeasData.fullInterSignalBiasUncertaintyNs);
+
+    // uint32 cycleSlipCount = 25;
+    pbGnssMeasData->set_cycleslipcount(gnssMeasData.cycleSlipCount);
+
     LOC_LOGd("LocApiPB: gnssMeasData - GnssMeasDataFlags:%x, Svid:%d, SvType:%d, StateMsk:%x, "\
             "RcvSvTime:%"  PRIu64", RcvSvTimeUnc:%" PRIu64", CNoDb:%lf", gnssMeasData.flags,
             gnssMeasData.svId, gnssMeasData.svType, gnssMeasData.stateMask,
@@ -3568,9 +3775,15 @@ int LocationApiPbMsgConv::convertGnssMeasDataToPB(const GnssMeasurementsData &gn
             gnssMeasData.carrierFrequencyHz, gnssMeasData.carrierCycles);
 
     LocApiPb_LOGd("LocApiPB: gnssMeasData - CarierPhase:%lf, CarierPhaseUnc:%lf, MultiPathInd:%d"\
-            "CNoRatio:%lf, AgcLevel:%lf", gnssMeasData.carrierPhase,
+            "CNoRatio:%lf, AgcLevel:%lf, BasebandCno:%lf", gnssMeasData.carrierPhase,
             gnssMeasData.carrierPhaseUncertainty, gnssMeasData.multipathIndicator,
-            gnssMeasData.signalToNoiseRatioDb, gnssMeasData.agcLevelDb);
+            gnssMeasData.signalToNoiseRatioDb, gnssMeasData.agcLevelDb,
+            gnssMeasData.basebandCarrierToNoiseDbHz);
+
+    LocApiPb_LOGd("LocApiPB: gnssMeasData - GnssSignalType:%x, InterSigBiasNs:%lf, "\
+            "InterSigBiasUncNs:%lf, cycleSlipCount:%d",
+            gnssMeasData.gnssSignalType, gnssMeasData.fullInterSignalBiasNs,
+            gnssMeasData.fullInterSignalBiasUncertaintyNs, gnssMeasData.cycleSlipCount);
 
     return 0;
 }
@@ -3643,10 +3856,14 @@ int LocationApiPbMsgConv::convertGnssSvToPB(const GnssSv &gnssSv,
     // uint32 gnssSignalTypeMask = 8;  - Bitwise OR of PBGnssSignalTypeMask
     pbGnssSv->set_gnsssignaltypemask(getPBMaskForGnssSignalTypeMask(gnssSv.gnssSignalTypeMask));
 
+    // double basebandCarrierToNoiseDbHz = 9;
+    pbGnssSv->set_basebandcarriertonoisedbhz(gnssSv.basebandCarrierToNoiseDbHz);
+
     LocApiPb_LOGd("LocApiPB: gnssSv - SvId:%d, SvType:%d, CNo:%f, Elev:%f, Azi:%f, SvOptMask:%x, "\
-            "CarrierFreq:%f, SignalTypeMask:%x", gnssSv.svId, gnssSv.type, gnssSv.cN0Dbhz,
-            gnssSv.elevation, gnssSv.azimuth, gnssSv.gnssSvOptionsMask, gnssSv.carrierFrequencyHz,
-            gnssSv.gnssSignalTypeMask);
+            "CarrierFreq:%f, SignalTypeMask:%x, BseBandCno:%lf", gnssSv.svId, gnssSv.type,
+            gnssSv.cN0Dbhz, gnssSv.elevation, gnssSv.azimuth, gnssSv.gnssSvOptionsMask,
+            gnssSv.carrierFrequencyHz, gnssSv.gnssSignalTypeMask,
+            gnssSv.basebandCarrierToNoiseDbHz);
     return 0;
 }
 
@@ -4110,8 +4327,9 @@ int LocationApiPbMsgConv::pbConvertToGnssLocInfoNotif(
     // PBLocation location = 1;
     pbConvertToLocation(pbGnssLocInfoNotif.location(), gnssLocInfoNotif.location);
 
-    // uint32 flags = 2; -  bitwise OR of PBGnssLocationInfoFlagMask
-    gnssLocInfoNotif.flags = getGnssLocationInfoFlagMaskFromPB(pbGnssLocInfoNotif.flags());
+    // uint64 flags = 2; -  bitwise OR of PBGnssLocationInfoFlagMask
+    gnssLocInfoNotif.flags = getGnssLocationInfoFlagMaskFromPB(
+            pbGnssLocInfoNotif.flags(), pbGnssLocInfoNotif.extflags());
 
     // float altitudeMeanSeaLevel = 3;
     gnssLocInfoNotif.altitudeMeanSeaLevel = pbGnssLocInfoNotif.altitudemeansealevel();
@@ -4211,7 +4429,7 @@ int LocationApiPbMsgConv::pbConvertToGnssLocInfoNotif(
 
     // uint32 locOutputEngMask = 35; - bitwise OR of PBLocApiPositioningEngineMask
     gnssLocInfoNotif.locOutputEngMask =
-            getPositioningEngineMaskFromPB(pbGnssLocInfoNotif.locoutputengmask());
+            getEnumForPBPositioningEngineMask(pbGnssLocInfoNotif.locoutputengmask());
 
     // float conformityIndex = 36;
     gnssLocInfoNotif.conformityIndex = pbGnssLocInfoNotif.conformityindex();
@@ -4230,6 +4448,9 @@ int LocationApiPbMsgConv::pbConvertToGnssLocInfoNotif(
     gnssLocInfoNotif.drSolutionStatusMask =
             (DrSolutionStatusMask)getDrSolutionStatusMaskFromPB(
             pbGnssLocInfoNotif.drsolutionstatusmask());
+
+    // bool altitudeAssumed = 41;
+    gnssLocInfoNotif.altitudeAssumed= pbGnssLocInfoNotif.altitudeassumed();
 
     LOC_LOGd("LocApiPB: pbGnssLocInfoNotif -GLocInfoFlgMask:%u, pdop:%f, hdop:%f, vdop:%f",
             gnssLocInfoNotif.flags, gnssLocInfoNotif.pdop, gnssLocInfoNotif.hdop,
@@ -4286,10 +4507,16 @@ int LocationApiPbMsgConv::pbConvertToGnssSvNotif(const PBLocApiGnssSvNotificatio
         // uint32 gnssSignalTypeMask = 8; - PBGnssSignalTypeMask
         gnssSvNotif.gnssSvs[i].gnssSignalTypeMask =
                 getGnssSignalTypeMaskFromPB(pPbGnssSv.gnsssignaltypemask());
-        LocApiPb_LOGd("LocApiPB: gnssSv[%d] - SvId:%d, CNo:%f, SvOptMask:%x, SignalTypeMask:%x",
+
+        // double basebandCarrierToNoiseDbHz = 9;
+        gnssSvNotif.gnssSvs[i].basebandCarrierToNoiseDbHz = pPbGnssSv.basebandcarriertonoisedbhz();
+
+        LocApiPb_LOGd("LocApiPB: gnssSv[%d] - SvId:%d, CNo:%f, SvOptMask:%x, SignalTypeMask:%x, "\
+                "BseBandCno:%lf",
                 i, gnssSvNotif.gnssSvs[i].svId, gnssSvNotif.gnssSvs[i].cN0Dbhz,
                 gnssSvNotif.gnssSvs[i].gnssSvOptionsMask,
-                gnssSvNotif.gnssSvs[i].gnssSignalTypeMask);
+                gnssSvNotif.gnssSvs[i].gnssSignalTypeMask,
+                gnssSvNotif.gnssSvs[i].basebandCarrierToNoiseDbHz);
     }
     return 0;
 }
@@ -4477,12 +4704,12 @@ int LocationApiPbMsgConv::pbConvertToGnssAidingData(const PBAidingData &pbGnssAi
     gnssAidData.sv.svMask = getGnssAidingDataSvMaskFromPB(pbGnssAidData.gnssaidingdatasvmask());
 
     // uint32 dreAidingDataMask = 3;- PBDrEngineAidingDataMask
-    gnssAidData.dreAidingDataMask = getDrSolutionStatusMaskFromPB(
+    gnssAidData.dreAidingDataMask = getDrEngineAidingDataMaskFromPB(
             pbGnssAidData.dreaidingdatamask());
 
     // Masks from - PBLocApiPositioningEngineMask
     // uint32 posEngineMask = 4;
-    gnssAidData.posEngineMask = getPositioningEngineMaskFromPB(pbGnssAidData.posenginemask());
+    gnssAidData.posEngineMask = getEnumForPBPositioningEngineMask(pbGnssAidData.posenginemask());
 
     LOC_LOGd("LocApiPB: pbGnssAidData deleteAll:%d, svMask: %x, PosEngMask:%x",
             gnssAidData.deleteAll, gnssAidData.sv.svMask, gnssAidData.posEngineMask);
@@ -4709,6 +4936,22 @@ int LocationApiPbMsgConv::pbConvertToGnssMeasurementsData(
     // double agcLevelDb = 20;
     gnssMeasData.agcLevelDb = pbGnssMeasData.agcleveldb();
 
+    // double basebandCarrierToNoiseDbHz = 21;
+    gnssMeasData.basebandCarrierToNoiseDbHz = pbGnssMeasData.basebandcarriertonoisedbhz();
+
+    // uint32 gnssSignalType = 22; - bitwise OR of  PBGnssSignalTypeMask
+    gnssMeasData.gnssSignalType =  getGnssSignalTypeMaskFromPB(pbGnssMeasData.gnsssignaltype());
+
+    // double fullInterSignalBiasNs = 23;
+    gnssMeasData.fullInterSignalBiasNs = pbGnssMeasData.fullintersignalbiasns();
+
+    // double fullInterSignalBiasUncertaintyNs = 24;
+    gnssMeasData.fullInterSignalBiasUncertaintyNs =
+            pbGnssMeasData.fullintersignalbiasuncertaintyns();
+
+    // uint32 cycleSlipCount = 25;
+    gnssMeasData.cycleSlipCount = pbGnssMeasData.cycleslipcount();
+
     LOC_LOGd("LocApiPB: pbGnssMeasData - GnssMeasDataFlags:%x, Svid:%d, SvType:%d, StateMsk:%x, "\
             "RcvSvTime:%"  PRIu64", RcvSvTimeUnc:%" PRIu64", CNoDb:%lf", gnssMeasData.flags,
             gnssMeasData.svId, gnssMeasData.svType, gnssMeasData.stateMask,
@@ -4722,10 +4965,17 @@ int LocationApiPbMsgConv::pbConvertToGnssMeasurementsData(
             gnssMeasData.adrMeters, gnssMeasData.adrUncertaintyMeters,
             gnssMeasData.carrierFrequencyHz, gnssMeasData.carrierCycles);
 
-    LocApiPb_LOGd("LocApiPB: pbGnssMeasData - CarierPhase:%lf, CarierPhaseUnc:%lf, MultiPathInd:%d"\
-            "CNoRatio:%lf, AgcLevel:%lf", gnssMeasData.carrierPhase,
+    LocApiPb_LOGd("LocApiPB: pbGnssMeasData- CarierPhase:%lf, CarierPhaseUnc:%lf, MultiPathInd:%d"\
+            "CNoRatio:%lf, AgcLevel:%lf, BasebandCno:%lf", gnssMeasData.carrierPhase,
             gnssMeasData.carrierPhaseUncertainty, gnssMeasData.multipathIndicator,
-            gnssMeasData.signalToNoiseRatioDb, gnssMeasData.agcLevelDb);
+            gnssMeasData.signalToNoiseRatioDb, gnssMeasData.agcLevelDb,
+            gnssMeasData.basebandCarrierToNoiseDbHz);
+
+    LocApiPb_LOGd("LocApiPB: gnssMeasData - GnssSignalType:%x, InterSigBiasNs:%lf, "\
+            "InterSigBiasUncNs:%lf, cycleSlipCount:%d",
+            gnssMeasData.gnssSignalType, gnssMeasData.fullInterSignalBiasNs,
+            gnssMeasData.fullInterSignalBiasUncertaintyNs, gnssMeasData.cycleSlipCount);
+
     return 0;
 }
 
