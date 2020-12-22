@@ -42,8 +42,8 @@ enum LocationApiDataTypesVersion {
     LOCAPI_DATA_TYPES_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    // Minor version 5: Single shot GTP WWAN fix request
-    LOCAPI_DATA_TYPES_VER_MINOR = 5;
+    // Minor version 6: Add glonass frequency in GnssSv
+    LOCAPI_DATA_TYPES_VER_MINOR = 6;
 }
 
 // ============================================================================
@@ -744,6 +744,7 @@ message PBLocApiGnssSv {
     float carrierFrequencyHz = 7; // carrier frequency of the signal tracked
     uint32 gnssSignalTypeMask = 8; // Specifies GNSS signal type - PBGnssSignalTypeMask
     double basebandCarrierToNoiseDbHz = 9; // Baseband signal strength Db Hz.
+    uint32 gloFrequency = 10; // GLONASS Frequency number.
 }
 
 message PBLocApiGnssSvNotification {
