@@ -5401,17 +5401,15 @@ void LocApiV02 :: reportNiRequest(
   qmiLocEventNiNotifyVerifyReqIndMsgT_v02 *ni_req_copy_ptr =
     (qmiLocEventNiNotifyVerifyReqIndMsgT_v02 *)malloc(sizeof(*ni_req_copy_ptr));
 
-  if( NULL != ni_req_copy_ptr)
-  {
-    memcpy(ni_req_copy_ptr, ni_req_ptr, sizeof(*ni_req_copy_ptr));
-
-    requestNiNotify(notif, (const void*)ni_req_copy_ptr);
-  }
-  else
-  {
-    LOC_LOGE("%s:%d]: Error copying NI request\n", __func__, __LINE__);
-  }
-
+    LocInEmergency emergencyState = ni_req_ptr->isInEmergencySession_valid ?
+            (ni_req_ptr->isInEmergencySession ? LOC_IN_EMERGENCY_SET : LOC_IN_EMERGENCY_NOT_SET) :
+            LOC_IN_EMERGENCY_UNKNOWN;
+    if (NULL != ni_req_copy_ptr) {
+        memcpy(ni_req_copy_ptr, ni_req_ptr, sizeof(*ni_req_copy_ptr));
+        requestNiNotify(notif, (const void*)ni_req_copy_ptr, emergencyState);
+    } else {
+        LOC_LOGe("Error copying NI request");
+    }
 }
 
 /* If Confidence value is less than 68%, then scale the accuracy value to
