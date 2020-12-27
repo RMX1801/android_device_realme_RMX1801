@@ -37,7 +37,9 @@
 /data/opponvitems(/.*)?                                                                                 u:object_r:nv_data_file:s0
 /cache/opponvitems(/.*)?                                                                                u:object_r:nv_data_file:s0
 /dev/block/platform/soc/c0c4000.sdhci/by-name/oppodycnvbk                                               u:object_r:modem_efs_partition_device:s0
+/dev/block/platform/soc/1da4000.ufshc/by-name/oppodycnvbk                                               u:object_r:modem_efs_partition_device:s0
 /dev/block/platform/soc/c0c4000.sdhci/by-name/oppostanvbk                                               u:object_r:modem_efs_partition_device:s0
+/dev/block/platform/soc/1da4000.ufshc/by-name/oppostanvbk                                               u:object_r:modem_efs_partition_device:s0
 
 # Oppoalgo
 /vendor/bin/oppoalgo_daemon                                                            u:object_r:oppoalgo_daemon_exec:s0
