@@ -7,3 +7,5 @@ vendor.oppo.hardware.cryptoeng::ICryptoeng                                   u:o
 vendor.oppo.hardware.hypnus::IHypnusUtil                                     u:object_r:hal_hypnus_hwservice:s0
 vendor.oppo.hardware.ktv::IKtv                                               u:object_r:hal_ktv_hwservice:s0
 vendor.oppo.hardware.mmdisplayfeature::IMMDisplayFeature                     u:object_r:hal_omdisplay_hwservice:s0
+vendor.oppo.hardware.radio.opporadio::IOppoRadio                             u:object_r:hal_telephony_hwservice:s0
+vendor.oppo.hardware.radio.oppoappradio::IOppoAppRadio                       u:object_r:hal_telephony_hwservice:s0
