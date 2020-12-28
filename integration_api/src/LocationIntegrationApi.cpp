@@ -32,6 +32,7 @@
 #include <LocationIntegrationApi.h>
 #include <LocationIntegrationApiImpl.h>
 #include <log_util.h>
+#include <loc_pla.h>
 
 namespace location_integration {
 
@@ -540,6 +541,15 @@ bool LocationIntegrationApi::configEngineRunState(LocIntegrationEngineType engTy
             return false;
         }
         return (mApiImpl->configEngineRunState(halEngType, halEngState) == 0);
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
+        return false;
+    }
+}
+
+bool LocationIntegrationApi::setUserConsentForTerrestrialPositioning(bool userConsent) {
+    if (mApiImpl) {
+        return (mApiImpl->setUserConsentForTerrestrialPositioning(userConsent) == 0);
     } else {
         LOC_LOGe ("NULL mApiImpl");
         return false;

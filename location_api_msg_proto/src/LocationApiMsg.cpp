@@ -859,6 +859,138 @@ int LocAPIGetGnssEnergyConsumedReqMsg::serializeToProtobuf(string& protoStr) {
     return protoStr.size();
 }
 
+// Convert LocAPIGetSingleTerrestrialPosReqMsg ->
+// PBLocAPIGetSingleTerrestrialPosReqMsg
+int LocAPIGetSingleTerrestrialPosReqMsg::serializeToProtobuf(string& protoStr) {
+    PBLocAPIMsgHeader pLocApiMsgHdr;
+    PBLocAPIGetSingleTerrestrialPosReqMsg pbLocGetTerrestrialPosReq;
+
+    if (nullptr == pLocApiPbMsgConv) {
+        LOC_LOGe("pLocApiPbMsgConv is null!");
+        return 0;
+    }
+    // string      mSocketName = 1;
+    pLocApiMsgHdr.set_msocketname(mSocketName);
+    // PBELocMsgID  msgId = 2;
+    pLocApiMsgHdr.set_msgid(pLocApiPbMsgConv->getPBEnumForELocMsgID(msgId));
+    // uint32   msgVersion = 3;
+    pLocApiMsgHdr.set_msgversion(msgVersion);
+
+    // Convert payload to PBLocAPIGetGnssEnergyConsumedReqMsg
+    // uint32 timeoutMsec = 1;
+    pbLocGetTerrestrialPosReq.set_timeoutmsec(mTimeoutMsec);
+    // PBTerrestrialTechMask techMask = 2;
+    pbLocGetTerrestrialPosReq.set_techmask((::PBTerrestrialTechMask)
+            pLocApiPbMsgConv->getPBMaskForTerrestrialTechMask(mTechMask));
+    // float horQoS = 3;
+    pbLocGetTerrestrialPosReq.set_horqos(mHorQoS);
+
+    string pbStr;
+    if (!pbLocGetTerrestrialPosReq.SerializeToString(&pbStr)) {
+        LOC_LOGe("SerializeToString on pbLocGetTerrestrialPosReq failed!");
+        return 0;
+    }
+
+    // bytes       payload = 4;
+    pLocApiMsgHdr.set_payload(pbStr);
+
+    // uint32   payloadSize = 5;
+    pLocApiMsgHdr.set_payloadsize(sizeof(LocAPIGetSingleTerrestrialPosReqMsg));
+
+    if (!pLocApiMsgHdr.SerializeToString(&protoStr)) {
+        LOC_LOGe("SerializeToString on pLocApiMsgHdr failed!");
+        return 0;
+    }
+    return protoStr.size();
+}
+
+// Decode PBLocConfigEngineRunStateReqMsg -> LocConfigEngineRunStateReqMsg
+LocAPIGetSingleTerrestrialPosReqMsg::LocAPIGetSingleTerrestrialPosReqMsg(
+            const char* name,
+            const PBLocAPIGetSingleTerrestrialPosReqMsg &pbLocGetTerrestrialPosReq,
+            const LocationApiPbMsgConv *pbMsgConv):
+        LocAPIMsgHeader(name, E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID, pbMsgConv) {
+    // >>>> PBLocAPIGetSingleTerrestrialPosReqMsg conversion
+    mTimeoutMsec = pbLocGetTerrestrialPosReq.timeoutmsec();
+    mTechMask = (TerrestrialTechMask)pLocApiPbMsgConv->getTerrestrialTechMaskFromPB(
+            pbLocGetTerrestrialPosReq.techmask());
+    mHorQoS = pbLocGetTerrestrialPosReq.horqos();
+}
+
+// Encode LocAPIGetSingleTerrestrialPosRespMsg -> PBLocAPIGetSingleTerrestrialPosRespMsg
+int LocAPIGetSingleTerrestrialPosRespMsg::serializeToProtobuf(string& protoStr) {
+    PBLocAPIMsgHeader pLocApiMsgHdr;
+    PBLocAPIGetSingleTerrestrialPosRespMsg pbLocGetTerrestrialPosResp;
+
+    if (nullptr == pLocApiPbMsgConv) {
+        LOC_LOGe("pLocApiPbMsgConv is null!");
+        return 0;
+    }
+    // string      mSocketName = 1;
+    pLocApiMsgHdr.set_msocketname(mSocketName);
+    // PBELocMsgID  msgId = 2;
+    pLocApiMsgHdr.set_msgid(pLocApiPbMsgConv->getPBEnumForELocMsgID(msgId));
+    // uint32   msgVersion = 3;
+    pLocApiMsgHdr.set_msgversion(msgVersion);
+
+    // PBLocationError errorCode = 1;
+    pbLocGetTerrestrialPosResp.set_errorcode(
+            (::PBLocationError) pLocApiPbMsgConv->getPBEnumForLocationError(mErrorCode));
+
+    // PBLocation      location = 2;
+    PBLocation* pbLocation = pbLocGetTerrestrialPosResp.mutable_location();
+    if (nullptr != pbLocation) {
+        if (pLocApiPbMsgConv->convertLocationToPB(mLocation, pbLocation)) {
+            LOC_LOGe("convertLocationToPB failed");
+            free(pbLocation);
+            return 0;
+        }
+    } else {
+        LOC_LOGe("mutable_locationnotification failed");
+        return 0;
+    }
+
+    string pbStr;
+    if (!pbLocGetTerrestrialPosResp.SerializeToString(&pbStr)) {
+        LOC_LOGe("SerializeToString on pbLocGetTerrestrialPosResp failed!");
+        return 0;
+    }
+
+    // bytes       payload = 4;
+    pLocApiMsgHdr.set_payload(pbStr);
+
+    // uint32   payloadSize = 5;
+    pLocApiMsgHdr.set_payloadsize(sizeof(LocAPIGetSingleTerrestrialPosRespMsg));
+
+    if (!pLocApiMsgHdr.SerializeToString(&protoStr)) {
+        LOC_LOGe("SerializeToString on pLocApiMsgHdr failed!");
+        return 0;
+    }
+
+    // free the location
+    pbLocGetTerrestrialPosResp.clear_location();
+    return protoStr.size();
+}
+
+// Decode PBLocAPIGetSingleTerrestrialPosRespMsg -> LocAPIGetSingleTerrestrialPosRespMsg
+LocAPIGetSingleTerrestrialPosRespMsg::LocAPIGetSingleTerrestrialPosRespMsg(
+            const char* name,
+            const PBLocAPIGetSingleTerrestrialPosRespMsg &pbLocGetTerrestrialPosResp,
+            const LocationApiPbMsgConv *pbMsgConv):
+        LocAPIMsgHeader(name, E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID, pbMsgConv) {
+
+    mErrorCode = pLocApiPbMsgConv->getEnumForPBLocationError(
+            pbLocGetTerrestrialPosResp.errorcode());
+
+    memset(&mLocation, 0, sizeof(mLocation));
+    // >>>> PBLocAPILocationIndMsg conversion
+    // PBLocation locationNotification = 1;
+    if (pbLocGetTerrestrialPosResp.has_location()) {
+        pLocApiPbMsgConv->pbConvertToLocation(pbLocGetTerrestrialPosResp.location(),
+                mLocation);
+    }
+}
+
 // Convert LocAPILocationIndMsg -> PBLocAPILocationIndMsg
 int LocAPILocationIndMsg::serializeToProtobuf(string& protoStr) {
     PBLocAPIMsgHeader pLocApiMsgHdr;
@@ -1925,6 +2057,58 @@ int LocConfigEngineRunStateReqMsg::serializeToProtobuf(string& protoStr) {
     return protoStr.size();
 }
 
+// Convert LocConfigEngineRunStateReqMsg -> PBLocConfigEngineRunStateReqMsg
+int LocConfigUserConsentTerrestrialPositioningReqMsg::serializeToProtobuf(
+        string& protoStr) {
+
+    PBLocAPIMsgHeader pLocApiMsgHdr;
+    PBLocConfigUserConsentTerrestrialPositioningReqMsg pbMsg;
+
+    if (nullptr == pLocApiPbMsgConv) {
+        LOC_LOGe("pLocApiPbMsgConv is null!");
+        return 0;
+    }
+    // string      mSocketName = 1;
+    pLocApiMsgHdr.set_msocketname(mSocketName);
+    // PBELocMsgID  msgId = 2;
+    pLocApiMsgHdr.set_msgid(pLocApiPbMsgConv->getPBEnumForELocMsgID(msgId));
+    // uint32   msgVersion = 3;
+    pLocApiMsgHdr.set_msgversion(msgVersion);
+
+    // >>>> PBLocConfigUserConsentTerrestrialPositioningReqMsg conversion
+    // bool userConsent
+    pbMsg.set_userconsent(mUserConsent);
+
+    string pbStr;
+    if (!pbMsg.SerializeToString(&pbStr)) {
+        LOC_LOGe("SerializeToString failed!");
+        return 0;
+    }
+    // bytes       payload = 4;
+    pLocApiMsgHdr.set_payload(pbStr);
+
+    // uint32   payloadSize = 5;
+    pLocApiMsgHdr.set_payloadsize(
+            sizeof(LocConfigUserConsentTerrestrialPositioningReqMsg));
+
+    if (!pLocApiMsgHdr.SerializeToString(&protoStr)) {
+        LOC_LOGe("SerializeToString on pLocApiMsgHdr failed!");
+        return 0;
+    }
+    return protoStr.size();
+}
+
+// Decode PBLocConfigEngineRunStateReqMsg -> LocConfigEngineRunStateReqMsg
+LocConfigUserConsentTerrestrialPositioningReqMsg::
+        LocConfigUserConsentTerrestrialPositioningReqMsg(
+            const char* name,
+            const PBLocConfigUserConsentTerrestrialPositioningReqMsg &pbMsg,
+            const LocationApiPbMsgConv *pbMsgConv):
+        LocAPIMsgHeader(name,
+                        E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID,
+                        pbMsgConv) {
+    mUserConsent = pbMsg.userconsent();
+}
 
 // Convert LocConfigGetRobustLocationConfigReqMsg -> PBLocConfigGetRobustLocationConfigReqMsg
 int LocConfigGetRobustLocationConfigReqMsg::serializeToProtobuf(string& protoStr) {

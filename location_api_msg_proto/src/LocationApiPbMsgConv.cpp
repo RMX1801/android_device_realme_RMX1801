@@ -165,6 +165,12 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
         case PB_E_LOCAPI_MEAS_MSG_ID:
             eLocMsgId = E_LOCAPI_MEAS_MSG_ID;
             break;
+        case PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID:
+            eLocMsgId = E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID;
+            break;
+        case PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID:
+            eLocMsgId = E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID;
+            break;
         case PB_E_LOCAPI_PINGTEST_MSG_ID:
             eLocMsgId = E_LOCAPI_PINGTEST_MSG_ID;
             break;
@@ -200,6 +206,9 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
             break;
         case PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
             eLocMsgId = E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID;
+            break;
+        case PB_E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID:
+            eLocMsgId = E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID;
             break;
         case PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             eLocMsgId = E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
@@ -241,6 +250,8 @@ LocationError LocationApiPbMsgConv::getEnumForPBLocationError(
         locErr = LOCATION_ERROR_INVALID_PARAMETER;
     } else if (PB_LOCATION_ERROR_NOT_SUPPORTED  == pbLocErr) {
         locErr = LOCATION_ERROR_NOT_SUPPORTED;
+    } else if (PB_LOCATION_ERROR_TIMEOUT == pbLocErr) {
+        locErr = LOCATION_ERROR_TIMEOUT;
     }
     return locErr;
 }
@@ -446,6 +457,31 @@ uint32_t LocationApiPbMsgConv::getPBEnumForLocEngineRunState(
     return pbEngineRunState;
 }
 
+// HAL TerrestrialTechMask from PB format
+uint32_t LocationApiPbMsgConv::getTerrestrialTechMaskFromPB(
+        const uint32_t &pbTerrestrialTechMask) const {
+    uint32_t terrestrialTechMask = 0;
+
+    if (pbTerrestrialTechMask & PB_TERRESTRIAL_TECH_GTP_WWAN) {
+        terrestrialTechMask |= TERRESTRIAL_TECH_GTP_WWAN;
+    }
+
+    return terrestrialTechMask;
+}
+
+// PB TerrestrialTechMask from HAL format
+uint32_t LocationApiPbMsgConv::getPBMaskForTerrestrialTechMask(
+        const uint32_t& terrestrialTechMask) const {
+    uint32_t pbTerrestrialTechMask = PB_TERRESTRIAL_TECH_INVALID;
+
+    if (terrestrialTechMask & TERRESTRIAL_TECH_GTP_WWAN) {
+        pbTerrestrialTechMask |= PB_TERRESTRIAL_TECH_GTP_WWAN;
+    }
+
+    return pbTerrestrialTechMask;
+}
+
+
 // PBLocApiGnss_LocSvSystemEnumType to GnssSvType
 GnssSvType LocationApiPbMsgConv::getGnssSvTypeFromPBGnssLocSvSystemEnumType(
             const PBLocApiGnss_LocSvSystemEnumType &pbGnssLocSvSysEnum) const {
@@ -574,6 +610,12 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
         case E_LOCAPI_MEAS_MSG_ID:
             pbLocMsgId = PB_E_LOCAPI_MEAS_MSG_ID;
             break;
+        case E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID:
+            pbLocMsgId = PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID;
+            break;
+        case E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID:
+            pbLocMsgId = PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID;
+            break;
         case E_LOCAPI_PINGTEST_MSG_ID:
             pbLocMsgId = PB_E_LOCAPI_PINGTEST_MSG_ID;
             break;
@@ -609,6 +651,9 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
             break;
         case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID;
+            break;
+        case E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID;
             break;
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
@@ -684,6 +729,9 @@ PBLocationError LocationApiPbMsgConv::getPBEnumForLocationError(
             break;
         case LOCATION_ERROR_NOT_SUPPORTED:
             pbLocErr = PB_LOCATION_ERROR_NOT_SUPPORTED;
+            break;
+        case LOCATION_ERROR_TIMEOUT:
+            pbLocErr = PB_LOCATION_ERROR_TIMEOUT;
             break;
         default:
             break;

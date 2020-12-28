@@ -514,6 +514,29 @@ uint16_t LocationClientApi::getYearOfHw() {
     }
 }
 
+void LocationClientApi::getSingleTerrestrialPosition(
+        uint32_t timeoutMsec, TerrestrialTechnologyMask techMask,
+        float horQoS, LocationCb terrestrialPositionCallback,
+        ResponseCb responseCallback) {
+
+    LOC_LOGd("timeout msec = %u, horQoS = %f,"
+             "techMask = 0x%x", timeoutMsec, horQoS, techMask);
+
+    if ((timeoutMsec == 0) || (techMask != TERRESTRIAL_TECH_GTP_WWAN) ||
+        (horQoS != 0.0)) {
+        LOC_LOGe("invalid parameter: timeout %d, tech mask 0x%x, horQoS %f",
+                 timeoutMsec, techMask, horQoS);
+        if (responseCallback) {
+            responseCallback(LOCATION_RESPONSE_PARAM_INVALID);
+        }
+    } else if (mApiImpl) {
+        mApiImpl->getSingleTerrestrialPos(timeoutMsec, ::TERRESTRIAL_TECH_GTP_WWAN, horQoS,
+                                          terrestrialPositionCallback, responseCallback);
+    } else {
+        LOC_LOGe ("NULL mApiImpl");
+    }
+}
+
 // ============ below Section implements toString() methods of data structs ==============
 static string maskToVals(uint64_t mask, int64_t baseNum) {
     string out;
