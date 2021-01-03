@@ -165,6 +165,12 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
         case PB_E_LOCAPI_MEAS_MSG_ID:
             eLocMsgId = E_LOCAPI_MEAS_MSG_ID;
             break;
+        case PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID:
+            eLocMsgId = E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID;
+            break;
+        case PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID:
+            eLocMsgId = E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID;
+            break;
         case PB_E_LOCAPI_PINGTEST_MSG_ID:
             eLocMsgId = E_LOCAPI_PINGTEST_MSG_ID;
             break;
@@ -201,6 +207,9 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
         case PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
             eLocMsgId = E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID;
             break;
+        case PB_E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID:
+            eLocMsgId = E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID;
+            break;
         case PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             eLocMsgId = E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
             break;
@@ -234,13 +243,15 @@ ELocMsgID LocationApiPbMsgConv::getEnumForPBELocMsgID(const PBELocMsgID &pbLocMs
 
 LocationError LocationApiPbMsgConv::getEnumForPBLocationError(
         const PBLocationError &pbLocErr) const {
-    LocationError locErr = LOCATION_ERROR_NOT_SUPPORTED;
+    LocationError locErr = LOCATION_ERROR_GENERAL_FAILURE;
     if (PB_LOCATION_ERROR_SUCCESS == pbLocErr) {
         locErr = LOCATION_ERROR_SUCCESS;
     } else if (PB_LOCATION_ERROR_INVALID_PARAMETER == pbLocErr) {
         locErr = LOCATION_ERROR_INVALID_PARAMETER;
-    } else {
+    } else if (PB_LOCATION_ERROR_NOT_SUPPORTED  == pbLocErr) {
         locErr = LOCATION_ERROR_NOT_SUPPORTED;
+    } else if (PB_LOCATION_ERROR_TIMEOUT == pbLocErr) {
+        locErr = LOCATION_ERROR_TIMEOUT;
     }
     return locErr;
 }
@@ -446,6 +457,31 @@ uint32_t LocationApiPbMsgConv::getPBEnumForLocEngineRunState(
     return pbEngineRunState;
 }
 
+// HAL TerrestrialTechMask from PB format
+uint32_t LocationApiPbMsgConv::getTerrestrialTechMaskFromPB(
+        const uint32_t &pbTerrestrialTechMask) const {
+    uint32_t terrestrialTechMask = 0;
+
+    if (pbTerrestrialTechMask & PB_TERRESTRIAL_TECH_GTP_WWAN) {
+        terrestrialTechMask |= TERRESTRIAL_TECH_GTP_WWAN;
+    }
+
+    return terrestrialTechMask;
+}
+
+// PB TerrestrialTechMask from HAL format
+uint32_t LocationApiPbMsgConv::getPBMaskForTerrestrialTechMask(
+        const uint32_t& terrestrialTechMask) const {
+    uint32_t pbTerrestrialTechMask = PB_TERRESTRIAL_TECH_INVALID;
+
+    if (terrestrialTechMask & TERRESTRIAL_TECH_GTP_WWAN) {
+        pbTerrestrialTechMask |= PB_TERRESTRIAL_TECH_GTP_WWAN;
+    }
+
+    return pbTerrestrialTechMask;
+}
+
+
 // PBLocApiGnss_LocSvSystemEnumType to GnssSvType
 GnssSvType LocationApiPbMsgConv::getGnssSvTypeFromPBGnssLocSvSystemEnumType(
             const PBLocApiGnss_LocSvSystemEnumType &pbGnssLocSvSysEnum) const {
@@ -574,6 +610,12 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
         case E_LOCAPI_MEAS_MSG_ID:
             pbLocMsgId = PB_E_LOCAPI_MEAS_MSG_ID;
             break;
+        case E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID:
+            pbLocMsgId = PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID;
+            break;
+        case E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID:
+            pbLocMsgId = PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID;
+            break;
         case E_LOCAPI_PINGTEST_MSG_ID:
             pbLocMsgId = PB_E_LOCAPI_PINGTEST_MSG_ID;
             break;
@@ -609,6 +651,9 @@ PBELocMsgID LocationApiPbMsgConv::getPBEnumForELocMsgID(const ELocMsgID &eLocMsg
             break;
         case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID;
+            break;
+        case E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID:
+            pbLocMsgId = PB_E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID;
             break;
         case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             pbLocMsgId = PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID;
@@ -674,7 +719,7 @@ PBBatchingMode LocationApiPbMsgConv::getPBEnumForBatchingMode(
 
 PBLocationError LocationApiPbMsgConv::getPBEnumForLocationError(
         const LocationError &locErr) const {
-    PBLocationError pbLocErr = PB_LOCATION_ERROR_INVALID_PARAMETER;
+    PBLocationError pbLocErr = PB_LOCATION_ERROR_GENERAL_FAILURE;
     switch (locErr) {
         case LOCATION_ERROR_SUCCESS:
             pbLocErr = PB_LOCATION_ERROR_SUCCESS;
@@ -684,6 +729,9 @@ PBLocationError LocationApiPbMsgConv::getPBEnumForLocationError(
             break;
         case LOCATION_ERROR_NOT_SUPPORTED:
             pbLocErr = PB_LOCATION_ERROR_NOT_SUPPORTED;
+            break;
+        case LOCATION_ERROR_TIMEOUT:
+            pbLocErr = PB_LOCATION_ERROR_TIMEOUT;
             break;
         default:
             break;
@@ -1295,6 +1343,11 @@ uint32_t LocationApiPbMsgConv::getPBMaskForGnssLocationInfoExtFlagMask(
     if (gnssLocInfoFlagMask & GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT) {
         pbGnssLocInfoFlagMask |= PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT;
     }
+
+    if (gnssLocInfoFlagMask & GNSS_LOCATION_INFO_SESSION_STATUS_BIT) {
+        pbGnssLocInfoFlagMask |= PB_GNSS_LOCATION_INFO_SESSION_STATUS_BIT;
+    }
+
     return pbGnssLocInfoFlagMask;
 }
 
@@ -2460,6 +2513,9 @@ uint64_t LocationApiPbMsgConv::getGnssLocationInfoFlagMaskFromPB(
     if (pbGnssLocInfoExtFlagMask & PB_GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT) {
         gnssLocInfoFlagMask |= GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT;
     }
+    if (pbGnssLocInfoExtFlagMask & PB_GNSS_LOCATION_INFO_SESSION_STATUS_BIT) {
+        gnssLocInfoFlagMask |= GNSS_LOCATION_INFO_SESSION_STATUS_BIT;
+    }
 
     LocApiPb_LOGv("LocApiPB: pbGnssLocInfoFlagMask:0x%x, pbGnssLocInfoExtFlagMask:0x%x, "
                   "gnssLocInfoFlagMask:0x%" PRIu64"", pbGnssLocInfoFlagMask,
@@ -2690,6 +2746,30 @@ uint32_t LocationApiPbMsgConv::getDrSolutionStatusMaskFromPB(
     LocApiPb_LOGv("LocApiPB: pbDrSolnStatusMask:%x, drSolnStatusMask:%x",
             pbDrSolnStatusMask, drSolnStatusMask);
     return drSolnStatusMask;
+}
+
+PBLocationSessionStatus LocationApiPbMsgConv::getPBEnumForLocSessionStatus(
+        const loc_sess_status& status) const {
+    PBLocationSessionStatus pbStatus = PB_LOCATION_SESS_FAILURE;
+
+    if (status == LOC_SESS_SUCCESS) {
+        pbStatus = PB_LOCATION_SESS_SUCCESS;
+    } else if (status == LOC_SESS_INTERMEDIATE) {
+        pbStatus = PB_LOCATION_SESS_INTERMEDIATE;
+    }
+    return pbStatus;
+}
+
+loc_sess_status LocationApiPbMsgConv::getLocSessionStatusFromPB(
+        const PBLocationSessionStatus& pbStatus) const {
+
+    loc_sess_status status = LOC_SESS_FAILURE;
+    if (pbStatus == PB_LOCATION_SESS_SUCCESS) {
+        status = LOC_SESS_SUCCESS;
+    } else if (pbStatus == PB_LOCATION_SESS_INTERMEDIATE) {
+        status = LOC_SESS_INTERMEDIATE;
+    }
+    return status;
 }
 
 // **** helper function for structure conversion to protobuf format
@@ -3357,6 +3437,10 @@ int LocationApiPbMsgConv::convertGnssLocInfoNotifToPB(
 
     // bool altitudeAssumed = 41;
     pbGnssLocInfoNotif->set_altitudeassumed(gnssLocInfoNotif.altitudeAssumed);
+
+    // bool sessionStatus = 42
+    pbGnssLocInfoNotif->set_sessionstatus(
+            getPBEnumForLocSessionStatus(gnssLocInfoNotif.sessionStatus));
 
     LocApiPb_LOGd("LocApiPB: gnssLocInfoNotif - GLocInfoFlgMask:%u, pdop:%f, hdop:%f, vdop:%f",
             gnssLocInfoNotif.flags, gnssLocInfoNotif.pdop, gnssLocInfoNotif.hdop,
@@ -4451,6 +4535,10 @@ int LocationApiPbMsgConv::pbConvertToGnssLocInfoNotif(
 
     // bool altitudeAssumed = 41;
     gnssLocInfoNotif.altitudeAssumed= pbGnssLocInfoNotif.altitudeassumed();
+
+    // bool sessionStatus = 42;
+    gnssLocInfoNotif.sessionStatus = getLocSessionStatusFromPB(
+            pbGnssLocInfoNotif.sessionstatus());
 
     LOC_LOGd("LocApiPB: pbGnssLocInfoNotif -GLocInfoFlgMask:%u, pdop:%f, hdop:%f, vdop:%f",
             gnssLocInfoNotif.flags, gnssLocInfoNotif.pdop, gnssLocInfoNotif.hdop,

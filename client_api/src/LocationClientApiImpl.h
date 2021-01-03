@@ -163,6 +163,10 @@ public:
     inline uint16_t getYearOfHw() {return mYearOfHw;}
     void invokePositionSessionResponseCb(LocationResponse responseCode);
 
+    void getSingleTerrestrialPos(uint32_t timeoutMsec, TerrestrialTechMask techMask,
+                                 float horQoS, LocationCb terrestrialPositionCallback,
+                                 ResponseCb responseCallback);
+
 private:
     ~LocationClientApiImpl();
     void capabilitesCallback(ELocMsgID  msgId, const void* msgData);
@@ -217,6 +221,10 @@ private:
 
     LocationSystemInfoCb    mLocationSysInfoCb;
     ResponseCb              mLocationSysInfoResponseCb;
+
+    // Terrestrial fix callback
+    LocationCb              mSingleTerrestrialPosCb;
+    ResponseCb              mSingleTerrestrialPosRespCb;
 
     MsgTask                    mMsgTask;
 

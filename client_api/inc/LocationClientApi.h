@@ -384,6 +384,12 @@ enum LocationResponse {
     LOCATION_RESPONSE_NOT_SUPPORTED = 2,
     /** LocationClientApi call has invalid parameter. <br/>   */
     LOCATION_RESPONSE_PARAM_INVALID = 3,
+    /** LocationClientApi call timeout */
+    LOCATION_RESPONSE_TIMEOUT = 4,
+    /** LocationClientApi is busy. */
+    LOCATION_RESPONSE_REQUEST_ALREADY_IN_PROGRESS = 5,
+    /** System is not ready, e.g.: hal daemon is not yet ready. */
+    LOCATION_RESPONSE_SYSTEM_NOT_READY = 6,
 };
 
 /** Specify the SV constellation type in GnssSv
@@ -522,6 +528,8 @@ enum GnssLocationInfoFlagMask {
     /** GnssLocation has valid GnssLocation::altitudeAssumed.
      *  <br/> */
     GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT             = (1ULL<<33),
+    /** GnssLocation has valid GnssLocation::sessionStatus. <br/> */
+    GNSS_LOCATION_INFO_SESSION_STATUS_BIT               = (1ULL<<34),
 };
 
 /** Specify the reliability level of
@@ -733,7 +741,11 @@ struct GnssLocationPositionDynamics {
     /** Uncertainty of yaw, 68% confidence level, in unit of radian.
      *  <br/> */
     float           yawUnc;
-    /** Heading rate, in unit of radians/second. <br/>   */
+    /** Heading rate, in unit of radians/second. <br/>
+     *  Range: +/- pi (where pi is ~3.14159). <br/>
+     *  The positive value is clockwise and negative value is
+     *  anti-clockwise. <br/>
+     */
     float           yawRate;
     /** Uncertainty of heading rate, in unit of radians/second.
      *  <br/> */
@@ -987,6 +999,17 @@ enum DrSolutionStatusMask {
     DR_SOLUTION_STATUS_VEHICLE_SENSOR_SPEED_INPUT_USED     = (1<<1),
 };
 
+/** Specify the session status. <br/> */
+enum LocSessionStatus {
+    /** Session is successful. <br/> */
+    LOC_SESS_SUCCESS      = 0,
+    /** Session is still in progress, the reported has not yet
+    achieved the needed criteria. <br/>*/
+    LOC_SESS_INTERMEDIATE = 1,
+    /** Session has failed. <br/>*/
+    LOC_SESS_FAILURE      = 2,
+};
+
 /** Specify the location info received by client via
  *  startPositionSession(uint32_t, const
  *  GnssReportCbs&, ResponseCb) and
@@ -1103,6 +1126,9 @@ struct GnssLocation : public Location {
      *  true:  Altitude is assumed; there may not be enough
      *         satellites to determine the precise altitude. <br/> */
     bool altitudeAssumed;
+    /** Indicates whether session is success, failure or
+     *  intermediate. <br/> */
+    LocSessionStatus sessionStatus;
 
     /* Default constructor to initalize GnssLocation structure */
     inline GnssLocation() :
@@ -1129,7 +1155,7 @@ struct GnssLocation : public Location {
             llaVRPBased({}),
             enuVelocityVRPBased{0.0f, 0.0f, 0.0f},
             drSolutionStatusMask((DrSolutionStatusMask)0),
-            altitudeAssumed(false) {
+            altitudeAssumed(false), sessionStatus(LOC_SESS_FAILURE) {
     }
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
@@ -1667,6 +1693,15 @@ struct LocationSystemInfo {
     string toString() const;
 };
 
+/** Specify the set of terrestrial technologies to be used when
+ *  invoking getSingleTerrestrialPosition(). <br/>
+ *
+ *  Currently, only TERRESTRIAL_TECH_GTP_WWAN is supported.
+ *  <br/> */
+enum TerrestrialTechnologyMask {
+    TERRESTRIAL_TECH_GTP_WWAN = 1 << 0,
+};
+
 enum BatchingStatus {
     BATCHING_STATUS_INACTIVE    = 0,
     BATCHING_STATUS_ACTIVE      = 1,
@@ -2153,6 +2188,81 @@ public:
      *  No callback will be issued regarding the procesing status.
      *  <br/> */
     void stopPositionSession();
+
+    /** @brief
+        Retrieve single-shot terrestrial position using the set of
+        specified terrestrial technologies. <br/>
+
+        For this phase, only TERRESTRIAL_TECH_GTP_WWAN will be
+        supported and this will return cell-based position. <br/.
+
+        This API can be invoked with on-going tracking session
+        initiated via startPositionSession(). <br/
+
+        If this API is invoked with single-shot terrestrial position
+        already in progress, the request will fail and the
+        responseCallback will get invoked with
+        LOCATION_RESPONSE_BUSY. <br/
+
+        @param timeoutMsec
+        The amount of time that user is willing to wait for
+        the terrestrial positioning to become available. <br/>
+
+        @param techMask
+        The set of terrestrial technologies that are allowed to be
+        used for producing the position. <br/>
+
+        For this phase, only TERRESTRIAL_TECH_GTP_WWAN will be
+        supported. Passing other values to this API will return
+        false. <br/>
+
+        @param horQoS
+        horizontal accuracy requirement for the terrestrial fix.
+        0(Zero) means client does not specify horizontal accuracy
+        requirement. <br/>
+
+        For this phase, only 0 will be accepted. None-zero
+        horizontal accuracy requirement will not be supported and
+        API call will return false. <br/>
+
+        @param terrestrialPositionCallback
+        callback to receive terrestrial position. Some fields in
+        LocationClientApi::Location, e.g.: speed, bearing and their
+        uncertainty may not be available for terrestrial position.
+        Please check Location::flags for the fields that are
+        available. <br/>
+
+        This callback will only be invoked when
+        responseCallback is invoked with ResponseCb with processing
+        status set to LOCATION_RESPONSE_SUCCESS. <br/>
+
+        Null terrestrialPositionCallback will cancel the current
+        request. If responseCallback is none-null,
+        LOCATION_RESPONSE_SUCCESS will be delivered. <br/>
+
+        @param responseCallback
+        Callback to receive processing status, e.g.: success or
+        failure code: e.g.: timeout. <br/>
+
+        When the processing status is LOCATION_RESPONSE_SUCCESS, the
+        terrestrialPositionCallback will be invoked to deliver the
+        single-shot terrestrial position report. <br/>
+
+        If this API is invoked with invalid parameter, e.g.: 0
+        milli-seconds timeout, or techMask set to value other than
+        TERRESTRIAL_TECH_GTP_WWAN or horQoS set to none-zero value,
+        the responseCallback will get invoked with
+        LOCATION_RESPONSE_PARAM_INVALID. <br/>
+
+        If this API is invoked with single-shot terrestrial position
+        already in progress, the request will fail and the
+        responseCallback will get invoked with
+        LOCATION_RESPONSE_BUSY. <br/> */
+    void getSingleTerrestrialPosition(uint32_t timeoutMsec,
+                                      TerrestrialTechnologyMask techMask,
+                                      float horQos,
+                                      LocationCb terrestrialPositionCallback,
+                                      ResponseCb responseCallback);
 
     /** @example example1:testTrackingApi
     * <pre>

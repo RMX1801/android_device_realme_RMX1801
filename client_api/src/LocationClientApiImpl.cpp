@@ -752,6 +752,10 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
         flags |= GNSS_LOCATION_INFO_ALTITUDE_ASSUMED_BIT;
     }
 
+    if (::GNSS_LOCATION_INFO_SESSION_STATUS_BIT & halLocationInfo.flags) {
+        flags |= GNSS_LOCATION_INFO_SESSION_STATUS_BIT;
+    }
+
     locationInfo.gnssInfoFlags = (GnssLocationInfoFlagMask)flags;
     locationInfo.altitudeMeanSeaLevel = halLocationInfo.altitudeMeanSeaLevel;
     locationInfo.pdop = halLocationInfo.pdop;
@@ -791,6 +795,7 @@ static GnssLocation parseLocationInfo(const ::GnssLocationInfoNotification &halL
     parseGnssMeasUsageInfo(halLocationInfo, locationInfo.measUsageInfo);
     locationInfo.drSolutionStatusMask = (DrSolutionStatusMask) halLocationInfo.drSolutionStatusMask;
     locationInfo.altitudeAssumed = halLocationInfo.altitudeAssumed;
+    locationInfo.sessionStatus = (LocSessionStatus) halLocationInfo.sessionStatus;
 
     flags = 0;
     if (::LOCATION_SBAS_CORRECTION_IONO_BIT & halLocationInfo.navSolutionMask) {
@@ -995,6 +1000,9 @@ static LocationResponse parseLocationError(::LocationError error) {
         case ::LOCATION_ERROR_NOT_SUPPORTED:
             response = LOCATION_RESPONSE_NOT_SUPPORTED;
             break;
+        case ::LOCATION_ERROR_TIMEOUT:
+            response = LOCATION_RESPONSE_TIMEOUT;
+            break;
         default:
             response = LOCATION_RESPONSE_UNKOWN_FAILURE;
             break;
@@ -1127,6 +1135,8 @@ LocationClientApiImpl::LocationClientApiImpl(CapabilitiesCb capabitiescb) :
         mGnssEnergyConsumedResponseCb(nullptr),
         mLocationSysInfoCb(nullptr),
         mLocationSysInfoResponseCb(nullptr),
+        mSingleTerrestrialPosCb(nullptr),
+        mSingleTerrestrialPosRespCb(nullptr),
         mPingTestCb(nullptr),
         mMsgTask("ClientApiImpl"),
         mLogger()
@@ -2022,6 +2032,90 @@ void LocationClientApiImpl::updateLocationSystemInfoListener(
             this, locSystemInfoCallback, responseCallback));
 }
 
+void LocationClientApiImpl::getSingleTerrestrialPos(
+        uint32_t timeoutMsec, TerrestrialTechMask techMask, float horQoS,
+        LocationCb terrestrialPositionCallback, ResponseCb responseCallback) {
+
+    struct GetSingleTerrestrialPosReq : public LocMsg {
+        GetSingleTerrestrialPosReq(LocationClientApiImpl *apiImpl,
+                                        uint32_t timeoutMsec,
+                                        TerrestrialTechMask techMask,
+                                        float horQoS,
+                                        LocationCb terrestrialPositionCallback,
+                                        ResponseCb responseCallback) :
+            mApiImpl(apiImpl), mTimeoutMsec(timeoutMsec), mTechMask(techMask),
+            mHorQoS(horQoS), mSingleTerrestrialPosCb(terrestrialPositionCallback),
+            mResponseCb(responseCallback) {}
+
+        virtual ~GetSingleTerrestrialPosReq() {}
+        void proc() const {
+            do {
+                if ((mApiImpl->mSingleTerrestrialPosCb == nullptr) &&
+                        (mSingleTerrestrialPosCb == nullptr)) {
+                    // pos cb can not be null if there is no pending request
+                    if (mResponseCb) {
+                        mResponseCb(LOCATION_RESPONSE_PARAM_INVALID);
+                    }
+                    break;
+                }
+
+                if ((mApiImpl->mSingleTerrestrialPosCb != nullptr) &&
+                        (mSingleTerrestrialPosCb != nullptr)) {
+                    // do not allow concurent single terrestrial position requests
+                    if (mResponseCb) {
+                        mResponseCb(LOCATION_RESPONSE_REQUEST_ALREADY_IN_PROGRESS);
+                    }
+                    break;
+                }
+
+                if (!mApiImpl->mHalRegistered) {
+                    if (mResponseCb) {
+                        mResponseCb(LOCATION_RESPONSE_SYSTEM_NOT_READY);
+                    }
+                    break;
+                }
+
+                // save the new callback
+                mApiImpl->mSingleTerrestrialPosCb = mSingleTerrestrialPosCb;
+                mApiImpl->mSingleTerrestrialPosRespCb = mResponseCb;
+
+                // If client has cancelled the callback, we are done with processing
+                if (mApiImpl->mSingleTerrestrialPosCb == nullptr) {
+                    if (mResponseCb) {
+                        mResponseCb(LOCATION_RESPONSE_SUCCESS);
+                    }
+                    break;
+                }
+
+                string pbStr;
+                LocAPIGetSingleTerrestrialPosReqMsg msg(
+                        mApiImpl->mSocketName, mTimeoutMsec, mTechMask, mHorQoS,
+                        &mApiImpl->mPbufMsgConv);
+
+                if (msg.serializeToProtobuf(pbStr)) {
+                    bool rc = mApiImpl->sendMessage(
+                            reinterpret_cast<uint8_t *>((uint8_t *)pbStr.c_str()),
+                                        pbStr.size());
+                    if (!rc && mResponseCb) {
+                        mResponseCb(LOCATION_RESPONSE_UNKOWN_FAILURE);
+                    }
+                }
+            } while (0);
+        }
+
+        LocationClientApiImpl *mApiImpl;
+        uint32_t mTimeoutMsec;
+        TerrestrialTechMask mTechMask;
+        float mHorQoS;
+        LocationCb mSingleTerrestrialPosCb;
+        ResponseCb mResponseCb;
+    };
+
+    mMsgTask.sendMsg(new (nothrow)GetSingleTerrestrialPosReq(
+            this, timeoutMsec, techMask, horQoS,
+            terrestrialPositionCallback, responseCallback));
+}
+
 /******************************************************************************
 LocationClientApiImpl - LocIpc onReceive handler
 ******************************************************************************/
@@ -2560,6 +2654,32 @@ void IpcListener::onReceive(const char* data, uint32_t length,
                     if (mApiImpl.mLocationSysInfoCb) {
                         mApiImpl.mLocationSysInfoCb(locationSystemInfo);
                     }
+                }
+                break;
+            }
+
+            case E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID:
+            {
+                LOC_LOGd("<<< message = terrestrial pos info");
+                if (mApiImpl.mSingleTerrestrialPosCb) {
+                    PBLocAPIGetSingleTerrestrialPosRespMsg pbMsg;
+                    if (0 == pbMsg.ParseFromString(pbLocApiMsg.payload())) {
+                        LOC_LOGe("Failed to parse PBLocAPIGetSingleTerrestrialPosRespMsg!!");
+                        return;
+                    }
+
+                    LocAPIGetSingleTerrestrialPosRespMsg msg(sockName.c_str(), pbMsg,
+                                                             &mApiImpl.mPbufMsgConv);
+                    if (mApiImpl.mSingleTerrestrialPosRespCb) {
+                        mApiImpl.mSingleTerrestrialPosRespCb(parseLocationError(msg.mErrorCode));
+                    }
+                    if (msg.mErrorCode == ::LOCATION_ERROR_SUCCESS) {
+                        Location terrestialPos = parseLocation(msg.mLocation);
+                        mApiImpl.mSingleTerrestrialPosCb(terrestialPos);
+                    }
+                    // clean up variable to indicate that no request is pending
+                    mApiImpl.mSingleTerrestrialPosRespCb = nullptr;
+                    mApiImpl.mSingleTerrestrialPosCb = nullptr;
                 }
                 break;
             }

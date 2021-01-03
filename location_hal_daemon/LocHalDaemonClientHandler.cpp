@@ -565,7 +565,7 @@ LocHalDaemonClientHandler - Location Control API response callback functions
 void LocHalDaemonClientHandler::onControlResponseCb(LocationError err, ELocMsgID msgId) {
     // no need to hold the lock, as lock is already held at the caller
     if (nullptr != mIpcSender) {
-        LOC_LOGd("--< onControlResponseCb err=%u msgId=%u", err, msgId);
+        LOC_LOGi("--< onControlResponseCb err=%u msgId=%u", err, msgId);
         string pbStr;
         LocAPIGenericRespMsg msg(SERVICE_NAME, msgId, err, &mService->mPbufMsgConv);
         if (msg.serializeToProtobuf(pbStr)) {
@@ -581,11 +581,23 @@ void LocHalDaemonClientHandler::onControlResponseCb(LocationError err, ELocMsgID
     }
 }
 
+void LocHalDaemonClientHandler::sendTerrestrialFix(LocationError error,
+                                                   const Location& location) {
+    LocAPIGetSingleTerrestrialPosRespMsg msg(SERVICE_NAME,
+            error, location,  &mService->mPbufMsgConv);
+
+    const char* msgStream = nullptr;
+    size_t msgLen = 0;
+    string pbStr;
+    if (msg.serializeToProtobuf(pbStr)) {
+        msgStream = pbStr.c_str();
+        msgLen = pbStr.size();
+        sendMessage(msgStream, msgLen, E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID);
+    }
+}
+
 void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
                                                const GnssConfig & gnssConfig) {
-    const char* msgStream = nullptr;
-    ELocMsgID eLocMsgId = E_LOCAPI_UNDEFINED_MSG_ID;
-    size_t msgLen = 0;
     string pbStr;
 
     switch (configMsgId) {
@@ -594,13 +606,7 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
             LocConfigGetRobustLocationConfigRespMsg msg(SERVICE_NAME,
                     gnssConfig.robustLocationConfig,
                     &mService->mPbufMsgConv);
-            if (msg.serializeToProtobuf(pbStr)) {
-                msgStream = pbStr.c_str();
-                msgLen = pbStr.size();
-                eLocMsgId = msg.msgId;
-            } else {
-                LOC_LOGe("LocConfigGetRobustLocationConfigRespMsg serializeToProtobuf failed");
-            }
+            msg.serializeToProtobuf(pbStr);
         }
         break;
     case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
@@ -608,13 +614,7 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
             LOC_LOGd("--< onGnssConfigCb, minGpsWeek = %d", gnssConfig.minGpsWeek);
             LocConfigGetMinGpsWeekRespMsg msg(SERVICE_NAME, gnssConfig.minGpsWeek,
                     &mService->mPbufMsgConv);
-            if (msg.serializeToProtobuf(pbStr)) {
-                msgStream = pbStr.c_str();
-                msgLen = pbStr.size();
-                eLocMsgId = msg.msgId;
-            } else {
-                LOC_LOGe("LocConfigGetMinGpsWeekRespMsg serializeToProtobuf failed");
-            }
+            msg.serializeToProtobuf(pbStr);
         }
         break;
     case E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID:
@@ -622,29 +622,16 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
             LOC_LOGd("--< onGnssConfigCb, minSvElevation = %d", gnssConfig.minSvElevation);
             LocConfigGetMinSvElevationRespMsg msg(SERVICE_NAME, gnssConfig.minSvElevation,
                     &mService->mPbufMsgConv);
-            if (msg.serializeToProtobuf(pbStr)) {
-                msgStream = pbStr.c_str();
-                msgLen = pbStr.size();
-                eLocMsgId = msg.msgId;
-            } else {
-                LOC_LOGe("LocConfigGetMinSvElevationRespMsg serializeToProtobuf failed");
-            }
+            msg.serializeToProtobuf(pbStr);
         }
         break;
 
     case E_INTAPI_GET_CONSTELLATION_SECONDARY_BAND_CONFIG_REQ_MSG_ID:
-        LOC_LOGd("--< onGnssConfigCb, valid flags 0x%x", gnssConfig.flags);
+        if (gnssConfig.flags & GNSS_CONFIG_FLAGS_CONSTELLATION_SECONDARY_BAND_BIT)
         {
             LocConfigGetConstellationSecondaryBandConfigRespMsg msg(SERVICE_NAME,
                     gnssConfig.secondaryBandConfig, &mService->mPbufMsgConv);
-            if (msg.serializeToProtobuf(pbStr)) {
-                msgStream = pbStr.c_str();
-                msgLen = pbStr.size();
-                eLocMsgId = msg.msgId;
-            } else {
-                LOC_LOGe("LocConfigGetConstellationSecondaryBandConfigRespMsg"
-                        " serializeToProtobuf failed");
-            }
+            msg.serializeToProtobuf(pbStr);
         }
         break;
 
@@ -652,8 +639,8 @@ void LocHalDaemonClientHandler::onGnssConfigCb(ELocMsgID configMsgId,
         break;
     }
 
-    if ((nullptr != mIpcSender) && (nullptr != msgStream)) {
-        bool rc = sendMessage(msgStream, msgLen, eLocMsgId);
+    if ((nullptr != mIpcSender) && (pbStr.size() != 0)) {
+        bool rc = sendMessage(pbStr.c_str(), pbStr.size(), configMsgId);
         // purge this client if failed
         if (!rc) {
             LOC_LOGe("failed rc=%d purging client=%s", rc, mName.c_str());

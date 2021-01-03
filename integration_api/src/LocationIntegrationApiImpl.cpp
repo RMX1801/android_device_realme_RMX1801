@@ -77,6 +77,9 @@ static LocConfigTypeEnum getLocConfigTypeFromMsgId(ELocMsgID  msgId) {
     case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
         configType = CONFIG_ENGINE_RUN_STATE;
         break;
+    case E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID:
+        configType = CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING;
+        break;
     case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
     case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_RESP_MSG_ID:
         configType = GET_ROBUST_LOCATION_CONFIG;
@@ -197,7 +200,8 @@ LocationIntegrationApiImpl::LocationIntegrationApiImpl(LocIntegrationCbs& integr
         mLeverArmConfigInfo{},
         mRobustLocationConfigInfo{},
         mDreConfigInfo{},
-        mMsgTask("IntegrationApiImpl") {
+        mMsgTask("IntegrationApiImpl"),
+        mGtpUserConsentConfigInfo{} {
     if (integrationClientAllowed() == false) {
         return;
     }
@@ -373,6 +377,7 @@ void IpcListener::onReceive(const char* data, uint32_t length,
             case E_INTAPI_CONFIG_DEAD_RECKONING_ENGINE_MSG_ID:
             case E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID:
             case E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID:
+            case E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID:
             case E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID:
             case E_INTAPI_GET_MIN_GPS_WEEK_REQ_MSG_ID:
             case E_INTAPI_GET_MIN_SV_ELEVATION_REQ_MSG_ID:
@@ -957,6 +962,34 @@ uint32_t LocationIntegrationApiImpl::configEngineRunState(
     return 0;
 }
 
+uint32_t LocationIntegrationApiImpl::setUserConsentForTerrestrialPositioning(bool userConsent) {
+    struct SetUserConsentReq : public LocMsg {
+        SetUserConsentReq(LocationIntegrationApiImpl* apiImpl,
+                          bool userConsent) :
+                mApiImpl(apiImpl), mUserConsent(userConsent) {}
+        virtual ~SetUserConsentReq() {}
+        void proc() const {
+            string pbStr;
+            mApiImpl->mGtpUserConsentConfigInfo.isValid = true;
+            mApiImpl->mGtpUserConsentConfigInfo.userConsent = mUserConsent;
+            LocConfigUserConsentTerrestrialPositioningReqMsg msg(
+                    mApiImpl->mSocketName, mUserConsent, &mApiImpl->mPbufMsgConv);
+            if (msg.serializeToProtobuf(pbStr)) {
+                mApiImpl->sendConfigMsgToHalDaemon(CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING,
+                        reinterpret_cast<uint8_t*>((uint8_t *)pbStr.c_str()), pbStr.size());
+            } else {
+                LOC_LOGe("serializeToProtobuf failed");
+            }
+        }
+
+        LocationIntegrationApiImpl* mApiImpl;
+        bool mUserConsent;
+    };
+
+    mMsgTask.sendMsg(new (nothrow) SetUserConsentReq(this, userConsent));
+    return 0;
+}
+
 void LocationIntegrationApiImpl::sendConfigMsgToHalDaemon(
         LocConfigTypeEnum configType, uint8_t* pMsg,
         size_t msgSize, bool invokeResponseCb) {
@@ -1099,6 +1132,18 @@ void LocationIntegrationApiImpl::processHalReadyMsg() {
                              pbStrLocCfgDrEngParam.size());
         } else {
             LOC_LOGe("LocConfigDrEngineParamsReqMsg serializeToProtobuf failed");
+        }
+    }
+
+    if (mGtpUserConsentConfigInfo.isValid) {
+        string pbStr;
+        LocConfigUserConsentTerrestrialPositioningReqMsg msg(
+                    mSocketName, mGtpUserConsentConfigInfo.userConsent, &mPbufMsgConv);
+        if (msg.serializeToProtobuf(pbStr)) {
+            sendConfigMsgToHalDaemon(CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING,
+                        reinterpret_cast<uint8_t*>((uint8_t *)pbStr.c_str()), pbStr.size());
+        } else {
+            LOC_LOGe("serializeToProtobuf failed");
         }
     }
 

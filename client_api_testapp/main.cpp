@@ -85,6 +85,8 @@ static uint32_t numGnssMeasurementsCb = 0;
 #define CONFIG_MIN_SV_ELEVATION "configMinSvElevation"
 #define GET_MIN_SV_ELEVATION    "getMinSvElevation"
 #define CONFIG_ENGINE_RUN_STATE "configEngineRunState"
+#define SET_USER_CONSENT    "setUserConsentForTerrestrialPositioning"
+#define GET_SINGLE_GTP_WWAN_FIX    "getSingleGtpWwanFix"
 
 // debug utility
 static uint64_t getTimestamp() {
@@ -122,6 +124,24 @@ static void onLocationCb(const location_client::Location& location) {
            location.altitude);
 }
 
+static void onGtpResponseCb(location_client::LocationResponse response) {
+    printf("<<< onGtpResponseCb err=%u\n", response);
+}
+
+static void onGtpLocationCb(const location_client::Location& location) {
+    numLocationCb++;
+    if (!outputEnabled) {
+        return;
+    }
+    printf("<<< onGtpLocationCb cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n",
+           numLocationCb,
+           location.timestamp,
+           location.flags,
+           location.latitude,
+           location.longitude,
+           location.altitude);
+}
+
 static void onGnssLocationCb(const location_client::GnssLocation& location) {
     numGnssLocationCb++;
     if (!outputEnabled) {
@@ -143,7 +163,8 @@ static void onEngLocationsCb(const std::vector<location_client::GnssLocation>& l
     }
     for (auto gnssLocation : locations) {
        printf("<<< onEngLocationsCb: cnt=%u time=%" PRIu64" mask=0x%x lat=%f lon=%f alt=%f\n"
-              "info mask=0x%" PRIx64 ", nav solution maks = 0x%x, eng type %d, eng mask 0x%x",
+              "info mask=0x%" PRIx64 ", nav solution maks = 0x%x, eng type %d, eng mask 0x%x, "
+              "session status %d",
               numEngLocationCb,
               gnssLocation.timestamp,
               gnssLocation.flags,
@@ -153,7 +174,8 @@ static void onEngLocationsCb(const std::vector<location_client::GnssLocation>& l
               gnssLocation.gnssInfoFlags,
               gnssLocation.navSolutionMask,
               gnssLocation.locOutputEngType,
-              gnssLocation.locOutputEngMask);
+              gnssLocation.locOutputEngMask,
+              gnssLocation.sessionStatus);
     }
 }
 
@@ -255,6 +277,8 @@ static void printHelp() {
     printf("%s: set min sv elevation angle\n", CONFIG_MIN_SV_ELEVATION);
     printf("%s: get min sv elevation angle\n", GET_MIN_SV_ELEVATION);
     printf("%s: config engine run state\n", CONFIG_ENGINE_RUN_STATE);
+    printf("%s: set user consent for terrestrial positioning 0/1\n", SET_USER_CONSENT);
+    printf("%s: get single shot wwan fix\n", GET_SINGLE_GTP_WWAN_FIX);
 }
 
 void setRequiredPermToRunAsLocClient() {
@@ -768,6 +792,44 @@ int main(int argc, char *argv[]) {
             printf("eng type %d, eng state %d\n", engType, engState);
             bool retVal = pIntClient->configEngineRunState(engType, engState);
             printf("configEngineRunState returned %d\n", retVal);
+        } else if (strncmp(buf, SET_USER_CONSENT, strlen(SET_USER_CONSENT)) == 0) {
+            static char *save = nullptr;
+            bool userConsent = false;
+            char* token = strtok_r(buf, " ", &save);
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+                userConsent = (atoi(token) != 0);
+            }
+            printf("userConsent %d\n", userConsent);
+            pIntClient->setUserConsentForTerrestrialPositioning(userConsent);
+        } else if (strncmp(buf, GET_SINGLE_GTP_WWAN_FIX, strlen(GET_SINGLE_GTP_WWAN_FIX)) == 0) {
+            static char *save = nullptr;
+            uint32_t timeoutMsec = 0;
+            float horQoS = 0.0;
+            uint32_t techMask = 0x0;
+            // skip first argument
+            char* token = strtok_r(buf, " ", &save);
+            // get timeout
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+                timeoutMsec = atoi(token);
+            }
+            // get qos
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+                horQoS = atof(token);
+            }
+            // tech mask
+            token = strtok_r(NULL, " ", &save);
+            if (token != NULL) {
+                techMask = atoi(token);
+            }
+            printf("timeout msec %d, horQoS %f, techMask 0x%x\n", timeoutMsec, horQoS, techMask);
+            if (!pClient) {
+                pClient = new LocationClientApi(onCapabilitiesCb);
+            }
+            pClient->getSingleTerrestrialPosition(timeoutMsec, (TerrestrialTechnologyMask) techMask,
+                                                  horQoS, onGtpLocationCb, onGtpResponseCb);
         } else {
             int command = buf[0];
             switch(command) {

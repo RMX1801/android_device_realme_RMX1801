@@ -504,6 +504,10 @@ public:
             (const PBLocEngineRunState &pbLocEngRunState) const;
     uint32_t getPBEnumForLocEngineRunState(const LocEngineRunState& locEngineRunState) const;
 
+    // LocEngineRunState to/from PB LocEngineRunState
+    uint32_t getTerrestrialTechMaskFromPB(const uint32_t &pbTerrestrialTechMask) const;
+    uint32_t getPBMaskForTerrestrialTechMask(const uint32_t& terrestrialTechMask) const;
+
     // **** helper function for enum conversion from normal format to protobuf enums.
     PBBatchingMode getPBEnumForBatchingMode(const BatchingMode &batchMode) const;
     PBLocationError getPBEnumForLocationError(const LocationError &locErr) const;
@@ -641,6 +645,8 @@ private:
             const GnssMeasurementsMultipathIndicator &gnssMeasMultiPathIndic) const;
     PBLocApiGnss_LocSvSystemEnumType getPBEnumForGnssLocSvSystem(
             const Gnss_LocSvSystemEnumType &gnssLocSvSysEnumType) const;
+    // PBLocationSessionStatus from/to loc_sess_status
+    PBLocationSessionStatus getPBEnumForLocSessionStatus(const loc_sess_status &status) const;
 
     // ** Special enum conversion
     // GnssSvType to PBLocApiGnss_LocSvSystemEnumType
@@ -716,6 +722,7 @@ private:
             const PBLocApiGnss_LocSvSystemEnumType &pbGnssLocSvSysEnumType) const;
     LocOutputEngineType getEnumForPBLocOutputEngineType(
             const PBLocApiOutputEngineType &pbLocOpEngType) const;
+    loc_sess_status getLocSessionStatusFromPB(const PBLocationSessionStatus &pbStatus) const;
 
     // ** Special enum conversion
     // PBLocApiGnss_LocSvSystemEnumType to GnssSvType

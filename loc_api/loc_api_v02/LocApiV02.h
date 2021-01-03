@@ -156,7 +156,6 @@ private:
 
   size_t mBatchSize, mDesiredBatchSize;
   size_t mTripBatchSize, mDesiredTripBatchSize;
-  GnssSvMeasurementSet*  mSvMeasurementSet;
   bool mIsFirstFinalFixReported;
   bool mIsFirstStartFixReq;
   uint64_t mHlosQtimer1, mHlosQtimer2;
