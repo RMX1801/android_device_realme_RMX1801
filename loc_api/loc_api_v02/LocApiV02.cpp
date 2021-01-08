@@ -3202,7 +3202,7 @@ void LocApiV02 :: reportPosition (
         }
 
         int64_t elapsedRealTime = -1;
-        int64_t unc;
+        int64_t unc = -1;
         if (location_report_ptr->systemTick_valid &&
             location_report_ptr->systemTickUnc_valid) {
             LOC_LOGD("Report position to the upper layer");
@@ -3213,14 +3213,15 @@ void LocApiV02 :: reportPosition (
             /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
                is the uncertainty of the Qtimer in the modem
                Note that location_report_ptr->systemTickUnc is in msec */
-            unc = location_report_ptr->systemTickUnc * 1000000;
+            unc = (int64_t)location_report_ptr->systemTickUnc * 1000000;
         } else if (location_report_ptr->timestampUtc_valid == 1) {
             //If Qtimer isn't valid, estimate the elapsedRealTime
-            int64_t locationTimeNanos = (location_report_ptr->timestampUtc) * 1000000;
-            bool isCurDataTimeTrustable = (locationTimeNanos % (mMinInterval * 1000000) == 0);
+            int64_t locationTimeNanos = (int64_t)(location_report_ptr->timestampUtc) * 1000000;
+            bool isCurDataTimeTrustable =
+                    (locationTimeNanos % ((int64_t)mMinInterval * 1000000) == 0);
             elapsedRealTime = mPositionElapsedRealTimeCal.
                     getElapsedRealtimeEstimateNanos(locationTimeNanos, isCurDataTimeTrustable,
-                                                    mMinInterval * 1000000);
+                                                    (int64_t)mMinInterval * 1000000);
             unc = mPositionElapsedRealTimeCal.getElapsedRealtimeUncNanos();
         }
 
