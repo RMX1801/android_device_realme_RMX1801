@@ -314,7 +314,9 @@ LocApiV02 :: LocApiV02(LOC_API_ADAPTER_EVENT_MASK_T exMask,
     mIsFirstStartFixReq(false),
     mHlosQtimer1(0),
     mHlosQtimer2(0),
-    mRefFCount(0)
+    mRefFCount(0),
+    mMeasElapsedRealTimeCal(600000000),
+    mPositionElapsedRealTimeCal(30000000)
 {
   // initialize loc_sync_req interface
   loc_sync_req_init();
@@ -3200,18 +3202,38 @@ void LocApiV02 :: reportPosition (
                     location_report_ptr->dgnssDataAgeMsec;
         }
 
+        int64_t elapsedRealTime = -1;
+        int64_t unc;
         if (location_report_ptr->systemTick_valid &&
             location_report_ptr->systemTickUnc_valid) {
+            LOC_LOGD("Report position to the upper layer");
             /* deal with Qtimer for ElapsedRealTimeNanos */
-            location.gpsLocation.flags |= LOC_GPS_LOCATION_HAS_ELAPSED_REAL_TIME;
-            location.gpsLocation.elapsedRealTime = location_report_ptr->systemTick;
+            elapsedRealTime = ElapsedRealtimeEstimator::getElapsedRealtimeQtimer(
+                    location_report_ptr->systemTick);
 
             /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
                is the uncertainty of the Qtimer in the modem
                Note that location_report_ptr->systemTickUnc is in msec */
-            location.gpsLocation.elapsedRealTimeUnc =
-                    location_report_ptr->systemTickUnc * 1000000;
+            unc = location_report_ptr->systemTickUnc * 1000000;
+        } else if (location_report_ptr->timestampUtc_valid == 1) {
+            //If Qtimer isn't valid, estimate the elapsedRealTime
+            int64_t locationTimeNanos = (location_report_ptr->timestampUtc) * 1000000;
+            bool isCurDataTimeTrustable = (locationTimeNanos % (mMinInterval * 1000000) == 0);
+            elapsedRealTime = mPositionElapsedRealTimeCal.
+                    getElapsedRealtimeEstimateNanos(locationTimeNanos, isCurDataTimeTrustable,
+                                                    mMinInterval * 1000000);
+            unc = mPositionElapsedRealTimeCal.getElapsedRealtimeUncNanos();
         }
+
+        if (elapsedRealTime != -1) {
+            location.gpsLocation.flags |= LOC_GPS_LOCATION_HAS_ELAPSED_REAL_TIME;
+            location.gpsLocation.elapsedRealTime = elapsedRealTime;
+            location.gpsLocation.elapsedRealTimeUnc = unc;
+        }
+
+        LOC_LOGd("Position elapsedRealtime: %" PRIi64 " uncertainty: %" PRIi64 "",
+               location.gpsLocation.elapsedRealTime,
+               location.gpsLocation.elapsedRealTimeUnc);
 
         LOC_LOGv("report position mask: 0x%" PRIx64 ", dgnss info: 0x%x %d %d %d %d,",
                  locationExtended.flags,
@@ -5142,23 +5164,49 @@ void LocApiV02::reportGnssMeasurementData(
 
     if (gnss_measurement_report_ptr.maxMessageNum == gnss_measurement_report_ptr.seqNum &&
         maxSubSeqNum == subSeqNum) {
-        LOC_LOGv("Report the measurements to the upper layer");
+        LOC_LOGD("Report the measurements to the upper layer");
+        int64_t elapsedRealTime = -1;
+        int64_t unc;
         if (gnss_measurement_report_ptr.refCountTicks_valid &&
             gnss_measurement_report_ptr.refCountTicksUnc_valid) {
             /* deal with Qtimer for ElapsedRealTimeNanos */
-
             mGnssMeasurements->gnssMeasNotification.clock.flags |=
                     GNSS_MEASUREMENTS_CLOCK_FLAGS_ELAPSED_REAL_TIME_BIT;
 
-            mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTime =
-                    gnss_measurement_report_ptr.refCountTicks;
+            elapsedRealTime = ElapsedRealtimeEstimator::getElapsedRealtimeQtimer(
+                    gnss_measurement_report_ptr.refCountTicks);
 
             /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
             is the uncertainty of the Qtimer in the modem
             Note that gnss_measurement_report_ptr.refCountTicksUncis in msec */
-             mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTimeUnc =
-                    gnss_measurement_report_ptr.refCountTicksUnc * 1000000;
+            unc = gnss_measurement_report_ptr.refCountTicksUnc * 1000000;
+        } else {
+            //If Qtimer isn't valid, estimate the elapsedRealTime
+            GnssMeasurementsNotification& in = mGnssMeasurements->gnssMeasNotification;
+            const uint32_t UTC_TO_GPS_SECONDS = 315964800;
+            int64_t measTimeNanos = (int64_t)in.clock.timeNs - (int64_t)in.clock.fullBiasNs
+                    - (int64_t)in.clock.biasNs - (int64_t)in.clock.leapSecond * 1000000000
+                    + (int64_t)UTC_TO_GPS_SECONDS * 1000000000;
+            bool isCurDataTimeTrustable =
+                    in.clock.flags & GNSS_MEASUREMENTS_CLOCK_FLAGS_LEAP_SECOND_BIT &&
+                    in.clock.flags & GNSS_MEASUREMENTS_CLOCK_FLAGS_FULL_BIAS_BIT &&
+                    in.clock.flags & GNSS_MEASUREMENTS_CLOCK_FLAGS_BIAS_BIT &&
+                    in.clock.flags & GNSS_MEASUREMENTS_CLOCK_FLAGS_BIAS_UNCERTAINTY_BIT;
+            elapsedRealTime = mMeasElapsedRealTimeCal.
+                    getElapsedRealtimeEstimateNanos(measTimeNanos, isCurDataTimeTrustable, 0);
+            unc = mMeasElapsedRealTimeCal.getElapsedRealtimeUncNanos();
         }
+
+        if (elapsedRealTime != -1) {
+            mGnssMeasurements->gnssMeasNotification.clock.flags |=
+                    GNSS_MEASUREMENTS_CLOCK_FLAGS_ELAPSED_REAL_TIME_BIT;
+            mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTime = elapsedRealTime;
+            mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTimeUnc = unc;
+        }
+        LOC_LOGd("Measurement elapsedRealtime: %" PRIi64 " uncertainty: %" PRIi64 "",
+               mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTime,
+               mGnssMeasurements->gnssMeasNotification.clock.elapsedRealTimeUnc);
+
         reportSvMeasurementInternal();
         resetSvMeasurementReport();
         // set up flag to indicate that no new info in mGnssMeasurements
@@ -9472,6 +9520,11 @@ LocApiV02::startTimeBasedTracking(const TrackingOptions& options, LocApiResponse
     LOC_LOGD("%s] minInterval %u", __func__, options.minInterval);
     LocationError err = LOCATION_ERROR_SUCCESS;
 
+    if (!mInSession) {
+        mPositionElapsedRealTimeCal.reset();
+        mMeasElapsedRealTimeCal.reset();
+    }
+
     mInSession = true;
     mMeasurementsStarted = true;
     registerEventMask(mMask);
@@ -9486,6 +9539,7 @@ LocApiV02::startTimeBasedTracking(const TrackingOptions& options, LocApiResponse
 
     // interval
     uint32_t minInterval = options.minInterval;
+    mMinInterval = minInterval;
 
     /*set interval for intermediate fixes*/
     start_msg.minIntermediatePositionReportInterval_valid = 1;
