@@ -3461,6 +3461,10 @@ void  LocApiV02 :: reportSv (
 
                 gnssSv_ref.size = sizeof(GnssSv);
                 gnssSv_ref.svId = sv_info_ptr->gnssSvId;
+                if (1 == gnss_report_ptr->expandedSvList_valid) {
+                    gnssSv_ref.gloFrequency = gnss_report_ptr->expandedSvList[i].gloFrequency;
+                }
+
                 switch (sv_info_ptr->system) {
                 case eQMI_LOC_SV_SYSTEM_GPS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GPS;
@@ -3480,13 +3484,16 @@ void  LocApiV02 :: reportSv (
                                                          SBAS_SV_PRN_MIN, SBAS_SV_PRN_MAX);
                     break;
 
-                // Glonass in SV report comes in range of [1, 32],
-                // convert to [65, 96]
+                // Glonass in SV report comes in range of [1, 32] or 255,
+                // convert to [65, 96] or 255
                 case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GLONASS;
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId + GLO_SV_PRN_MIN - 1;
-                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
-                                                         GLO_SV_PRN_MIN, GLO_SV_PRN_MAX);
+                    if (!isGloSlotUnknown(sv_info_ptr->gnssSvId)) {
+                        gnssSv_ref.svId = sv_info_ptr->gnssSvId + GLO_SV_PRN_MIN - 1;
+                    }
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId, GLO_SV_PRN_MIN,
+                                                         GLO_SV_PRN_MAX) ||
+                                   isGloSlotUnknown(gnssSv_ref.svId);
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_BDS_V02:

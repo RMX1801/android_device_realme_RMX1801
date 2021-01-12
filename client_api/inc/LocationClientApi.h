@@ -1169,7 +1169,10 @@ struct GnssSv {
      *   SV Range for supported constellation is specified as below:
      *   <br/>
      *    - For GPS:     1 to 32 <br/>
-     *    - For GLONASS: 65 to 96 <br/>
+     *    - For GLONASS: 65 to 96 or FCN+104
+     *                   [65, 96] if orbital slot number(OSN) is known
+     *                   [97, 110] as frequency channel number(FCN) [-7, 6] plus 104
+     *                   i.e. encode FCN -7 as 97, 0 as 104, 6 as 110 <br/>
      *    - For SBAS:    120 to 158 and 183 to 191 <br/>
      *    - For QZSS:    193 to 197 <br/>
      *    - For BDS:     201 to 263 <br/>
@@ -1207,6 +1210,9 @@ struct GnssSv {
     double basebandCarrierToNoiseDbHz;
     /** Method to print the struct to human readable form, for logging.
      *  <br/> */
+    uint16_t gloFrequency;
+    /** GLONASS frequency channel number
+     * <br/> */
     string toString() const;
 };
 
