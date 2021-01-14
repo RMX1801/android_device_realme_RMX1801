@@ -1,6 +1,3 @@
-on post-fs
-    setprop oppo.camera.packname com.oppo.camera
-
 on boot
     mkdir /data/opponvitems  0771 radio radio
     mkdir /persist/camera 0777 system system
@@ -101,6 +98,9 @@ on boot
     chmod 0666 /sys/devices/virtual/graphics/fb0/dynamic_fps_switch
     chmod 0666 /sys/devices/virtual/graphics/fb0/panel_serial_number
     chmod 0666 /sys/kernel/oppo_display/sau_closebl_node
+
+    # Set oppo camera package name to com.oppo.camera to trick camera hal
+    setprop oppo.camera.packname com.oppo.camera
 
 # Add for oppoalgo_daemon
 service oppoalgo /vendor/bin/oppoalgo_daemon
