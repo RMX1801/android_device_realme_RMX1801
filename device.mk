@@ -31,7 +31,10 @@ DEVICE_PACKAGE_OVERLAYS += \
 PRODUCT_ENFORCE_RRO_TARGETS := *
 
 # Soong namespaces
-PRODUCT_SOONG_NAMESPACES += device/realme/RMX1801
+PRODUCT_SOONG_NAMESPACES += \
+    device/realme/RMX1801 \
+    hardware/google/interfaces \
+    hardware/google/pixel
 
 # Permissions
 PRODUCT_COPY_FILES += \
