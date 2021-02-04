@@ -1,9 +1,0 @@
-type hal_touch_sdm660, domain;
-hal_server_domain(hal_touch_sdm660, hal_lineage_touch)
-
-type hal_touch_sdm660_exec, exec_type, vendor_file_type, file_type;
-init_daemon_domain(hal_touch_sdm660)
-
-# Allow access to gesture enable nodes
-allow hal_touch_sdm660 proc_touchpanel:dir search;
-allow hal_touch_sdm660 proc_touchpanel:file rw_file_perms;
