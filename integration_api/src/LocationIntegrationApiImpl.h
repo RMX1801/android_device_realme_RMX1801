@@ -84,6 +84,11 @@ typedef struct {
     ::DeadReckoningEngineConfig dreConfig;
 } DeadReckoningEngineConfigInfo;
 
+typedef struct {
+    bool isValid;
+    bool userConsent;
+} GtpUserConsentConfigInfo;
+
 class IpcListener;
 
 class LocationIntegrationApiImpl : public ILocationControlAPI {
@@ -125,6 +130,8 @@ public:
     uint32_t getConstellationSecondaryBandConfig();
 
     uint32_t configEngineRunState(PositioningEngineMask engType, LocEngineRunState engState);
+
+    uint32_t setUserConsentForTerrestrialPositioning(bool userConsent);
 
 private:
     ~LocationIntegrationApiImpl();
@@ -168,6 +175,7 @@ private:
     RobustLocationConfigInfo mRobustLocationConfigInfo;
     DeadReckoningEngineConfigInfo mDreConfigInfo;
     LocConfigEngRunStateMap       mEngRunStateConfigMap;
+    GtpUserConsentConfigInfo      mGtpUserConsentConfigInfo;
 
     LocConfigReqCntMap       mConfigReqCntMap;
     LocIntegrationCbs        mIntegrationCbs;

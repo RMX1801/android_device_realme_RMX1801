@@ -117,6 +117,8 @@ public:
     void eraseGeofenceIds(size_t count, uint32_t* clientIds);
     uint32_t* getSessionIds(size_t count, uint32_t* clientIds);
     uint32_t* getClientIds(size_t count, uint32_t* sessionIds);
+    // send terrestrial fix to the requesting LCA client
+    void sendTerrestrialFix(LocationError error, const Location& location);
 
     inline shared_ptr<LocIpcSender> getIpcSender () {return mIpcSender;};
 

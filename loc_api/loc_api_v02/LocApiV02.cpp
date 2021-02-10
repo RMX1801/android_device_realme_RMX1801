@@ -309,7 +309,6 @@ LocApiV02 :: LocApiV02(LOC_API_ADAPTER_EVENT_MASK_T exMask,
     mGnssMeasurements(nullptr),
     mBatchSize(0), mDesiredBatchSize(0),
     mTripBatchSize(0), mDesiredTripBatchSize(0),
-    mSvMeasurementSet(nullptr),
     mIsFirstFinalFixReported(false),
     mIsFirstStartFixReq(false),
     mHlosQtimer1(0),
@@ -3203,7 +3202,7 @@ void LocApiV02 :: reportPosition (
         }
 
         int64_t elapsedRealTime = -1;
-        int64_t unc;
+        int64_t unc = -1;
         if (location_report_ptr->systemTick_valid &&
             location_report_ptr->systemTickUnc_valid) {
             LOC_LOGD("Report position to the upper layer");
@@ -3214,14 +3213,15 @@ void LocApiV02 :: reportPosition (
             /* Uncertainty on HLOS time is 0, so the uncertainty of the difference
                is the uncertainty of the Qtimer in the modem
                Note that location_report_ptr->systemTickUnc is in msec */
-            unc = location_report_ptr->systemTickUnc * 1000000;
+            unc = (int64_t)location_report_ptr->systemTickUnc * 1000000;
         } else if (location_report_ptr->timestampUtc_valid == 1) {
             //If Qtimer isn't valid, estimate the elapsedRealTime
-            int64_t locationTimeNanos = (location_report_ptr->timestampUtc) * 1000000;
-            bool isCurDataTimeTrustable = (locationTimeNanos % (mMinInterval * 1000000) == 0);
+            int64_t locationTimeNanos = (int64_t)(location_report_ptr->timestampUtc) * 1000000;
+            bool isCurDataTimeTrustable =
+                    (locationTimeNanos % ((int64_t)mMinInterval * 1000000) == 0);
             elapsedRealTime = mPositionElapsedRealTimeCal.
                     getElapsedRealtimeEstimateNanos(locationTimeNanos, isCurDataTimeTrustable,
-                                                    mMinInterval * 1000000);
+                                                    (int64_t)mMinInterval * 1000000);
             unc = mPositionElapsedRealTimeCal.getElapsedRealtimeUncNanos();
         }
 
@@ -3461,6 +3461,10 @@ void  LocApiV02 :: reportSv (
 
                 gnssSv_ref.size = sizeof(GnssSv);
                 gnssSv_ref.svId = sv_info_ptr->gnssSvId;
+                if (1 == gnss_report_ptr->expandedSvList_valid) {
+                    gnssSv_ref.gloFrequency = gnss_report_ptr->expandedSvList[i].gloFrequency;
+                }
+
                 switch (sv_info_ptr->system) {
                 case eQMI_LOC_SV_SYSTEM_GPS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GPS;
@@ -3480,13 +3484,16 @@ void  LocApiV02 :: reportSv (
                                                          SBAS_SV_PRN_MIN, SBAS_SV_PRN_MAX);
                     break;
 
-                // Glonass in SV report comes in range of [1, 32],
-                // convert to [65, 96]
+                // Glonass in SV report comes in range of [1, 32] or 255,
+                // convert to [65, 96] or 255
                 case eQMI_LOC_SV_SYSTEM_GLONASS_V02:
                     gnssSv_ref.type = GNSS_SV_TYPE_GLONASS;
-                    gnssSv_ref.svId = sv_info_ptr->gnssSvId + GLO_SV_PRN_MIN - 1;
-                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId,
-                                                         GLO_SV_PRN_MIN, GLO_SV_PRN_MAX);
+                    if (!isGloSlotUnknown(sv_info_ptr->gnssSvId)) {
+                        gnssSv_ref.svId = sv_info_ptr->gnssSvId + GLO_SV_PRN_MIN - 1;
+                    }
+                    bSvIdIsValid = isValInRangeInclusive(gnssSv_ref.svId, GLO_SV_PRN_MIN,
+                                                         GLO_SV_PRN_MAX) ||
+                                   isGloSlotUnknown(gnssSv_ref.svId);
                     break;
 
                 case eQMI_LOC_SV_SYSTEM_BDS_V02:
@@ -5687,6 +5694,42 @@ void LocApiV02::convertGnssMeasurementsHeader(const Gnss_LocSvSystemEnumType loc
                     gnss_measurement_info.BdsB1iB1cTimeBias.timeBiasUnc * 1000000;
             mTimeBiases.flags |= BIAS_BDSB1_BDSB1C_UNC_VALID;
         }
+    }
+
+    if (1 == gnss_measurement_info.GpsL1L2cTimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_measurement_info.GpsL1L2cTimeBias;
+
+        getInterSystemTimeBias("gpsL1L2cTimeBias",
+                               svMeasSetHead.gpsL1L2cTimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GPSL1L2C_TIME_BIAS;
+    }
+
+    if (1 == gnss_measurement_info.GloG1G2TimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_measurement_info.GloG1G2TimeBias;
+
+        getInterSystemTimeBias("gloG1G2TimeBias",
+                               svMeasSetHead.gloG1G2TimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GLOG1G2_TIME_BIAS;
+    }
+
+    if (1 == gnss_measurement_info.BdsB1iB1cTimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_measurement_info.BdsB1iB1cTimeBias;
+
+        getInterSystemTimeBias("bdsB1iB1cTimeBias",
+                               svMeasSetHead.bdsB1iB1cTimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_BDSB1IB1C_TIME_BIAS;
+    }
+
+    if (1 == gnss_measurement_info.GalE1E5bTimeBias_valid) {
+        qmiLocInterSystemBiasStructT_v02* interSystemBias =
+                (qmiLocInterSystemBiasStructT_v02*)&gnss_measurement_info.GalE1E5bTimeBias;
+
+        getInterSystemTimeBias("galE1E5bTimeBias",
+                               svMeasSetHead.galE1E5bTimeBias, interSystemBias);
+        svMeasSetHead.flags |= GNSS_SV_MEAS_HEADER_HAS_GALE1E5B_TIME_BIAS;
     }
 
     if (1 == gnss_measurement_info.gloTime_valid) {

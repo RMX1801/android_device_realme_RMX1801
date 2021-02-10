@@ -44,7 +44,8 @@ enum LocationApiMsgVersion {
     LOCAPI_MSG_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_MSG_VER_MINOR = 3;
+    // Minor version 4: GTP Single shot WWAN change
+    LOCAPI_MSG_VER_MINOR = 4;
 }
 
 // ============================================================================
@@ -109,6 +110,10 @@ enum PBELocMsgID {
     // Measurement reports
     PB_E_LOCAPI_MEAS_MSG_ID = 30;
 
+    // Terrestria fix request/response msg
+    PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_REQ_MSG_ID = 31;
+    PB_E_LOCAPI_GET_SINGLE_TERRESTRIAL_POS_RESP_MSG_ID = 32;
+
     // ping
     PB_E_LOCAPI_PINGTEST_MSG_ID = 99;
 
@@ -124,6 +129,7 @@ enum PBELocMsgID {
     PB_E_INTAPI_CONFIG_MIN_SV_ELEVATION_MSG_ID = 208;
     PB_E_INTAPI_CONFIG_CONSTELLATION_SECONDARY_BAND_MSG_ID = 209;
     PB_E_INTAPI_CONFIG_ENGINE_RUN_STATE_MSG_ID = 210;
+    PB_E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID = 211;
 
     // integration API config retrieval request/response
     PB_E_INTAPI_GET_ROBUST_LOCATION_CONFIG_REQ_MSG_ID  = 300;
@@ -432,6 +438,20 @@ message PBLocAPILocationSystemInfoIndMsg {
 }
 
 //*******************************************************************
+// IPC message structure - Single-shot Terrestrial fix
+//*******************************************************************
+message PBLocAPIGetSingleTerrestrialPosReqMsg {
+    uint32                timeoutMsec = 1;
+    PBTerrestrialTechMask techMask = 2;
+    float                 horQoS = 3;
+};
+
+message PBLocAPIGetSingleTerrestrialPosRespMsg {
+    PBLocationError errorCode = 1;
+    PBLocation      location = 2;
+};
+
+//*******************************************************************
 // IPC message structure - Location Integration API Configure Request
 //*******************************************************************
 // defintion for message with msg id of PB_E_INTAPI_CONFIG_CONSTRAINTED_TUNC_MSG_ID
@@ -493,6 +513,12 @@ message PBLocConfigMinSvElevationReqMsg {
 message PBLocConfigEngineRunStateReqMsg {
     PBLocApiPositioningEngineMask mEngType = 1;
     PBLocEngineRunState mEngState = 2;
+}
+
+// defintion for message with msg id of
+// PB_E_INTAPI_CONFIG_USER_CONSENT_TERRESTRIAL_POSITIONING_MSG_ID
+message PBLocConfigUserConsentTerrestrialPositioningReqMsg {
+    bool userConsent = 1;
 }
 
 //******************************************************************************

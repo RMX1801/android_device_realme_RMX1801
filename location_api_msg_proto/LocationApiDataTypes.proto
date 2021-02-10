@@ -42,7 +42,8 @@ enum LocationApiDataTypesVersion {
     LOCAPI_DATA_TYPES_VER_MAJOR = 1;
     // Minor - New features / API addition, new message/elemtent addition.
     // Bump the last byte of version i.e. x.2 to x.3
-    LOCAPI_DATA_TYPES_VER_MINOR = 4;
+    // Minor version 6: Add glonass frequency in GnssSv
+    LOCAPI_DATA_TYPES_VER_MINOR = 6;
 }
 
 // ============================================================================
@@ -309,6 +310,11 @@ enum PBLeapSecondSysInfoMask {
     PB_LEAP_SECOND_SYS_INFO_LEAP_SECOND_CHANGE_BIT = 2;
 }
 
+enum PBTerrestrialTechMask {
+    PB_TERRESTRIAL_TECH_INVALID = 0;
+    PB_TERRESTRIAL_TECH_GTP_WWAN = 1;
+};
+
 enum PBLocApiGnssLocationPosDataMask {
     PB_LOCATION_NAV_DATA_INVALID             = 0;
     // Navigation data has Forward Acceleration
@@ -369,6 +375,7 @@ enum PBLocationError {
     PB_LOCATION_ERROR_INVALID_PARAMETER = 1;
     PB_LOCATION_ERROR_NOT_SUPPORTED = 2;
     PB_LOCATION_ERROR_GENERAL_FAILURE = 3;
+    PB_LOCATION_ERROR_TIMEOUT = 4;
 }
 
 enum PBLocReqEngineTypeMask {
@@ -737,6 +744,7 @@ message PBLocApiGnssSv {
     float carrierFrequencyHz = 7; // carrier frequency of the signal tracked
     uint32 gnssSignalTypeMask = 8; // Specifies GNSS signal type - PBGnssSignalTypeMask
     double basebandCarrierToNoiseDbHz = 9; // Baseband signal strength Db Hz.
+    uint32 gloFrequency = 10; // GLONASS Frequency number.
 }
 
 message PBLocApiGnssSvNotification {
