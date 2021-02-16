@@ -55,6 +55,7 @@
 
 # Power
 /(vendor|system/vendor)/bin/hw/android\.hardware\.power@1\.3-service\.realme_sdm660-libperfmgr          u:object_r:hal_power_default_exec:s0
+/sys/kernel/debug/system_stats                                                                          u:object_r:debugfs:s0
 
 # Power supply
 /sys/devices(/platform)?/soc/[a-z0-9]+.qcom,spmi/spmi-[0-9]/spmi[0-9]-0[0-9]/[a-z0-9]+.qcom,spmi:qcom,[a-z0-9]+@[0-9]:qcom,qpnp-smb2/power_supply/ac(/.*)?  u:object_r:sysfs_battery_supply:s0
