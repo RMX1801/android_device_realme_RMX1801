@@ -19,3 +19,4 @@ type sysfs_wlan, sysfs_type, fs_type;
 # RealmeParts
 type kcal_sysfs, sysfs_type, fs_type;
 type sysfs_usb_fastcharge, sysfs_type, fs_type;
+type audio_socket, file_type;

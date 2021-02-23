@@ -71,6 +71,9 @@
 # Sharedmem
 /sys/devices(/platform)?/soc/[0-9]+.qcom,oembackup_sharedmem/uio/uio[0-1](/.*)?                         u:object_r:sysfs_oembackup:s0
 
+# Sockets
+/dev/socket/audio_hw_socket                   u:object_r:audio_socket:s0
+
 # Touch
 /vendor/bin/hw/vendor\.lineage\.touch@1\.0-service\.realme_sdm660                                       u:object_r:hal_touch_sdm660_exec:s0
 
