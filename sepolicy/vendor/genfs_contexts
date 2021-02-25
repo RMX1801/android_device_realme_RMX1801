@@ -14,8 +14,6 @@ genfscon sysfs /devices/soc/soc:fpc_fpc1020/wakelock_enable       u:object_r:sys
 genfscon proc /fp_id                                                       u:object_r:fp_proc:s0
 
 # Power
-genfscon debugfs /rpm_stats                                     u:object_r:debugfs_rpm:s0
-genfscon debugfs /system_stats                                  u:object_r:debugfs_rpm:s0
 genfscon sysfs /devices/virtual/graphics/fb0                    u:object_r:sysfs_graphics:s0
 genfscon sysfs /devices/virtual/graphics/fb1                    u:object_r:sysfs_graphics:s0
 genfscon sysfs /devices/virtual/graphics/fb2                    u:object_r:sysfs_graphics:s0

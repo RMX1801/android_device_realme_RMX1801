@@ -320,7 +320,7 @@ PRODUCT_COPY_FILES += \
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power@1.3-service.realme_sdm660-libperfmgr
+    android.hardware.power-service.realme_sdm660-libperfmgr
 
 # Powerhint
 PRODUCT_COPY_FILES += \

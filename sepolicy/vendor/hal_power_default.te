@@ -1,7 +1,6 @@
 allow hal_power_default proc_touchpanel:dir search;
 allow hal_power_default proc_touchpanel:file w_file_perms;
 
-r_dir_file(hal_power_default, debugfs_rpm)
 r_dir_file(hal_power_default, sysfs_graphics)
 
 allow hal_power_default device_latency:chr_file rw_file_perms;
