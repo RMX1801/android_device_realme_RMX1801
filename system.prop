@@ -48,6 +48,9 @@ vidc.enc.target_support_bframe=1
 persist.radio.VT_CAM_INTERFACE=1
 persist.vendor.qti.telephony.vt_cam_interface=1
 
+# IORap app launch prefetching using Perfetto traces and madvise
+ro.iorapd.enable=true
+
 # Media
 audio.offload.video=true
 media.aac_51_output_enabled=true
