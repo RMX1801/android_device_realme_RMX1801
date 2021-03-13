@@ -19,4 +19,5 @@
     <color name="switchbar_background_color">@*android:color/material_grey_600</color>
     <color name="switchbar_switch_track_tint">#BFFFFFFF</color>
     <color name="switchbar_switch_thumb_tint">@android:color/white</color>
+    <color name="homepage_realmeparts_background">#FECA12</color>
 </resources>

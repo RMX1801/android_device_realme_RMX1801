@@ -58,6 +58,9 @@
                 <action android:name="com.android.settings.action.EXTRA_SETTINGS" />
             </intent-filter>
             <meta-data
+                android:name="com.android.settings.bg.hint"
+                android:resource="@color/homepage_realmeparts_background" />
+            <meta-data
                 android:name="com.android.settings.category"
                 android:value="com.android.settings.category.ia.homepage" />
             <meta-data 
