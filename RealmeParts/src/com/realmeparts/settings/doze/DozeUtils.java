@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.lineageos.settings.doze;
+package com.realmeparts.settings.doze;
 
 import android.content.Context;
 import android.content.Intent;

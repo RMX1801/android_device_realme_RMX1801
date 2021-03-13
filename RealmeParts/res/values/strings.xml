@@ -28,6 +28,15 @@
     <!-- Device specific settings -->
     <string name="device_settings_app_name">Advanced settings</string>
 
+    <!-- Dialog texts -->
+    <string name="dialog_ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset">Reset</string>
+
+    <!-- RealmeParts strings -->
+    <string name="realmeparts">RealmeParts</string>
+    <string name="realmeparts_summary">Additional Tweaks</string>
+
     <!-- Ambient Display -->
     <string name="ambient_display_title">Ambient display</string>
     <string name="ambient_display_enable_title">Ambient display</string>
@@ -67,9 +76,6 @@
     <string name="proximity_wake_title">Proximity wake</string>
     <string name="proximity_wake_enable_title">Proximity wake</string>
     <string name="proximity_wake_enable_summary">Wake device on hand wave</string>
-
-    <!-- Dialog texts -->
-    <string name="dialog_ok">OK</string>
 
     <!-- Help texts -->
     <string name="doze_settings_help_title">Help</string>
