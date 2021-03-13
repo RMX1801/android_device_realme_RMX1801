@@ -68,6 +68,16 @@
                 android:resource="@string/realmeparts_summary" />
         </activity-alias>
 
+        <service
+            android:name=".RealmePartsTileService"
+            android:icon="@drawable/ic_realmeparts"
+            android:label="@string/realmeparts"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+
         <receiver android:name=".BootCompletedReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
