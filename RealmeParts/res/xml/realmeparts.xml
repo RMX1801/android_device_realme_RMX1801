@@ -28,4 +28,12 @@
             android:title="@string/ambient_display_gestures_title" />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/vibrator_intensity_control">
+
+        <com.realmeparts.settings.vibration.VibratorStrengthPreference
+	    android:key="vib_strength"
+            android:icon="@drawable/ic_vibrate" />
+    </PreferenceCategory>
 </PreferenceScreen>

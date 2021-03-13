@@ -7,3 +7,7 @@ dontaudit system_app {
   apex_service
   system_suspend_control_service
 }:service_manager find;
+
+# RealmeParts
+allow system_app sysfs_vibrator:dir search;
+allow system_app sysfs_vibrator:file rw_file_perms;
