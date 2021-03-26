@@ -134,7 +134,7 @@ public final class DozeUtils {
                 || isPocketGestureEnabled(context);
     }
 
-    protected static Sensor getSensor(SensorManager sm, String type) {
+    public static Sensor getSensor(SensorManager sm, String type) {
         for (Sensor sensor : sm.getSensorList(Sensor.TYPE_ALL)) {
             if (type.equals(sensor.getStringType())) {
                 return sensor;
