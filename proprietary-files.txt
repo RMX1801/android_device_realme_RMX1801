@@ -3125,7 +3125,7 @@ vendor/lib64/libqmi_encdec.so
 vendor/lib64/qtibus.so
 vendor/lib64/qtimutex.so
 
-# Radio (IMS) - from jasmine-user 10 QKQ1.190910.002 V11.0.11.0.QDIMIXM release-keys
+# Radio (IMS) - from jasmine-user 10 QKQ1.190910.002 V11.0.22.0.QDIMIXM release-keys
 -product/app/imssettings/imssettings.apk|a1cc6f2e1ab37fb24dadad5d3b45c425e72c1e4a
 -product/app/uceShimService/uceShimService.apk|a4f64644c7c7f4340745df98d9da5e3243134b21
 product/lib64/lib-imscamera.so|8611f22989e922c9bf5e55ab40b5e5021bc3f92b
@@ -3133,7 +3133,7 @@ product/lib64/lib-imsvideocodec.so|c2e541068f9195888deaa9807cd8025587a0aae6
 product/lib64/lib-imsvt.so|02a422f752ae83d2c9c376d2a78056605bcf962c
 product/lib64/lib-imsvtextutils.so|c065912c11045bbccc06e98782963d1492e21e1a
 product/lib64/lib-imsvtutils.so|bf2da369eabe1d93f14ba8388b3ae8d98e767a2d
-product/lib64/libdiag_system.so|0903778a417c572dd4829bf703cec2266e079d96
+product/lib64/libdiag_system.so|588e842c56dfba4c978d2ef864a567d9cc0051da
 product/lib64/libimscamera_jni.so|7cb89110cca94d37d68c705f12a7a5a4ee106139
 product/lib64/libimsmedia_jni.so|3540752cc3658261ea3c909f03018eea4398f84e
 product/lib64/vendor.qti.imsrtpservice@2.0.so|2a5bca02128b51f8d47dd2f9cf886e0d23e7bbd9
@@ -3177,7 +3177,7 @@ vendor/lib64/vendor.qti.imsrtpservice@2.0.so
 vendor/lib64/vendor.qti.imsrtpservice@2.1-service-Impl.so
 vendor/lib64/vendor.qti.imsrtpservice@2.1.so
 
-# Radio - from jasmine-user 10 QKQ1.190910.002 V11.0.11.0.QDIMIXM release-keys
+# Radio - from jasmine-user 10 QKQ1.190910.002 V11.0.22.0.QDIMIXM release-keys
 -product/app/QtiTelephonyService/QtiTelephonyService.apk|db60b6fe27b3033f6468b3170b23af18dd0bcdaf
 -product/app/datastatusnotification/datastatusnotification.apk|272156d88ac5a05f76fcea7f1a31087e1acbcd85
 product/etc/permissions/qcrilhook.xml|ceb890ab3c1645aa0d0044abab1ba58c4097a991
