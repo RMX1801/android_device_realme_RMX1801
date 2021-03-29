@@ -49,12 +49,6 @@
     <string name="ambient_display_always_on_title">Always on</string>
     <string name="ambient_display_always_on_summary">Show time, notification icons, and other info. Increased battery usage.</string>
 
-    <!-- Tilt sensor -->
-    <string name="tilt_sensor_title">Tilt sensor</string>
-
-    <!-- Pickup sensor -->
-    <string name="pickup_sensor_title">Pickup sensor</string>
-
     <!-- Proximity sensor -->
     <string name="proximity_sensor_title">Proximity sensor</string>
 
@@ -63,10 +57,6 @@
     <string name="hand_wave_gesture_summary">Pulse notifications on hand wave</string>
     <string name="hand_wave_gesture_flat_title">Detect orientation</string>
     <string name="hand_wave_gesture_flat_summary">Pulse only if the phone is lying face up on a flat surface</string>
-
-    <!-- Pick-up gesture -->
-    <string name="pick_up_gesture_title">Pick-up</string>
-    <string name="pick_up_gesture_summary">Pulse notifications on pick-up</string>
 
     <!-- Pocket gesture -->
     <string name="pocket_gesture_title">Pocket</string>
