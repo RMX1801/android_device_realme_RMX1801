@@ -1,3 +1,5 @@
+typeattribute hal_power_default mlstrustedsubject;
+
 allow hal_power_default proc_touchpanel:dir search;
 allow hal_power_default proc_touchpanel:file w_file_perms;
 
@@ -15,5 +17,9 @@ r_dir_file(hal_power_default, sysfs_graphics)
 
 # To dump
 allow hal_power_default cgroup:file read;
+
+# Set scheduling info for apps (for adpf)
+allow hal_power_default appdomain:process { getsched setsched };
+allow hal_power_default self:capability sys_nice;
 
 set_prop(hal_power_default, vendor_power_prop)
