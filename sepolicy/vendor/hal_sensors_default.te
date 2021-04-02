@@ -1,2 +1,2 @@
 allow hal_sensors_default oppo_ver_proc:dir search;
-allow hal_sensors_default oppo_ver_proc:file { read open };
+allow hal_sensors_default oppo_ver_proc:file r_file_perms;
