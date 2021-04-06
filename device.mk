@@ -349,6 +349,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.media.bufferpool@1.0.vendor \
     android.hardware.media.c2@1.0.vendor \
+    libavservices_minijail \
+    libavservices_minijail.vendor \
     libc2dcolorconvert \
     libextmedia_jni \
     libhypv_intercept \
