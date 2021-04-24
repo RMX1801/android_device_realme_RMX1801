@@ -1,2 +1,2 @@
-allow sensors oppo_ver_proc:dir search;
+allow sensors oppo_ver_proc:dir r_dir_perms;
 allow sensors oppo_ver_proc:file r_file_perms;
