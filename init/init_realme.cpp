@@ -34,12 +34,19 @@
 #include <sys/sysinfo.h>
 #include <unistd.h>
 
+#include <android-base/file.h>
+#include <android-base/logging.h>
 #include <android-base/properties.h>
+#include <android-base/strings.h>
+
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
 
 #include "vendor_init.h"
 #include "property_service.h"
+
+using android::base::Trim;
+using android::base::ReadFileToString;
 
 char const *heapstartsize;
 char const *heapgrowthlimit;
@@ -80,6 +87,70 @@ void check_device()
     }
 }
 
+void init_alarm_boot_properties()
+{
+    char const *boot_reason_file = "/proc/sys/kernel/boot_reason";
+    std::string boot_reason;
+
+    if (ReadFileToString(boot_reason_file, &boot_reason)) {
+        /*
+         * Setup ro.alarm_boot value to true when it is RTC triggered boot up
+         * For existing PMIC chips, the following mapping applies
+         * for the value of boot_reason:
+         *
+         * 0 -> unknown
+         * 1 -> hard reset
+         * 2 -> sudden momentary power loss (SMPL)
+         * 3 -> real time clock (RTC)
+         * 4 -> DC charger inserted
+         * 5 -> USB charger inserted
+         * 6 -> PON1 pin toggled (for secondary PMICs)
+         * 7 -> CBLPWR_N pin toggled (for external power supply)
+         * 8 -> KPDPWR_N pin toggled (power key pressed)
+         */
+        if (Trim(boot_reason) == "0") {
+            property_override("ro.boot.bootreason", "invalid");
+            property_override("ro.alarm_boot", "false");
+        }
+        else if (Trim(boot_reason) == "1") {
+            property_override("ro.boot.bootreason", "hard_reset");
+            property_override("ro.alarm_boot", "false");
+        }
+        else if (Trim(boot_reason) == "2") {
+            property_override("ro.boot.bootreason", "smpl");
+            property_override("ro.alarm_boot", "false");
+        }
+        else if (Trim(boot_reason) == "3") {
+            property_override("ro.alarm_boot", "true");
+            // disable boot animation for RTC wakeup
+            property_override("debug.sf.nobootanimation", "1");
+        }
+        else if (Trim(boot_reason) == "4") {
+            property_override("ro.boot.bootreason", "dc_chg");
+            property_override("ro.alarm_boot", "false");
+        }
+        else if (Trim(boot_reason) == "5") {
+            property_override("ro.boot.bootreason", "usb_chg");
+            property_override("ro.alarm_boot", "false");
+        }
+        else if (Trim(boot_reason) == "6") {
+            property_override("ro.boot.bootreason", "pon1");
+            property_override("ro.alarm_boot", "false");
+        }
+        else if (Trim(boot_reason) == "7") {
+            property_override("ro.boot.bootreason", "cblpwr");
+            property_override("ro.alarm_boot", "false");
+        }
+        else if (Trim(boot_reason) == "8") {
+            property_override("ro.boot.bootreason", "kpdpwr");
+            property_override("ro.alarm_boot", "false");
+        }
+    }
+    else {
+        LOG(ERROR) << "Unable to read bootreason from " << boot_reason_file;
+    }
+}
+
 void vendor_load_properties()
 {
     check_device();
@@ -90,4 +161,6 @@ void vendor_load_properties()
     property_override("dalvik.vm.heaptargetutilization", heaptargetutilization);
     property_override("dalvik.vm.heapminfree", heapminfree);
     property_override("dalvik.vm.heapmaxfree", heapmaxfree);
+
+    init_alarm_boot_properties();
 }
