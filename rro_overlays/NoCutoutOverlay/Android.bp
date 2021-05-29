@@ -15,5 +15,5 @@
 runtime_resource_overlay {
     name: "NoCutoutOverlay",
     sdk_version: "current",
-    vendor: true,
+    product_specific: true,
 }
