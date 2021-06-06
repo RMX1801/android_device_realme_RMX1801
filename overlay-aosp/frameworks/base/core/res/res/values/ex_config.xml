@@ -57,4 +57,7 @@
     <string-array name="config_deviceKeyHandlerClasses" translatable="false">
         <item>com.realmeparts.settings.touch.TouchKeyHandler</item>
     </string-array>
+
+    <!-- Default navigation mode -->
+    <integer name="config_navBarInteractionMode">2</integer>
 </resources>
