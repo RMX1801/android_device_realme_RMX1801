@@ -22,4 +22,7 @@ allow hal_power_default cgroup:file read;
 allow hal_power_default appdomain:process { getsched setsched };
 allow hal_power_default self:capability sys_nice;
 
+# Set scheduling info for system_server (for adpf)
+allow hal_power_default system_server:process setsched;
+
 set_prop(hal_power_default, vendor_power_prop)
