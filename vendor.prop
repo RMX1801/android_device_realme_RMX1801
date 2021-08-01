@@ -92,9 +92,6 @@ ro.charger.enable_suspend=true
 persist.vendor.cne.feature=1
 persist.vendor.dpm.feature=1
 
-# Codec2 switch
-debug.media.codec2=2
-
 # Dalvik dex2oat
 dalvik.vm.dex2oat64.enabled=true
 
