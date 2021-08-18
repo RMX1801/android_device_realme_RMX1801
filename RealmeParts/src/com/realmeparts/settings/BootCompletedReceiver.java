@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.realmeparts.settings.dirac.DiracUtils;
 import com.realmeparts.settings.doze.DozeUtils;
 import com.realmeparts.settings.kcal.Utils;
 import com.realmeparts.settings.vibration.VibratorStrengthPreference;
@@ -37,6 +38,7 @@ public class BootCompletedReceiver extends BroadcastReceiver implements Utils {
         if (DEBUG) Log.d(TAG, "Received boot completed intent");
         DozeUtils.checkDozeService(context);
         VibratorStrengthPreference.restore(context);
+        new DiracUtils(context).onBootCompleted();
 
         if (Settings.Secure.getInt(context.getContentResolver(), PREF_ENABLED, 0) == 1) {
             FileUtils.setValue(KCAL_ENABLE, Settings.Secure.getInt(context.getContentResolver(),

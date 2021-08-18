@@ -124,6 +124,22 @@
             </intent-filter>
         </service>
 
+	<activity
+            android:name=".dirac.DiracActivity"
+            android:label="@string/dirac_title"
+            android:theme="@style/Theme.Main">
+        </activity>
+
+        <service
+            android:name=".dirac.DiracTileService"
+            android:icon="@drawable/ic_headphone"
+            android:label="@string/dirac_qs_tile_title"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".doze.DozeSettingsActivity"
             android:label="@string/ambient_display_title"

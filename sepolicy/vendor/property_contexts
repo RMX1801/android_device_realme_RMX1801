@@ -11,6 +11,12 @@ vendor.oppo.camera.fovc.enable                   u:object_r:camera_prop:s0
 vendor.oppo.camera.hal3.enable                   u:object_r:camera_prop:s0
 vendor.oppo.open.camera.name                     u:object_r:camera_prop:s0
 
+# Dirac
+persist.audio.dirac.eq                           u:object_r:dirac_prop:s0
+persist.audio.dirac.headset                      u:object_r:dirac_prop:s0
+persist.audio.dirac.music.state                  u:object_r:dirac_prop:s0
+persist.audio.dirac.speaker                      u:object_r:dirac_prop:s0
+
 # Fingerprint
 oppo.fpc.sw.version                              u:object_r:oppo_fp_prop:s0
 persist.vendor.fingerprint.                      u:object_r:oppo_fp_prop:s0

@@ -49,6 +49,18 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/dirac_title">
+
+        <PreferenceScreen
+            android:key="dirac"
+            android:title="@string/dirac_title"
+            android:summary="@string/dirac_summary"
+            android:icon="@drawable/ic_headphone"
+            android:fragment="com.realmeparts.settings.dirac.DiracActivity" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/touchscreen_gesture_category">
 
         <Preference
