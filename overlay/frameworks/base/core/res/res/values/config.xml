@@ -217,12 +217,6 @@
         orientation. If zero, the value of rounded_corner_radius is used. -->
     <dimen name="rounded_corner_radius_bottom">108px</dimen>
 
-    <!-- MMS user agent string -->
-     <string name="config_mms_user_agent">Android-Mms/2.0</string>
-
-    <!-- MMS user agent prolfile url -->
-     <string name="config_mms_user_agent_profile_url">http://www.google.com/oha/rdf/ua-profile-kila.xml</string>
-
     <!--  Define Google play service package for FRP-->
      <string name="config_persistentDataPackageName">com.google.android.gms</string>
 
