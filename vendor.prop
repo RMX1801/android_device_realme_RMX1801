@@ -1,5 +1,5 @@
 # Set system properties identifying the chipset
-ro.soc.manufacturer=Qualcomm
+ro.soc.manufacturer=QTI
 ro.soc.model=SDM660
 
 # Audio 
