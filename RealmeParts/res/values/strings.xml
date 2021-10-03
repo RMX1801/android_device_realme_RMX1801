@@ -73,8 +73,9 @@
 
     <!-- Vibration Slider -->
     <string name="vibrator_intensity_control">Vibration</string>
-    <string name="vib_strength_title_head">Vibration Strength</string>
-    <string name="vib_strength_summary_head">Define the strength of the vibrator</string>
+    <string name="system_strength_title">System</string>
+    <string name="notification_strength_title">Notification</string>
+    <string name="call_strength_title">Call</string>
 
     <!-- Screen off Gestures : Input -->
     <string name="touchscreen_gesture_category">Screen OFF Gestures</string>

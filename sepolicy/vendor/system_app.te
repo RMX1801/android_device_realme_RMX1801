@@ -18,5 +18,5 @@ allow system_app sysfs_usb_fastcharge:file rw_file_perms;
 allow system_app sysfs_usb_supply:dir search;
 allow system_app sysfs_usb_supply:file rw_file_perms;
 allow system_app sysfs_usb_supply:dir search;
-allow system_app sysfs_vibrator:dir search;
-allow system_app sysfs_vibrator:file rw_file_perms;
+allow system_app sysfs_leds:dir search;
+allow system_app sysfs_leds:file rw_file_perms;

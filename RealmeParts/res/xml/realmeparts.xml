@@ -80,10 +80,22 @@
         android:title="@string/vibrator_intensity_control">
 
         <com.realmeparts.settings.vibration.VibratorStrengthPreference
-	    android:key="vib_strength"
+            android:defaultValue="80"
+            android:key="vib_strength"
             android:icon="@drawable/ic_vibrate"
-            android:title="@string/vib_strength_title_head"
-            android:summary="@string/vib_strength_summary_head" />
+            android:title="@string/system_strength_title" />
+
+        <com.realmeparts.settings.vibration.NotificationVibratorStrengthPreference
+            android:defaultValue="80"
+            android:key="notif_vib_strength"
+            android:icon="@drawable/ic_vibrate_notif"
+            android:title="@string/notification_strength_title" />
+
+        <com.realmeparts.settings.vibration.CallVibratorStrengthPreference
+            android:defaultValue="80"
+            android:key="call_vib_strength"
+            android:icon="@drawable/ic_vibrate_call"
+            android:title="@string/call_strength_title" />
     </PreferenceCategory>
 
     <PreferenceCategory

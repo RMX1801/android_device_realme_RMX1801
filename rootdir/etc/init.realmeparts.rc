@@ -18,10 +18,15 @@ on boot
     chmod 0666 /proc/touchpanel/oppo_tp_limit_enable
 
     # Vibrator
-    chown system system /sys/class/timed_output/vibrator/vtg_default
-    chown system system /sys/class/timed_output/vibrator/vtg_level
-    chown system system /sys/class/timed_output/vibrator/vtg_max
-    chown system system /sys/class/timed_output/vibrator/vtg_min
+    chown system system /sys/class/leds/vibrator/vmax_mv_user
+    chown system system /sys/class/leds/vibrator/vmax_mv_strong
+    chown system system /sys/class/leds/vibrator/vmax_mv_call
+    chown system system sys/class/leds/vibrator/vmax_override
+    chmod 0660 /sys/class/leds/vibrator/vmax_mv_user
+    chmod 0660 /sys/class/leds/vibrator/vmax_mv_strong
+    chmod 0660 /sys/class/leds/vibrator/vmax_mv_call
+    chmod 0660 /sys/class/leds/vibrator/vmax_override
+    write /sys/class/leds/vibrator/vmax_override 1
 
     # KCal
     chown system system /sys/devices/platform/kcal_ctrl.0/kcal_cont

@@ -26,6 +26,8 @@ import android.util.Log;
 import com.realmeparts.settings.dirac.DiracUtils;
 import com.realmeparts.settings.doze.DozeUtils;
 import com.realmeparts.settings.kcal.Utils;
+import com.realmeparts.settings.vibration.CallVibratorStrengthPreference;
+import com.realmeparts.settings.vibration.NotificationVibratorStrengthPreference;
 import com.realmeparts.settings.vibration.VibratorStrengthPreference;
 
 public class BootCompletedReceiver extends BroadcastReceiver implements Utils {
@@ -37,7 +39,12 @@ public class BootCompletedReceiver extends BroadcastReceiver implements Utils {
     public void onReceive(final Context context, Intent intent) {
         if (DEBUG) Log.d(TAG, "Received boot completed intent");
         DozeUtils.checkDozeService(context);
+        // System
         VibratorStrengthPreference.restore(context);
+        // Notification
+        NotificationVibratorStrengthPreference.restore(context);
+        // Call
+        CallVibratorStrengthPreference.restore(context);
         new DiracUtils(context).onBootCompleted();
 
         if (Settings.Secure.getInt(context.getContentResolver(), PREF_ENABLED, 0) == 1) {

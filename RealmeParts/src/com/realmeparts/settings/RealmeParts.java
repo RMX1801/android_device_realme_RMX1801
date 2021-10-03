@@ -31,6 +31,8 @@ import androidx.preference.TwoStatePreference;
 import com.realmeparts.settings.dirac.DiracActivity;
 import com.realmeparts.settings.doze.DozeSettingsActivity;
 import com.realmeparts.settings.kcal.KCalSettingsActivity;
+import com.realmeparts.settings.vibration.CallVibratorStrengthPreference;
+import com.realmeparts.settings.vibration.NotificationVibratorStrengthPreference;
 import com.realmeparts.settings.vibration.VibratorStrengthPreference;
 
 public class RealmeParts extends PreferenceFragment implements
@@ -87,6 +89,12 @@ public class RealmeParts extends PreferenceFragment implements
 
         VibratorStrengthPreference mVibratorStrength = findPreference("vib_strength");
         mVibratorStrength.setEnabled(VibratorStrengthPreference.isSupported());
+
+        CallVibratorStrengthPreference mCallVibratorStrength = findPreference("call_vib_strength");
+        mCallVibratorStrength.setEnabled(CallVibratorStrengthPreference.isSupported());
+
+        NotificationVibratorStrengthPreference mNotificationVibratorStrength = findPreference("notif_vib_strength");
+        mNotificationVibratorStrength.setEnabled(NotificationVibratorStrengthPreference.isSupported());
 
         mUSBFastChgModeSwitch = (TwoStatePreference) findPreference(PREF_USB_FAST_CHARGE_SWITCH);
         mUSBFastChgModeSwitch.setEnabled(USBFastChgModeSwitch.isSupported());

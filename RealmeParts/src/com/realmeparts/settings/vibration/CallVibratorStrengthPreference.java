@@ -29,17 +29,17 @@ import com.realmeparts.settings.R;
 import com.realmeparts.settings.preference.CustomSeekBarPreference;
 import com.realmeparts.settings.util.Utils;
 
-public class VibratorStrengthPreference extends CustomSeekBarPreference {
+public class CallVibratorStrengthPreference extends CustomSeekBarPreference {
 
     private static int mMinVal = 116;
     private static int mMaxVal = 3596;
     private static int mDefVal = mMaxVal - (mMaxVal - mMinVal) / 4;
     private Vibrator mVibrator;
 
-    private static final String FILE_LEVEL = "/sys/class/leds/vibrator/vmax_mv_user";
+    private static final String FILE_LEVEL = "/sys/class/leds/vibrator/vmax_mv_call";
     private static final long[] testVibrationPattern = {0,250};
 
-    public VibratorStrengthPreference(Context context, AttributeSet attrs) {
+    public CallVibratorStrengthPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mInterval = 10;
@@ -67,7 +67,7 @@ public class VibratorStrengthPreference extends CustomSeekBarPreference {
     private void setValue(String newValue) {
         Utils.writeValue(FILE_LEVEL, newValue);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
-        editor.putString("vib_strength", newValue);
+        editor.putString("call_vib_strength", newValue);
         editor.commit();
         mVibrator.vibrate(testVibrationPattern, -1);
     }
@@ -77,7 +77,7 @@ public class VibratorStrengthPreference extends CustomSeekBarPreference {
             return;
         }
 
-        String storedValue = PreferenceManager.getDefaultSharedPreferences(context).getString("vib_strength", String.valueOf(mDefVal));
+        String storedValue = PreferenceManager.getDefaultSharedPreferences(context).getString("call_vib_strength", String.valueOf(mDefVal));
         Utils.writeValue(FILE_LEVEL, storedValue);
     }
 
