@@ -79,6 +79,12 @@
     <PreferenceCategory
         android:title="@string/vibrator_intensity_control">
 
+        <com.realmeparts.settings.preference.SecureSettingSwitchPreference
+            android:key="vmax_override"
+            android:defaultValue="0"
+            android:title="@string/vmax_override_mode_title"
+            android:summary="@string/vmax_override_mode_summary" />
+
         <com.realmeparts.settings.vibration.VibratorStrengthPreference
             android:defaultValue="80"
             android:key="vib_strength"

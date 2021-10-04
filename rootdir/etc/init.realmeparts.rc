@@ -26,7 +26,6 @@ on boot
     chmod 0660 /sys/class/leds/vibrator/vmax_mv_strong
     chmod 0660 /sys/class/leds/vibrator/vmax_mv_call
     chmod 0660 /sys/class/leds/vibrator/vmax_override
-    write /sys/class/leds/vibrator/vmax_override 1
 
     # KCal
     chown system system /sys/devices/platform/kcal_ctrl.0/kcal_cont
