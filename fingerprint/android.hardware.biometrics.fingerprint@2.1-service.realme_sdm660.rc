@@ -5,6 +5,7 @@ service vendor.fps_hal.realme_sdm660 /vendor/bin/hw/android.hardware.biometrics.
     class late_start
     user system
     group system input uhid
+    task_profiles ServiceCapacityLow
 
 service fps_hal /vendor/bin/hw/vendor.oppo.hardware.biometrics.fingerprint@2.1-service
     # "class hal" causes a race condition on some devices due to files created
@@ -13,3 +14,4 @@ service fps_hal /vendor/bin/hw/vendor.oppo.hardware.biometrics.fingerprint@2.1-s
     class late_start
     user system
     group system input uhid
+    task_profiles ServiceCapacityLow
