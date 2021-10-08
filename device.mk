@@ -88,9 +88,18 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-impl:32 \
     android.hardware.audio@5.0-impl:32 \
+    android.hardware.audio@2.0.vendor \
+    android.hardware.audio@4.0.vendor \
+    android.hardware.audio@5.0.vendor \
+    android.hardware.audio.common@4.0.vendor \
+    android.hardware.audio.common@5.0.vendor \
     android.hardware.audio.effect@2.0-impl:32 \
     android.hardware.audio.effect@5.0-impl:32 \
     android.hardware.audio.service \
+    android.hardware.audio.service \
+    android.hardware.audio.effect@2.0.vendor \
+    android.hardware.audio.effect@4.0.vendor \
+    android.hardware.audio.effect@5.0.vendor \
     android.hardware.soundtrigger@2.1-impl:32 \
     audio.a2dp.default \
     audio.r_submix.default \
@@ -141,11 +150,15 @@ PRODUCT_COPY_FILES += \
 
 # ATRACE_HAL
 PRODUCT_PACKAGES += \
-    android.hardware.atrace@1.0-service
+    android.hardware.atrace@1.0-service \
+    android.hardware.atrace@1.0.vendor
 
 # Bluetooth
 PRODUCT_PACKAGES += \
     android.hardware.bluetooth.audio@2.0-impl:32 \
+    android.hardware.bluetooth.audio@2.0.vendor \
+    android.hardware.bluetooth@1.0.vendor \
+    android.hardware.bluetooth@1.1.vendor \
     audio.bluetooth.default \
     libbluetooth_audio_session \
     libbthost_if \
@@ -157,14 +170,28 @@ PRODUCT_COPY_FILES += \
 
 # Camera
 PRODUCT_PACKAGES += \
+    android.frameworks.cameraservice.common@2.0.vendor \
+    android.frameworks.cameraservice.device@2.0.vendor \
+    android.frameworks.cameraservice.service@2.0.vendor \
     android.frameworks.displayservice@1.0 \
-    android.hardware.camera.device@3.4:64 \
+    android.frameworks.displayservice@1.0.vendor \
+    android.hardware.camera.common@1.0.vendor \
+    android.hardware.camera.device@3.5:64 \
+    android.hardware.camera.device@1.0.vendor \
+    android.hardware.camera.device@3.2.vendor \
+    android.hardware.camera.device@3.3.vendor \
+    android.hardware.camera.device@3.4.vendor \
+    android.hardware.camera.device@3.5.vendor \
+    android.hardware.camera.metadata@3.2.vendor \
+    android.hardware.camera.metadata@3.3.vendor \
+    android.hardware.camera.metadata@3.4.vendor \
     android.hardware.camera.provider@2.4-impl:32 \
     android.hardware.camera.provider@2.4-service \
     android.hardware.camera.provider@2.5:64 \
     libstdc++.vendor_32 \
     Snap \
-    vendor.qti.hardware.camera.device@1.0
+    vendor.qti.hardware.camera.device@1.0 \
+    vendor.qti.hardware.camera.device@1.0.vendor
 
 # Configstore
 PRODUCT_PACKAGES += \
@@ -172,15 +199,18 @@ PRODUCT_PACKAGES += \
 
 # Display
 PRODUCT_PACKAGES += \
+    android.hardware.graphics.common-V1-ndk_platform.vendor \
     android.hardware.graphics.allocator@2.0-impl:64 \
     android.hardware.graphics.allocator@2.0-service \
     android.hardware.graphics.composer@2.1-service \
+    android.hardware.graphics.composer@2.1.vendor \
     android.hardware.graphics.mapper@2.0-impl-2.1 \
     android.hardware.memtrack@1.0-impl \
     android.hardware.memtrack@1.0-service \
     gralloc.sdm660 \
     hwcomposer.sdm660 \
     libdisplayconfig \
+    libgui \
     libgui_vendor \
     libhwc2on1adapter \
     libhwc2onfbadapter \
@@ -195,10 +225,15 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl:64 \
     android.hardware.drm@1.0-service \
+    android.hardware.drm@1.0.vendor \
+    android.hardware.drm@1.1.vendor \
+    android.hardware.drm@1.2.vendor \
+    android.hardware.drm@1.3.vendor \
     android.hardware.drm@1.3-service.clearkey
 
 # Fingerprint
 PRODUCT_PACKAGES += \
+    android.hardware.biometrics.fingerprint@2.1.vendor \
     android.hardware.biometrics.fingerprint@2.1-service.realme_sdm660
 
 # fwk-detect
@@ -206,14 +241,23 @@ PRODUCT_PACKAGES += \
     libqti_vndfwk_detect \
     libqti_vndfwk_detect.vendor
 
+# Gatekeeper
+PRODUCT_PACKAGES += \
+    android.hardware.gatekeeper@1.0.vendor
+
 # GCamGo
 PRODUCT_PACKAGES += \
     GCamGo
 
 # GPS
 PRODUCT_PACKAGES += \
+    android.hardware.gnss.measurement_corrections@1.0.vendor \
+    android.hardware.gnss.visibility_control@1.0.vendor \
     android.hardware.gnss@2.0-impl-qti \
     android.hardware.gnss@2.0-service-qti \
+    android.hardware.gnss@1.0.vendor \
+    android.hardware.gnss@1.1.vendor \
+    android.hardware.gnss@2.0.vendor \
     libbatching \
     libgeofencing \
     libgnss \
@@ -232,7 +276,11 @@ PRODUCT_COPY_FILES += \
 # Health
 PRODUCT_PACKAGES += \
     android.hardware.health@2.1-impl \
-    android.hardware.health@2.1-service
+    android.hardware.health@2.1-service \
+    android.hardware.health.storage@1.0.vendor \
+    android.hardware.health@1.0.vendor \
+    android.hardware.health@2.0.vendor \
+    android.hardware.health@2.1.vendor
 
 # HIDL
 PRODUCT_PACKAGES += \
@@ -278,12 +326,20 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/gpio-keys.kl:$(TARGET_COPY_OUT_SYSTEM)/usr/keylayout/gpio-keys.kl
 
+# Keymaster
+PRODUCT_PACKAGES += \
+    android.hardware.keymaster@3.0.vendor \
+    android.hardware.keymaster@4.0.vendor
+
 # Lights
 PRODUCT_PACKAGES += \
-    android.hardware.light@2.0-service.realme_sdm660
+    android.hardware.light@2.0-service.realme_sdm660 \
+    android.hardware.light@2.0.vendor
 
 # Media
 PRODUCT_PACKAGES += \
+    android.hardware.media.bufferpool@1.0.vendor \
+    android.hardware.media.c2@1.0.vendor \
     libc2dcolorconvert \
     libextmedia_jni \
     libhypv_intercept \
@@ -312,8 +368,15 @@ PRODUCT_COPY_FILES += \
 # Net
 PRODUCT_PACKAGES += \
     android.system.net.netd@1.1 \
+    android.system.net.netd@1.0.vendor \
+    android.system.net.netd@1.1.vendor \
     libandroid_net \
     netutils-wrapper-1.0
+
+# Neural Networks
+PRODUCT_PACKAGES += \
+    android.hardware.neuralnetworks@1.2 \
+    android.hardware.neuralnetworks@1.2.vendor
 
 # Perf
 PRODUCT_PACKAGES += \
@@ -326,7 +389,8 @@ PRODUCT_COPY_FILES += \
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power-service.realme_sdm660-libperfmgr \
-    android.hardware.power.stats@1.0-service.mock
+    android.hardware.power.stats@1.0-service.mock \
+    android.hardware.power.stats@1.0.vendor
 
 # Powerhint
 PRODUCT_COPY_FILES += \
@@ -360,11 +424,23 @@ PRODUCT_COPY_FILES += \
 
 # Radio
 PRODUCT_PACKAGES += \
+    android.hardware.radio.deprecated@1.0 \
+    android.hardware.radio.deprecated@1.0.vendor \
     android.hardware.radio@1.4 \
     android.hardware.radio@1.2 \
-    android.hardware.radio.config@1.1 \
+    android.hardware.radio@1.0.vendor \
+    android.hardware.radio@1.1.vendor \
+    android.hardware.radio@1.2.vendor \
+    android.hardware.radio@1.3.vendor \
+    android.hardware.radio@1.4.vendor \
     android.hardware.radio.config@1.0 \
+    android.hardware.radio.config@1.1 \
+    android.hardware.radio.config@1.2 \
+    android.hardware.radio.config@1.0.vendor \
+    android.hardware.radio.config@1.1.vendor \
+    android.hardware.radio.config@1.2.vendor \
     android.hardware.secure_element@1.0 \
+    android.hardware.secure_element@1.0.vendor \
     CarrierConfigOverlay \
     libprotobuf-cpp-full \
     librmnetctl \
@@ -388,6 +464,7 @@ PRODUCT_COPY_FILES += \
 
 # Sensors
 PRODUCT_PACKAGES += \
+    android.frameworks.sensorservice@1.0.vendor \
     android.hardware.sensors@1.0-impl:64 \
     android.hardware.sensors@1.0-service \
     libsensorndkbridge
@@ -415,6 +492,8 @@ PRODUCT_BOOT_JARS += \
 
 # Tetheroffload
 PRODUCT_PACKAGES += \
+    android.hardware.tetheroffload.config@1.0.vendor \
+    android.hardware.tetheroffload.control@1.0.vendor \
     ipacm \
     IPACM_cfg.xml \
     libipanat \
@@ -450,7 +529,17 @@ PRODUCT_COPY_FILES += \
 
 # WiFi
 PRODUCT_PACKAGES += \
+    android.hardware.wifi.hostapd@1.0.vendor \
+    android.hardware.wifi.hostapd@1.1.vendor \
+    android.hardware.wifi.offload@1.0.vendor \
+    android.hardware.wifi.supplicant@1.0.vendor \
+    android.hardware.wifi.supplicant@1.1.vendor \
+    android.hardware.wifi.supplicant@1.2.vendor \
     android.hardware.wifi@1.0-service \
+    android.hardware.wifi@1.0.vendor \
+    android.hardware.wifi@1.1.vendor \
+    android.hardware.wifi@1.2.vendor \
+    android.hardware.wifi@1.3.vendor \
     hostapd \
     libqsap_sdk \
     libwifi-hal-qcom \
@@ -469,3 +558,25 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     libaacwrapper \
     libnl
+
+# Additional Packages
+PRODUCT_PACKAGES += \
+    android.frameworks.automotive.display@1.0.vendor \
+    android.frameworks.schedulerservice@1.0.vendor \
+    android.frameworks.stats@1.0.vendor \
+    android.hardware.automotive.audiocontrol@1.0.vendor \
+    android.hardware.automotive.evs@1.0.vendor \
+    android.hardware.automotive.vehicle@2.0.vendor \
+    android.hardware.boot@1.0.vendor \
+    android.hardware.broadcastradio@1.0.vendor \
+    android.hardware.broadcastradio@1.1.vendor \
+    android.hardware.common-V1-ndk_platform.vendor \
+    android.hardware.contexthub@1.0.vendor \
+    android.hardware.dumpstate@1.0.vendor \
+    android.hardware.fastboot@1.0.vendor \
+    android.hardware.input.classifier@1.0.vendor \
+    android.hardware.input.common@1.0.vendor \
+    android.hidl.allocator@1.0.vendor \
+    android.hidl.memory.block@1.0.vendor \
+    android.system.wifi.keystore@1.0.vendor \
+    libadf.vendor \
