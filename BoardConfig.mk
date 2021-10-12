@@ -99,6 +99,7 @@ ifeq ($(HOST_OS),linux)
 endif
 
 # Display
+BOARD_USES_ADRENO := true
 TARGET_SCREEN_DENSITY := 480
 TARGET_HAS_WIDE_COLOR_DISPLAY := true
 
