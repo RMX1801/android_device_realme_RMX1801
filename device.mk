@@ -225,6 +225,10 @@ PRODUCT_PACKAGES += \
     vendor.display.config@1.9 \
     vendor.display.config@1.9_vendor
 
+# Display Device Config
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/displayconfig/display_id_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/displayconfig/display_id_0.xml
+
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm@1.0-impl:64 \
