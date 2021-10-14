@@ -17,6 +17,7 @@
 
 package com.realmeparts.settings.kcal;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.provider.Settings;
 import androidx.preference.PreferenceFragment;
@@ -42,10 +43,15 @@ public class KCalSettings extends PreferenceFragment implements
     private SecureSettingSeekBarPreference mMin;
     private SecureSettingSwitchPreference mGrayscale;
 
+    private ActionBar actionBar;
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        actionBar = getActivity().getActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override

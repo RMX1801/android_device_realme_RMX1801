@@ -16,7 +16,9 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/device_kcal_title">
+ 
     <com.realmeparts.settings.preference.SecureSettingSwitchPreference
         android:defaultValue="false"
         android:key="kcal_enabled"

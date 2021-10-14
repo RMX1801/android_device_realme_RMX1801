@@ -19,6 +19,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:transitionGroup="true"
     android:orientation="vertical">
 
     <ImageView
@@ -28,7 +30,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/preview" />
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/fragment_kcal"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

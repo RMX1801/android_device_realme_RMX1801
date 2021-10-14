@@ -316,9 +316,7 @@ PRODUCT_PACKAGES += \
     init.qcom.usb.rc \
     init.qcom.usb.sh \
     init.qti.qseecomd.sh \
-    init.realmeparts.rc \
     init.recovery.qcom.rc \
-    init.realmeparts.rc \
     init.target.rc \
     init.uclamp.rc \
     ueventd.qcom.rc
@@ -427,9 +425,6 @@ PRODUCT_PACKAGES += \
 # RealmeParts
 PRODUCT_PACKAGES += \
     RealmeParts
-
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/privapp-permissions-realmeparts.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp-permissions-realmeparts.xml
 
 # Radio
 PRODUCT_PACKAGES += \

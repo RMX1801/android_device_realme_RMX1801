@@ -24,9 +24,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.android.settingslib.collapsingtoolbar.CollapsingToolbarBaseActivity;
+
 import com.realmeparts.settings.R;
 
-public class KCalSettingsActivity extends Activity implements Utils {
+public class KCalSettingsActivity extends CollapsingToolbarBaseActivity implements Utils {
 
     private KCalSettings mKCalSettingsFragment;
 
@@ -49,10 +51,6 @@ public class KCalSettingsActivity extends Activity implements Utils {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-
             case R.id.action_reset:
                 mKCalSettingsFragment.applyValues(RED_DEFAULT + " " +
                         GREEN_DEFAULT + " " +

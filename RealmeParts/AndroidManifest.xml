@@ -21,6 +21,10 @@
     android:versionName="1.0"
     android:sharedUserId="android.uid.system">
 
+    <uses-sdk
+        android:minSdkVersion="24"
+        android:targetSdkVersion="24" />
+
     <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -30,40 +34,28 @@
     <protected-broadcast android:name="com.realmeparts.settings.UPDATE_SETTINGS" />
 
     <application
-        android:icon="@android:drawable/sym_def_app_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/realmeparts"
-        android:theme="@style/Theme.Main"
         android:persistent="true">
 
         <activity
             android:name=".RealmePartsActivity"
             android:label="@string/realmeparts"
-            android:exported="false">
+            android:theme="@style/Theme.SubSettingsBase"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <activity-alias
-            android:name=".RealmeParts"
-            android:label="@string/realmeparts"
-            android:targetActivity="RealmePartsActivity"
-            android:icon="@drawable/ic_realmeparts">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="com.android.settings.action.EXTRA_SETTINGS" />
             </intent-filter>
             <meta-data
-                android:name="com.android.settings.bg.hint"
-                android:resource="@color/homepage_realmeparts_background" />
+                android:name="com.android.settings.icon"
+                android:resource="@drawable/ic_realmeparts" />
             <meta-data
                 android:name="com.android.settings.category"
                 android:value="com.android.settings.category.ia.homepage" />
             <meta-data 
                 android:name="com.android.settings.summary"
                 android:resource="@string/realmeparts_summary" />
-        </activity-alias>
+        </activity>
 
         <service
             android:name=".RealmePartsTileService"
@@ -75,14 +67,14 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".BootCompletedReceiver">
+        <receiver android:name=".BootCompletedReceiver" android:exported="true">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".Startup" >
+        <receiver android:name=".Startup" android:exported="true">
             <intent-filter android:priority="100" >
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -127,7 +119,8 @@
 	<activity
             android:name=".dirac.DiracActivity"
             android:label="@string/dirac_title"
-            android:theme="@style/Theme.Main">
+            android:exported="true"
+            android:theme="@style/Theme.SubSettingsBase">
         </activity>
 
         <service
@@ -143,19 +136,21 @@
         <activity
             android:name=".doze.DozeSettingsActivity"
             android:label="@string/ambient_display_title"
-            android:theme="@style/Theme.Main">
+            android:exported="true"
+            android:theme="@style/Theme.SubSettingsBase">
         </activity>
 
         <activity
             android:name=".touch.TouchscreenGestureSettings"
             android:label="@string/touchscreen_gesture_settings_title"
-            android:theme="@style/Theme.Main">
+            android:exported="true"
+            android:theme="@style/Theme.SubSettingsBase">
         </activity>
 
         <activity
             android:name=".kcal.KCalSettingsActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Main"
+            android:exported="true"
+            android:theme="@style/Theme.SubSettingsBase"
             android:label="@string/advanced_settings_kcal">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
