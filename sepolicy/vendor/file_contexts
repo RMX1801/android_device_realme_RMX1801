@@ -5,6 +5,9 @@
 /mnt/vendor/opporeserve/media/Camera(/.*)?                                                                     u:object_r:oppo_reserve_media_camera:s0
 /vendor/bin/hw/vendor\.oppo\.hardware\.ktv@1\.0-service                                                        u:object_r:hal_camera_default_exec:s0
 
+# clean_scratch_files
+/system/bin/clean_scratch_files                 u:object_r:clean_scratch_files_exec:s0
+
 # CryptoEng
 /vendor/bin/hw/vendor\.oppo\.hardware\.cryptoeng@1\.0-service                                           u:object_r:hal_cryptoeng_default_exec:s0
 
