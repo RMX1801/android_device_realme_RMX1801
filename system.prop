@@ -33,6 +33,9 @@ persist.data.df.dev_name=rmnet_usb0
 persist.vendor.data.mode=concurrent
 ro.vendor.use_data_netmgrd=true
 
+# Disable blur on app-launch
+ro.launcher.blur.appLaunch=0
+
 # Display
 debug.sf.hw=1
 debug.sf.latch_unsignaled=1
