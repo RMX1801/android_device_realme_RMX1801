@@ -39,6 +39,9 @@ dalvik.vm.dex2oat64.enabled=true
 # Disable blur on app-launch
 ro.launcher.blur.appLaunch=0
 
+# Disable async MTE on system_server
+arm64.memtag.process.system_server=off
+
 # Display
 debug.sf.hw=1
 debug.sf.latch_unsignaled=1
