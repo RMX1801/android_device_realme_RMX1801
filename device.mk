@@ -320,6 +320,7 @@ PRODUCT_PACKAGES += \
     init.recovery.qcom.rc \
     init.realmeparts.rc \
     init.target.rc \
+    init.uclamp.rc \
     ueventd.qcom.rc
 
 # IRQ Config

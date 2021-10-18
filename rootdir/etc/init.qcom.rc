@@ -29,6 +29,7 @@ import /vendor/etc/init/hw/init.oppo.rc
 import /vendor/etc/init/hw/init.qcom.usb.rc
 import /vendor/etc/init/hw/init.msm.usb.configfs.rc
 import /vendor/etc/init/hw/init.target.rc
+import /vendor/etc/init/hw/init.uclamp.rc
 import /vendor/etc/init/init.realmeparts.rc
 
 on early-init
