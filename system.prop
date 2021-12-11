@@ -42,9 +42,6 @@ ro.launcher.blur.appLaunch=0
 # Disable async MTE on system_server
 arm64.memtag.process.system_server=off
 
-# Fingerprint cleanup
-fingerprint.nocleanup=true
-
 # IMS
 persist.radio.VT_CAM_INTERFACE=1
 persist.vendor.qti.telephony.vt_cam_interface=1
