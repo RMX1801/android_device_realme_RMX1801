@@ -172,11 +172,11 @@ ro.vendor.sdk.sensors.gestures=false
 # SurfaceFlinger
 debug.sf.use_phase_offsets_as_durations=1
 debug.sf.late.sf.duration=10500000
-debug.sf.late.app.duration=20500000
-debug.sf.early.sf.duration=21000000
-debug.sf.early.app.duration=16500000
-debug.sf.earlyGl.sf.duration=13500000
-debug.sf.earlyGl.app.duration=21000000
+debug.sf.late.app.duration=16600000
+debug.sf.early.sf.duration=16600000
+debug.sf.early.app.duration=16600000
+debug.sf.earlyGl.sf.duration=16600000
+debug.sf.earlyGl.app.duration=16600000
 debug.sf.recomputecrop=0
 ro.sf.blurs_are_expensive=1
 ro.surface_flinger.force_hwc_copy_for_virtual_displays=true
