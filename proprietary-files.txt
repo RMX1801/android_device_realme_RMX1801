@@ -109,7 +109,7 @@ vendor/lib64/vendor.qti.hardware.bluetooth_sar@1.0.so
 vendor/lib64/vendor.qti.hardware.fm@1.0.so
 
 # Camera
-vendor/lib/hw/camera.sdm660.so
+vendor/lib/hw/camera.sdm660.so|a41e126026934ce37778f430400a631c513aef05
 vendor/lib/libbase64.so
 vendor/lib/libcamera_core_hwi.so
 vendor/lib/libcvface_api.so
@@ -211,33 +211,33 @@ vendor/lib/libarcsoft_picbest.so
 vendor/lib/libarcsoft_relighting_pro_image.so
 vendor/lib/libarcsoft_smart_denoise.so
 vendor/lib/libarcsoft_videostabilizer.so
-vendor/lib/libarcvs.dep.so
+vendor/lib/libarcvs.dep.so|4942cdc54750e2e82b2cb23d4fe073ef1c920b55
 vendor/lib/libarcvs.so
 
 # Camera calibration files
-etc/camera/cp/CPCalibrationData.bin
-etc/camera/cp/FusionCalibrationParams.bin
-etc/camera/cp/SystemParamsBokeh.bin
-etc/camera/cp/SystemParamsFusion.bin
-etc/camera/faceTpl0.rgb32
-etc/camera/faceTpl1.rgb32
-etc/camera/gasryuv.model
-etc/camera/skinSeg.model
+etc/camera/cp/CPCalibrationData.bin:vendor/etc/camera/cp/CPCalibrationData.bin
+etc/camera/cp/FusionCalibrationParams.bin:vendor/etc/camera/cp/FusionCalibrationParams.bin
+etc/camera/cp/SystemParamsBokeh.bin:vendor/etc/camera/cp/SystemParamsBokeh.bin
+etc/camera/cp/SystemParamsFusion.bin:vendor/etc/camera/cp/SystemParamsFusion.bin
+etc/camera/faceTpl0.rgb32:vendor/etc/camera/faceTpl0.rgb32
+etc/camera/faceTpl1.rgb32:vendor/etc/camera/faceTpl1.rgb32
+etc/camera/gasryuv.model:vendor/etc/camera/gasryuv.model
+etc/camera/skinSeg.model:vendor/etc/camera/skinSeg.model
 vendor/etc/camera/ashdr/ncf_pack.ncf
 vendor/etc/DxHDCP.cfg
 
 # Camera firmware
-etc/firmware/cpp_firmware_v1_1_1.fw
-etc/firmware/cpp_firmware_v1_1_6.fw
-etc/firmware/cpp_firmware_v1_2_0.fw
-etc/firmware/cpp_firmware_v1_4_0.fw
-etc/firmware/cpp_firmware_v1_5_0.fw
-etc/firmware/cpp_firmware_v1_5_1.fw
-etc/firmware/cpp_firmware_v1_5_2.fw
-etc/firmware/cpp_firmware_v1_6_0.fw
-etc/firmware/cpp_firmware_v1_8_0.fw
-etc/firmware/cpp_firmware_v1_10_0.fw
-etc/firmware/cpp_firmware_v1_12_0.fw
+etc/firmware/cpp_firmware_v1_10_0.fw:vendor/firmware/cpp_firmware_v1_10_0.fw
+etc/firmware/cpp_firmware_v1_12_0.fw:vendor/firmware/cpp_firmware_v1_12_0.fw
+etc/firmware/cpp_firmware_v1_1_1.fw:vendor/firmware/cpp_firmware_v1_1_1.fw
+etc/firmware/cpp_firmware_v1_1_6.fw:vendor/firmware/cpp_firmware_v1_1_6.fw
+etc/firmware/cpp_firmware_v1_2_0.fw:vendor/firmware/cpp_firmware_v1_2_0.fw
+etc/firmware/cpp_firmware_v1_4_0.fw:vendor/firmware/cpp_firmware_v1_4_0.fw
+etc/firmware/cpp_firmware_v1_5_0.fw:vendor/firmware/cpp_firmware_v1_5_0.fw
+etc/firmware/cpp_firmware_v1_5_1.fw:vendor/firmware/cpp_firmware_v1_5_1.fw
+etc/firmware/cpp_firmware_v1_5_2.fw:vendor/firmware/cpp_firmware_v1_5_2.fw
+etc/firmware/cpp_firmware_v1_6_0.fw:vendor/firmware/cpp_firmware_v1_6_0.fw
+etc/firmware/cpp_firmware_v1_8_0.fw:vendor/firmware/cpp_firmware_v1_8_0.fw
 
 # Camera-chromatix
 vendor/lib/libchromatix_csidtg_common.so
@@ -2312,7 +2312,7 @@ vendor/lib/libmmcamera2_mct_shimlayer.so
 vendor/lib/libmmcamera2_pproc_modules.so
 vendor/lib/libmmcamera2_pp_buf_mgr.so
 vendor/lib/libmmcamera2_q3a_core.so
-vendor/lib/libmmcamera2_sensor_modules.so
+vendor/lib/libmmcamera2_sensor_modules.so|bf21190be6567bedbddb36df18c6dd251f706928
 vendor/lib/libmmcamera2_stats_algorithm.so
 vendor/lib/libmmcamera2_stats_lib.so
 vendor/lib/libmmcamera2_stats_modules.so
@@ -2362,7 +2362,7 @@ vendor/lib/libmmcamera_imx476.so
 vendor/lib/libmmcamera_imx519.so
 vendor/lib/libmmcamera_imx576.so
 vendor/lib/libmmcamera_imx576_m24c64s_eeprom.so
-vendor/lib/libmmcamera_interface.so
+vendor/lib/libmmcamera_interface.so|e3ec33a27435f08c45645e9479960e0c691b7173
 vendor/lib/libmmcamera_isp_abf48.so
 vendor/lib/libmmcamera_isp_aec_bg_stats47.so
 vendor/lib/libmmcamera_isp_bf_stats47.so
