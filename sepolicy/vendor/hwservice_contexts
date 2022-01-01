@@ -5,7 +5,6 @@ vendor.oppo.hardware.biometrics.fingerprint::IBiometricsFingerprint          u:o
 vendor.oppo.hardware.camera.oppopostproc::ICameraPostProc                    u:object_r:hal_camera_hwservice:s0
 vendor.oppo.hardware.commondcs::ICommonDcsHalService                         u:object_r:hal_fingerprint_oppo_hwservice:s0
 vendor.oppo.hardware.cryptoeng::ICryptoeng                                   u:object_r:hal_cryptoeng_hwservice:s0
-vendor.oppo.hardware.ktv::IKtv                                               u:object_r:hal_ktv_hwservice:s0
 vendor.oppo.hardware.mmdisplayfeature::IMMDisplayFeature                     u:object_r:hal_omdisplay_hwservice:s0
 vendor.oppo.hardware.radio.opporadio::IOppoRadio                             u:object_r:hal_telephony_hwservice:s0
 vendor.oppo.hardware.radio.oppoappradio::IOppoAppRadio                       u:object_r:hal_telephony_hwservice:s0

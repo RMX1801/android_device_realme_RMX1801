@@ -1,5 +1,4 @@
 type hal_cryptoeng_hwservice, hwservice_manager_type;
-type hal_ktv_hwservice, hwservice_manager_type;
 type hal_fingerprint_oppo_hwservice, hwservice_manager_type;
 type hal_omdisplay_hwservice, hwservice_manager_type;
 type oppoalgo_daemon_hwservice, hwservice_manager_type;

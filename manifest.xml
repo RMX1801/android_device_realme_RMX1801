@@ -175,11 +175,6 @@
         <fqname>@1.0::ICryptoeng/default</fqname>
     </hal>
     <hal format="hidl">
-        <name>vendor.oppo.hardware.ktv</name>
-        <transport>hwbinder</transport>
-        <fqname>@1.0::IKtv/default</fqname>
-    </hal>
-    <hal format="hidl">
         <name>vendor.oppo.hardware.mmdisplayfeature</name>
         <transport>hwbinder</transport>
         <fqname>@1.0::IMMDisplayFeature/default</fqname>
