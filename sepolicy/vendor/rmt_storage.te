@@ -4,3 +4,5 @@ allow rmt_storage sysfs_mmc:dir search;
 allow rmt_storage sysfs_mmc:file r_file_perms;
 allow rmt_storage sysfs_oembackup:dir search;
 allow rmt_storage sysfs_oembackup:file r_file_perms;
+
+get_prop(rmt_storage, oppo_debug_prop);

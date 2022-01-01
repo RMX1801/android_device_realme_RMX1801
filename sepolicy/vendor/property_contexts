@@ -1,15 +1,34 @@
+# Audio
+sys.oppo.mm.record.type                          u:object_r:vendor_audio_prop:s0
+sys.oppo.mm.voice.record                         u:object_r:vendor_audio_prop:s0
+
 # Camera
-oppo.camera.debug.logfile                        u:object_r:camera_prop:s0
-oppo.camera.hal.change                           u:object_r:camera_prop:s0
-oppo.camera.oppo.bokeh                           u:object_r:camera_prop:s0
-oppo.camera.switch.time                          u:object_r:camera_prop:s0
+camera.cpp.dumppreviewpayload                    u:object_r:camera_prop:s0
+cameradaemon.SaveMemAtBoot                       u:object_r:camera_prop:s0
+cpp.set.clock                                    u:object_r:camera_prop:s0
+disable.cpp.power.collapse                       u:object_r:camera_prop:s0
+oppo.camera.                                     u:object_r:camera_prop:s0
 oppo.open.camera.name                            u:object_r:camera_prop:s0
-persist.camera.stats.debugexif                   u:object_r:camera_prop:s0
+persist.cam.pp.feat.mask                         u:object_r:camera_prop:s0
+persist.camera.                                  u:object_r:camera_prop:s0
+persist.capture.burst.exposures                  u:object_r:camera_prop:s0
+persist.debug.sf.showfps                         u:object_r:camera_prop:s0
+persist.debug.set.fixedfps                       u:object_r:camera_prop:s0
+persist.denoise.process.plates                   u:object_r:camera_prop:s0
+persist.dualcam.lpm.enable                       u:object_r:camera_prop:s0
+persist.enable.max.pending.buf                   u:object_r:camera_prop:s0
+persist.partial.skip                             u:object_r:camera_prop:s0
+persist.sys.assert.panic                         u:object_r:exported_system_prop:s0
 persist.vendor.camera.HAL3.enabled               u:object_r:camera_prop:s0
+st.stereo.dump                                   u:object_r:camera_prop:s0
+ubwc.no.compression                              u:object_r:camera_prop:s0
 vendor.oppo.camera.                              u:object_r:camera_prop:s0
-vendor.oppo.camera.fovc.enable                   u:object_r:camera_prop:s0
-vendor.oppo.camera.hal3.enable                   u:object_r:camera_prop:s0
 vendor.oppo.open.camera.name                     u:object_r:camera_prop:s0
+ro.camera.dualcam.type                           u:object_r:vendor_ro_camera_prop:s0
+ro.camera.platform.660lite                       u:object_r:vendor_ro_camera_prop:s0
+ro.camera.req.fmq.size                           u:object_r:vendor_ro_camera_prop:s0
+ro.camera.res.fmq.size                           u:object_r:vendor_ro_camera_prop:s0
+ro.camera.sensor.aux2m                           u:object_r:vendor_ro_camera_prop:s0
 
 # Dirac
 persist.audio.dirac.eq                           u:object_r:dirac_prop:s0
@@ -17,18 +36,33 @@ persist.audio.dirac.headset                      u:object_r:dirac_prop:s0
 persist.audio.dirac.music.state                  u:object_r:dirac_prop:s0
 persist.audio.dirac.speaker                      u:object_r:dirac_prop:s0
 
+# Display
+gpu.stats.debug.level                   u:object_r:vendor_display_prop:s0
+sdm.disable_hdr_lut_gen                 u:object_r:vendor_display_prop:s0
+
 # Fingerprint
 fpc_kpi                                          u:object_r:oppo_fp_prop:s0
 oppo.fpc.sw.version                              u:object_r:oppo_fp_prop:s0
 persist.vendor.fingerprint.                      u:object_r:oppo_fp_prop:s0
 
-# NLP
-oppo.nlp.proxy                                   u:object_r:oppo_loc_prop:s0
+# Oppo debug
+persist.console.silent.config                    u:object_r:oppo_debug_prop:s0
+persist.oppo.nw.region.lock                      u:object_r:oppo_debug_prop:s0
+ro.build.display.full_id                         u:object_r:oppo_debug_prop:s0
+ro.build.version.ota                             u:object_r:oppo_debug_prop:s0
+ro.oppo.                                         u:object_r:oppo_debug_prop:s0
+ro.rf_version                                    u:object_r:oppo_debug_prop:s0
+ro.sys.reserve.integrate                         u:object_r:oppo_debug_prop:s0
+sys.build.display.full_id                        u:object_r:oppo_debug_prop:s0
 
 # Power
 vendor.powerhal.                                 u:object_r:vendor_power_prop:s0
 
 # Radio
+gsm.operator.numeric                             u:object_r:exported_system_prop:s0
+persist.sys.oppo.region                          u:object_r:exported_system_prop:s0
 oppo.device.imeicache                            u:object_r:vendor_radio_prop:s0
-persist.oppo.nw.region.lock                      u:object_r:vendor_radio_prop:s0
-ro.oppo.nw.singlecard                            u:object_r:vendor_radio_prop:s0
+
+# Wifi version
+vendor.wlan.driver.version                       u:object_r:vendor_wifi_version:s0
+vendor.wlan.firmware.version                     u:object_r:vendor_wifi_version:s0

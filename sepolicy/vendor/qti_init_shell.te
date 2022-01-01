@@ -1,3 +1,5 @@
+get_prop(qti_init_shell, oppo_debug_prop)
+
 allow qti_init_shell { sysfs_dm sysfs_mmc }:file write;
 
 dontaudit qti_init_shell self:capability { dac_override dac_read_search };
