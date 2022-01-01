@@ -2727,8 +2727,10 @@ vendor/lib/vendor.oppo.hardware.commondcs@1.0.so
 vendor/lib/vendor.qti.hardware.fingerprint@1.0.so
 vendor/lib64/android.frameworks.fingerprintservice@1.0.so
 vendor/lib64/libalipay_factory.so
+vendor/lib64/libhypnusclient.so
 vendor/lib64/libqfp-service.so
 vendor/lib64/vendor.oppo.hardware.commondcs@1.0.so
+vendor/lib64/vendor.oppo.hardware.hypnus@1.0.so
 vendor/lib64/vendor.qti.hardware.fingerprint@1.0.so
 
 # Fingerprint Firmware
@@ -2876,12 +2878,6 @@ vendor/firmware/a530_gpmu.fw2
 vendor/firmware/a530_pfp.fw
 vendor/firmware/a530_pm4.fw
 vendor/firmware/a540_gpmu.fw2
-
-# Hypnus
-vendor/bin/hw/vendor.oppo.hardware.hypnus@1.0-service
-vendor/etc/init/vendor.oppo.hardware.hypnus@1.0-service.rc
-vendor/lib64/libhypnusclient.so
-vendor/lib64/vendor.oppo.hardware.hypnus@1.0.so
 
 # Init
 vendor/etc/init/cnd.rc
