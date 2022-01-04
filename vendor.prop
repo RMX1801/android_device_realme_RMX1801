@@ -85,7 +85,6 @@ persist.vendor.bt.aac_frm_ctl.enabled=true
 vendor.qcom.bluetooth.soc=cherokee
 
 # Camera
-vendor.camera.hal1.packagelist=com.whatsapp,com.instagram.android,com.snapchat.android
 vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.google.android.GoogleCamera
 vidc.enc.dcvs.extra-buff-count=2
 
