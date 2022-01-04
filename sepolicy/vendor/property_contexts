@@ -62,7 +62,3 @@ vendor.powerhal.                                 u:object_r:vendor_power_prop:s0
 gsm.operator.numeric                             u:object_r:exported_system_prop:s0
 persist.sys.oppo.region                          u:object_r:exported_system_prop:s0
 oppo.device.imeicache                            u:object_r:vendor_radio_prop:s0
-
-# Wifi version
-vendor.wlan.driver.version                       u:object_r:vendor_wifi_version:s0
-vendor.wlan.firmware.version                     u:object_r:vendor_wifi_version:s0
