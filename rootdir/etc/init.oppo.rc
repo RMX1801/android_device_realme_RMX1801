@@ -5,50 +5,6 @@ on boot
     setprop persist.vendor.radio.force_on_dc true
     mkdir /persist/media 0775 media media
 
-    chmod 0755 /dev/cpuset
-    mkdir /dev/freezer
-    mount cgroup none /dev/freezer freezer
-    chown system system /dev/freezer
-    chmod 0755 /dev/freezer/
-
-    chown system system /dev/freezer/cgroup.procs
-    chmod 0666 /dev/freezer/cgroup.procs
-    chown system system /dev/freezer/tasks
-    chmod 0666 /dev/freezer/tasks
-
-    mkdir /dev/blkio
-    mount cgroup none /dev/blkio blkio
-    chown system system /dev/blkio
-    chmod 0755 /dev/blkio
-
-    chown system system /dev/blkio/cgroup.procs
-    chmod 0666 /dev/blkio/cgroup.procs
-    chown system system /dev/blkio/tasks
-    chmod 0666 /dev/blkio/tasks
-    chown system system /dev/blkio/blkio.weight
-    chmod 0666 /dev/blkio/blkio.weight
-    chown system system /dev/blkio/blkio.leaf_weight
-    chmod 0666 /dev/blkio/blkio.leaf_weight
-    chown system system /dev/blkio/blkio.throttle.read_bps_device
-    chmod 0666 /dev/blkio/blkio.throttle.read_bps_device
-    chown system system /dev/blkio/blkio.throttle.write_bps_device
-    chmod 0666 /dev/blkio/blkio.throttle.write_bps_device
-
-
-    chown system system /dev/cpuset/cgroup.procs
-    chown system system /dev/cpuset/foreground/cgroup.procs
-    chown system system /dev/cpuset/foreground/boost/cgroup.procs
-    chown system system /dev/cpuset/background/cgroup.procs
-    chown system system /dev/cpuset/system-background/cgroup.procs
-    chown system system /dev/cpuset/top-app/cgroup.procs
-
-    chmod 0666 /dev/cpuset/foreground/cgroup.procs
-    chmod 0666 /dev/cpuset/foreground/boost/cgroup.procs
-    chmod 0666 /dev/cpuset/background/cgroup.procs
-    chmod 0666 /dev/cpuset/system-background/cgroup.procs
-    chmod 0666 /dev/cpuset/top-app/cgroup.procs
-    chmod 0666 /dev/cpuset/cgroup.procs
-
     # Add for limit_enable
     chown system system /proc/touchpanel/oppo_tp_limit_area
     chown system system /proc/touchpanel/oppo_tp_limit_whitelist
@@ -57,38 +13,5 @@ on boot
     # Add for touchscreen firmware update check
     write /proc/touchpanel/tp_fw_update 1
 
-    # Add for MM display feature
-    chown system system /sys/devices/virtual/graphics/fb0/cabc
-    chown system system /sys/devices/virtual/graphics/fb0/lcdoff
-    chown system system /sys/devices/virtual/graphics/fb0/hbm
-    chown system system /sys/devices/virtual/graphics/fb0/acl
-    chown system system /sys/devices/virtual/graphics/fb0/closebl
-    chown system system /sys/devices/virtual/graphics/fb0/ffl_set
-    chown system system /sys/devices/virtual/graphics/fb0/lbr
-    chown system system /sys/devices/virtual/graphics/fb0/seed
-    chown system system /sys/devices/virtual/graphics/fb0/debug
-    chown system system /sys/devices/virtual/graphics/fb0/lcm_id_info
-    chown system system /sys/devices/virtual/graphics/fb0/fingerprint_notify
-    chown system system /sys/devices/virtual/graphics/fb0/dynamic_fps_switch
-    chown system system /sys/devices/virtual/graphics/fb0/panel_serial_number
-    chown system system /sys/kernel/oppo_display/sau_closebl_node
-
-    chmod 0666 /sys/devices/virtual/graphics/fb0/hbm
-    chmod 0666 /sys/devices/virtual/graphics/fb0/seed
-    chmod 0666 /sys/devices/virtual/graphics/fb0/ffl_set
-    chmod 0666 /sys/devices/virtual/graphics/fb0/debug
-    chmod 0666 /sys/devices/virtual/graphics/fb0/lcm_id_info
-    chmod 0666 /sys/devices/virtual/graphics/fb0/fingerprint_notify
-    chmod 0666 /sys/devices/virtual/graphics/fb0/dynamic_fps_switch
-    chmod 0666 /sys/devices/virtual/graphics/fb0/panel_serial_number
-    chmod 0666 /sys/kernel/oppo_display/sau_closebl_node
-
     # Set oppo camera package name to com.oppo.camera to trick camera hal
     setprop oppo.camera.packname com.oppo.camera
-
-# Add for oppoalgo_daemon
-service oppoalgo /vendor/bin/oppoalgo_daemon
-    class main
-    user media
-    ioprio rt 4
-    group camera input drmrpc sdcard_rw system

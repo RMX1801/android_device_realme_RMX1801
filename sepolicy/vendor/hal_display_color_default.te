@@ -1,1 +1,0 @@
-allow hal_display_color_default hal_omdisplay_oppo:binder { call transfer };
