@@ -184,6 +184,7 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 TARGET_COPY_OUT_VENDOR := vendor
 
 # Sepolicy
+SELINUX_IGNORE_NEVERALLOWS := false
 include device/qcom/sepolicy-legacy-um/SEPolicy.mk
 SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
