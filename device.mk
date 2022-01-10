@@ -219,6 +219,7 @@ PRODUCT_PACKAGES += \
     libgui_vendor \
     libhwc2on1adapter \
     libhwc2onfbadapter \
+    libqdMetaData \
     libqdMetaData.system \
     libtinyxml \
     libvulkan \
