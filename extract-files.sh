@@ -61,15 +61,6 @@ function blob_fixup() {
         product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml)
             sed -i 's|xml version="2.0"|xml version="1.0"|g' "${2}"
             ;;
-        system_ext/etc/init/dpmd.rc)
-            sed -i "s|/system/product/bin/|/system/system_ext/bin/|g" "${2}"
-            ;;
-        system_ext/etc/permissions/com.qti.dpmframework.xml | system_ext/etc/permissions/dpmapi.xml)
-            sed -i "s|/system/product/framework/|/system/system_ext/framework/|g" "${2}"
-            ;;
-        system_ext/lib64/libdpmframework.so)
-            sed -i "s/libhidltransport.so/libcutils-v29.so\x00\x00\x00/" "${2}"
-            ;;
         vendor/lib/hw/camera.sdm660.so|vendor/lib/libarcvs.dep.so|vendor/lib/libmmcamera2_sensor_modules.so|vendor/lib/libmmcamera_interface.so)
             sed -i 's|/system/etc/camera/|/vendor/etc/camera/|g' "${2}"
             ;;

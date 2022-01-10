@@ -93,7 +93,6 @@ ro.charger.enable_suspend=true
 
 # CNE/ DPM
 persist.vendor.cne.feature=1
-persist.vendor.dpm.feature=1
 
 # DRM
 drm.service.enabled=true
