@@ -1,4 +1,7 @@
 # Audio
+audio_hal.in_period_size                         u:object_r:vendor_audio_prop:s0
+audio_hal.period_multiplier                      u:object_r:vendor_audio_prop:s0
+persist.oppo.mm.log.hal                          u:object_r:vendor_audio_prop:s0
 sys.oppo.mm.record.type                          u:object_r:vendor_audio_prop:s0
 sys.oppo.mm.voice.record                         u:object_r:vendor_audio_prop:s0
 
