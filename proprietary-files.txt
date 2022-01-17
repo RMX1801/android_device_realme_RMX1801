@@ -2888,13 +2888,16 @@ vendor/lib64/libkeymasterprovision.so
 vendor/lib64/libkeymasterutils.so
 vendor/lib64/libqtikeymaster4.so
 
-# Latency
-product/framework/vendor.qti.hardware.data.latency-V1.0-java.jar
-product/framework/vendor.qti.latency-V2.0-java.jar
-product/lib64/vendor.qti.hardware.data.latency@1.0.so
-product/lib64/vendor.qti.latency@2.0.so
-vendor/lib64/vendor.qti.hardware.data.latency@1.0.so
-vendor/lib64/vendor.qti.latency@2.0.so
+# Latency - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
+system_ext/framework/vendor.qti.hardware.data.latency-V1.0-java.jar|68068cdbd044dca2872284ebcd2909eb74c3a804
+system_ext/framework/vendor.qti.latency-V2.0-java.jar|239a5cf7f057d3e93c0fe7cb33ee6be088ad2aac
+system_ext/framework/vendor.qti.latency-V2.1-java.jar|b292cd4c9b1140ebc3cb6873106389483214eee2
+system_ext/lib64/vendor.qti.hardware.data.latency@1.0.so|16b0273612a833617d1aff80cc24933fc7f9006c
+system_ext/lib64/vendor.qti.latency@2.0.so|52058b376a37c99bfe67da8e83ab36a1e72972b1
+system_ext/lib64/vendor.qti.latency@2.1.so|18bffeadefcbbb5f3e1b512b0cee4cb39af27b72
+vendor/lib64/vendor.qti.hardware.data.latency@1.0.so|c433c73b5469b787cb7fb70b05b83190b319edd6
+vendor/lib64/vendor.qti.latency@2.0.so|60ab3143325e855f8c72e3f603c28efe2e7227b9
+vendor/lib64/vendor.qti.latency@2.1.so|47f0d25338274af94764be9d39eabef8cf5ca790
 
 # Libdolphin - from LA.QSSI.11.0.r1-11600-qssi.0
 system_ext/lib/libdolphin.so|4982c340b218f24e1cdf3173aa2e1d80b54ec305
