@@ -2921,13 +2921,13 @@ vendor/lib64/vendor.qti.hardware.data.latency@1.0.so|c433c73b5469b787cb7fb70b05b
 vendor/lib64/vendor.qti.latency@2.0.so|60ab3143325e855f8c72e3f603c28efe2e7227b9
 vendor/lib64/vendor.qti.latency@2.1.so|47f0d25338274af94764be9d39eabef8cf5ca790
 
-# Libdolphin - from LA.QSSI.11.0.r1-11600-qssi.0
-system_ext/lib/libdolphin.so|4982c340b218f24e1cdf3173aa2e1d80b54ec305
-system_ext/lib64/libdolphin.so|615205f399e8b4bd5a20f43ea8fdc508a97121c5
+# Libdolphin - from alioth - 12/SKQ1.210908.001/21.10.12
+system_ext/lib/libdolphin.so|4212332e6f596d61060a69cd5b6380684d39e2af
+system_ext/lib64/libdolphin.so|e899d86d91956a728b684ccf3b6f89594d631376
 
-# Libbeluga - from LA.QSSI.11.0.r1-11600-qssi.0
-system_ext/lib/libbeluga.so|879ed469e4a98c6bd5d3379b9786e0f30b1518e1
-system_ext/lib64/libbeluga.so|2c327f37e9eebed975472adb37f62024cae24161
+# Libbeluga - from alioth - 12/SKQ1.210908.001/21.10.12
+system_ext/lib/libbeluga.so|8c471c924e3da8433ffb20ec86e2539d440a502c
+system_ext/lib64/libbeluga.so|ee3c1b68bc44372cbc63d074a786ca460605fc45
 
 # Listen
 vendor/lib/hw/sound_trigger.primary.sdm660.so
