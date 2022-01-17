@@ -2523,70 +2523,88 @@ vendor/lib64/libsysmon_cdsp_skel.so
 # Charger
 vendor/bin/hvdcp_opti
 
-# CNE
-etc/cne/Nexus/ATT/ATT_profiles.xml
-etc/cne/Nexus/ROW/ROW_profiles.xml
-etc/cne/Nexus/VZW/VZW_profiles.xml
-product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml|335d6da6763240d58a1598f95bed50bb80e3e71d
-product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml|f21207db1805ec6ba512f526b795822794ff6274
-product/framework/vendor.qti.data.factory-V1.0-java.jar
-product/framework/vendor.qti.data.factory-V2.0-java.jar
-product/framework/vendor.qti.hardware.data.connection-V1.0-java.jar
-product/framework/vendor.qti.hardware.data.connection-V1.1-java.jar
-product/framework/vendor.qti.hardware.data.dynamicdds-V1.0-java.jar
-product/framework/vendor.qti.hardware.data.iwlan-V1.0-java.jar
-product/lib64/vendor.qti.data.factory@1.0.so
-product/lib64/vendor.qti.data.factory@2.0.so
-product/lib64/vendor.qti.hardware.data.connection@1.0.so
-product/lib64/vendor.qti.hardware.data.connection@1.1.so
-product/lib64/vendor.qti.hardware.data.dynamicdds@1.0.so
-product/lib64/vendor.qti.hardware.data.iwlan@1.0.so
--vendor/app/CneApp/CneApp.apk
--vendor/app/IWlanService/IWlanService.apk
-vendor/bin/cnd
-vendor/etc/cne/wqeclient/ATT/ATT_profile1.xml
-vendor/etc/cne/wqeclient/ATT/ATT_profile2.xml
-vendor/etc/cne/wqeclient/ATT/ATT_profile3.xml
-vendor/etc/cne/wqeclient/ATT/ATT_profile4.xml
-vendor/etc/cne/wqeclient/ATT/ATT_profile5.xml
-vendor/etc/cne/wqeclient/ATT/ATT_profile6.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile1.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile15.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile16.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile17.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile18.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile19.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile2.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile20.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile21.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile3.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile32.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile4.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile5.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile6.xml
-vendor/etc/cne/wqeclient/ROW/ROW_profile7.xml
-vendor/etc/cne/wqeclient/VZW/VZW_profile1.xml
-vendor/etc/cne/wqeclient/VZW/VZW_profile2.xml
-vendor/etc/cne/wqeclient/VZW/VZW_profile3.xml
-vendor/etc/cne/wqeclient/VZW/VZW_profile4.xml
-vendor/etc/cne/wqeclient/VZW/VZW_profile5.xml
-vendor/etc/cne/wqeclient/VZW/VZW_profile6.xml
-vendor/lib64/libcne.so
-vendor/lib64/libcneapiclient.so
-vendor/lib64/libcneoplookup.so
-vendor/lib64/libcneqmiutils.so
-vendor/lib64/libwms.so
-vendor/lib64/libwqe.so
-vendor/lib64/libxml.so
-vendor/lib64/vendor.qti.data.factory@2.0.so
-vendor/lib64/vendor.qti.hardware.data.cne.internal.api@1.0.so
-vendor/lib64/vendor.qti.hardware.data.cne.internal.constants@1.0.so
-vendor/lib64/vendor.qti.hardware.data.cne.internal.server@1.0.so
-vendor/lib64/vendor.qti.hardware.data.connection@1.0.so
-vendor/lib64/vendor.qti.hardware.data.connection@1.1.so
-vendor/lib64/vendor.qti.hardware.data.dynamicdds@1.0.so
-vendor/lib64/vendor.qti.hardware.data.iwlan@1.0.so
-vendor/lib64/vendor.qti.hardware.data.qmi@1.0.so
+# CNE - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
+product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml|335d6da6763240d58a1598f95bed50bb80e3e71d|75e8a824d368cd4172985c884796381327d950da
+product/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml|f21207db1805ec6ba512f526b795822794ff6274|620c9fa0047bb681e918af2d1e7a98c648f45fb7
+system_ext/framework/vendor.qti.data.factory-V1.0-java.jar|c8ec0ab32ebddd7dea5fbaac434061068474b68d
+system_ext/framework/vendor.qti.data.factory-V2.0-java.jar|69b3b2eb56857ee632ed611df41a94d7afb2c5ca
+system_ext/framework/vendor.qti.data.factory-V2.1-java.jar|59ede14468c62ec4ebbc8d3a683095266d5f1baa
+system_ext/framework/vendor.qti.data.factory-V2.2-java.jar|bcb39fccdae648797ae56165f867bdefe1e00dd7
+system_ext/framework/vendor.qti.data.factory-V2.3-java.jar|4368c35088f7b42e6911a2748d2ce7acc35e1a9b
+system_ext/framework/vendor.qti.data.mwqem-V1.0-java.jar|4db6298c05ec575261b32919f4462a934d9844be
+system_ext/framework/vendor.qti.data.slm-V1.0-java.jar|cafa6d149b535e815961fc075db75cc34d48c17f
+system_ext/framework/vendor.qti.hardware.data.connection-V1.0-java.jar|c6e5d125ce87fa585eb666b82642c565501eb4c1
+system_ext/framework/vendor.qti.hardware.data.connection-V1.1-java.jar|ebb1435d9dd340b5ff7d5f94644da6a29824ab15
+system_ext/framework/vendor.qti.hardware.data.dynamicdds-V1.0-java.jar|da83f28bb82ca6cb016612ff126aba2123e3516a
+system_ext/framework/vendor.qti.hardware.data.iwlan-V1.0-java.jar|b776f0042dbb7fb5f6619dbc5b97c42248b4e4f2
+system_ext/framework/vendor.qti.hardware.data.lce-V1.0-java.jar|3aafde85be8e733876ec862e75b4e74f8163d273
+system_ext/framework/vendor.qti.hardware.data.qmi-V1.0-java.jar|ff9d6d52309ce32124af851eacd82de8de7d2e12
+system_ext/lib64/vendor.qti.data.factory@1.0.so|0a411ac2beb5e95d043e734446c855ab92ec1816
+system_ext/lib64/vendor.qti.data.factory@2.0.so|84b93cf877ee0bec8567d40c99f784f6ddce6a53
+system_ext/lib64/vendor.qti.data.factory@2.1.so|1558598fee9a676af8781496bad4874775bac82d
+system_ext/lib64/vendor.qti.data.factory@2.2.so|931f4b7c07885ad63f42876ca1a1a9bc72e747fb
+system_ext/lib64/vendor.qti.data.factory@2.3.so|5d689c9759cd3a6217eb451e54903e83a843dc90
+system_ext/lib64/vendor.qti.data.mwqem@1.0.so|a374daf48f677ff17bb11a69818fc51dde390e3f
+system_ext/lib64/vendor.qti.data.slm@1.0.so|7725ce65dc098def9d5ffd073b3dc3ab695612d5
+system_ext/lib64/vendor.qti.hardware.data.connection@1.0.so|0a117f7e99037f7bd08e8f45eb2f4abba252b467
+system_ext/lib64/vendor.qti.hardware.data.connection@1.1.so|54d33c7c273c16397c77898fbcc834baa0886a1e
+system_ext/lib64/vendor.qti.hardware.data.dynamicdds@1.0.so|8e4f7bc59e3c7a92b6e9933d2294ab2cf1f3ded7
+system_ext/lib64/vendor.qti.hardware.data.iwlan@1.0.so|794d79a56fdc634175efedb6c7aafe9286a58dfc
+system_ext/lib64/vendor.qti.hardware.data.lce@1.0.so|c4accb3896f124a8938d59fc24793a1c528fd13a
+system_ext/lib64/vendor.qti.hardware.data.qmi@1.0.so|dbede1bf4e67724b1215beda05dbc3531df3b93e
+-vendor/app/CneApp/CneApp.apk|13bdf6ba5637d3df3d6d9fb0017f9f56ddc620e7
+-vendor/app/IWlanService/IWlanService.apk|a189d8879b4cf5026db2d6a80abb3a1319e38f0c
+vendor/bin/cnd|07829b294562037b779a6e7244972d7c24e758a5
+vendor/etc/cne/wqeclient/ATT/ATT_profile1.xml|578f3f8f56059bfdbef926bcc68d01c15e06951f
+vendor/etc/cne/wqeclient/ATT/ATT_profile2.xml|1fb42c672a12b6660bdce3ea94e0c43719dd9de8
+vendor/etc/cne/wqeclient/ATT/ATT_profile3.xml|f88e13f1dd7b82388c90358f71813026370c9ed8
+vendor/etc/cne/wqeclient/ATT/ATT_profile4.xml|fb08e04f57797c5684bf734f7ce4bb4968859b18
+vendor/etc/cne/wqeclient/ATT/ATT_profile5.xml|eb726ad1a42b9b78b9ee3b821fc108611bc9eeac
+vendor/etc/cne/wqeclient/ATT/ATT_profile6.xml|be97b46b0d07ee2f6ebcc677d8099ed2140d5d85
+vendor/etc/cne/wqeclient/ROW/ROW_profile1.xml|e7ca213d0998cb3a6a603ad3eca7bda69830ff55
+vendor/etc/cne/wqeclient/ROW/ROW_profile15.xml|0130dfd8326ee710bf4e15718ede87c49a85b763
+vendor/etc/cne/wqeclient/ROW/ROW_profile16.xml|e05b935d7ccf48d306b71c719b2e4df83187d9c0
+vendor/etc/cne/wqeclient/ROW/ROW_profile17.xml|f1b33204799268eda78dd8314f26abf2e37431e2
+vendor/etc/cne/wqeclient/ROW/ROW_profile18.xml|19db16f62dabb806a62f192858a9d52b5bc2a064
+vendor/etc/cne/wqeclient/ROW/ROW_profile19.xml|1fcc57b1fa4dbbc7d250e8dd92acf1527d447eb3
+vendor/etc/cne/wqeclient/ROW/ROW_profile2.xml|169a5209000e357a1a3183e8e5bfdf6fd07c2787
+vendor/etc/cne/wqeclient/ROW/ROW_profile20.xml|7be0614cf0116c39b736c58fe5eca36838aeb3db
+vendor/etc/cne/wqeclient/ROW/ROW_profile21.xml|cc62517e6c37e12ee1ebebbb27f9c22878749be3
+vendor/etc/cne/wqeclient/ROW/ROW_profile3.xml|4be4060e8ac2d9fcea490feec7938cadcff46e1f
+vendor/etc/cne/wqeclient/ROW/ROW_profile32.xml|b87542b9284efe4c2bd0ae868bb9a765c2c3dbc5
+vendor/etc/cne/wqeclient/ROW/ROW_profile4.xml|f88e13f1dd7b82388c90358f71813026370c9ed8
+vendor/etc/cne/wqeclient/ROW/ROW_profile5.xml|96101f6b01436a02572c67a469ff67ccfb738874
+vendor/etc/cne/wqeclient/ROW/ROW_profile6.xml|cef14ff8a160c7ad719b85d024a4b3301c3638d0
+vendor/etc/cne/wqeclient/ROW/ROW_profile7.xml|8d6773a4c418d0dcc4dc9096017d2681c7a1defe
+vendor/etc/cne/wqeclient/VZW/VZW_profile1.xml|c89d3c062790b442cbe941cafc641a4e322f2d59
+vendor/etc/cne/wqeclient/VZW/VZW_profile2.xml|ba14a9df975cf872ed0cbe28bee8fac63cd848d4
+vendor/etc/cne/wqeclient/VZW/VZW_profile3.xml|9b123d81c9b8991499cda33b0706810e0c8fb974
+vendor/etc/cne/wqeclient/VZW/VZW_profile4.xml|ff91feb5060a6df07e3e4d9bc99ae58bccad7649
+vendor/etc/cne/wqeclient/VZW/VZW_profile5.xml|f76c894f3c6d5b6ed35113a088dc3174c900501b
+vendor/etc/cne/wqeclient/VZW/VZW_profile6.xml|14d136e7fcc682311757d3edc0b9d3eaeba11815
+vendor/lib64/libcne.so|1e0ea712d0c62168e527780bc525be99cf24da64
+vendor/lib64/libcneapiclient.so|b6479678e5b0e8b46d8df5eb8bd610aa17be00d0
+vendor/lib64/libcneoplookup.so|60d6abe85061de4fa75e5e4f69d477f37f1f8f64
+vendor/lib64/libcneqmiutils.so|c2e2658698eb8b312ca6b28c1a1088a331bb28b9
+vendor/lib64/libwms.so|1b23b338937081f2f911680d5c9021951f93439d
+vendor/lib64/libwqe.so|5a955d19151ad220446df0c49825714dd71a5d8b
+vendor/lib64/libxml.so|11c11c2fb6b713855532a3709f78935f8c98a766
+vendor/lib64/vendor.qti.data.factory@2.0.so|748bfbaa57a409b8962e2b1725e1415e423a7315
+vendor/lib64/vendor.qti.data.factory@2.1.so|bb1f3fa22563282ee24bf03ca681fdc45551feef
+vendor/lib64/vendor.qti.data.factory@2.2.so|6951ff98d20902678e8af584c7b4cf89e360f31b
+vendor/lib64/vendor.qti.data.factory@2.3.so|e9992039c400ef5fb57db62e108873a219348b4c
+vendor/lib64/vendor.qti.data.mwqem@1.0.so|cde93c45f93a82091513d31535f188569dda89fe
+vendor/lib64/vendor.qti.data.slm@1.0.so|0b5e88dfdb4fd0fb3c890f0aa3405ef268814da9
+vendor/lib64/vendor.qti.hardware.data.cne.internal.api@1.0.so|e4d002e61b2d6a4d3826e0563ee16cac74696833
+vendor/lib64/vendor.qti.hardware.data.cne.internal.constants@1.0.so|f87a303f7a092c4d18b7db91d5162a777c920817
+vendor/lib64/vendor.qti.hardware.data.cne.internal.server@1.0.so|7d80cd3bda9fd34dd1629116124579e5a4a787f5
+vendor/lib64/vendor.qti.hardware.data.connection@1.0.so|39bf1d748c3bb90d38be5d031dcd0024b1f2bb2f
+vendor/lib64/vendor.qti.hardware.data.connection@1.1.so|702dd62c50c91446de473f32e31da3a85ba0aea9
+vendor/lib64/vendor.qti.hardware.data.dynamicdds@1.0.so|4494ebdbbcfa79a0ed5ac3445cf0e2e417742bc1
+vendor/lib64/vendor.qti.hardware.data.iwlan@1.0.so|e67ecee0938f81d3241a5acf140d7fc7d24db469
+vendor/lib64/vendor.qti.hardware.data.lce@1.0.so|80d8502e6458ecf0883a029c2777c24574d29485
+vendor/lib64/vendor.qti.hardware.data.qmi@1.0.so|851db5940d5e9e4330e16221be114aef14f52325
+vendor/lib64/vendor.qti.hardware.mwqemadapter@1.0.so|c041dbfc99643e791e52c4e7f3a87050a8cd6c93
 
 # DPM - from m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
 framework/tcmclient.jar|cdd1ea7143a5a7acc3909b5cfa706650179647c7
@@ -2686,15 +2704,15 @@ vendor/etc/init/vendor.qti.esepowermanager@1.0-service.rc
 vendor/lib64/hw/vendor.qti.esepowermanager@1.0-impl.so
 vendor/lib64/vendor.qti.esepowermanager@1.0.so
 
-# Factory
-product/framework/vendor.qti.hardware.factory-V1.0-java.jar
-product/framework/vendor.qti.hardware.factory-V1.1-java.jar
-product/lib64/vendor.qti.hardware.factory@1.0.so
-product/lib64/vendor.qti.hardware.factory@1.1.so
-vendor/bin/hw/vendor.qti.hardware.factory@1.0-service
-vendor/etc/init/vendor.qti.hardware.factory@1.0-service.rc
-vendor/lib64/vendor.qti.hardware.factory@1.0.so
-vendor/lib64/vendor.qti.hardware.factory@1.1.so
+# Factory - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
+system_ext/framework/vendor.qti.hardware.factory-V1.0-java.jar|e92f7ed21d9ce0ef8b38e6d718829592ad6b0fff
+system_ext/framework/vendor.qti.hardware.factory-V1.1-java.jar|45f8be282a5753ef9d0aa482adc3899e3fd86ffe
+system_ext/lib64/vendor.qti.hardware.factory@1.0.so|aae4d2f9f4c91da13cbe92a55754d777c63e5777
+system_ext/lib64/vendor.qti.hardware.factory@1.1.so|a16efefd4f9cf4a16320e27082e81e1d4ffabb45
+vendor/bin/hw/vendor.qti.hardware.factory@1.0-service|e86e5c3203f0695b593dbf745b3f888dba2a0403
+vendor/etc/init/vendor.qti.hardware.factory@1.0-service.rc|b47de7097f6b81ad6a6b05f70a2678861fda69fb
+vendor/lib64/vendor.qti.hardware.factory@1.0.so|e5ca96144d7bcafc9e7dd7fd753e4d5bc53c5273
+vendor/lib64/vendor.qti.hardware.factory@1.1.so|f0218dcb55d38e9875c34489ce31c9f2b1ed506b
 
 # Fingerprint
 vendor/bin/hw/vendor.oppo.hardware.biometrics.fingerprint@2.1-service
@@ -2855,7 +2873,6 @@ vendor/firmware/a530_pm4.fw
 vendor/firmware/a540_gpmu.fw2
 
 # Init
-vendor/etc/init/cnd.rc
 vendor/etc/init/dataadpl.rc
 vendor/etc/init/dataqti.rc
 vendor/etc/init/imsdatadaemon.rc
@@ -2866,6 +2883,9 @@ vendor/etc/init/init.qdmastats.rc
 vendor/etc/init/init.time_daemon.rc
 vendor/etc/init/port-bridge.rc
 vendor/etc/init/qcrild.rc
+
+# Init - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
+vendor/etc/init/cnd.rc|3a5183df3479500fb729493bc56c71166fc10bce
 
 # Init - modified
 vendor/etc/init/netmgrd.rc|213d147cfcfe175aa4cdf1a345f3b148ea72982d
