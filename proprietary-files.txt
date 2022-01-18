@@ -3262,10 +3262,10 @@ vendor/firmware/tp/18321/LIMIT_NT_NF36672_TIANMA.img
 vendor/lib64/vendor.qti.hardware.improvetouch.touchcompanion@1.0-service.so
 vendor/lib64/vendor.qti.hardware.improvetouch.touchcompanion@1.0.so
 
-# TUI
-vendor/bin/hw/vendor.qti.hardware.tui_comm@1.0-service-qti
-vendor/etc/init/vendor.qti.hardware.tui_comm@1.0-service-qti.rc
-vendor/lib64/vendor.qti.hardware.tui_comm@1.0.so
+# TUI - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
+vendor/bin/hw/vendor.qti.hardware.tui_comm@1.0-service-qti|15378114c18fd1b1c8f9671f656396285ad1de48
+vendor/etc/init/vendor.qti.hardware.tui_comm@1.0-service-qti.rc|2cfc563d7e1579374f001c94588fae7835a12ffc
+vendor/lib64/vendor.qti.hardware.tui_comm@1.0.so|4ba792ee3234dca4cd7ebbd7b3f9003c800f51b4
 
 # Thermal - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
 vendor/bin/thermal-engine|6ee391c0b9f8d4ceea57521f584b75c60d2ffa09
