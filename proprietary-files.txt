@@ -3258,9 +3258,9 @@ vendor/firmware/tp/18321/FW_NT_NF36672_TIANMA_TEST.bin
 vendor/firmware/tp/18321/LIMIT_NT_NF36672_DEPUTE.img
 vendor/firmware/tp/18321/LIMIT_NT_NF36672_TIANMA.img
 
-# Touch-improve
-vendor/lib64/vendor.qti.hardware.improvetouch.touchcompanion@1.0-service.so
-vendor/lib64/vendor.qti.hardware.improvetouch.touchcompanion@1.0.so
+# Touch-improve - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
+vendor/lib64/vendor.qti.hardware.improvetouch.touchcompanion@1.0-service.so|b52d181f80be8eaddb26c7df628e398f662efd93
+vendor/lib64/vendor.qti.hardware.improvetouch.touchcompanion@1.0.so|14625370922717efd29a0476482778dccb06e484
 
 # TUI - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
 vendor/bin/hw/vendor.qti.hardware.tui_comm@1.0-service-qti|15378114c18fd1b1c8f9671f656396285ad1de48
