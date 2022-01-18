@@ -2522,8 +2522,8 @@ vendor/lib64/libfastcrc.so
 vendor/lib64/libfastrpc_utf_stub.so
 vendor/lib64/libsysmon_cdsp_skel.so
 
-# Charger
-vendor/bin/hvdcp_opti
+# Charger - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
+vendor/bin/hvdcp_opti|cfee9d4b5c2a842173aefe573344b2d3366f7d17
 
 # CNE - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
 product/etc/permissions/vendor.qti.hardware.data.connection-V1.0-java.xml|335d6da6763240d58a1598f95bed50bb80e3e71d|75e8a824d368cd4172985c884796381327d950da
