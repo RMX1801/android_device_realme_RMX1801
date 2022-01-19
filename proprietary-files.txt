@@ -2881,6 +2881,7 @@ vendor/etc/init/qcrild.rc
 
 # Init - from DDV_sprout - m690-user 11 RKQ1.210607.001 00WW_3_440 release-keys
 vendor/etc/init/cnd.rc|3a5183df3479500fb729493bc56c71166fc10bce
+vendor/etc/init/init_thermal-engine.rc|a0310f09da9f09c67e110607b73aec9f9f981c4c
 
 # Init - modified
 vendor/etc/init/netmgrd.rc|213d147cfcfe175aa4cdf1a345f3b148ea72982d
