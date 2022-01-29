@@ -14,10 +14,6 @@
 # limitations under the License.
 #
 
-# Build
-PRODUCT_BROKEN_VERIFY_USES_LIBRARIES := true
-RELAX_USES_LIBRARY_CHECK := true
-
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/realme/RMX1801/RMX1801-vendor.mk)
 $(call inherit-product, vendor/realme/RMX1801/dirac/dirac.mk)
